@@ -78,7 +78,7 @@ const inMemory = {
   newsletters: [
     {
       id: 1,
-      email: 'concierge@luluaurelian.com',
+      email: 'concierge@luluaurelian.co.ke',
       is_active: true,
       subscribed_at: new Date()
     }

@@ -89,8 +89,8 @@ class EmailService {
                   
                   <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                      <td style="padding: 0 15px;"><a href="https://www.luluaurelian.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Website</a></td>
-                      <td style="padding: 0 15px;"><a href="https://www.luluaurelian.com/#/portal" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Guest Portal</a></td>
+                      <td style="padding: 0 15px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Website</a></td>
+                      <td style="padding: 0 15px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Guest Portal</a></td>
                     </tr>
                   </table>
 
@@ -433,7 +433,7 @@ class EmailService {
          <strong>Check-in:</strong> ${booking.check_in}<br/>
          <strong>Check-out:</strong> ${booking.check_out}${cleaningText}`
       ]) +
-      this._renderButton({ label: 'View in Portal', url: 'https://luluaurelian.com/portal' });
+      this._renderButton({ label: 'View in Portal', url: 'https://luluaurelian.co.ke/portal' });
 
     const html = this._getHtmlTemplate(title, preheader, bodyContent);
 

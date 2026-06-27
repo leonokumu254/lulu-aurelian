@@ -33,7 +33,7 @@ app.use('/api', limiter);
 
 // --- GLOBAL MIDDLEWARES ---
 const allowedOrigins = env.NODE_ENV === 'production' 
-  ? ['https://luluaurelian.com', 'https://www.luluaurelian.com'] 
+  ? ['https://luluaurelian.co.ke', 'https://www.luluaurelian.co.ke'] 
   : ['http://localhost:5173', 'http://localhost:5000'];
 
 app.use(cors({

@@ -31,7 +31,7 @@ export const exportICal = async (req, res, next) => {
 
       ical.push(
         'BEGIN:VEVENT',
-        `UID:${booking.id}@luluaurelian.com`,
+        `UID:${booking.id}@luluaurelian.co.ke`,
         `DTSTAMP:${formatICalDate(created)}`,
         `DTSTART;VALUE=DATE:${start.toISOString().split('T')[0].replace(/-/g, '')}`,
         `DTEND;VALUE=DATE:${end.toISOString().split('T')[0].replace(/-/g, '')}`,

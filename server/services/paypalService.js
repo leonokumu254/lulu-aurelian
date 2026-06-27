@@ -50,8 +50,8 @@ class PaypalService {
             description: `Booking ${reference}`
           }],
           application_context: {
-            return_url: 'https://www.luluaurelian.com/payment-success',
-            cancel_url: 'https://www.luluaurelian.com/payment-cancelled'
+            return_url: 'https://www.luluaurelian.co.ke/payment-success',
+            cancel_url: 'https://www.luluaurelian.co.ke/payment-cancelled'
           }
         })
       });
