@@ -1,0 +1,749 @@
+.guest-portal-container {
+  padding: 2rem 0;
+  animation: fadeIn 0.4s ease-out;
+  color: var(--portal-text);
+  font-family: var(--portal-font-sans);
+}
+
+.guest-portal-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  color: var(--portal-text-muted);
+}
+
+.guest-portal-header {
+  margin-bottom: 2.5rem;
+}
+
+.guest-portal-title {
+  color: var(--portal-text);
+  font-family: var(--portal-font-display);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+}
+
+.guest-portal-subtitle {
+  color: var(--portal-text-muted);
+  font-size: 1.05rem;
+}
+
+.guest-portal-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* Glassmorphic Utilities for Light Theme */
+.glass {
+  background: var(--portal-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--portal-card-border);
+  border-radius: 16px;
+  box-shadow: var(--portal-shadow);
+}
+
+/* -------------------------------------
+   MAIN STREAM
+-------------------------------------- */
+.guest-portal-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.portal-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #DC2626;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* STATUS BANNER CARD */
+.status-banner-card {
+  padding: 1.5rem 2rem;
+}
+
+.status-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.tracker-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--portal-text-muted);
+  font-weight: 600;
+}
+#title{
+  color: var(--color-gold-deep);
+}
+
+/* Pastel Badges */
+.status-badge-pastel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge-pastel.pending { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+.status-badge-pastel.approved { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+.status-badge-pastel.paid { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+.status-badge-pastel.completed { background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; }
+
+.status-badge-pastel .dot {
+  font-size: 1rem;
+  line-height: 0;
+}
+
+/* Stepper Track */
+.stepper-track {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.stepper-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.stepper-node:last-child {
+  flex: 0;
+}
+
+.node-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid rgba(29, 25, 18, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--portal-text-muted);
+  transition: all 0.3s ease;
+}
+
+.node-label {
+  font-size: 0.8rem;
+  color: var(--portal-text-muted);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.stepper-node.completed .node-circle {
+  background: var(--portal-gold-bright);
+  border-color: var(--portal-gold-bright);
+  color: #FFFFFF;
+}
+
+.stepper-node.completed .node-label {
+  color: var(--portal-gold-deep);
+}
+
+.stepper-node.active .node-circle {
+  border-color: var(--portal-gold-bright);
+  color: var(--portal-gold-deep);
+  background: rgba(187, 133, 37, 0.1);
+  box-shadow: 0 0 15px rgba(187, 133, 37, 0.2);
+}
+
+.stepper-node.active .node-label {
+  color: var(--portal-text);
+  font-weight: 700;
+}
+
+.node-line {
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 16px);
+  width: calc(100% - 32px);
+  height: 2px;
+  background: rgba(29, 25, 18, 0.1);
+  z-index: -1;
+}
+
+.stepper-node.completed .node-line {
+  background: var(--portal-gold-bright);
+}
+
+/* GLASSMORPHIC ACTION CARD */
+.action-card {
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(187, 133, 37, 0.05) 0%, transparent 50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.action-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+}
+
+.action-card-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.arrival-label {
+  font-size: 0.9rem;
+  color: var(--portal-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.arrival-date {
+  font-family: var(--portal-font-display);
+  font-size: 3rem;
+  color: var(--portal-text);
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.arrival-year {
+  color: var(--portal-gold-deep);
+  font-size: 2.2rem;
+}
+
+.arrival-unit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--portal-text);
+  font-weight: 500;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.action-card-map {
+  flex-shrink: 0;
+}
+
+.map-placeholder {
+  width: 140px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(29, 25, 18, 0.1);
+  box-shadow: var(--portal-shadow);
+}
+
+.thumbnail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.action-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(29, 25, 18, 0.1);
+  padding-top: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.booking-ref-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-label {
+  font-size: 0.75rem;
+  color: var(--portal-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.ref-value {
+  font-family: var(--portal-font-display);
+  font-size: 1.1rem;
+  color: var(--portal-text);
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.btn-modify {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--portal-gold-deep, #BB8525);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--portal-font-sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(187, 133, 37, 0.2);
+}
+
+.btn-modify:hover {
+  background: var(--portal-text, #1D1912);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(29, 25, 18, 0.3);
+}
+
+/* Payment Block */
+.payment-gateway-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.payment-timer-alert {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #DC2626;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--portal-font-sans);
+}
+
+.payment-timer-alert.expired {
+  background: rgba(107, 114, 128, 0.1);
+  border-color: rgba(107, 114, 128, 0.2);
+  color: #4B5563;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.payment-timer-alert span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.payment-timer-alert strong {
+  font-family: var(--portal-font-display);
+  font-size: 1.25rem;
+}
+
+.payment-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.pay-option {
+  border: 2px solid var(--portal-card-border);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pay-option.selected {
+  border-color: var(--portal-gold-deep);
+  background: rgba(187, 133, 37, 0.05);
+}
+
+.pay-option input[type="radio"] {
+  margin-top: 0.25rem;
+  accent-color: var(--portal-gold-deep);
+}
+
+.pay-option-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.pay-option-content strong {
+  color: var(--portal-text);
+  font-size: 0.95rem;
+}
+
+.pay-option-content span {
+  color: var(--portal-text-muted);
+  font-size: 0.8rem;
+}
+
+.btn-pay-now {
+  background: #10B981;
+  color: #FFF;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-pay-now:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-pay-now:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.no-bookings-hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.no-bookings-hero .empty-icon {
+  color: var(--portal-text-muted);
+}
+
+/* -------------------------------------
+   SIDEBAR
+-------------------------------------- */
+.guest-portal-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* LOYALTY WIDGET */
+.loyalty-widget {
+  padding: 1.5rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(249, 249, 242, 0.9) 100%);
+  border: 1px solid var(--portal-card-border);
+}
+
+.loyalty-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.loyalty-widget-header h3 {
+  font-family: var(--portal-font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--portal-text);
+  margin: 0;
+}
+
+.loyalty-star {
+  color: var(--portal-gold-bright);
+}
+
+.loyalty-ring-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.progress-ring-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  fill: transparent;
+  stroke: rgba(29, 25, 18, 0.05);
+}
+
+.progress-ring-fill {
+  fill: transparent;
+  stroke: var(--portal-gold-bright);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.progress-ring-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring-number {
+  font-family: var(--portal-font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--portal-text);
+}
+
+.ring-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--portal-text-muted);
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.loyalty-ring-meta p {
+  color: var(--portal-text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+.loyalty-ring-meta strong {
+  color: var(--portal-gold-deep);
+}
+
+.earned-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(187, 133, 37, 0.1);
+  border: 1px solid rgba(187, 133, 37, 0.2);
+  color: var(--portal-gold-deep);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* Milestone Timeline */
+.milestone-timeline {
+  padding: 1rem 0;
+}
+
+.milestone-track {
+  position: relative;
+  height: 8px;
+  background: rgba(29, 25, 18, 0.08);
+  border-radius: 4px;
+  margin: 0 10px;
+}
+
+.milestone-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--portal-gold-bright);
+  border-radius: 4px;
+  transition: width 1s ease-in-out;
+}
+
+.milestone-notch {
+  position: absolute;
+  top: -8px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notch-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid rgba(29, 25, 18, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--portal-text-muted);
+  transition: all 0.3s;
+}
+
+.notch-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--portal-text-muted);
+  white-space: nowrap;
+}
+
+.milestone-notch.unlocked .notch-icon {
+  background: var(--portal-gold-bright);
+  border-color: var(--portal-gold-bright);
+  color: #FFFFFF;
+}
+
+.milestone-notch.unlocked .notch-label {
+  color: var(--portal-gold-deep);
+  font-weight: 700;
+}
+
+/* TRANSACTION HISTORY */
+.history-widget {
+  padding: 1.5rem;
+}
+
+.history-header h3 {
+  font-family: var(--portal-font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--portal-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(29, 25, 18, 0.05);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.history-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(29, 25, 18, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--portal-text-muted);
+}
+
+.history-item-details {
+  flex: 1;
+}
+
+.history-item-details h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+  color: var(--portal-text);
+  font-weight: 600;
+}
+
+.history-item-details span {
+  font-size: 0.8rem;
+  color: var(--portal-text-muted);
+}
+
+.micro-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.micro-badge.completed { background: #F3F4F6; color: #374151; }
+.micro-badge.paid { background: #DBEAFE; color: #1E40AF; }
+.micro-badge.approved { background: #D1FAE5; color: #065F46; }
+.micro-badge.pending { background: #FEF3C7; color: #92400E; }
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 1024px) {
+  .guest-portal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .stepper-track {
+    display: none;
+  }
+  .status-banner-header {
+    margin-bottom: 0;
+  }
+  
+  .action-card-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .map-placeholder {
+    width: 100%;
+    height: 120px;
+  }
+  
+  .action-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .btn-modify {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .loyalty-ring-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}

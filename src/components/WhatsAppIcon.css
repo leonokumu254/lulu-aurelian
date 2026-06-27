@@ -1,0 +1,229 @@
+.floating-whatsapp {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background-color: var(--color-dark);
+  border: 1px solid var(--color-gold-bright);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 10px 25px rgba(29, 25, 18, 0.25);
+}
+
+.wa-svg {
+  width: 25px;
+  height: 25px;
+  fill: var(--color-gold-bright);
+  transition: var(--transition-smooth);
+}
+
+.floating-whatsapp:hover {
+  background-color: #25D366; /* Changes to WhatsApp green on hover */
+  border-color: #25D366;
+  transform: scale(1.1) translateY(-3px);
+  box-shadow: 0 15px 30px rgba(37, 211, 102, 0.35);
+}
+
+.floating-whatsapp:hover .wa-svg {
+  fill: var(--color-white);
+}
+
+/* Pulse Animation */
+.pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid var(--color-gold-bright);
+  top: 0;
+  left: 0;
+  animation: pulse 2s infinite ease-out;
+  pointer-events: none;
+}
+
+.floating-whatsapp:hover .pulse-ring {
+  border-color: #25D366;
+}
+
+/* Tooltip text */
+.wa-tooltip {
+  position: absolute;
+  right: 80px;
+  background-color: var(--color-dark);
+  color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px);
+  transition: var(--transition-smooth);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.wa-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-dark);
+  border-right: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+}
+
+.floating-whatsapp:hover .wa-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Chat Window Modal */
+.wa-chat-window {
+  position: fixed;
+  bottom: calc(2rem + 70px); /* Just above the floating icon */
+  right: 2rem;
+  width: 320px;
+  background-color: var(--color-white, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform-origin: bottom right;
+}
+
+.wa-chat-header {
+  background-color: #00a884; /* WhatsApp brand green */
+  padding: 1rem 1.25rem;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wa-chat-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+}
+
+.wa-chat-subtitle {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+  font-family: var(--font-sans);
+}
+
+.wa-close-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.wa-close-btn:hover {
+  opacity: 1;
+}
+
+.wa-chat-body {
+  background-color: #efeae2; /* standard WhatsApp background color */
+  background-image: url('data:image/svg+xml;utf8,<svg opacity="0.05" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/></svg>');
+  padding: 1.5rem 1.25rem;
+  flex-grow: 1;
+  min-height: 150px;
+}
+
+.wa-greeting {
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 0 8px 8px 8px;
+  font-size: 0.95rem;
+  color: #111b21;
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  margin: 0;
+  position: relative;
+  font-family: var(--font-sans);
+}
+
+.wa-greeting::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -8px;
+  border-top: 8px solid #ffffff;
+  border-left: 8px solid transparent;
+}
+
+.wa-chat-footer {
+  padding: 12px;
+  background: #f0f2f5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wa-textarea {
+  flex-grow: 1;
+  border: none;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 12px 16px;
+  resize: none;
+  height: 44px; /* match button height approx */
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
+
+.wa-textarea::placeholder {
+  color: #8696a0;
+}
+
+.wa-send-btn {
+  background: #00a884;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.wa-send-btn:hover {
+  transform: scale(1.05);
+  background: #008f6f;
+}
+
+.wa-send-btn svg {
+  margin-left: -2px; /* slight visual offset for the send arrow */
+}

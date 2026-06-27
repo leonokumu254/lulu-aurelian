@@ -1,0 +1,238 @@
+.offers-section {
+  background-color: var(--color-bg);
+  padding: 4rem 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.offers-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.offers-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.offers-titles .section-title {
+  color: var(--color-dark);
+  font-size: 2.8rem;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  font-family: var(--font-serif);
+}
+
+.offers-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--color-gold-deep);
+  font-weight: 500;
+  max-width: 300px;
+}
+
+.view-offers-btn {
+  background-color: transparent;
+  color: var(--color-dark);
+  border: 1px solid var(--color-dark);
+  border-radius: 24px;
+  padding: 0.8rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.view-offers-btn:hover {
+  background-color: var(--color-dark);
+  color: var(--color-bg);
+}
+
+.offers-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 1rem 0;
+  contain: paint; /* Strict boundary for iOS Safari */
+}
+
+.offers-marquee-track {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  will-change: scroll-position;
+  padding-inline: calc(50% - 130px);
+}
+
+.offers-marquee-track::-webkit-scrollbar {
+  display: none;
+}
+
+.offers-marquee-group {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.offer-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gold-deep);
+  color: var(--color-gold-deep);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.offer-nav-arrow:hover {
+  background-color: var(--color-gold-deep);
+  color: var(--color-white);
+}
+
+.left-arrow {
+  left: 10px;
+}
+
+.right-arrow {
+  right: 10px;
+}
+
+@keyframes popEffect {
+  0% { transform: translateY(-50%) scale(1); }
+  40% { transform: translateY(-50%) scale(0.85); }
+  80% { transform: translateY(-50%) scale(1.1); }
+  100% { transform: translateY(-50%) scale(1); }
+}
+
+.offer-nav-arrow.pop-anim {
+  animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+
+.offer-item {
+  min-width: 260px;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.offer-image-wrapper {
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.offer-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.offer-item:hover .offer-image {
+  transform: scale(1.05);
+}
+
+.offer-content {
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.offer-title {
+  font-family: var(--font-serif);
+  color: var(--color-dark);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.offer-desc {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.offer-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.offer-btn-book, .offer-btn-call {
+  background-color: var(--color-gold-deep);
+  color: var(--color-white);
+  border: none;
+  border-radius: 24px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.75rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.offer-btn-book:hover, .offer-btn-call:hover {
+  background-color: var(--color-gold-muted);
+}
+
+.offer-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-gold-deep);
+  border-radius: 50%;
+  color: var(--color-gold-deep);
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.offer-whatsapp-btn:hover {
+  background-color: var(--color-gold-deep);
+  color: var(--color-white);
+}
+
+@media (max-width: 768px) {
+  .offers-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .offer-item {
+    min-width: 220px;
+    width: 220px;
+  }
+  
+  .offers-marquee-track {
+    padding-inline: calc(50% - 110px);
+  }
+}

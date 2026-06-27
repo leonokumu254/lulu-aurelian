@@ -1,0 +1,249 @@
+/* 1. Main Outer Layout */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+/* 2. Main Dashboard Container (Full Screen) */
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+/* 3. Left Sidebar */
+.dashboard-sidebar {
+  width: 260px;
+  background-color: var(--color-dark);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-border);
+}
+
+/* Profile Widget (Top of sidebar in mockup) */
+.sidebar-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.profile-avatar-container {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(255,255,255,0.05); /* Dark circle */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  border: 2px solid var(--color-gold-deep);
+  overflow: hidden;
+}
+
+.profile-avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-name {
+  font-family: var(--font-sans);
+  color: var(--color-white);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.profile-role {
+  color: var(--color-gold-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+/* Navigation Links */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 15px;
+  color: rgba(255,255,255,0.5); /* Muted grey-blue equivalent */
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  color: var(--color-white);
+}
+
+.nav-item.active {
+  background-color: rgba(255,255,255,0.05); /* Highlight active state */
+  color: var(--color-white);
+}
+
+.nav-item svg {
+  stroke-width: 2px;
+}
+
+/* Logout Button at bottom of sidebar */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  background-color: var(--color-gold-deep); /* Use project's accent color instead of teal/coral */
+  color: var(--color-white);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* 4. Main Scrollable Content Area */
+.dashboard-main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: var(--color-bg);
+}
+
+/* 5. Top Search Header */
+.dashboard-top-header {
+  width: 100%;
+  background-color: var(--color-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-dark);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.dashboard-top-header h1 {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.btn-home {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--color-gold-deep);
+  color: var(--color-gold-deep);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-home:hover {
+  background: var(--color-gold-deep);
+  color: var(--color-white);
+}
+
+.dashboard-content-area {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Fix mobile overlay */
+@media (max-width: 992px) {
+  .dashboard-wrapper {
+    padding: 0; /* Remove padding on mobile to fill screen */
+  }
+  .dashboard-container {
+    height: 100vh;
+    border-radius: 0;
+  }
+  .dashboard-sidebar {
+    position: absolute;
+    z-index: 100;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .dashboard-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--color-dark);
+    padding: 0;
+    margin-right: 15px;
+  }
+  .dashboard-top-header {
+    justify-content: flex-start;
+    padding: 15px 20px;
+  }
+  .dashboard-top-header h1 {
+    font-size: 1.4rem;
+  }
+  .btn-home {
+    margin-left: auto;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  .dashboard-content-area {
+    padding: 20px;
+    gap: 20px;
+  }
+}

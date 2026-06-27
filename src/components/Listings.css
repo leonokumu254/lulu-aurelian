@@ -1,0 +1,331 @@
+*{
+  box-sizing: border-box;
+}
+.listings-section{
+  margin-top: 3%;
+  padding-top: 2%; 
+  margin-bottom: 5%;
+  padding-bottom: 3%;
+}
+.listing-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 25px;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.listing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-luxury);
+  border-color: rgba(187, 133, 37, 0.2);
+}
+
+.listing-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 340px;
+}
+
+.listing-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.listing-card:hover .listing-image {
+  transform: scale(1.06);
+}
+
+.listing-images-collage {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 6px;
+  height: 100%;
+  width: 100%;
+}
+
+.collage-main {
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+}
+
+.collage-side {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  height: 100%;
+}
+
+.collage-sub {
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+}
+
+.collage-sub.more-photos::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(29, 25, 18, 0.35);
+  transition: var(--transition-fast);
+}
+
+.collage-sub.more-photos:hover::after {
+  background-color: rgba(29, 25, 18, 0.5);
+}
+
+.collage-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  z-index: 2;
+  gap: 0.25rem;
+  pointer-events: none;
+}
+
+.collage-overlay span {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.listing-price-tag {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background-color: var(--color-bg);
+  color: var(--color-dark);
+  padding: 0.6rem 1.4rem;
+  font-family: var(--font-sans);
+  border-radius: 2px;
+  border-left: 3px solid var(--color-gold-deep);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+.price-num {
+  font-size: 1.4rem;
+  font-family: var(--font-serif);
+  font-weight: 600;
+}
+
+.price-unit {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+  margin-left: 0.2rem;
+}
+
+.listing-info {
+  padding: 2.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.listing-name {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  font-weight: 400;
+}
+
+.listing-desc {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+  flex-grow: 1;
+}
+
+.listing-specs {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-gold-deep);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bullet {
+  font-size: 1rem;
+}
+
+.listing-separator {
+  border: 0;
+  height: 1px;
+  background-color: var(--color-border);
+  margin-bottom: 1.5rem;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.2rem;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-dark);
+}
+
+.amenity-icon {
+  color: var(--color-gold-deep);
+  display: flex;
+  align-items: center;
+}
+
+.amenity-text {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.listing-book-btn {
+  width: 100%;
+  margin-top: auto;
+  border-radius: 25px;
+}
+ 
+
+
+@media (max-width: 768px) {
+  .listings-section {
+    margin-top: 1rem !important;
+    padding-top: 0 !important;
+    margin-bottom: 1rem !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .listing-info {
+    padding: 1.5rem;
+  }
+  .amenities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .listing-image-container {
+    height: 240px;
+  }
+}
+
+/* Booking Channels Styles (Airbnb & Booking.com) */
+.external-booking-channels {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.external-booking-channels-summary {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+}
+
+.channels-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+  font-weight: 700;
+  margin-bottom: 0.1rem;
+}
+
+.channels-buttons {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.channel-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  position: relative;
+}
+
+.channel-icon {
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.airbnb-btn .channel-icon {
+  transform: scale(2.8);
+  transform-origin: center;
+}
+
+.booking-btn .channel-icon {
+  transform: scale(5.8);
+  transform-origin: center;
+}
+
+.airbnb-btn {
+  background-color: #FFF0F2;
+  color: #FF385C;
+  border: 1px solid rgba(255, 56, 92, 0.25);
+}
+
+.airbnb-btn:hover {
+  background-color: #FFD9E0;
+  border-color: rgba(255, 56, 92, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(255, 56, 92, 0.12);
+}
+
+.booking-btn {
+  background-color: #F0F4FC;
+  color: #003580;
+  border: 1px solid rgba(0, 53, 128, 0.25);
+  /* max-width: 160px; */
+  
+}
+
+.booking-btn:hover {
+  background-color: #D9E5FA;
+  border-color: rgba(0, 53, 128, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 53, 128, 0.12);
+}
+

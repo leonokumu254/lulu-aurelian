@@ -1,0 +1,137 @@
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+}
+
+.home-view {
+  flex-grow: 1;
+}
+
+.booking-view-container {
+  flex-grow: 1;
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+
+.booking-header-offset {
+  height: 20px;
+}
+
+.back-link-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-gold-deep);
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: var(--transition-fast);
+}
+
+.back-link-btn:hover {
+  color: var(--color-dark);
+  transform: translateX(-3px);
+}
+
+.booking-page-title {
+  font-size: 3rem;
+  font-weight: 400;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.booking-grid {
+  display: grid;
+  grid-template-columns: 7fr 4fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .booking-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .booking-page-title {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  .booking-view-container {
+    padding-top: 6rem;
+    padding-bottom: 5rem;
+  }
+}
+
+/* ═══ Guest Auth Bars ═══ */
+.guest-session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(184, 151, 90, 0.08), rgba(184, 151, 90, 0.04));
+  border: 1px solid rgba(184, 151, 90, 0.2);
+  border-radius: 12px;
+  padding: 0.7rem 1.2rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.85rem;
+  color: #5a4d3a;
+}
+
+.guest-session-bar strong {
+  color: #b8975a;
+}
+
+.guest-session-bar button {
+  background: none;
+  border: none;
+  color: #b8975a;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.guest-session-bar button:hover {
+  color: #8b6d32;
+}
+
+.guest-prompt-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(184, 151, 90, 0.05);
+  border: 1px dashed rgba(184, 151, 90, 0.25);
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.83rem;
+  color: #8a7e6e;
+}
+
+.guest-prompt-bar button {
+  background: none;
+  border: none;
+  color: #b8975a;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.83rem;
+  text-decoration: underline;
+  margin: 0 0.3rem;
+  transition: color 0.2s;
+}
+
+.guest-prompt-bar button:hover {
+  color: #8b6d32;
+}
