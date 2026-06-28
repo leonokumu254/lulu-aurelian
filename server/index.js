@@ -19,7 +19,7 @@ import cmsRoutes from './routes/cmsRoutes.js';
 import icalRoutes from './routes/icalRoutes.js';
 
 const app = express();
-app.set('trust proxy', 1); // Required for express-rate-limit when hosted on Railway
+app.set('trust proxy', true); // Required for express-rate-limit when hosted on Railway
 
 // --- SECURITY MIDDLEWARES ---
 app.use(helmet()); // Protect HTTP headers
@@ -29,6 +29,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: { success: false, error: 'Too many requests from this IP, please try again later.' },
+  validate: { trustProxy: false, xForwardedForHeader: false, default: false }
 });
 app.use('/api', limiter);
 
