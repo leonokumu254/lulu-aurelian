@@ -303,7 +303,7 @@ export default function App() {
           <Listings onBookSelect={handleBookSelect} />
           <WhyChooseUs />
           <OffersSection setPage={(p, params) => navigateToPage(p, params)} />
-          <BookingStatusWidget />
+          <BookingStatusWidget user={authUser} />
           {!authUser && (
             <AuthPage 
               onLoginSuccess={(profile) => {

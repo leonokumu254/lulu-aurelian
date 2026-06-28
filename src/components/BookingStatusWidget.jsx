@@ -1,36 +1,45 @@
-import React, { useState } from 'react';
-import { Search, Loader, CheckCircle, XCircle, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Loader, CheckCircle, XCircle, Clock, ArrowRight } from 'lucide-react';
 import './BookingStatusWidget.css';
 
-export default function BookingStatusWidget() {
-  const [token, setToken] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
+export default function BookingStatusWidget({ user }) {
+  const [loading, setLoading] = useState(true);
+  const [activeBooking, setActiveBooking] = useState(null);
 
-  const checkStatus = async (e) => {
-    e.preventDefault();
-    if (!token.trim()) return;
-
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/status?token=${encodeURIComponent(token.trim())}`);
-      const data = await res.json();
-
-      if (data.success) {
-        setResult(data.booking);
-      } else {
-        setError(data.error || 'Could not find a booking with that reference code.');
-      }
-    } catch (err) {
-      setError('Connection error. Please try again later.');
-    } finally {
+  useEffect(() => {
+    if (!user) {
       setLoading(false);
+      return;
     }
-  };
+
+    const fetchMyBookings = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/my-bookings`, {
+          credentials: 'include'
+        });
+        const data = await res.json();
+        
+        if (data.success && data.bookings && data.bookings.length > 0) {
+          // Find the most relevant active booking (Pending, Approved, Paid)
+          const active = data.bookings.find(b => 
+            ['PENDING', 'APPROVED', 'PAID'].includes(b.status)
+          ) || data.bookings[0]; // fallback to most recent if none active
+          
+          setActiveBooking(active);
+        }
+      } catch (err) {
+        console.error('Failed to fetch bookings for widget', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyBookings();
+  }, [user]);
+
+  if (!user || loading || !activeBooking) {
+    return null; // Don't show anything if not logged in, loading, or no bookings
+  }
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -50,63 +59,40 @@ export default function BookingStatusWidget() {
       <div className="container" data-aos="fade-up">
         <div className="status-widget-container">
           <div className="status-widget-header">
-            <h2>Check Your Reservation Status</h2>
-            <p>Enter the secure reference token you received in your email to view live updates on your booking without logging in.</p>
+            <h2>Welcome Back, {user.name.split(' ')[0]}</h2>
+            <p>Here is the status of your current reservation.</p>
           </div>
 
-          <form onSubmit={checkStatus} className="status-form">
-            <div className="search-input-wrapper">
-              <Search size={20} className="search-icon" />
-              <input
-                type="text"
-                placeholder="e.g. sec_12345abcdef..."
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                className="status-input"
-                required
-              />
-              <button type="submit" disabled={loading} className="btn-primary status-btn">
-                {loading ? <Loader size={20} className="spinner" /> : 'Check Status'}
-              </button>
-            </div>
-          </form>
-
-          {error && (
-            <div className="status-error animate-fade-in">
-              {error}
-            </div>
-          )}
-
-          {result && (
-            <div className="status-result-card animate-slide-up">
-              <div className="status-result-header">
-                {getStatusIcon(result.status)}
-                <div className="status-text">
-                  <span className="label">Current Status</span>
-                  <strong className={`status-badge ${result.status.toLowerCase()}`}>{result.status}</strong>
-                </div>
-              </div>
-              
-              <div className="status-details-grid">
-                <div className="detail-item">
-                  <span className="label">Guest Name</span>
-                  <span className="value">{result.guest_name}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Suite</span>
-                  <span className="value" style={{ textTransform: 'capitalize' }}>{result.unit_id}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Check In</span>
-                  <span className="value">{new Date(result.check_in).toLocaleDateString()}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Check Out</span>
-                  <span className="value">{new Date(result.check_out).toLocaleDateString()}</span>
-                </div>
+          <div className="status-result-card animate-slide-up" style={{ marginTop: 0 }}>
+            <div className="status-result-header">
+              {getStatusIcon(activeBooking.status)}
+              <div className="status-text">
+                <span className="label">Current Status</span>
+                <strong className={`status-badge ${activeBooking.status.toLowerCase()}`}>{activeBooking.status}</strong>
               </div>
             </div>
-          )}
+            
+            <div className="status-details-grid">
+              <div className="detail-item">
+                <span className="label">Suite</span>
+                <span className="value" style={{ textTransform: 'capitalize' }}>{activeBooking.unit_id === 'skyview' ? 'Skyview Hideaway' : activeBooking.unit_id === 'cocoa' ? 'Cocoa Retreat' : activeBooking.unit_id}</span>
+              </div>
+              <div className="detail-item">
+                <span className="label">Check In</span>
+                <span className="value">{new Date(activeBooking.check_in).toLocaleDateString()}</span>
+              </div>
+              <div className="detail-item">
+                <span className="label">Check Out</span>
+                <span className="value">{new Date(activeBooking.check_out).toLocaleDateString()}</span>
+              </div>
+              <div className="detail-item">
+                <span className="label">Actions</span>
+                <a href="#/portal" className="value" style={{ color: '#cfa873', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}>
+                  Manage Booking <ArrowRight size={16} />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
