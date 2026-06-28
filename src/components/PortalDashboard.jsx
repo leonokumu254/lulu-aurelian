@@ -241,7 +241,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
             </h1>
             <button className="btn-home" onClick={() => { window.location.hash = '#/'; }}>
               <Home size={18} />
-              <span>Website Home</span>
+              <span>Home</span>
             </button>
           </header>
 
