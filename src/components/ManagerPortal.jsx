@@ -337,16 +337,16 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
 
                     <p className="review-comment">"{r.comment}"</p>
 
-                    {r.status === 'Pending' && (
-                      <div className="review-actions">
-                        <button onClick={() => handleReviewAction(r.id, 'delete')} className="btn-rev-delete">
-                          Delete Testimonial
-                        </button>
+                    <div className="review-actions">
+                      <button onClick={() => handleReviewAction(r.id, 'delete')} className="btn-rev-delete">
+                        Delete Testimonial
+                      </button>
+                      {r.status === 'Pending' && (
                         <button onClick={() => handleReviewAction(r.id, 'approve')} className="btn-rev-approve">
                           Approve Review
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
