@@ -19,6 +19,7 @@ import SuccessModal from './components/SuccessModal';
 import PortalDashboard from './components/PortalDashboard';
 import AuthPage from './components/AuthPage';
 import GuestAuthModal from './components/GuestAuthModal';
+import BookingStatusWidget from './components/BookingStatusWidget';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -302,6 +303,7 @@ export default function App() {
           <Listings onBookSelect={handleBookSelect} />
           <WhyChooseUs />
           <OffersSection setPage={(p, params) => navigateToPage(p, params)} />
+          <BookingStatusWidget />
           {!authUser && (
             <AuthPage 
               onLoginSuccess={(profile) => {

@@ -26,7 +26,8 @@
 .payment-gateway-box {
   max-width: 750px;
   padding: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 .modal-close-btn {
@@ -112,6 +113,28 @@
 @media (max-width: 768px) {
   .payment-grid {
     grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+  .payment-summary-col {
+    padding: 1.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .payment-methods-col {
+    padding: 1.5rem;
+  }
+  .payment-header {
+    padding: 1.5rem;
+  }
+  .modal-title {
+    font-size: 1.25rem;
+  }
+  .payment-timer-banner {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 
@@ -213,9 +236,27 @@
   background: rgba(187, 133, 37, 0.05);
 }
 
+.payment-method-card.mpesa.selected {
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.payment-method-card.paypal.selected {
+  border-color: #00457C;
+  background: rgba(0, 69, 124, 0.05);
+}
+
 .payment-method-card input[type="radio"] {
   accent-color: var(--color-gold-deep);
   transform: scale(1.2);
+}
+
+.payment-method-card.mpesa.selected input[type="radio"] {
+  accent-color: #10B981;
+}
+
+.payment-method-card.paypal.selected input[type="radio"] {
+  accent-color: #00457C;
 }
 
 .method-icon {

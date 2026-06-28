@@ -95,10 +95,12 @@ export default function SuccessModal({ bookingDetails, onClose }) {
               <X size={48} strokeWidth={2.5} />
             </div>
           </div>
-          <h2 className="modal-title" style={{ fontSize: '2rem' }}>Payment Unsuccessful</h2>
-          <p className="modal-subtitle" style={{ fontSize: '1.1rem', maxWidth: 450, margin: '0 auto', color: '#DC2626' }}>
-            {paymentError}
-          </p>
+          <h2 className="modal-title" style={{ fontSize: '1.75rem', color: '#DC2626' }}>Payment Failed</h2>
+          <div style={{ background: '#FEF2F2', padding: '1rem', borderRadius: '8px', marginTop: '1rem' }}>
+            <p className="modal-subtitle" style={{ fontSize: '1rem', maxWidth: 450, margin: '0 auto', color: '#991B1B', fontWeight: 500 }}>
+              {paymentError || 'An unexpected error occurred during processing.'}
+            </p>
+          </div>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2.5rem' }}>
             <button onClick={() => setPaymentError(null)} className="btn-primary" style={{ padding: '1rem 2rem', background: '#DC2626', borderColor: '#DC2626' }}>
               Try Again
@@ -163,7 +165,7 @@ export default function SuccessModal({ bookingDetails, onClose }) {
           <div className="payment-methods-col">
             <h3 className="box-title">Select Payment Method</h3>
             <div className="payment-options-list">
-              <label className={`payment-method-card ${paymentMethod === 'mpesa' ? 'selected' : ''}`}>
+              <label className={`payment-method-card mpesa ${paymentMethod === 'mpesa' ? 'selected' : ''}`}>
                 <input type="radio" name="gateway" value="mpesa" checked={paymentMethod === 'mpesa'} onChange={() => setPaymentMethod('mpesa')} />
                 <div className="method-icon mpesa" style={{ background: 'transparent' }}>
                   <img src="/mpesa-logo.jpg" alt="M-Pesa" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '8px' }} />
@@ -187,7 +189,7 @@ export default function SuccessModal({ bookingDetails, onClose }) {
                 </div>
               )}
 
-              <label className={`payment-method-card ${paymentMethod === 'paypal' ? 'selected' : ''}`}>
+              <label className={`payment-method-card paypal ${paymentMethod === 'paypal' ? 'selected' : ''}`}>
                 <input type="radio" name="gateway" value="paypal" checked={paymentMethod === 'paypal'} onChange={() => setPaymentMethod('paypal')} />
                 <div className="method-icon paypal" style={{ background: 'transparent' }}>
                   <img src="/paypal.svg" alt="PayPal" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
