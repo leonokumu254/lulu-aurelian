@@ -52,7 +52,9 @@ export const requestBooking = async (req, res, next) => {
 
     // Fetch all agents and managers to alert them
     const allUsers = await db.users.getAll();
-    const agentEmails = allUsers.filter(u => u.role === 'MANAGER' || u.role === 'AGENT').map(u => u.email);
+    const agentEmails = allUsers
+      .filter(u => u.role && (u.role.toUpperCase() === 'MANAGER' || u.role.toUpperCase() === 'AGENT'))
+      .map(u => u.email);
 
     // Dispatch automated communications asynchronously (do not block the response)
     emailService.sendBookingConfirmation(newBooking).catch(err => console.error('[EMAIL ERROR]:', err));
