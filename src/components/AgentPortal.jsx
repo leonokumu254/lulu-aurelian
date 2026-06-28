@@ -17,7 +17,7 @@ export default function AgentPortal({ user }) {
   // Fetch bookings from backend
   const fetchBookings = async () => {
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -131,7 +131,7 @@ export default function AgentPortal({ user }) {
   const handleDecline = async (id) => {
     setActionLoading(id);
     try {
-      const response = await fetch(`/api/bookings/${id}/decline`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${id}/decline`, {
         method: 'PUT',
         credentials: 'include'
       });

@@ -55,14 +55,14 @@ export default function App() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        let res = await fetch('/api/auth/me', { credentials: 'include' });
+        let res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/me`, { credentials: 'include' });
         
         // If access token expired, try to refresh
         if (res.status === 401) {
-          const refreshRes = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });
+          const refreshRes = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/refresh`, { method: 'POST', credentials: 'include' });
           if (refreshRes.ok) {
             // Retry fetching profile
-            res = await fetch('/api/auth/me', { credentials: 'include' });
+            res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/me`, { credentials: 'include' });
           } else {
             throw new Error('Refresh failed');
           }
@@ -88,7 +88,7 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/logout`, { method: 'POST', credentials: 'include' });
     } catch (err) {
       console.error(err);
     }

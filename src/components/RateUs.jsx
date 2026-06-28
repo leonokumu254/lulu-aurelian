@@ -21,7 +21,7 @@ export default function RateUs({ user }) {
     setError('');
 
     try {
-      const res = await fetch('/api/reviews', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

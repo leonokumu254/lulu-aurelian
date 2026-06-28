@@ -16,7 +16,7 @@ export default function GuestPortal({ user, onBookNew }) {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await fetch('/api/bookings/my-bookings', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/my-bookings`, {
           credentials: 'include'
         });
         const data = await res.json();
@@ -97,7 +97,7 @@ export default function GuestPortal({ user, onBookNew }) {
     setProcessingPayment(true);
     setPaymentError(null);
     try {
-      const res = await fetch(`/api/bookings/${activeBooking.id}/pay`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${activeBooking.id}/pay`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -237,7 +237,7 @@ export default function GuestPortal({ user, onBookNew }) {
                           if (!confirmCancel) return;
 
                           try {
-                            const res = await fetch(`/api/bookings/${activeBooking.id}/cancel`, {
+                            const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${activeBooking.id}/cancel`, {
                               method: 'PUT',
                               credentials: 'include'
                             });

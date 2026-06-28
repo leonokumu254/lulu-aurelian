@@ -16,7 +16,7 @@ export default function SuitePasscodes() {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/bookings/unit-settings', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/unit-settings`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -76,7 +76,7 @@ export default function SuitePasscodes() {
 
     setSavingUnit(unitId);
     try {
-      const response = await fetch(`/api/bookings/unit-settings/${unitId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/unit-settings/${unitId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

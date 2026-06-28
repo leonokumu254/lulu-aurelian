@@ -110,7 +110,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
         payload.user_id = guestUser.id;
       }
 
-      const response = await fetch('/api/bookings/request', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/request`, {
         method: 'POST',
         headers,
         credentials: 'include',

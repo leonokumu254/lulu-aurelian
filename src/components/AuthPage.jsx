@@ -43,7 +43,7 @@ export default function AuthPage({ onLoginSuccess }) {
       setLoading(true);
       setError('');
       try {
-        const response = await fetch('/api/auth/google', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ access_token: tokenResponse.access_token })
@@ -81,7 +81,7 @@ export default function AuthPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password })
@@ -127,7 +127,7 @@ export default function AuthPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,7 +169,7 @@ export default function AuthPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/forgot-password', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim().toLowerCase() })
@@ -206,7 +206,7 @@ export default function AuthPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: resetToken, password })

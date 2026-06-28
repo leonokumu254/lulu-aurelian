@@ -30,7 +30,7 @@ export default function ChangePassword({ user }) {
     setSuccess('');
 
     try {
-      const response = await fetch('/api/auth/change-password', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/change-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

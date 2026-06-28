@@ -69,7 +69,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
 
   useEffect(() => {
     if (formData.suite) {
-      fetch(`/api/bookings/blocked-dates/${formData.suite}`)
+      fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/blocked-dates/${formData.suite}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) setBlockedDates(data.blockedDates);

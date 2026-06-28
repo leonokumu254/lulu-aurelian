@@ -26,7 +26,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
 
     const checkExistingSession = async () => {
       try {
-        const response = await fetch('/api/auth/me', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/me`, {
           credentials: 'include'
         });
         const data = await response.json();

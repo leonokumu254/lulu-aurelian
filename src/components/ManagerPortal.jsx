@@ -45,7 +45,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await fetch('/api/users', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/users`, {
           credentials: 'include'
         });
         if (!response.ok) throw new Error('Network response was not ok');
@@ -64,7 +64,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch('/api/reviews/all', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/reviews/all`, {
           credentials: 'include'
         });
         if (!response.ok) throw new Error('Failed to fetch reviews');
@@ -113,7 +113,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
   const handleReviewAction = async (id, action) => {
     try {
       if (action === 'approve') {
-        const response = await fetch(`/api/reviews/${id}/moderate`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/reviews/${id}/moderate`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -124,7 +124,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
           triggerToast('Review approved for public directory.');
         }
       } else {
-        const response = await fetch(`/api/reviews/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/reviews/${id}`, {
           method: 'DELETE',
           credentials: 'include'
         });

@@ -35,7 +35,7 @@ export default function SuccessModal({ bookingDetails, onClose }) {
     setProcessingPayment(true);
     setPaymentError(null);
     try {
-      const res = await fetch(`/api/bookings/${bookingDetails.bookingId}/pay`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${bookingDetails.bookingId}/pay`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -230,7 +230,7 @@ export default function SuccessModal({ bookingDetails, onClose }) {
                 
                 try {
                   const token = localStorage.getItem('guestToken');
-                  await fetch(`/api/bookings/${bookingDetails.bookingId}/cancel`, {
+                  await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${bookingDetails.bookingId}/cancel`, {
                     method: 'PUT',
                     headers: { Authorization: `Bearer ${token}` }
                   });

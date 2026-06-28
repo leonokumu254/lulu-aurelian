@@ -24,7 +24,7 @@ export default function Newsletter() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/newsletters/subscribe', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/newsletters/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() })
