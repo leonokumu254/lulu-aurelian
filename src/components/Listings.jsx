@@ -20,10 +20,10 @@ const LISTINGS = [
     beds: '2 King Bedrooms',
     desc: 'Located on the top floor, this elegant 2-bedroom apartment offers a quiet, private retreat for professionals and travelers, complete with a balcony featuring stunning Mt. Kenya views. Designed for both short and extended stays, the space includes a dedicated workspace, fast Wi-Fi, a fully equipped modern kitchen, secure self-check-in, and free parking.',
     amenities: [
-      { icon: <Wifi size={16} />, text: 'High Speed Wi-Fi' },
+      { icon: <Wifi size={16} />, text: '40 MBPS Wi-Fi' },
       { icon: <Users size={16} />, text: ' Up to 4 Guests' },
       { icon: <Maximize size={16} />, text: '140 m²' },
-      { icon: <Coffee size={16} />, text: 'Nespresso Bar' },
+      { icon: <Coffee size={16} />, text: 'Coffee Maker'},
       { icon: <Tv size={16} />, text: 'Smart TV' },
       { icon: <Map size={16} />, text: 'Mt Kenya View' }
     ]
@@ -31,7 +31,7 @@ const LISTINGS = [
   {
     id: 'cocoa',
     name: 'Cocoa Retreat',
-    tagline: 'Warm Woodside Sanctuary',
+    tagline: 'Rich cocoa vibes',
     price: 5000,
     image: './assets/cocoa/cocoa_1.jpg',
     previewImages: [
@@ -44,12 +44,10 @@ const LISTINGS = [
     beds: '2 Queen Bedrooms',
     desc: ' Cocoa Retreat is a cozy, stylish, and fully equipped apartment featuring rich brown tones, fast Wi-Fi, and free parking, perfect for a comfortable stay for families, couples, and business travelers alike.',
     amenities: [
-      { icon: <Wifi size={16} />, text: '500Mbps Wi-Fi' },
+      { icon: <Wifi size={16} />, text: '40mbps Wifi' },
       { icon: <Users size={16} />, text: '4 Guests' },
       { icon: <Maximize size={16} />, text: '85 m²' },
-      { icon: <Coffee size={16} />, text: 'Pour-over Station' },
       { icon: <Tv size={16} />, text: 'Smart TV' }
-      // { icon: <Map size={16} />, text: 'Forest View' }
     ]
   }
 ];

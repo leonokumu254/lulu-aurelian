@@ -15,13 +15,13 @@ const SUITE_PREVIEWS = {
     name: 'Skyview Hideaway',
     price: 'KES 5,500',
     image: '/assets/skyview/skyview_1.jpg',
-    tagline: 'Penthouse • Panoramic Skyline Views • 140 m²'
+    tagline: 'Penthouse • Panoramic Mt Kenya views ' 
   },
   cocoa: {
     name: 'Cocoa Retreat',
     price: 'KES 5,000',
     image: '/assets/cocoa/cocoa_1.jpg',
-    tagline: 'Cozy Retreat • Dark Walnut Panels • Slate Fireplace'
+    tagline: 'Chilled environment with luxury experience '
   }
 };
 
