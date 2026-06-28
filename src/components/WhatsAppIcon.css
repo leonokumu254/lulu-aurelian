@@ -91,7 +91,6 @@
   transform: translateX(0);
 }
 
-/* Chat Window Modal */
 .wa-chat-window {
   position: fixed;
   bottom: calc(2rem + 70px); /* Just above the floating icon */
@@ -100,11 +99,12 @@
   background-color: var(--color-white, #ffffff);
   border-radius: 12px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
+  z-index: 99999;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transform-origin: bottom right;
+  pointer-events: auto;
 }
 
 .wa-chat-header {
@@ -121,6 +121,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   font-family: var(--font-sans);
+  color: #ffffff;
 }
 
 .wa-chat-subtitle {
@@ -128,6 +129,7 @@
   font-size: 0.8rem;
   opacity: 0.9;
   font-family: var(--font-sans);
+  color: #ffffff;
 }
 
 .wa-close-btn {
@@ -197,6 +199,8 @@
   outline: none;
   box-shadow: 0 1px 1px rgba(0,0,0,0.05);
   box-sizing: border-box;
+  color: #000000;
+  pointer-events: auto;
 }
 
 .wa-textarea::placeholder {

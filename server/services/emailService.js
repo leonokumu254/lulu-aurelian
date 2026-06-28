@@ -42,8 +42,7 @@ class EmailService {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
       <style>
-        body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; }
+        body, p, a, td, span, strong, ul, li, div, h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -91,6 +90,14 @@ class EmailService {
                     <tr>
                       <td style="padding: 0 15px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Website</a></td>
                       <td style="padding: 0 15px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Guest Portal</a></td>
+                    </tr>
+                  </table>
+                  
+                  <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                    <tr>
+                      <td style="padding: 0 10px;"><a href="https://instagram.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: 600;">Instagram</a></td>
+                      <td style="padding: 0 10px;"><a href="https://tiktok.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: 600;">TikTok</a></td>
+                      <td style="padding: 0 10px;"><a href="https://facebook.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: 600;">Facebook</a></td>
                     </tr>
                   </table>
 

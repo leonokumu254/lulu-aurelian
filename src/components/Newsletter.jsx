@@ -51,10 +51,10 @@ export default function Newsletter() {
         <div className="newsletter-box glass-dark animate-slide-up">
           {!subscribed ? (
             <div className="newsletter-content">
-              <span className="newsletter-tag">Private Club Invitation</span>
+              <span className="newsletter-tag">Aurelian Club Assocaition</span>
               <h2 className="newsletter-title">Subscribe to the Aurelian Club</h2>
               <p className="newsletter-desc">
-                Register to receive exclusive invitations, early-access announcements for new suites, and curated luxury travel inspiration.
+                Register to receive exclusive discounts, early-announcements on new offers, and curated luxury travel  inspiration.
               </p>
               
               <form className="newsletter-form" onSubmit={handleSubscribe}>
@@ -79,7 +79,7 @@ export default function Newsletter() {
               <CheckCircle2 size={48} className="success-icon" />
               <h2 className="newsletter-title">Invitation Confirmed</h2>
               <p className="newsletter-desc">
-                Welcome to the Aurelian Club. You will receive private updates and early-access listing details directly in your inbox.
+                Welcome to the Aurelian Club. You will receive  updates and early-access listing details directly in your inbox.
               </p>
               <button onClick={() => setSubscribed(false)} className="btn-secondary newsletter-back-btn">
                 Subscribe another email

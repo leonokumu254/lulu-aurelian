@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
 import './App.css';
 import Hero from './components/Hero';
@@ -164,7 +165,12 @@ export default function App() {
           !el.closest('.guest-session-bar') &&
           !el.closest('.guest-prompt-bar') &&
           !el.closest('.no-reveal') &&
-          !el.closest('.reviews-section')
+          !el.closest('.reviews-section') &&
+          !el.closest('.wa-chat-window') &&
+          !el.closest('.gallery-modal-overlay') &&
+          !el.closest('.booking-view-container') &&
+          !el.closest('.lightbox-overlay') &&
+          !el.closest('footer')
         ) {
           el.setAttribute('data-aos', 'fade-up');
           changed = true;
@@ -265,6 +271,11 @@ export default function App() {
 
   return (
     <div className="app-root">
+      <Helmet>
+        <title>{page === 'home' ? 'Lulu Aurelian Estate | Luxury Escapes' : page === 'booking' ? 'Book Your Stay | Lulu Aurelian' : page === 'portal' ? 'Guest Portal | Lulu Aurelian' : 'Lulu Aurelian Estate'}</title>
+        <meta name="description" content="Lulu Aurelian Estate is the epitome of luxury penthouse living and refined hospitality in East Africa. Our estate offers an unparalleled blend of modern elegance and bespoke services, featuring meticulously designed suites like the Cocoa Suite and Skyview Suite, both offering breathtaking panoramic views. Guests experience a world-class stay with dedicated concierge assistance, gourmet dining options, premium amenities, and immaculate housekeeping services. Whether you are seeking a peaceful retreat, a romantic getaway, or an executive stay, our property ensures an unforgettable experience tailored to your exact desires. From seamless direct bookings and integrated payment gateways to secure user portals for both guests and management, Lulu Aurelian Estate is committed to providing seamless convenience and sophisticated comfort. Discover opulence, tranquility, and exclusivity at Lulu Aurelian Estate, where every detail is crafted to exceed your highest expectations in modern hospitality." />
+      </Helmet>
+
       {/* Global Header Navigation - Hidden on Portal for full dashboard layout */}
       {page !== 'portal' && (
         <Header page={page} setPage={(p, params) => navigateToPage(p, params)} authUser={authUser} onLogout={handleLogout} />

@@ -376,6 +376,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
       {/* Contact Information */}
       <div className="form-group-divider" />
       <h2 className="form-section-title">Personal Information</h2>
+      <p style={{ fontSize: '1rem', fontStyle: 'italic', color: 'var(--color-gold-deep)', marginBottom: '1.5rem', fontWeight: 500 }}>"We hate paperwork too"</p>
 
       {hasStoredDetails && !isEditingProfile ? (
         <div className="confirmed-details-container glass">

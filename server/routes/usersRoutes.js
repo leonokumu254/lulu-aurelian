@@ -14,7 +14,7 @@ router.get('/', authMiddleware, async (req, res) => {
       name: u.name,
       email: u.email,
       role: u.role,
-      avatar: u.avatar_url || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
+      avatar: u.avatar_url || '/avatar.svg', 
     }));
     res.json(safeUsers);
   } catch (err) {

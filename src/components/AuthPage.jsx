@@ -57,7 +57,7 @@ export default function AuthPage({ onLoginSuccess }) {
             email: data.user.email,
             name: data.user.name,
             role: data.user.role.toLowerCase(),
-            // avatar: data.user.avatar || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
+            avatar: data.user.avatar || '/avatar.svg'
           });
         } else {
           setError(data.error || 'Google authentication failed.');
@@ -96,8 +96,8 @@ export default function AuthPage({ onLoginSuccess }) {
           name: data.user.name,
           role: data.user.role.toLowerCase(),
           avatar: data.user.role === 'MANAGER'
-            ? 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200'
-            : 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
+            ? '/avatar.svg'
+            : '/user-icon.svg' 
         });
       } else {
         setError(data.error || 'Invalid credentials.');
@@ -146,7 +146,7 @@ export default function AuthPage({ onLoginSuccess }) {
           email: data.user.email,
           name: data.user.name,
           role: data.user.role.toLowerCase(),
-          avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
+          avatar: '/user-icon.svg'
         });
       } else {
         setError(data.error || 'Registration failed.');
@@ -232,28 +232,29 @@ export default function AuthPage({ onLoginSuccess }) {
     <div className="auth-page-wrapper">
       <div className="auth-card">
         <div className="auth-brand">
-          <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem' }}>LULU AURELIAN ESTATE</span>
+          <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem', }}>Lulu   < span id ="login-text">Aurelian </span> </span>
         </div>
 
         {mode === 'login' ? (
           <div className="auth-view animate-fade-in">
-            <h2>Welcome back, glad to see you</h2>
+            <h2>Welcome back, glad to see you</h2> 
             
             {error && <div className="auth-error">{error}</div>}
 
             <form onSubmit={handleLogin}>
               <div className="form-group">
-                <label>Email Address *</label>
+                <label id='label'>Email Address *</label>
                 <input 
                   type="email" 
                   value={email} 
                   onChange={e => setEmail(e.target.value)} 
                   placeholder="Type your email address" 
                   disabled={loading}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>Password *</label>
+                <label id='label'>Password *</label>
                 <div className="password-wrapper">
                   <input 
                     type={showPassword ? "text" : "password"} 
@@ -261,6 +262,7 @@ export default function AuthPage({ onLoginSuccess }) {
                     onChange={e => setPassword(e.target.value)} 
                     placeholder="••••••••" 
                     disabled={loading}
+                    required
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -271,7 +273,7 @@ export default function AuthPage({ onLoginSuccess }) {
               <div className="form-options">
                 <label className="remember-me">
                   <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-                  <span>Remember me</span>
+                  <span id='label'>Remember me</span>
                 </label>
                 <button type="button" className="forgot-pw" onClick={() => setMode('forgot')}>Forgot your password?</button>
               </div>
@@ -387,17 +389,17 @@ export default function AuthPage({ onLoginSuccess }) {
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name *</label>
-                  <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} disabled={loading} placeholder="John" />
+                  <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} disabled={loading} placeholder="Nelson" required/>
                 </div>
                 <div className="form-group">
                   <label>Last Name *</label>
-                  <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} disabled={loading} placeholder="Doe" />
+                  <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} disabled={loading} placeholder="John"  required/>
                 </div>
               </div>
 
               <div className="form-group">
                 <label>Email *</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} disabled={loading} placeholder="john@example.com" />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} disabled={loading} placeholder="john@gmail.com" required />
               </div>
 
               <div className="form-group">

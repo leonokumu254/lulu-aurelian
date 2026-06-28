@@ -14,12 +14,12 @@
 }
 .header-main.scrolled {
   padding: 0.9rem 0;
-  background: rgba(243, 243, 230, 0.6);
+  background: rgba(212, 175, 55, 0.12); 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(29, 25, 18, 0.08);
   box-shadow: 0 4px 25px rgba(29, 25, 18, 0.05);
-}
+} 
 .header-container {
   display: flex;
   align-items: center;

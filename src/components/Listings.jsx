@@ -87,14 +87,14 @@ export default function Listings({ onBookSelect }) {
               >
                 <div className="listing-images-collage">
                   <div className="collage-main">
-                    <img src={listing.previewImages[0]} alt={listing.name} className="listing-image" />
+                    <img src={listing.previewImages[0]} alt={`${listing.name} - Stunning luxury suite interior showing the main living area or bedroom`} title={`${listing.name} Main Interior`} className="listing-image" />
                   </div>
                   <div className="collage-side">
                     <div className="collage-sub">
-                      <img src={listing.previewImages[1]} alt={`${listing.name} 2`} className="listing-image" />
+                      <img src={listing.previewImages[1]} alt={`${listing.name} - Detailed view of the luxury amenities and premium furniture`} title={`${listing.name} Detail View 1`} className="listing-image" />
                     </div>
                     <div className="collage-sub more-photos">
-                      <img src={listing.previewImages[2]} alt={`${listing.name} 3`} className="listing-image" />
+                      <img src={listing.previewImages[2]} alt={`${listing.name} - Another beautiful angle of the luxurious suite interior`} title={`${listing.name} Detail View 2`} className="listing-image" />
                       <div className="collage-overlay">
                         <Grid size={18} />
                         <span>Show Photos</span>

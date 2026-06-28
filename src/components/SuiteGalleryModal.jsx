@@ -238,20 +238,20 @@ export default function SuiteGalleryModal({ suiteId, onClose, onBookSelect }) {
 
               <div className="airbnb-image-grid">
                 <div className="grid-left-col" onClick={() => setLightboxIndex(0)}>
-                  <img src={data.images.master} alt="Suite Main View" />
+                  <img src={data.images.master} alt={`${data.title} - Main Exterior/Interior View showcasing luxury amenities`} title={`${data.title} Main View`} />
                 </div>
                 <div className="grid-right-col">
                   <div className="grid-thumb" onClick={() => setLightboxIndex(1)}>
-                    <img src={data.images.thumb1} alt="Suite Interior 1" />
+                    <img src={data.images.thumb1} alt={`${data.title} - Beautiful interior living space with elegant design`} title={`${data.title} Interior Detail 1`} />
                   </div>
                   <div className="grid-thumb" onClick={() => setLightboxIndex(2)}>
-                    <img src={data.images.thumb2} alt="Suite Interior 2" />
+                    <img src={data.images.thumb2} alt={`${data.title} - High-end bedroom and comfortable bedding setup`} title={`${data.title} Interior Detail 2`} />
                   </div>
                   <div className="grid-thumb" onClick={() => setLightboxIndex(3)}>
-                    <img src={data.images.thumb3} alt="Suite Interior 3" />
+                    <img src={data.images.thumb3} alt={`${data.title} - Modern kitchen or bathroom highlighting premium fixtures`} title={`${data.title} Interior Detail 3`} />
                   </div>
                   <div className="grid-thumb" onClick={() => setLightboxIndex(4)}>
-                    <img src={data.images.thumb4} alt="Suite Interior 4" />
+                    <img src={data.images.thumb4} alt={`${data.title} - Scenic balcony or lounge area with relaxing atmosphere`} title={`${data.title} Interior Detail 4`} />
                   </div>
                 </div>
 
@@ -308,7 +308,7 @@ export default function SuiteGalleryModal({ suiteId, onClose, onBookSelect }) {
                           }}
                           style={{ cursor: 'pointer' }}
                         >
-                          <img src={sec.photos[0]} alt={sec.title} />
+                          <img src={sec.photos[0]} alt={`${data.title} - Detailed view of the ${sec.title}`} title={`${sec.title} View`} />
                         </div>
                       ) : (
                         /* Main image with side-by-side images below */
@@ -321,7 +321,7 @@ export default function SuiteGalleryModal({ suiteId, onClose, onBookSelect }) {
                             }}
                             style={{ cursor: 'pointer' }}
                           >
-                            <img src={sec.photos[0]} alt={`${sec.title} main`} />
+                            <img src={sec.photos[0]} alt={`${data.title} - Primary view of the ${sec.title} showcasing luxury design`} title={`${sec.title} Main Photo`} />
                           </div>
                           <div className="tour-sub-photos">
                             {sec.photos.slice(1).map((photo, pIdx) => (
@@ -334,7 +334,7 @@ export default function SuiteGalleryModal({ suiteId, onClose, onBookSelect }) {
                                 }}
                                 style={{ cursor: 'pointer' }}
                               >
-                                <img src={photo} alt={`${sec.title} detail ${pIdx + 1}`} />
+                                <img src={photo} alt={`${data.title} - Alternate angle or detail of the ${sec.title}`} title={`${sec.title} Detail ${pIdx + 1}`} />
                               </div>
                             ))}
                             {/* Duplicate or placeholder to enforce the layout if only 2 photos, making them side-by-side */}
@@ -395,7 +395,8 @@ export default function SuiteGalleryModal({ suiteId, onClose, onBookSelect }) {
             <div className="lightbox-image-container" onClick={(e) => e.stopPropagation()}>
               <img 
                 src={allPhotos[lightboxIndex]} 
-                alt={`Suite view ${lightboxIndex + 1}`} 
+                alt={`${data.title} - High resolution full-screen view of the luxury suite interior or exterior`}
+                title={`${data.title} Full View ${lightboxIndex + 1}`}
                 className="lightbox-main-image" 
               />
             </div>

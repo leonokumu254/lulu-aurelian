@@ -287,7 +287,7 @@ export default function GuestPortal({ user, onBookNew }) {
                         const ref = activeBooking.id.split('-')[0].toUpperCase();
                         const unit = activeBooking.unit_id === 'skyview' ? 'Skyview' : 'Cocoa';
                         const text = encodeURIComponent(`Hello, I would like to request a modification for my booking.\n\n*Current Details:*\nReference: ${ref}\nDates: ${checkIn} to ${checkOut}\nUnit: ${unit}\n\n*My Preferred Changes:*\n[Please type your changes here...]`);
-                        window.open(`https://wa.me/254753734631?text=${text}`, '_blank');
+                        window.open(`https://wa.me/254112299384?text=${text}`, '_blank');
                       }}>
                         <Edit3 size={16} /> Modify Booking
                       </button>

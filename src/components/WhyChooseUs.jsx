@@ -15,7 +15,7 @@ const ADVANTAGES = [
 {
   
     title: "Premium Accommodation in Nyeri",
-    desc: "Stay in stylish, secure, and centrally located Airbnb apartments in Nyeri Town with easy access to local attractions, restaurants, business hubs, and breathtaking views of Mount Kenya."
+    desc: "Stay in stylish, secure, and centrally located Airbnb apartments in Nyeri Town with easy access to local attractions like Chaka Ranch,Aberdare National Park,Baden Powel  Historical gardens, Zaina falls and breathtaking views of Mount Kenya."
 }
 ];
 
@@ -24,7 +24,7 @@ export default function WhyChooseUs() {
     <section className="why-us-section" id="why-us">
       <div className="container">
          <div className="section-title-wrapper">
-          <span className="section-tagline"> Your Home Away From Home</span>
+          <span className="section-tagline"> Your Home Away From Home</span> 
           <h2 className="section-title">Where Comfort Meets Exceptional Hospitality</h2> 
           <p className="section-subtitle" id='about-desc'>
             Experience the finest luxury Airbnb apartments in Nyeri Town. We blend elegant interiors, premium amenities, and absolute privacy to provide the perfect accommodation for short-term and extended stays.

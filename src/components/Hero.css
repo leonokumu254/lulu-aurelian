@@ -106,7 +106,10 @@
   border-radius: 10px;
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+  /* box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9); */
+  background-color: rgba(212, 175, 55, 0.12);
+  color: var(--color-white);
+  backdrop-filter: blur(10px);
 }
 
 .filter-input-group {
@@ -123,7 +126,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-dark);
+  color: var(--color-white);
   margin-bottom: 0.4rem;
 }
 
@@ -135,7 +138,7 @@
 .filter-input {
   background: transparent ; 
   border: none;
-  color: var(--color-dark);
+  color: var(--color-white); 
   font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 600;
@@ -145,7 +148,7 @@
 }
 
 .filter-input::placeholder {
-  color: var(--color-muted);
+  color: var(--color-white); 
 }
 
 /* Custom calendar indicator color for webkit */

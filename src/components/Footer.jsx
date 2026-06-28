@@ -35,6 +35,11 @@ export default function Footer({ setPage }) {
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
               </svg>
             </a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5v3a3 3 0 0 1-3-3"></path>
+              </svg>
+            </a>
             <a href="https://airbnb.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Airbnb">
               <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" width="36" height="36" />
             </a>

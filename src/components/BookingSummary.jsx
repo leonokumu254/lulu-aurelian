@@ -201,8 +201,8 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
         {/* Cleaning service opt-in */}
         {nights >= 7 && (
           <div className="summary-cleaning-optin" style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--color-bg)', borderRadius: '8px', border: '1px solid var(--color-gold-muted)' }}>
-            <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--color-gold-deep)' }}>Optional Cleaning Service</h5>
-            <p style={{ margin: '0 0 1rem 0', fontSize: '0.8rem', color: 'var(--color-muted)' }}>You qualify for our cleaning service (KES 500/session). Add preferred dates:</p>
+            <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--color-text)' }}>Optional Cleaning Service</h5>
+            <p style={{ margin: '0 0 1rem 0', fontSize: '0.8rem', color: 'var(--color-text)' }}>You qualify for our cleaning service (KES 500/session). Add preferred dates:</p>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
               <input 
                 type="date" 

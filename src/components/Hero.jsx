@@ -80,7 +80,7 @@ export default function Hero({ onSearch }) {
 
       {/* Glassmorphic Search Bar */}
 <div className="hero-filter-container container no-reveal hero-text-reveal-delayed">
-  <form className="hero-filter-bar glass" onSubmit={handleSearch}>
+  <form className="hero-filter-bar " onSubmit={handleSearch}>
     {/* Added 'floating-glass' class here */}
     <div className="filter-input-group floating-glass" onClick={() => setIsCalendarOpen(true)} style={{ cursor: 'pointer' }}>
       <label className="filter-label">

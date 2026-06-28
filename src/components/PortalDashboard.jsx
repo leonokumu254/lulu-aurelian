@@ -38,8 +38,8 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
             name: data.user.name,
             role: data.user.role.toLowerCase(),
             avatar: data.user.role === 'MANAGER'
-              ? 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200'
-              : 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
+              ? '/avatar.svg'
+              : '/user-icon.svg' 
           });
         } else {
           // Token invalid/expired — clear it
@@ -109,7 +109,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
         <aside className={`dashboard-sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="sidebar-profile">
             <div className="profile-avatar-container">
-              <img src={user.avatar || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200'} alt="Avatar" />
+              <img src={user.avatar || '/user-icon.svg'} alt="Avatar" />
             </div>
             <span className="profile-name">{user.name || user.email.split('@')[0]}</span>
             <span className="profile-role">{user.role}</span>

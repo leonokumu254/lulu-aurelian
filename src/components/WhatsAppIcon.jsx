@@ -5,7 +5,7 @@ export default function WhatsAppIcon() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   
-  const phoneNumber = '+254753734631'; 
+  const phoneNumber = '+254112299384'; 
 
   const handleSend = () => {
     const text = message.trim() ? encodeURIComponent(message) : encodeURIComponent("Hello! I'm interested in booking a stay at Lulu Aurelian Estate.");
