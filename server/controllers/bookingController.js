@@ -38,10 +38,10 @@ export const requestBooking = async (req, res, next) => {
       unit_id: unit_id.trim().toLowerCase(),
       check_in,
       check_out,
-      status: 'APPROVED',
+      status: 'PENDING',
       secure_token: secureToken,
-      approved_by: null, // Auto-approved without a specific user
-      approved_at: new Date(),
+      approved_by: null, 
+      approved_at: null,
       created_at: new Date(),
       updated_at: new Date(),
       cleaning_dates: cleaning_dates || null
