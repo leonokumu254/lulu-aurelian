@@ -19,6 +19,7 @@ import cmsRoutes from './routes/cmsRoutes.js';
 import icalRoutes from './routes/icalRoutes.js';
 
 const app = express();
+app.set('trust proxy', 1); // Required for express-rate-limit when hosted on Railway
 
 // --- SECURITY MIDDLEWARES ---
 app.use(helmet()); // Protect HTTP headers
