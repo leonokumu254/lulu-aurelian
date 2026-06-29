@@ -1,7 +1,7 @@
 {
-  "name": "temp_project",
+  "name": "lulu-aurelian-estate",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,7 @@
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
     "aos": "^2.3.4",
-    "lucide-react": "^1.21.0",
+    "lucide-react": "^0.383.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-helmet-async": "^3.0.0"

@@ -158,12 +158,12 @@
 
 ---
 
-## 5. Staff Credentials (Development)
+## 5. Staff Credentials (Production)
 
 | Role | Email | Password |
 |------|-------|----------|
-| Manager | `chrisine@gmail.com` | `manager` |
-| Agent | `caroline@gmail.com` | `agent` |
+| Manager | `chrisine@gmail.com` | *[REDACTED - See Railway Environment Variables]* |
+| Agent | `caroline@gmail.com` | *[REDACTED - See Railway Environment Variables]* |
 
 ---
 
