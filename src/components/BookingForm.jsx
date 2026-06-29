@@ -172,7 +172,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
         setPhoneError('Phone number is required');
       } else {
         const digitsOnly = val.replace(/\D/g, '');
-        if (digitsOnly.length < 7) {
+        if (digitsOnly.length < 9) {
           setPhoneError('Phone number is too short');
         } else if (digitsOnly.length > 15) {
           setPhoneError('Phone number is too long');
@@ -191,7 +191,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
   );
 
   const digits = formData.phone ? formData.phone.replace(/\D/g, '') : '';
-  const isPhoneValid = digits.length >= 7 && digits.length <= 15;
+  const isPhoneValid = digits.length >= 9 && digits.length <= 15;
   const hasStoredDetails = !!(user && formData.firstName && formData.lastName && formData.email && formData.phone && isPhoneValid && !phoneError);
 
   return (

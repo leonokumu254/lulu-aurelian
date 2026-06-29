@@ -69,7 +69,7 @@ export default function SuccessModal({ bookingDetails, onClose }) {
   if (paymentComplete) {
     return (
       <div className="success-modal-overlay animate-fade-in">
-        <div className="success-modal-box animate-slide-up" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        <div className="success-modal-box status-modal-box animate-slide-up">
           <div className="success-badge-container" style={{ margin: '0 auto 1.5rem', display: 'flex', justifyContent: 'center' }}>
             <div className="success-checkmark-circle" style={{ width: 80, height: 80 }}>
               <Check size={48} strokeWidth={2.5} />
@@ -89,7 +89,7 @@ export default function SuccessModal({ bookingDetails, onClose }) {
   if (paymentError) {
     return (
       <div className="success-modal-overlay animate-fade-in">
-        <div className="success-modal-box animate-slide-up" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        <div className="success-modal-box status-modal-box animate-slide-up">
           <div className="success-badge-container failed" style={{ margin: '0 auto 1.5rem', display: 'flex', justifyContent: 'center' }}>
             <div className="success-checkmark-circle failed" style={{ width: 80, height: 80 }}>
               <X size={48} strokeWidth={2.5} />

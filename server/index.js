@@ -34,15 +34,17 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // --- GLOBAL MIDDLEWARES ---
-const allowedOrigins = env.NODE_ENV === 'production' 
-  ? ['https://luluaurelian.co.ke', 'https://www.luluaurelian.co.ke'] 
-  : ['http://localhost:5173', 'http://localhost:5000'];
+const allowedOrigins = [
+  'https://luluaurelian.co.ke', 
+  'https://www.luluaurelian.co.ke', 
+  'https://lulu-aurelian.vercel.app',
+  'http://localhost:5173', 
+  'http://localhost:5000'
+];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (env.NODE_ENV !== 'production') return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
     }

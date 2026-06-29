@@ -747,3 +747,14 @@
     text-align: center;
   }
 }
+
+.status-modal-box {
+  text-align: center;
+  padding: 3rem;
+}
+
+@media (max-width: 768px) {
+  .status-modal-box {
+    padding: 2.5rem 1.5rem;
+  }
+}

@@ -29,8 +29,8 @@ async function seed() {
     console.log('[SEEDER]: Seeding default staff accounts into `users` table...');
     
     // Hash default login passwords
-    const managerHash = await bcrypt.hash('manager', 10);
-    const agentHash = await bcrypt.hash('agent', 10);
+    const managerHash = await bcrypt.hash('managerSecure2026!', 10);
+    const agentHash = await bcrypt.hash('agentSecure2026!', 10);
 
     // Insert Manager Account
     await connection.query(
@@ -39,7 +39,7 @@ async function seed() {
        ON DUPLICATE KEY UPDATE name=VALUES(name), password_hash=VALUES(password_hash), role=VALUES(role)`,
       ['f93c66eb-bc46-4e58-9635-f0ea8bde0d12', 'Christine Nechesa', 'chrisine@gmail.com', managerHash, 'MANAGER']
     );
-    console.log('[SEEDER]: Seeded Manager: chrisine@gmail.com / password: manager');
+    console.log('[SEEDER]: Seeded Manager: chrisine@gmail.com / password: managerSecure2026!');
 
     // Insert Agent Account
     await connection.query(
@@ -48,7 +48,7 @@ async function seed() {
        ON DUPLICATE KEY UPDATE name=VALUES(name), password_hash=VALUES(password_hash), role=VALUES(role)`,
       ['d9b73489-cf2b-4fa8-bc3c-c9d34fb05ea3', 'Caroline Nechesa', 'caroline@gmail.com', agentHash, 'AGENT']
     );
-    console.log('[SEEDER]: Seeded Agent: caroline@gmail.com / password: agent');
+    console.log('[SEEDER]: Seeded Agent: caroline@gmail.com / password: agentSecure2026!');
 
     console.log('[SEEDER]: Database seeding completed successfully.');
   } catch (error) {

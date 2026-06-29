@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, CheckCircle, MapPin, Edit3, Bed, Award, Star, History, Lock, Unlock } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, MapPin, Edit3, Bed, Award, Star, History, Lock, Unlock, X } from 'lucide-react';
 import './GuestPortal.css';
 
 export default function GuestPortal({ user, onBookNew }) {
@@ -413,7 +413,7 @@ export default function GuestPortal({ user, onBookNew }) {
       {/* Payment Success Modal */}
       {paymentSuccess && (
         <div className="modal-overlay glass-modal">
-          <div className="dispatch-modal glass animate-slide-up" style={{ textAlign: 'center', padding: '3rem' }}>
+          <div className="dispatch-modal glass status-modal-box animate-slide-up">
             <div className="success-badge-container" style={{ margin: '0 auto 1.5rem', width: 80, height: 80, borderRadius: '50%', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div className="success-checkmark-circle" style={{ width: 60, height: 60, borderRadius: '50%', background: '#10B981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <CheckCircle size={36} />
@@ -431,7 +431,7 @@ export default function GuestPortal({ user, onBookNew }) {
       {/* Payment Failed Modal */}
       {paymentError && (
         <div className="modal-overlay glass-modal">
-          <div className="dispatch-modal glass animate-slide-up" style={{ textAlign: 'center', padding: '3rem' }}>
+          <div className="dispatch-modal glass status-modal-box animate-slide-up">
             <div className="success-badge-container" style={{ margin: '0 auto 1.5rem', width: 80, height: 80, borderRadius: '50%', background: 'rgba(220, 38, 38, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div className="success-checkmark-circle" style={{ width: 60, height: 60, borderRadius: '50%', background: '#DC2626', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <X size={36} />
