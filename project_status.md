@@ -105,15 +105,15 @@
 ### Priority 3 — Feature Gaps 🟢
 | # | Task | Files Affected |
 |---|------|---------------|
-| 12 | **Persist Pricing Engine** — Save pricing changes to a `suites` database table instead of client-side only. | `server/controllers/`, `schema.sql`, `ManagerPortal.jsx` |
-| 13 | **Persist CMS Content** — Blog posts and community posts backed by database tables. | `server/controllers/`, `schema.sql`, `ManagerPortal.jsx` |
+| 12 | ~~**Persist Pricing Engine**~~ *(Completed - Now uses MySQL via /api/bookings/unit-settings)* | `server/controllers/`, `schema.sql`, `ManagerPortal.jsx` |
+| 13 | ~~**Persist CMS Content**~~ *(Completed - Backend DB persistence added to schema.sql and db.js)* | `server/controllers/`, `schema.sql`, `ManagerPortal.jsx` |
 | 14 | **Calendar iCal Sync** — Connect suite calendars with Airbnb/iCal feeds to block unavailable dates dynamically. | `BookingForm.jsx`, new backend service |
 | 15 | **Guest Review Page** — Build a standalone public review submission page linked from checkout emails. | New component, `App.jsx` routing |
 | 16 | **User Registration/Invitation Flow** — Allow managers to create new staff accounts from the portal. | `server/routes/usersRoutes.js`, `ManagerPortal.jsx` |
 | 17 | **Avatar Upload** — Add file upload for staff avatars + `avatar` column in `users` table. | `schema.sql`, `server/controllers/`, `ManagerPortal.jsx` |
 | 18 | **Suite Inventory Expansion** — Design pages for upcoming Glasshouse and Cliffside suites. | New components |
 | 19 | **Unit Tests** — Implement Vitest tests for pricing calculator logic and API endpoints. | New test files |
-| 20 | **Offer Integration** — Tie `OffersData.js` into the booking/pricing engine so that selecting an offer auto-applies the relevant discount (e.g. 10% off for 7 nights). | `BookingSummary.jsx`, backend pricing engine |
+| 20 | ~~**Offer Integration**~~ *(Completed - Auto-calculates highest savings from OffersData in BookingSummary)* | `BookingSummary.jsx`, backend pricing engine |
 
 ---
 

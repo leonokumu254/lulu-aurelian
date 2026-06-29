@@ -177,7 +177,7 @@ export const EMAIL_TEMPLATES = {
       ],
       button: {
         label: 'Contact Concierge',
-        url: 'mailto:info@luluaurelian.co.ke' 
+        url: 'mailto:info@luluaurelian.co.ke'
       }
     };
   },

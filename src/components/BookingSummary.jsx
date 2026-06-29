@@ -47,7 +47,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
   // Financial Calculations
   const ratePerNight = currentSuitePrice;
   const roomCost = ratePerNight * nights;
-  
+
   let lengthDiscountPercent = 0;
   if (nights >= 30) lengthDiscountPercent = 20;
   else if (nights >= 7) lengthDiscountPercent = 10;
@@ -68,14 +68,14 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
 
   const savings = lengthDiscountValue + offerSavings;
   const cleaningCost = cleaningDates.length * 500;
-  
+
   let totalCost = Math.max(0, roomCost - savings) + cleaningCost;
 
   const digitsOnly = formData.phone ? formData.phone.replace(/\D/g, '') : '';
   const isPhoneValid = digitsOnly.length >= 7 && digitsOnly.length <= 15;
 
   // Validation checks to enable submit
-  const isFormValid = 
+  const isFormValid =
     formData.firstName && formData.firstName.trim() !== '' &&
     formData.lastName && formData.lastName.trim() !== '' &&
     formData.email && formData.email.trim() !== '' &&
@@ -166,7 +166,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
 
       <div className="summary-content">
         <h4 className="summary-section-title">Reservation Summary</h4>
-        
+
         {/* Stay details */}
         <div className="summary-stay-details">
           <div className="stay-detail-item">
@@ -204,17 +204,17 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
             <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--color-text)' }}>Optional Cleaning Service</h5>
             <p style={{ margin: '0 0 1rem 0', fontSize: '0.8rem', color: 'var(--color-text)' }}>You qualify for our cleaning service (KES 500/session). Add preferred dates:</p>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 value={newCleaningDate}
                 onChange={e => setNewCleaningDate(e.target.value)}
                 min={formData.checkIn || undefined}
                 max={formData.checkOut || undefined}
                 style={{ flex: 1, padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', fontSize: '0.85rem' }}
               />
-              <button 
-                type="button" 
-                className="btn-secondary" 
+              <button
+                type="button"
+                className="btn-secondary"
                 style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
                 onClick={() => {
                   if (newCleaningDate && !cleaningDates.includes(newCleaningDate)) {
@@ -252,7 +252,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
             <span>KES {ratePerNight.toLocaleString('en-KE')} × {nights} {nights === 1 ? 'night' : 'nights'}</span>
             <span>KES {roomCost.toLocaleString('en-KE')}</span>
           </div>
-          
+
           {lengthDiscountPercent > 0 && (
             <div className="pricing-row" style={{ color: '#10B981', fontWeight: 500, marginTop: '0.5rem' }}>
               <span>{lengthDiscountPercent}% Long Stay Discount</span>
@@ -290,8 +290,8 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
           </p>
         )}
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="btn-primary summary-submit-btn"
           disabled={!isFormValid || submitting || isSuccess}
           onClick={handleSubmitClick}
@@ -313,20 +313,20 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
         <div className="external-booking-channels-summary">
           <span className="channels-label">Or book on your favorite platform:</span>
           <div className="channels-buttons">
-            <a 
-              href={formData.suite === 'skyview' ? 'https://www.airbnb.com/h/pearlapartmentsnyeri' : 'https://www.airbnb.com/h/cocoapearlapartment'} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={formData.suite === 'skyview' ? 'https://www.airbnb.com/h/pearlapartmentsnyeri' : 'https://www.airbnb.com/h/cocoapearlapartment'}
+              target="_blank"
+              rel="noopener noreferrer"
               className="channel-btn airbnb-btn"
               title="Book via Airbnb"
             >
               <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" className="channel-icon" />
             </a>
-            
-            <a 
-              href={formData.suite === 'skyview' ?  'https://www.booking.com/Share-F7S7E5V' : 'https://www.booking.com/Share-KWW4dvn'} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+
+            <a
+              href={formData.suite === 'skyview' ? 'https://www.booking.com/Share-F7S7E5V' : 'https://www.booking.com/Share-KWW4dvn'}
+              target="_blank"
+              rel="noopener noreferrer"
               className="channel-btn booking-btn"
               title="Book via Booking.com"
             >
@@ -335,7 +335,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
           </div>
         </div>
 
-            </div>
+      </div>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  DollarSign, TrendingUp, UserPlus, Trash, Plus, Send, 
-  FileText, Users, CheckCircle, MessageSquare, ShieldCheck, Mail, Star 
+import {
+  DollarSign, TrendingUp, UserPlus, Trash, Plus, Send,
+  FileText, Users, CheckCircle, MessageSquare, ShieldCheck, Mail, Star
 } from 'lucide-react';
 import './ManagerPortal.css';
 
 export default function ManagerPortal({ user, managerTab = 'pricing' }) {
-  
+
   // TOAST NOTIFICATIONS
   const [toastMessage, setToastMessage] = useState('');
   const triggerToast = (msg) => {
@@ -19,7 +19,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
     try {
       const saved = localStorage.getItem('lulu_pricing');
       if (saved) return JSON.parse(saved);
-    } catch (e) {}
+    } catch (e) { }
     return [
       { id: 'skyview', name: 'Skyview Hideaway', basePrice: 5500 },
       { id: 'cocoa', name: 'Cocoa Retreat', basePrice: 5000 }
@@ -97,7 +97,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
       email: newAgent.email,
       role: newAgent.role,
       status: 'Active',
-      avatar: '/avatar.svg' 
+      avatar: '/avatar.svg'
     };
     setTeam([...team, member]);
     setNewAgent({ name: '', email: '', role: 'Agent' });
@@ -178,57 +178,57 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
       {/* Main Interactive Card */}
       <div className="dashboard-card">
 
-      {/* PRICING ENGINE VIEW */}
-      {managerTab === 'pricing' && (
-        <div className="pricing-engine-view animate-fade-in">
-          <div className="section-header-box">
-            <h2>Suite Pricing Management</h2>
-            <p>Update the standard nightly rate for the suites.</p>
-          </div>
+        {/* PRICING ENGINE VIEW */}
+        {managerTab === 'pricing' && (
+          <div className="pricing-engine-view animate-fade-in">
+            <div className="section-header-box">
+              <h2>Suite Pricing Management</h2>
+              <p>Update the standard nightly rate for the suites.</p>
+            </div>
 
-          <div className="dashboard-grid-2col">
-            {suites.map(s => {
-              return (
-                <div key={s.id} className="suite-pricing-card glass" style={{ overflow: 'hidden', padding: 0 }}>
-                  <img src={`/assets/${s.id}/${s.id}_1.jpg`} alt={s.name} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
-                  <div style={{ padding: '1.5rem' }}>
-                    <div className="pricing-card-header">
-                      <h4>{s.name}</h4>
-                    </div>
+            <div className="dashboard-grid-2col">
+              {suites.map(s => {
+                return (
+                  <div key={s.id} className="suite-pricing-card glass" style={{ overflow: 'hidden', padding: 0 }}>
+                    <img src={`/assets/${s.id}/${s.id}_1.jpg`} alt={s.name} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
+                    <div style={{ padding: '1.5rem' }}>
+                      <div className="pricing-card-header">
+                        <h4>{s.name}</h4>
+                      </div>
 
-                    <div className="pricing-inputs-grid" style={{ gridTemplateColumns: '1fr' }}>
-                      <div className="price-input-group">
-                        <label>Nightly Rate (KES)</label>
-                        <div className="input-prefix-wrapper">
-                          <span className="prefix" style={{ fontSize: '1.1rem', color: '#1D1912', fontWeight: 800 }}>KES</span>
-                          <input 
-                            type="number" 
-                            value={s.basePrice}
-                            onChange={(e) => handleBasePriceChange(s.id, e.target.value)}
-                            style={{ fontSize: '1.4rem', fontWeight: 800, padding: '0.8rem 1rem 0.8rem 3.5rem', color: '#BB8525' }}
-                          />
+                      <div className="pricing-inputs-grid" style={{ gridTemplateColumns: '1fr' }}>
+                        <div className="price-input-group">
+                          <label>Nightly Rate (KES)</label>
+                          <div className="input-prefix-wrapper">
+                            <span className="prefix" style={{ fontSize: '1.1rem', color: '#1D1912', fontWeight: 800 }}>KES</span>
+                            <input
+                              type="number"
+                              value={s.basePrice}
+                              onChange={(e) => handleBasePriceChange(s.id, e.target.value)}
+                              style={{ fontSize: '1.4rem', fontWeight: 800, padding: '0.8rem 1rem 0.8rem 3.5rem', color: '#BB8525' }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            <div className="publish-pricing-row">
+              <button onClick={savePricingSettings} className="btn-engine-publish">
+                Publish Pricing
+              </button>
+            </div>
           </div>
-
-          <div className="publish-pricing-row">
-            <button onClick={savePricingSettings} className="btn-engine-publish">
-              Publish Pricing
-            </button>
-          </div>
-        </div>
-      )}
+        )}
 
 
 
-      {/* TEAM & MODERATION VIEW */}
-      {managerTab === 'team' && (
-        <div className="team-moderation-view animate-fade-in">
+        {/* TEAM & MODERATION VIEW */}
+        {managerTab === 'team' && (
+          <div className="team-moderation-view animate-fade-in">
             {/* TEAM MANAGER SECTION */}
             <div className="team-col glass" style={{ maxWidth: '800px', margin: '0 auto' }}>
               <div className="column-header-row">
@@ -243,23 +243,23 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
                 <form onSubmit={handleAddAgent} className="add-agent-form card-border animate-slide-up">
                   <h4>New Profile Onboarding</h4>
                   <div className="form-group-row">
-                    <input 
-                      type="text" 
-                      placeholder="Full Name" 
+                    <input
+                      type="text"
+                      placeholder="Full Name"
                       value={newAgent.name}
-                      onChange={(e) => setNewAgent({...newAgent, name: e.target.value})}
+                      onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
                       required
                     />
-                    <input 
-                      type="email" 
-                      placeholder="Staff Email" 
+                    <input
+                      type="email"
+                      placeholder="Staff Email"
                       value={newAgent.email}
-                      onChange={(e) => setNewAgent({...newAgent, email: e.target.value})}
+                      onChange={(e) => setNewAgent({ ...newAgent, email: e.target.value })}
                       required
                     />
                     <select
                       value={newAgent.role}
-                      onChange={(e) => setNewAgent({...newAgent, role: e.target.value})}
+                      onChange={(e) => setNewAgent({ ...newAgent, role: e.target.value })}
                     >
                       <option value="Agent">Agent</option>
                       <option value="Manager">Manager</option>
@@ -288,7 +288,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
                         {member.role === 'Manager' ? <ShieldCheck size={14} className="shield" /> : <Mail size={14} />}
                         <span>{member.role}</span>
                       </div>
-                      
+
                       {member.email !== 'manager@lulu.com' && (
                         <button onClick={() => handleRemoveAgent(member.id)} className="btn-member-revoke" title="Revoke access tokens">
                           <Trash size={14} />
@@ -299,11 +299,11 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
                 ))}
               </div>
             </div>
-        </div>
-      )}
+          </div>
+        )}
 
-      {managerTab === 'moderation' && (
-        <div className="moderation-view animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {managerTab === 'moderation' && (
+          <div className="moderation-view animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
             {/* REVIEW MODERATION FEED */}
             <div className="moderation-col glass">
               <div style={{ marginBottom: '1.5rem' }}>
@@ -320,10 +320,10 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
                         <div className="star-rating" style={{ display: 'flex', alignItems: 'center' }}>
                           <div style={{ display: 'flex', alignItems: 'center', marginRight: '8px' }}>
                             {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                size={14} 
-                                className={i < r.rating ? 'star filled' : 'star'} 
+                              <Star
+                                key={i}
+                                size={14}
+                                className={i < r.rating ? 'star filled' : 'star'}
                               />
                             ))}
                           </div>
@@ -351,8 +351,8 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
                 ))}
               </div>
             </div>
-        </div>
-      )}
+          </div>
+        )}
       </div>
     </div>
   );

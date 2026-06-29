@@ -35,10 +35,10 @@ app.use('/api', limiter);
 
 // --- GLOBAL MIDDLEWARES ---
 const allowedOrigins = [
-  'https://luluaurelian.co.ke', 
-  'https://www.luluaurelian.co.ke', 
+  'https://luluaurelian.co.ke',
+  'https://www.luluaurelian.co.ke',
   'https://lulu-aurelian.vercel.app',
-  'http://localhost:5173', 
+  'http://localhost:5173',
   'http://localhost:5000'
 ];
 

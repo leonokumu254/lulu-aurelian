@@ -221,7 +221,7 @@ class EmailService {
         text: text,
         html: html || text
       });
-      
+
       console.log(`[EMAIL DISPATCHER] Successfully sent to ${to}. Message ID: ${info.messageId}`);
       return { success: true, messageId: info.messageId };
     } catch (error) {
@@ -232,7 +232,7 @@ class EmailService {
 
   async sendBookingConfirmation(booking) {
     const data = EMAIL_TEMPLATES.BOOKING_CONFIRMATION(booking);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -254,7 +254,7 @@ class EmailService {
     const passcode = await db.unit_settings.getPasscode(booking.unit_id);
     const bookingWithPasscode = { ...booking, passcode };
     const data = EMAIL_TEMPLATES.FULFILLMENT_CREDENTIALS(bookingWithPasscode);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -274,7 +274,7 @@ class EmailService {
 
   async sendNewsletterWelcome(email) {
     const data = EMAIL_TEMPLATES.NEWSLETTER_WELCOME(email);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -292,7 +292,7 @@ class EmailService {
 
   async sendAccountCreationWelcome(email, name) {
     const data = EMAIL_TEMPLATES.ACCOUNT_CREATION_WELCOME(email, name);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -310,7 +310,7 @@ class EmailService {
 
   async sendCheckInFollowUp(booking) {
     const data = EMAIL_TEMPLATES.CHECK_IN_FOLLOW_UP(booking);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -328,7 +328,7 @@ class EmailService {
 
   async sendCheckoutReviewRequest(booking) {
     const data = EMAIL_TEMPLATES.CHECKOUT_REVIEW_REQUEST(booking);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -346,7 +346,7 @@ class EmailService {
 
   async sendHolidayMarketing(email, holidayName) {
     const data = EMAIL_TEMPLATES.HOLIDAY_MARKETING(email, holidayName);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -365,7 +365,7 @@ class EmailService {
 
   async sendNewsletterBlog(email, blogData) {
     const data = EMAIL_TEMPLATES.NEWSLETTER_BLOG(blogData);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -383,7 +383,7 @@ class EmailService {
 
   async sendNewsletterCampaign(email, subject, bodyHtml) {
     const data = EMAIL_TEMPLATES.NEWSLETTER_CAMPAIGN(subject, bodyHtml);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       `<div style="margin-bottom: 25px; line-height: 1.6; color: #4a4a4a; font-size: 16px;">${data.htmlOverride}</div>` +
@@ -401,7 +401,7 @@ class EmailService {
 
   async sendGuestCancellation(booking) {
     const data = EMAIL_TEMPLATES.GUEST_CANCELLATION(booking);
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
@@ -420,7 +420,7 @@ class EmailService {
   async sendAgentBookingAlert(emails, booking) {
     const title = 'New Booking Alert';
     const preheader = `New booking request from ${booking.guest_name} for ${booking.unit_id}.`;
-    
+
     let cleaningText = '';
     let cleaningDates = [];
     if (booking.cleaning_dates) {
@@ -430,7 +430,7 @@ class EmailService {
       }
     }
 
-    const bodyContent = 
+    const bodyContent =
       this._renderBadge('INTERNAL ALERT') +
       this._renderHeading('New Booking', 'Received') +
       this._renderParagraphs([
@@ -457,8 +457,8 @@ class EmailService {
     const title = 'Reset Your Password';
     const preheader = 'Securely reset your Lulu Aurelian Estate account password.';
     const heroImage = 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920301.jpg?k=a54142f102014f7ca339af537b0a4c026ed95739c5a2550dfc39f8129ef294ff&o=';
-    
-    const bodyContent = 
+
+    const bodyContent =
       this._renderBadge('SECURITY') +
       this._renderHeading('Password Reset', 'Request') +
       this._renderParagraphs([

@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { 
-  requestBooking, 
-  approveBooking, 
-  declineBooking, 
-  verifyPaymentWebhook, 
+import {
+  requestBooking,
+  approveBooking,
+  declineBooking,
+  verifyPaymentWebhook,
   getBookings,
   getMyBookings,
   checkBookingStatus,

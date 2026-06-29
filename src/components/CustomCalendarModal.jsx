@@ -34,22 +34,22 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
   const getDaysInMonth = (year, month) => {
     const date = new Date(year, month, 1);
     const days = [];
-    
+
     // Day of the week for 1st of month (0 = Sun, 1 = Mon, ..., 6 = Sat)
     // Adjust to start week on Monday: (day + 6) % 7
     const firstDayIndex = (date.getDay() + 6) % 7;
-    
+
     // Add empty spacer days for the beginning of the grid
     for (let i = 0; i < firstDayIndex; i++) {
       days.push(null);
     }
-    
+
     // Add all actual days of the month
     const totalDays = new Date(year, month + 1, 0).getDate();
     for (let d = 1; d <= totalDays; d++) {
       days.push(new Date(year, month, d));
     }
-    
+
     return days;
   };
 
@@ -111,7 +111,7 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
 
     if (isStart) classes.push('range-start');
     if (isEnd) classes.push('range-end');
-    
+
     if (checkInDate && checkOutDate && date > checkInDate && date < checkOutDate) {
       classes.push('range-mid');
     }
@@ -171,7 +171,7 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
   return (
     <div className="calendar-modal-overlay" onClick={onClose}>
       <div className="calendar-modal-container animate-slide-up" onClick={(e) => e.stopPropagation()}>
-        
+
         {/* Top Header Bar */}
         <div className="calendar-modal-top-bar">
           <span className="calendar-modal-title">Select Dates</span>
@@ -182,21 +182,21 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
 
         {/* Navigation & Month headers */}
         <div className="calendar-grid-header">
-          <button 
-            className="nav-arrow-btn" 
+          <button
+            className="nav-arrow-btn"
             onClick={() => setCurrentMonthOffset(prev => prev - 1)}
             disabled={currentMonthOffset <= 0}
           >
             <ChevronLeft size={20} />
           </button>
-          
+
           <div className="months-titles">
             <h3 className="month-title">{leftMonthInfo.name} {leftMonthInfo.year}</h3>
             <h3 className="month-title right-only">{rightMonthInfo.name} {rightMonthInfo.year}</h3>
           </div>
 
-          <button 
-            className="nav-arrow-btn" 
+          <button
+            className="nav-arrow-btn"
             onClick={() => setCurrentMonthOffset(prev => prev + 1)}
           >
             <ChevronRight size={20} />
@@ -205,7 +205,7 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
 
         {/* Days of week and month calendars */}
         <div className="calendar-months-container">
-          
+
           {/* Left Month */}
           <div className="month-view">
             <div className="weeks-header-row">
@@ -219,8 +219,8 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
             </div>
             <div className="days-grid">
               {leftDays.map((day, idx) => (
-                <div 
-                  key={`left-${idx}`} 
+                <div
+                  key={`left-${idx}`}
                   className={getDayClasses(day)}
                   onClick={() => handleDateClick(day)}
                 >
@@ -243,8 +243,8 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
             </div>
             <div className="days-grid">
               {rightDays.map((day, idx) => (
-                <div 
-                  key={`right-${idx}`} 
+                <div
+                  key={`right-${idx}`}
                   className={getDayClasses(day)}
                   onClick={() => handleDateClick(day)}
                 >
@@ -261,9 +261,9 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
           <div className="calendar-status-box">
             <span className="status-label">{getStatusText()}</span>
           </div>
-          
+
           <div className="calendar-action-buttons">
-            <button 
+            <button
               className="calendar-clear-btn"
               onClick={() => {
                 setCheckIn('');
@@ -272,8 +272,8 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
             >
               Clear dates
             </button>
-            
-            <button 
+
+            <button
               className="btn-primary calendar-select-btn"
               disabled={!checkIn || !checkOut}
               onClick={handleSelectClick}

@@ -40,7 +40,7 @@ export const requestBooking = async (req, res, next) => {
       check_out,
       status: 'PENDING',
       secure_token: secureToken,
-      approved_by: null, 
+      approved_by: null,
       approved_at: null,
       created_at: new Date(),
       updated_at: new Date(),
@@ -59,7 +59,7 @@ export const requestBooking = async (req, res, next) => {
     // Dispatch automated communications asynchronously (do not block the response)
     emailService.sendBookingConfirmation(newBooking).catch(err => console.error('[EMAIL ERROR]:', err));
     whatsappService.sendBookingStatusAlert(newBooking, 'APPROVED').catch(err => console.error('[WHATSAPP ERROR]:', err));
-    
+
     if (agentEmails.length > 0) {
       emailService.sendAgentBookingAlert(agentEmails, newBooking).catch(err => console.error('[AGENT ALERT ERROR]:', err));
     }
@@ -85,7 +85,7 @@ export const requestBooking = async (req, res, next) => {
 export const approveBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
-    
+
     const booking = await db.bookings.findById(id);
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking record not found.' });
@@ -190,7 +190,7 @@ export const initiatePayment = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { method, phone } = req.body; // 'mpesa' or 'paypal'
-    
+
     const booking = await db.bookings.findById(id);
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking record not found.' });
@@ -215,7 +215,7 @@ export const initiatePayment = async (req, res, next) => {
 
     // Auto-deliver data bundle (Location details, digital key lock passcode, wifi, rules)
     await emailService.sendFulfillmentCredentials(updatedBooking);
-    
+
     // Notify check-in credentials dispatched via WhatsApp
     await whatsappService.sendBookingStatusAlert(updatedBooking, 'PAID');
 
@@ -276,7 +276,7 @@ export const verifyPaymentWebhook = async (req, res, next) => {
 
     // Auto-deliver data bundle (Location details, digital key lock passcode, wifi, rules)
     await emailService.sendFulfillmentCredentials(updatedBooking);
-    
+
     // Notify check-in credentials dispatched via WhatsApp
     await whatsappService.sendBookingStatusAlert(updatedBooking, 'PAID');
 
@@ -294,7 +294,7 @@ export const verifyPaymentWebhook = async (req, res, next) => {
 export const getBookings = async (req, res, next) => {
   try {
     const { status } = req.query;
-    
+
     const list = await db.bookings.getAll(status);
 
     return res.status(200).json({
@@ -403,8 +403,8 @@ export const getBlockedDates = async (req, res, next) => {
     const { unitId } = req.params;
     const allBookings = await db.bookings.getAll(); // Assuming getAll is available, or write a custom query.
     // Filter active bookings for the requested unit
-    const activeBookings = allBookings.filter(b => 
-      b.unit_id === unitId && 
+    const activeBookings = allBookings.filter(b =>
+      b.unit_id === unitId &&
       (b.status === 'APPROVED' || b.status === 'PAID')
     );
 

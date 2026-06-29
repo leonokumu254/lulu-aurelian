@@ -95,7 +95,7 @@ const inMemory = {
   ],
 
   password_resets: [],
-  
+
   ical_links: []
 };
 
@@ -294,7 +294,7 @@ export const db = {
       // Convert to parsed JSON if not already for in-memory
       const memBooking = { ...booking };
       if (typeof memBooking.cleaning_dates === 'string') {
-        try { memBooking.cleaning_dates = JSON.parse(memBooking.cleaning_dates); } catch(e){}
+        try { memBooking.cleaning_dates = JSON.parse(memBooking.cleaning_dates); } catch (e) { }
       }
       inMemory.bookings.push(memBooking);
       return memBooking;
@@ -526,7 +526,7 @@ export const db = {
   newsletters: {
     create: async (email) => {
       const emailLower = email.trim().toLowerCase();
-      
+
       if (useMySQL) {
         const [result] = await pool.query(
           'INSERT INTO newsletters (email, is_active) VALUES (?, 1) ON DUPLICATE KEY UPDATE is_active = 1',
