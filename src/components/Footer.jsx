@@ -36,13 +36,13 @@ export default function Footer({ setPage }) {
               </svg>
             </a>
             <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="TikTok">
-              <img src="/tiktok-svgrepo-com.svg" alt="TikTok" width="28" height="28" />
+              <img src="/tiktok-svgrepo-com.svg" alt="TikTok" width="28" height="28" style={{ filter: 'brightness(0) invert(1)' }} />
             </a>
-            <a href="https://airbnb.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Airbnb">
-              <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" width="36" height="36" />
+            <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Airbnb">
+              <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" width="36" height="36" style={{ backgroundColor: 'white', borderRadius: '50%', padding: '4px' }} />
             </a>
-            <a href="https://booking.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Booking.com">
-              <img src="/bookingcom-logo-svgrepo-com.svg" alt="Booking.com" width="36" height="36" />
+            <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Booking.com">
+              <img src="/bookingcom-logo-svgrepo-com.svg" alt="Booking.com" width="36" height="36" style={{ backgroundColor: 'white', borderRadius: '4px', padding: '4px' }} />
             </a>
           </div>
         </div>
@@ -53,6 +53,7 @@ export default function Footer({ setPage }) {
             <li><button onClick={() => handleNavClick('home-hero')} className="footer-link-btn">Home</button></li>
             <li><button onClick={() => handleNavClick('suites')} className="footer-link-btn">Our Suites</button></li>
             <li><button onClick={() => handleNavClick('why-us')} className="footer-link-btn">Why Choose Us</button></li>
+            <li><button onClick={() => handleNavClick('contact')} className="footer-link-btn">Contact</button></li>
             <li><button onClick={() => handleNavClick('newsletter')} className="footer-link-btn">Newsletter</button></li>
             <li><button onClick={() => setPage('booking')} className="footer-link-btn">Book Stay</button></li>
           </ul>

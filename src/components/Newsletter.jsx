@@ -51,26 +51,25 @@ export default function Newsletter() {
         <div className="newsletter-box glass-dark animate-slide-up">
           {!subscribed ? (
             <div className="newsletter-content">
-              <span className="newsletter-tag">Aurelian Club Assocaition</span>
-              <h2 className="newsletter-title">Subscribe to the Aurelian Club</h2>
+              <span className="newsletter-tag">Inner Circle</span>
+              <h2 className="newsletter-title">Aurelian Exclusives</h2>
               <p className="newsletter-desc">
-                Register to receive exclusive discounts, early-announcements on new offers, and curated luxury travel  inspiration.
+                Receive priority access to seasonal retreats, member-only rates, and curated local itineraries directly to your inbox.
               </p>
               
-              <form className="newsletter-form" onSubmit={handleSubscribe}>
-                <div className="input-field-wrapper">
+              <form className="newsletter-form-minimal" onSubmit={handleSubscribe}>
+                <div className="input-field-wrapper-minimal">
                   <input
                     type="email"
-                    placeholder="Enter your personal email address"
-                    className="newsletter-input"
+                    placeholder="Enter your email address"
+                    className="newsletter-input-minimal"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   {error && <span className="newsletter-error">{error}</span>}
                 </div>
-                <button type="submit" className="newsletter-btn">
-                  <span>Join Newsletter</span>
-                  <Send size={14} />
+                <button type="submit" className="newsletter-btn-minimal" aria-label="Subscribe">
+                  <Send size={24} />
                 </button>
               </form>
             </div>

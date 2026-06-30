@@ -100,6 +100,8 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
       unit_id: formData.suite,
       check_in: formData.checkIn,
       check_out: formData.checkOut,
+      adults: formData.adults || 1,
+      children: formData.hasChildren ? (formData.children || 0) : 0,
       cleaning_dates: cleaningDates
     };
 

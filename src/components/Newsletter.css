@@ -58,61 +58,53 @@
   font-weight: 300;
 }
 
-.newsletter-form {
+.newsletter-form-minimal {
   display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  text-align: left;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 0.5rem;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+.newsletter-form-minimal:focus-within {
+  border-color: var(--color-gold-deep);
 }
 
-.input-field-wrapper {
+.input-field-wrapper-minimal {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
-.newsletter-input {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 1.1rem 1.5rem;
+.newsletter-input-minimal {
+  background-color: transparent;
+  border: none;
+  padding: 0.8rem 0;
   color: var(--color-white);
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 1rem;
   outline: none;
-  transition: var(--transition-smooth);
-  border-radius: 2px;
   width: 100%;
 }
-
-.newsletter-input:focus {
-  border-color: var(--color-gold-bright);
-  background-color: rgba(255, 255, 255, 0.08);
+.newsletter-input-minimal::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.newsletter-btn {
-  background-color: var(--color-gold-deep);
-  color: var(--color-white);
+.newsletter-btn-minimal {
+  background-color: transparent;
+  color: var(--color-gold-deep);
   border: none;
-  padding: 1.1rem 2.2rem;
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  padding: 0 0.5rem;
   cursor: pointer;
-  transition: var(--transition-smooth);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  border-radius: 2px;
-  white-space: nowrap;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
-
-.newsletter-btn:hover {
-  background-color: var(--color-gold-bright);
-  color: var(--color-dark);
-  box-shadow: 0 5px 15px rgba(238, 205, 92, 0.3);
+.newsletter-btn-minimal:hover {
+  color: var(--color-gold-bright);
+  transform: translateX(4px);
 }
 
 .newsletter-error {
@@ -165,13 +157,7 @@
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
   }
-  .newsletter-form {
-    flex-direction: column;
+  .newsletter-form-minimal {
     width: 100%;
-    gap: 0.8rem;
-  }
-  .newsletter-btn {
-    width: 100%;
-    justify-content: center;
   }
 }

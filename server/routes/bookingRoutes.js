@@ -1,9 +1,7 @@
 import { Router } from 'express';
 import {
   requestBooking,
-  approveBooking,
-  declineBooking,
-  verifyPaymentWebhook,
+  stanbicCallback,
   getBookings,
   getMyBookings,
   checkBookingStatus,
@@ -17,42 +15,36 @@ import { authMiddleware, requireRole } from '../middleware/auth.js';
 
 const router = Router();
 
-// --- PUBLIC ROUTING ---
-// Guest triggers initial booking request
+// ─── PUBLIC ROUTES ───────────────────────────────────────────────────────────
+
+// Guest creates a direct booking (no staff approval required)
 router.post('/request', requestBooking);
 
-// Guest checks reservation status using secure_token query parameter (No Login Required)
+// Guest checks reservation status via secure_token
 router.get('/status', checkBookingStatus);
 
-// Get blocked dates for a unit (No Login Required)
+// Calendar blocked-dates feed (includes PENDING holds)
 router.get('/blocked-dates/:unitId', getBlockedDates);
 
-// M-Pesa webhook callback endpoint (Verified via X-Mpesa-Secret callback key)
-router.post('/webhook/mpesa', verifyPaymentWebhook);
+// Stanbic Paybill callback webhook (public — verified by signature)
+router.post('/webhook/stanbic', stanbicCallback);
 
-// --- PROTECTED ROUTING ---
+// ─── PROTECTED ROUTES ────────────────────────────────────────────────────────
+
+// Guest initiates Stanbic STK Push payment
+router.post('/:id/pay', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), initiatePayment);
+
 // Fetch guest's own bookings
 router.get('/my-bookings', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), getMyBookings);
 
-// Guest initiates instant payment
-router.post('/:id/pay', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), initiatePayment);
+// Cancel a booking (only PENDING / AUTHORIZING — PAID bookings must contact management)
+router.put('/:id/cancel', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), cancelBooking);
 
 // Fetch all bookings (Agents & Managers)
 router.get('/', authMiddleware, requireRole('MANAGER', 'AGENT'), getBookings);
 
-// Approve a booking, logging approved_at and initiating 3h payment countdown (Agents & Managers)
-router.put('/:id/approve', authMiddleware, requireRole('MANAGER', 'AGENT'), approveBooking);
-
-// Decline a booking (Agents & Managers)
-router.put('/:id/decline', authMiddleware, requireRole('MANAGER', 'AGENT'), declineBooking);
-
-// Cancel a booking (Guest, Agents, Managers)
-router.put('/:id/cancel', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), cancelBooking);
-
-// Get unit settings (Agents & Managers)
+// Unit settings
 router.get('/unit-settings', authMiddleware, requireRole('MANAGER', 'AGENT'), getUnitSettings);
-
-// Update unit setting passcode (Agents & Managers)
 router.put('/unit-settings/:unitId', authMiddleware, requireRole('MANAGER', 'AGENT'), updateUnitSettings);
 
 export default router;

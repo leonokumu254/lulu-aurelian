@@ -4,12 +4,71 @@ import { env } from '../config/env.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
 
-// Phase 1: Guest Requests Booking (Public Access)
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
+const MAX_ADULT_GUESTS   = 5;
+const PEAK_GUEST_SURCHARGE = 1500; // KES — applied when adults === 5
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+
+/**
+ * Returns the next available check-in windows for a given unit so we can
+ * inform a guest when their requested dates are already taken.
+ */
+async function getNextAvailableWindows(unitId, requestedNights, limit = 3) {
+  const allBookings = await db.bookings.getAll();
+  const activeForUnit = allBookings
+    .filter(b =>
+      b.unit_id === unitId &&
+      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status)
+    )
+    .map(b => ({
+      in:  new Date(b.check_in),
+      out: new Date(b.check_out)
+    }))
+    .sort((a, b) => a.in - b.in);
+
+  const suggestions = [];
+  let probe = new Date();
+  probe.setHours(0, 0, 0, 0);
+  probe.setDate(probe.getDate() + 1); // start from tomorrow
+
+  let attempts = 0;
+  while (suggestions.length < limit && attempts < 90) {
+    attempts++;
+    const probeOut = new Date(probe);
+    probeOut.setDate(probeOut.getDate() + requestedNights);
+
+    const overlap = activeForUnit.some(b =>
+      probe < b.out && probeOut > b.in
+    );
+
+    if (!overlap) {
+      suggestions.push({
+        check_in:  probe.toISOString().split('T')[0],
+        check_out: probeOut.toISOString().split('T')[0]
+      });
+      probe = new Date(probeOut); // jump past this window
+    } else {
+      probe.setDate(probe.getDate() + 1);
+    }
+  }
+
+  return suggestions;
+}
+
+// ─── PHASE 1: DIRECT BOOKING (No staff approval — guests book instantly) ────
+
 export const requestBooking = async (req, res, next) => {
   try {
-    const { guest_name, guest_email, guest_phone, unit_id, check_in, check_out, cleaning_dates } = req.body;
+    const {
+      guest_name, guest_email, guest_phone,
+      unit_id, check_in, check_out,
+      adults = 1, children = 0,
+      cleaning_dates
+    } = req.body;
 
-    // Validate request inputs
+    // ── Input validation ──────────────────────────────────────────────────
     if (!guest_name || !guest_email || !guest_phone || !unit_id || !check_in || !check_out) {
       return res.status(400).json({
         success: false,
@@ -17,62 +76,104 @@ export const requestBooking = async (req, res, next) => {
       });
     }
 
-    const checkInDate = new Date(check_in);
+    const checkInDate  = new Date(check_in);
     const checkOutDate = new Date(check_out);
 
     if (checkOutDate <= checkInDate) {
       return res.status(400).json({
         success: false,
-        error: 'Check-out date must be post check-in date.'
+        error: 'Check-out date must be after check-in date.'
       });
     }
 
-    // Generate high-entropy secure token for passwordless verification
+    // ── Guest count enforcement ───────────────────────────────────────────
+    const adultCount   = parseInt(adults, 10)   || 1;
+    const childCount   = parseInt(children, 10) || 0;
+    const totalAdults  = adultCount;
+
+    if (totalAdults > MAX_ADULT_GUESTS) {
+      return res.status(400).json({
+        success: false,
+        error: `Maximum guest capacity is ${MAX_ADULT_GUESTS} adults. For larger groups, please contact management.`
+      });
+    }
+
+    // ── Price surcharge for 5-adult bookings ─────────────────────────────
+    const hasPeakSurcharge = totalAdults === MAX_ADULT_GUESTS;
+
+    // ── Overlap / double-booking check ───────────────────────────────────
+    const allBookings = await db.bookings.getAll();
+    const conflicting = allBookings.find(b =>
+      b.unit_id === unit_id &&
+      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status) &&
+      new Date(b.check_in)  < checkOutDate &&
+      new Date(b.check_out) > checkInDate
+    );
+
+    if (conflicting) {
+      const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+      const suggestions = await getNextAvailableWindows(unit_id, nights);
+
+      return res.status(409).json({
+        success:             false,
+        error:               'Those dates are no longer available for the selected suite.',
+        conflict_period:     { check_in, check_out },
+        next_available_windows: suggestions
+      });
+    }
+
+    // ── Create booking row (PENDING → awaits payment) ─────────────────────
     const secureToken = 'sec_' + crypto.randomBytes(24).toString('hex');
 
     const newBooking = {
-      id: crypto.randomUUID(),
-      guest_name: guest_name.trim(),
-      guest_email: guest_email.trim().toLowerCase(),
-      guest_phone: guest_phone.trim(),
-      unit_id: unit_id.trim().toLowerCase(),
+      id:              crypto.randomUUID(),
+      guest_name:      guest_name.trim(),
+      guest_email:     guest_email.trim().toLowerCase(),
+      guest_phone:     guest_phone.trim(),
+      unit_id:         unit_id.trim().toLowerCase(),
       check_in,
       check_out,
-      status: 'PENDING',
-      secure_token: secureToken,
-      approved_by: null,
-      approved_at: null,
-      created_at: new Date(),
-      updated_at: new Date(),
-      cleaning_dates: cleaning_dates || null
+      adults:          totalAdults,
+      children:        childCount,
+      has_peak_surcharge: hasPeakSurcharge ? 1 : 0,
+      status:          'PENDING',
+      secure_token:    secureToken,
+      approved_by:     null,
+      approved_at:     null,
+      hold_expires_at: new Date(Date.now() + PAYMENT_TTL_MS),
+      created_at:      new Date(),
+      updated_at:      new Date(),
+      cleaning_dates:  cleaning_dates || null
     };
 
-    // Store in relational memory
     await db.bookings.create(newBooking);
 
-    // Fetch all agents and managers to alert them
-    const allUsers = await db.users.getAll();
-    const agentEmails = allUsers
+    // ── Notify staff asynchronously ──────────────────────────────────────
+    const allUsers   = await db.users.getAll();
+    const staffEmails = allUsers
       .filter(u => u.role && (u.role.toUpperCase() === 'MANAGER' || u.role.toUpperCase() === 'AGENT'))
       .map(u => u.email);
 
-    // Dispatch automated communications asynchronously (do not block the response)
     emailService.sendBookingConfirmation(newBooking).catch(err => console.error('[EMAIL ERROR]:', err));
-    whatsappService.sendBookingStatusAlert(newBooking, 'APPROVED').catch(err => console.error('[WHATSAPP ERROR]:', err));
+    whatsappService.sendBookingStatusAlert(newBooking, 'PENDING').catch(err => console.error('[WHATSAPP ERROR]:', err));
 
-    if (agentEmails.length > 0) {
-      emailService.sendAgentBookingAlert(agentEmails, newBooking).catch(err => console.error('[AGENT ALERT ERROR]:', err));
+    if (staffEmails.length > 0) {
+      emailService.sendAgentBookingAlert(staffEmails, newBooking).catch(err => console.error('[AGENT ALERT ERROR]:', err));
     }
 
     return res.status(201).json({
       success: true,
-      message: 'Booking reserved. Awaiting payment within 3 hours.',
+      message: 'Reservation created. Please complete payment within 1 hour to secure your booking.',
       booking: {
-        id: newBooking.id,
-        status: newBooking.status,
-        check_in: newBooking.check_in,
-        check_out: newBooking.check_out,
-        secure_token: newBooking.secure_token // Returned to allow guest to check status
+        id:              newBooking.id,
+        status:          newBooking.status,
+        check_in:        newBooking.check_in,
+        check_out:       newBooking.check_out,
+        adults:          newBooking.adults,
+        children:        newBooking.children,
+        has_peak_surcharge: newBooking.has_peak_surcharge,
+        hold_expires_at: newBooking.hold_expires_at,
+        secure_token:    newBooking.secure_token
       }
     });
 
@@ -81,309 +182,311 @@ export const requestBooking = async (req, res, next) => {
   }
 };
 
-// Phase 2: Staff Moderation - Approve Booking (Staff Access Only)
-export const approveBooking = async (req, res, next) => {
-  try {
-    const { id } = req.params;
 
-    const booking = await db.bookings.findById(id);
-    if (!booking) {
-      return res.status(404).json({ success: false, error: 'Booking record not found.' });
-    }
+// ─── PAYMENT: Initiate Stanbic Paybill STK Push ─────────────────────────────
 
-    if (booking.status !== 'PENDING') {
-      return res.status(400).json({
-        success: false,
-        error: `Cannot approve booking that is currently ${booking.status}.`
-      });
-    }
-
-    // Update status and audit metadata
-    const updatedBooking = await db.bookings.updateStatus(id, 'APPROVED', {
-      approved_by: req.user.id,
-      approved_at: new Date()
-    });
-
-    // Alert guest via WhatsApp/email that booking is approved (3h TTL commences)
-    await whatsappService.sendBookingStatusAlert(updatedBooking, 'APPROVED');
-
-    console.log(`[MODERATION ENGINE]: Booking ${updatedBooking.id} APPROVED by Staff ID: ${req.user.id}. 3-Hour countdown triggered.`);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Booking approved. 3-hour payment TTL initiated.',
-      booking: updatedBooking
-    });
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Phase 2: Staff Moderation - Decline Booking (Staff Access Only)
-export const declineBooking = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const booking = await db.bookings.findById(id);
-    if (!booking) {
-      return res.status(404).json({ success: false, error: 'Booking record not found.' });
-    }
-
-    if (booking.status !== 'PENDING') {
-      return res.status(400).json({
-        success: false,
-        error: `Cannot decline booking that is currently ${booking.status}.`
-      });
-    }
-
-    const updatedBooking = await db.bookings.updateStatus(id, 'DECLINED');
-
-    await whatsappService.sendBookingStatusAlert(updatedBooking, 'DECLINED');
-
-    return res.status(200).json({
-      success: true,
-      message: 'Booking request declined successfully.',
-      booking: updatedBooking
-    });
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Guest or Staff - Cancel Booking
-export const cancelBooking = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const booking = await db.bookings.findById(id);
-    if (!booking) {
-      return res.status(404).json({ success: false, error: 'Booking record not found.' });
-    }
-
-    if (booking.status !== 'APPROVED') {
-      return res.status(400).json({
-        success: false,
-        error: `Cannot cancel booking that is currently ${booking.status}.`
-      });
-    }
-
-    const updatedBooking = await db.bookings.updateStatus(id, 'CANCELLED');
-
-    // Dispatch automated cancellation receipt email to the guest asking for feedback
-    await emailService.sendGuestCancellation(updatedBooking);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Booking canceled successfully.',
-      booking: updatedBooking
-    });
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Phase 3: Initiate Instant Payment via M-Pesa STK or PayPal
 export const initiatePayment = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { method, phone } = req.body; // 'mpesa' or 'paypal'
+    const { phone, idempotency_key } = req.body;
+
+    if (!idempotency_key) {
+      return res.status(400).json({ success: false, error: 'idempotency_key is required.' });
+    }
 
     const booking = await db.bookings.findById(id);
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking record not found.' });
     }
 
-    if (booking.status !== 'APPROVED') {
-      return res.status(400).json({ success: false, error: 'Booking is not awaiting payment.' });
+    if (booking.status !== 'PENDING') {
+      return res.status(400).json({
+        success: false,
+        error: `Booking cannot be paid — current status: ${booking.status}`
+      });
     }
 
-    // 3-hour expiration check
-    const now = new Date();
-    const createdTime = new Date(booking.created_at);
-    const hoursDiff = (now - createdTime) / (1000 * 60 * 60);
+    // ── 1-hour hold expiry check ─────────────────────────────────────────
+    const expiresAt = booking.hold_expires_at
+      ? new Date(booking.hold_expires_at)
+      : new Date(new Date(booking.created_at).getTime() + PAYMENT_TTL_MS);
 
-    if (hoursDiff > 3) {
-      await db.bookings.updateStatus(booking.id, 'CANCELED');
-      return res.status(400).json({ success: false, error: 'The 3-hour payment window for this booking has expired. Please create a new booking.' });
+    if (new Date() > expiresAt) {
+      await db.bookings.updateStatus(booking.id, 'EXPIRED');
+      return res.status(400).json({
+        success: false,
+        error: 'Your 1-hour payment hold has expired. Please create a new booking.'
+      });
     }
 
-    // Mock instant payment success for M-Pesa / PayPal
-    const updatedBooking = await db.bookings.updateStatus(booking.id, 'PAID');
+    // ── Idempotency guard — don't re-call Stanbic for duplicate attempts ─
+    const existing = await db.payments.findByIdempotencyKey(booking.id, idempotency_key);
+    if (existing) {
+      return res.status(200).json({
+        success:       true,
+        message:       'Payment already initiated. Check your phone for the STK prompt.',
+        transactionId: existing.transaction_ref
+      });
+    }
 
-    // Auto-deliver data bundle (Location details, digital key lock passcode, wifi, rules)
-    await emailService.sendFulfillmentCredentials(updatedBooking);
+    // ── Determine amount (base + optional peak surcharge) ────────────────
+    const BASE_PRICE    = booking.unit_id === 'skyview' ? 5500 : 5000;
+    const nights        = Math.round(
+      (new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)
+    );
+    const surcharge     = booking.has_peak_surcharge ? PEAK_GUEST_SURCHARGE : 0;
+    const totalAmount   = (BASE_PRICE * nights) + surcharge;
 
-    // Notify check-in credentials dispatched via WhatsApp
-    await whatsappService.sendBookingStatusAlert(updatedBooking, 'PAID');
+    // ── Call Stanbic STK Push ────────────────────────────────────────────
+    const { stanbicService } = await import('../services/stanbicService.js');
+    // Use idempotency_key as the dbsReferenceId — Stanbic echoes it back
+    // as BillRefNumber in the callback, letting us match the payment record.
+    const dbsReferenceId = idempotency_key;
+
+    let stanbicResult;
+    try {
+      stanbicResult = await stanbicService.initiateSTKPush(
+        phone || booking.guest_phone,
+        totalAmount,
+        dbsReferenceId
+      );
+    } catch (stanbicErr) {
+      console.error('[STANBIC STK ERROR]:', stanbicErr.message);
+      return res.status(502).json({ success: false, error: 'Payment gateway temporarily unavailable. Please try again.' });
+    }
+
+    // ── Persist payment attempt ──────────────────────────────────────────
+    await db.payments.create({
+      booking_id:       booking.id,
+      amount:           totalAmount,
+      currency:         'KES',
+      gateway:          'STANBIC',
+      transaction_ref:  dbsReferenceId,  // BillRefNumber Stanbic will echo back
+      idempotency_key,
+      status:           'PENDING'
+    });
+
+    // ── Transition booking to AUTHORIZING ────────────────────────────────
+    await db.bookings.updateStatus(booking.id, 'AUTHORIZING');
 
     return res.status(200).json({
-      success: true,
-      message: `Payment via ${method.toUpperCase()} processed successfully!`,
-      booking: updatedBooking
+      success:       true,
+      message:       'STK Push sent to your phone. Enter your PIN to complete payment.',
+      transactionId: stanbicResult.transactionId,
+      amount:        totalAmount,
+      surcharge:     surcharge > 0 ? { reason: '5-guest peak surcharge', amount: surcharge } : null
     });
+
   } catch (error) {
     next(error);
   }
 };
 
-// Phase 3: Fulfillment Gateway - M-Pesa Callback Webhook (Public Gateway Access)
-export const verifyPaymentWebhook = async (req, res, next) => {
+
+// ─── WEBHOOK: Stanbic Transaction Notification Callback ─────────────────────
+// Stanbic POSTs OutboundTransactionNotificationRequest to your CallbackUrl.
+// Security: X-IBM-Client-Id header must match your Client Key.
+// You MUST respond: { "ResultCode": 0, "ResultDesc": "Accepted" }
+
+export const stanbicCallback = async (req, res, next) => {
   try {
-    // Validate Webhook Signature
-    const clientSecret = req.headers['x-mpesa-secret'] || req.query.secret;
-    if (clientSecret !== env.MPESA_CALLBACK_SECRET) {
-      console.warn('[SECURITY VIOLATION]: Webhook received invalid verification secret.');
-      return res.status(401).json({ success: false, error: 'Unauthorized callback signature.' });
+    // ── Verify X-IBM-Client-Id header ────────────────────────────────────
+    const { stanbicService } = await import('../services/stanbicService.js');
+    if (env.NODE_ENV === 'production' && !stanbicService.verifyCallbackClientId(req)) {
+      console.warn('[STANBIC CALLBACK]: Invalid X-IBM-Client-Id. Rejecting.');
+      return res.status(401).json({ ResultCode: 1, ResultDesc: 'Unauthorized' });
     }
 
-    // Expected M-Pesa Paybill payload schema
-    // { TransactionType, TransID, TransAmount, BillRefNumber (matches booking_id or token) }
-    const { TransID, TransAmount, BillRefNumber } = req.body;
+    // ── Extract exact spec fields ─────────────────────────────────────────
+    // Spec: OutboundTransactionNotificationRequest
+    const {
+      TransID,            // Stanbic/bank transaction reference — use as our audit key
+      BillRefNumber,      // echoes back the dbsReferenceId we sent (our booking ref)
+      TransAmount,        // e.g. "KES 5,500.00"
+      MSISDN,             // payer phone
+      ThirdPartyTransID,  // M-Pesa receipt number
+      TransTime,
+      TransactionType
+    } = req.body;
 
-    if (!TransID || !TransAmount || !BillRefNumber) {
-      return res.status(400).json({
-        success: false,
-        error: 'Incomplete gateway payload structure.'
-      });
+    if (!TransID) {
+      console.warn('[STANBIC CALLBACK]: Missing TransID in payload.');
+      return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' }); // always 200 to prevent retries
     }
 
-    // Match by booking ID or secure_token
-    let booking = await db.bookings.findById(BillRefNumber);
+    console.log(`[STANBIC CALLBACK]: Received — TransID: ${TransID}, BillRef: ${BillRefNumber}, Amount: ${TransAmount}, Phone: ${MSISDN}`);
+
+    // ── Idempotency: skip if already processed ────────────────────────────
+    const alreadyProcessed = await db.payments.findProcessedEvent(TransID);
+    if (alreadyProcessed) {
+      console.log(`[STANBIC CALLBACK]: Duplicate event ${TransID} — skipping.`);
+      return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
+    }
+    await db.payments.recordProcessedEvent(TransID);
+
+    // ── Match payment record by BillRefNumber (our dbsReferenceId) ────────
+    const payment = await db.payments.findByRef(BillRefNumber);
+    if (!payment) {
+      console.warn(`[STANBIC CALLBACK]: No payment found for BillRefNumber: ${BillRefNumber}`);
+      return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
+    }
+
+    // ── Fetch booking ─────────────────────────────────────────────────────
+    const booking = await db.bookings.findById(payment.booking_id);
     if (!booking) {
-      booking = await db.bookings.findByToken(BillRefNumber);
+      console.warn(`[STANBIC CALLBACK]: Booking ${payment.booking_id} not found.`);
+      return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
     }
 
-    if (!booking) {
-      console.warn(`[FULFILLMENT WARNING]: Callback transaction ${TransID} has no matching booking reference: ${BillRefNumber}`);
-      return res.status(404).json({ success: false, error: 'Reference transaction not matched.' });
+    if (booking.status !== 'AUTHORIZING') {
+      console.warn(`[STANBIC CALLBACK]: Booking ${booking.id} in unexpected state: ${booking.status}. Ignoring.`);
+      return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
     }
 
-    // Verify booking is in valid state (must be APPROVED to pay)
-    if (booking.status !== 'APPROVED') {
-      return res.status(400).json({
-        success: false,
-        error: `Transaction rejected. Booking ${booking.id} is currently in status: ${booking.status}`
-      });
-    }
+    // ── Transition: AUTHORIZING → PAID ────────────────────────────────────
+    await db.payments.updateStatus(BillRefNumber, 'COMPLETED');
+    const confirmedBooking = await db.bookings.updateStatus(booking.id, 'PAID');
 
-    // Transition to PAID
-    const updatedBooking = await db.bookings.updateStatus(booking.id, 'PAID');
+    console.log(`[STANBIC CALLBACK]: ✅ Booking ${booking.id} PAID. TransID: ${TransID}, M-Pesa Receipt: ${ThirdPartyTransID}, Amount: ${TransAmount}`);
 
-    console.log(`[PAYMENT RESOLVER]: Payment verified for Booking ${updatedBooking.id}. Amount: $${TransAmount}. TxRef: ${TransID}`);
+    // ── Send fulfillment credentials ──────────────────────────────────────
+    emailService.sendFulfillmentCredentials(confirmedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
+    whatsappService.sendBookingStatusAlert(confirmedBooking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
 
-    // Auto-deliver data bundle (Location details, digital key lock passcode, wifi, rules)
-    await emailService.sendFulfillmentCredentials(updatedBooking);
-
-    // Notify check-in credentials dispatched via WhatsApp
-    await whatsappService.sendBookingStatusAlert(updatedBooking, 'PAID');
-
-    return res.status(200).json({
-      ResultCode: 0,
-      ResultDesc: 'Payment recognized and fulfillment credentials dispatched.'
-    });
+    // ── MUST respond with this exact format ──────────────────────────────
+    return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
 
   } catch (error) {
-    next(error);
+    console.error('[STANBIC CALLBACK ERROR]:', error.message);
+    // Still return 200 — if we 500, Stanbic will retry and cause duplicates
+    return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
   }
 };
 
-// Staff Query - Get All Bookings (Staff Access Only)
+
+
+// ─── GUEST / STAFF QUERIES ───────────────────────────────────────────────────
+
 export const getBookings = async (req, res, next) => {
   try {
     const { status } = req.query;
-
     const list = await db.bookings.getAll(status);
-
-    return res.status(200).json({
-      success: true,
-      count: list.length,
-      bookings: list
-    });
+    return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
     next(error);
   }
 };
 
-// Guest Query - Get My Bookings (Guest Access)
 export const getMyBookings = async (req, res, next) => {
   try {
     const userEmail = req.user.email;
     const list = await db.bookings.findByGuestEmail(userEmail);
-    return res.status(200).json({
-      success: true,
-      count: list.length,
-      bookings: list
-    });
+    return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
     next(error);
   }
 };
 
-// Guest Status Check (Public Access - No password required, authenticates via secure_token query parameter)
 export const checkBookingStatus = async (req, res, next) => {
   try {
     const { token } = req.query;
-
     if (!token) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing secure access token in parameter query.'
-      });
+      return res.status(400).json({ success: false, error: 'Missing secure access token.' });
     }
 
     const booking = await db.bookings.findByToken(token);
     if (!booking) {
-      return res.status(404).json({
-        success: false,
-        error: 'Unauthorized token reference.'
-      });
+      return res.status(404).json({ success: false, error: 'Unauthorized token reference.' });
     }
 
     return res.status(200).json({
       success: true,
       booking: {
-        id: booking.id,
-        guest_name: booking.guest_name,
-        unit_id: booking.unit_id,
-        check_in: booking.check_in,
-        check_out: booking.check_out,
-        status: booking.status,
-        created_at: booking.created_at
+        id:           booking.id,
+        guest_name:   booking.guest_name,
+        unit_id:      booking.unit_id,
+        check_in:     booking.check_in,
+        check_out:    booking.check_out,
+        adults:       booking.adults,
+        children:     booking.children,
+        status:       booking.status,
+        created_at:   booking.created_at,
+        hold_expires_at: booking.hold_expires_at
       }
     });
-
   } catch (error) {
     next(error);
   }
 };
 
-// Retrieve passcode settings for both units
+export const cancelBooking = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await db.bookings.findById(id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking record not found.' });
+    }
+
+    const cancellableStatuses = ['PENDING', 'AUTHORIZING'];
+    if (!cancellableStatuses.includes(booking.status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot cancel booking in status: ${booking.status}. For paid bookings, please contact management.`
+      });
+    }
+
+    const updatedBooking = await db.bookings.updateStatus(id, 'CANCELLED');
+    await emailService.sendGuestCancellation(updatedBooking);
+
+    return res.status(200).json({ success: true, message: 'Booking cancelled successfully.', booking: updatedBooking });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ─── BLOCKED DATES (includes PENDING to prevent race conditions) ─────────────
+
+export const getBlockedDates = async (req, res, next) => {
+  try {
+    const { unitId } = req.params;
+    const allBookings = await db.bookings.getAll();
+
+    const activeBookings = allBookings.filter(b =>
+      b.unit_id === unitId &&
+      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status)
+    );
+
+    const blocked = activeBookings.map(b => ({
+      checkIn:  b.check_in,
+      checkOut: b.check_out,
+      isPending: b.status === 'PENDING' || b.status === 'AUTHORIZING'
+    }));
+
+    return res.status(200).json({ success: true, blockedDates: blocked });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ─── UNIT SETTINGS ───────────────────────────────────────────────────────────
+
 export const getUnitSettings = async (req, res, next) => {
   try {
     const settings = await db.unit_settings.getAll();
-    return res.status(200).json({
-      success: true,
-      settings
-    });
+    return res.status(200).json({ success: true, settings });
   } catch (error) {
     next(error);
   }
 };
 
-// Update unit passcode
 export const updateUnitSettings = async (req, res, next) => {
   try {
     const { unitId } = req.params;
     const { passcode } = req.body;
 
     if (!passcode || passcode.length !== 4 || isNaN(passcode)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Passcode must be exactly a 4-digit number.'
-      });
+      return res.status(400).json({ success: false, error: 'Passcode must be exactly a 4-digit number.' });
     }
 
     await db.unit_settings.setPasscode(unitId, passcode);
@@ -397,27 +500,6 @@ export const updateUnitSettings = async (req, res, next) => {
   }
 };
 
-// Retrieve blocked dates for calendar UI
-export const getBlockedDates = async (req, res, next) => {
-  try {
-    const { unitId } = req.params;
-    const allBookings = await db.bookings.getAll(); // Assuming getAll is available, or write a custom query.
-    // Filter active bookings for the requested unit
-    const activeBookings = allBookings.filter(b =>
-      b.unit_id === unitId &&
-      (b.status === 'APPROVED' || b.status === 'PAID')
-    );
-
-    const blocked = activeBookings.map(b => ({
-      checkIn: b.check_in,
-      checkOut: b.check_out
-    }));
-
-    return res.status(200).json({
-      success: true,
-      blockedDates: blocked
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// NOTE: The old approveBooking / declineBooking / verifyPaymentWebhook endpoints
+// have been removed. The new direct-booking flow is:
+// PENDING → AUTHORIZING (on STK initiation) → PAID (on Stanbic webhook) → CANCELLED / EXPIRED

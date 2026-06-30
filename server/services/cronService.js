@@ -8,47 +8,68 @@ class CronService {
   initializeScheduledTasks() {
     console.log('[CRON SERVICE]: Registering automated systems...');
 
-    // 1. 3-HOUR EXPIRATION ENGINE (Runs every 15 minutes)
-    cron.schedule('*/15 * * * *', () => {
-      this.cancelExpiredApprovedBookings();
+    // 1. EXPIRED PENDING HOLDS (Runs every 5 minutes — 1hr TTL)
+    cron.schedule('*/5 * * * *', () => {
+      this.expireUnpaidPendingBookings();
     });
 
-    // 2. STAY LIFECYCLE MONITOR & MESSAGING ENGINE (Runs daily at 09:00 AM)
+    // 2. STUCK AUTHORIZING BOOKINGS (Runs every 30 minutes)
+    cron.schedule('*/30 * * * *', () => {
+      this.expireStuckAuthorizingBookings();
+    });
+
+    // 3. STAY LIFECYCLE MONITOR & MESSAGING ENGINE (Runs daily at 09:00 AM)
     cron.schedule('0 9 * * *', () => {
       this.runLifecycleMessagingHooks();
     });
 
-    console.log('[CRON SERVICE]: Expiration Engine (Hourly) and Lifecycle messaging (Daily) configured.');
+    console.log('[CRON SERVICE]: Expiry Engine (5-min), Authorizing Sweeper (30-min), and Lifecycle messaging (Daily) configured.');
   }
 
-  // Task: Cancel APPROVED bookings that exceeded 3-hour time-to-live without payment
-  async cancelExpiredApprovedBookings() {
-    console.log('[CRON WORKER]: Scanning for expired APPROVED reservations...');
-    const TTL_LIMIT_MS = 3 * 60 * 60 * 1000; // 3 Hours in milliseconds
-
+  // Task 1: Expire PENDING bookings whose 1-hour hold has elapsed
+  async expireUnpaidPendingBookings() {
+    console.log('[CRON WORKER]: Scanning for expired PENDING holds...');
     let expiredCount = 0;
     try {
-      const expiredBookings = await db.bookings.findExpiredApproved(TTL_LIMIT_MS);
+      const expired = await db.bookings.findExpiredPending();
 
-      for (const b of expiredBookings) {
-        await db.bookings.updateStatus(b.id, 'CANCELED');
+      for (const b of expired) {
+        await db.bookings.updateStatus(b.id, 'EXPIRED');
         expiredCount++;
-        
-        console.log(`[CRON EXPIRE]: Booking Ref ${b.id} CANCELED due to payment window expiration (TTL limit exceeded).`);
-        
+        console.log(`[CRON EXPIRE]: Booking ${b.id} EXPIRED — 1-hour payment hold elapsed.`);
+
         whatsappService.sendLifecyclePing(
           b.guest_phone,
           WHATSAPP_TEMPLATES.BOOKING_CANCELED_EXPIRED(b)
-        );
+        ).catch(() => {});
       }
 
       if (expiredCount > 0) {
-        console.log(`[CRON WORKER]: Expiration run completed. Canceled ${expiredCount} bookings.`);
+        console.log(`[CRON WORKER]: Expired ${expiredCount} unpaid PENDING bookings.`);
       } else {
-        console.log('[CRON WORKER]: Expiration run completed. No expired bookings detected.');
+        console.log('[CRON WORKER]: No expired PENDING bookings found.');
       }
     } catch (err) {
-      console.error('[CRON SERVICE ERROR]: Expiration scanner failed:', err.message);
+      console.error('[CRON ERROR]: Pending expiry scan failed:', err.message);
+    }
+  }
+
+  // Task 2: Expire AUTHORIZING bookings that never received a webhook (stuck for >2h)
+  async expireStuckAuthorizingBookings() {
+    console.log('[CRON WORKER]: Scanning for stuck AUTHORIZING bookings...');
+    try {
+      const stuck = await db.bookings.findExpiredAuthorizing();
+
+      for (const b of stuck) {
+        await db.bookings.updateStatus(b.id, 'PAYMENT_FAILED');
+        console.log(`[CRON EXPIRE]: Booking ${b.id} marked PAYMENT_FAILED — no webhook received in 2h.`);
+      }
+
+      if (stuck.length > 0) {
+        console.log(`[CRON WORKER]: Cleaned up ${stuck.length} stuck AUTHORIZING bookings.`);
+      }
+    } catch (err) {
+      console.error('[CRON ERROR]: Authorizing sweep failed:', err.message);
     }
   }
 

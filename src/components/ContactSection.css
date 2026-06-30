@@ -1,0 +1,138 @@
+.contact-section {
+  padding: 0;
+  background-color: var(--color-bg);
+}
+
+.contact-container {
+  width: 100%;
+}
+
+.contact-atmosphere {
+  position: relative;
+  background-image: url('/assets/cocoa/cocoa_25.jpeg');
+  background-size: cover;
+  background-position: center;
+  min-height: 500px;
+  display: flex;
+}
+
+.contact-overlay {
+  background: rgba(29, 25, 18, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 4rem;
+  width: 100%;
+  flex: 1;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.contact-details-title {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+}
+
+.contact-title-lulu {
+  color: var(--color-white);
+}
+
+.contact-title-aurelian {
+  color: var(--color-gold-deep);
+}
+
+.contact-detail-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contact-icon {
+  color: var(--color-gold-deep);
+  flex-shrink: 0;
+}
+
+.contact-item p {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 300;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-whatsapp-direct {
+  display: inline-flex;
+  background-color: var(--color-gold-deep);
+  color: var(--color-white);
+  padding: 0.8rem 1.8rem;
+  border-radius: 24px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.btn-whatsapp-direct:hover {
+  background-color: var(--color-gold-muted);
+  transform: translateY(-2px);
+}
+
+.btn-call-direct {
+  display: inline-flex;
+  background-color: transparent;
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+  padding: 0.8rem 1.8rem;
+  border-radius: 24px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.btn-call-direct:hover {
+  background-color: var(--color-white);
+  color: var(--color-dark);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 991px) {
+  .contact-atmosphere {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .contact-overlay {
+    padding: 2.5rem 1.5rem;
+  }
+  .contact-details-title {
+    font-size: 2rem;
+  }
+}

@@ -39,18 +39,7 @@ export const OFFERS = [
     discountValue: 20
     // MANAGER NOTE: Change minNights and discountValue above
   },
-  {
-    id: 4,
-    title: "Extended Stay Bonus",
-    shortDesc: "Book more than 3 nights and get a 5% discount.",
-    fullDesc: "A quick getaway just got better. Stay for more than 3 nights and receive a 5% discount on your total booking.",
-    image: "/time.jpg", 
-    action: "Book Now",
-    discountType: "percentage",
-    minNights: 4, // "more than 3 nights" means 4 or more
-    discountValue: 5
-    // MANAGER NOTE: Change minNights and discountValue above
-  },
+
   {
     id: 5,
     title: "Corporate Packages",
