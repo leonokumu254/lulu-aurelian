@@ -15,7 +15,7 @@ const SUITE_PREVIEWS = {
     name: 'Skyview Hideaway',
     price: 'KES 5,500',
     image: '/assets/skyview/skyview_1.jpg',
-    tagline: 'Penthouse • Panoramic Mt Kenya views ' 
+    tagline: 'Penthouse  Panoramic Mt Kenya views ' 
   },
   cocoa: {
     name: 'Cocoa Retreat',
@@ -302,7 +302,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
                     onClick={(e) => { e.stopPropagation(); handleAdultsCount(-1); }}
                     disabled={formData.adults <= 1}
                   >
-                    -
+                    
                   </button>
                   <span className="counter-value">{formData.adults}</span>
                   <button
