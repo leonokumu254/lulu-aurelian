@@ -110,8 +110,8 @@
 
 .review-card {
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(187, 133, 37, 0.15);
   border-radius: 16px;
   padding: 25px;

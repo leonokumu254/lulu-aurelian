@@ -23,8 +23,8 @@
   font-family: var(--font-sans);
   font-size: 0.85rem;
   color: #1D1912;
-  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .toast-icon {
@@ -466,8 +466,8 @@
 /* Modal Styling */
 .glass-modal {
   background: rgba(112, 128, 144, 0.45);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 .modal-overlay {
@@ -487,8 +487,8 @@
   width: 100%;
   max-width: 500px;
   background: rgba(29, 25, 18, 0.85); /* Dark Glass */
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(187, 133, 37, 0.3);
   border-radius: 12px;
   padding: 2rem;
@@ -601,8 +601,8 @@
   background: rgba(255, 255, 255, 0.1);
   color: #FFFFFF;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .btn-modal-secondary:hover {
