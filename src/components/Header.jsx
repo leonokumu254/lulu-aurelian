@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import './Header.css';
 
 export default function Header({ page, setPage, authUser, onLogout }) {
@@ -73,7 +73,7 @@ export default function Header({ page, setPage, authUser, onLogout }) {
             <button onClick={() => handleNavClick('home-hero')} className="nav-link">Home</button>
             <button onClick={() => handleNavClick('suites')} className="nav-link">Our Suites</button>
             <button onClick={() => handleNavClick('why-us')} className="nav-link">Why Choose Us</button>
-            <button onClick={() => handleNavClick('newsletter')} className="nav-link">Contact</button>
+            <button onClick={() => handleNavClick('contact')} className="nav-link">Contact</button>
           </nav>
         )}
 
@@ -84,22 +84,21 @@ export default function Header({ page, setPage, authUser, onLogout }) {
             <button onClick={() => setPage('home')} className="btn-header-secondary">Return Home</button>
           )}
           {authUser ? (
-            <div className="header-user-profile" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '0.5rem' }}>
+            <div className="user-capsule">
               <div 
+                className="user-capsule-info"
                 onClick={() => setPage('portal')}
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
                 title="Go to Dashboard"
               >
                 <img 
                   src={authUser.avatar || '/user-icon.svg'} 
                   alt={authUser.name || 'Profile'} 
                   onError={(e) => { e.target.onerror = null; e.target.src = '/user-icon.svg'; }}
-                  style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--color-gold-muted)', backgroundColor: 'var(--color-bg)' }} 
                 />
-                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-text)' }}>{authUser.name ? authUser.name.split(' ')[0] : 'User'}</span>
+                <span>{authUser.name ? authUser.name.split(' ')[0] : 'User'}</span>
               </div>
-              <button onClick={onLogout} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500, padding: '0.5rem', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = '#d63031'} onMouseOut={e => e.target.style.color = '#666'}>
-                Logout
+              <button className="user-capsule-logout" onClick={onLogout} title="Logout">
+                <LogOut size={14} />
               </button>
             </div>
           ) : (
@@ -140,7 +139,7 @@ export default function Header({ page, setPage, authUser, onLogout }) {
                 <button onClick={() => handleNavClick('home-hero')} className="mobile-nav-link">Home</button>
                 <button onClick={() => handleNavClick('suites')} className="mobile-nav-link">Our Suites</button>
                 <button onClick={() => handleNavClick('why-us')} className="mobile-nav-link">Why Choose Us</button>
-                <button onClick={() => handleNavClick('newsletter')} className="mobile-nav-link">Contact</button>
+                <button onClick={() => handleNavClick('contact')} className="mobile-nav-link">Contact</button>
               </>
             )}
             <div className="mobile-nav-cta">

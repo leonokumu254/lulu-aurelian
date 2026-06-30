@@ -10,6 +10,7 @@ import OffersPage from './components/OffersPage';
 import Reviews from './components/Reviews';
 import Listings from './components/Listings';
 import Newsletter from './components/Newsletter';
+import ContactSection from './components/ContactSection';
 import Location from './components/Location';
 import Footer from './components/Footer';
 import WhatsAppIcon from './components/WhatsAppIcon';
@@ -314,6 +315,7 @@ export default function App() {
             />
           )}
           <Reviews />
+          <ContactSection />
           <Newsletter />
         </div>
       ) : page === 'offers' ? (

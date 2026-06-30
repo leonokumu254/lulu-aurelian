@@ -1,0 +1,186 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "STK PUSH- M-PESA  CHECKOUT API",
+    "version": "1.0.0",
+    "title": "STK PUSH - M-PESA  CHECKOUT API Sandbox",
+    "contact": {
+      "name": "API Support",
+      "email": "kilele@stanbic.com"
+    },
+    "x-ibm-name": "mpesa-checkout-api"
+  },
+  "basePath": "/api/sandbox/mpesa-checkout",
+  "tags": [
+    {
+      "name": "M-pesa checkout API allows you to collect Money on M-PESA Platform",
+      "description": "stk-push."
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          " Mobile Money STK Push"
+        ],
+        "summary": "STK Push Integration with via Stanbic",
+        "description": "To allow customers to receive a prefilled pop-up notification on their MPESA Menu to confirm the initiated transaction",
+        "operationId": "STKPush",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Auth",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "STK Push Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/STKPushRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully processsed",
+            "schema": {
+              "$ref": "#/definitions/STKPushResponse"
+            }
+          },
+          "default": {
+            "description": "Processing failed",
+            "schema": {
+              "$ref": "#/definitions/errorMessage"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "STKPushRequest": {
+      "type": "object",
+      "required": [
+        "dbsReferenceId",
+        "billAccountRef",
+        "amount",
+        "mobileNumber"
+      ],
+      "properties": {
+        "dbsReferenceId": {
+          "type": "string",
+          "description": "This is your Uniqueid reference for each request",
+          "example": "REW21331DR5F1"
+        },
+        "billAccountRef": {
+          "type": "string",
+          "description": "The Account number you want your customer to pay into. This is provided by the bank",
+          "example": "33562174"
+        },
+        "amount": {
+          "type": "string",
+          "description": "Amount",
+          "example": "10.00"
+        },
+        "mobileNumber": {
+          "type": "string",
+          "description": "MPESA phone number",
+          "example": "254712XXXXXX"
+        }
+      }
+    },
+    "STKPushResponse": {
+      "type": "object",
+      "properties": {
+        "dbsReferenceId": {
+          "type": "string",
+          "example": "989892717711"
+        },
+        "status": {
+          "type": "string",
+          "example": "Success"
+        },
+        "statusMessage": {
+          "type": "string",
+          "example": "Request processed successfully"
+        }
+      }
+    },
+    "errorMessage": {
+      "type": "object",
+      "properties": {
+        "dbsReferenceId": {
+          "type": "string",
+          "example": "989892717711"
+        },
+        "responseCode": {
+          "type": "string",
+          "example": "2001"
+        },
+        "responseMessage": {
+          "type": "string",
+          "description": "Description why the request failed",
+          "example": "Invalid mobile number"
+        }
+      }
+    }
+  },
+  "x-ibm-configuration": {
+    "type": "rest",
+    "phase": "realized",
+    "enforced": true,
+    "testable": true,
+    "cors": {
+      "enabled": false
+    },
+    "servers": [
+      {
+        "url": "https://sandbox.connect.stanbicbank.co.ke/api/sandbox/mpesa-checkout",
+        "description": "",
+        "type": [
+          "production",
+          "development"
+        ]
+      }
+    ],
+    "oauth-servers": {
+      "OAuth": {
+        "tokenUrls": [
+          "https://sandbox.connect.stanbicbank.co.ke/api/sandbox/auth/oauth2/token"
+        ],
+        "authorizationUrls": [],
+        "refreshUrls": []
+      }
+    }
+  },
+  "securityDefinitions": {
+    "OAuth": {
+      "type": "oauth2",
+      "x-ibm-oauth-provider": "oauth2",
+      "flow": "application",
+      "tokenUrl": "/auth/oauth2/token",
+      "scopes": {
+        "payments": "securely make pesalink payments"
+      }
+    }
+  },
+  "security": [
+    {
+      "OAuth": [
+        "payments"
+      ]
+    }
+  ],
+  "host": "sandbox.connect.stanbicbank.co.ke"
+}

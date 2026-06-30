@@ -20,12 +20,23 @@ export default function BookingStatusWidget({ user }) {
         const data = await res.json();
         
         if (data.success && data.bookings && data.bookings.length > 0) {
-          // Find the most relevant active booking (Pending, Approved, Paid)
-          const active = data.bookings.find(b => 
-            ['PENDING', 'APPROVED', 'PAID'].includes(b.status)
-          ) || data.bookings[0]; // fallback to most recent if none active
-          
-          setActiveBooking(active);
+          const now = new Date();
+          // Filter bookings to those where check_out has not passed yet
+          const activeOrUpcoming = data.bookings.filter(b => {
+            const checkOutDate = new Date(b.check_out);
+            checkOutDate.setHours(23, 59, 59, 999); // Include the whole checkout day
+            return checkOutDate >= now;
+          });
+
+          if (activeOrUpcoming.length > 0) {
+            const active = activeOrUpcoming.find(b => 
+              ['PENDING', 'APPROVED', 'PAID'].includes(b.status)
+            ) || activeOrUpcoming[0];
+            
+            setActiveBooking(active);
+          } else {
+            setActiveBooking(null);
+          }
         }
       } catch (err) {
         console.error('Failed to fetch bookings for widget', err);

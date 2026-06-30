@@ -31,14 +31,22 @@ export default function OffersSection({ setPage }) {
     let animationId;
     let isHovered = false;
 
+    let currentScroll = track ? track.scrollLeft : 0;
+
     const scrollStep = () => {
       if (track && !isHovered && !isInteractingRef.current) {
-        track.scrollLeft += 0.5; // slowed down from 1.5 to 0.5
+        currentScroll += 1; // 1px per frame is smooth and reliable
+        track.scrollLeft = currentScroll;
+        
         const groupWidth = track.firstElementChild ? track.firstElementChild.offsetWidth : 0;
         const gap = 32; // 2rem
-        if (groupWidth > 0 && track.scrollLeft >= groupWidth + gap) {
-          track.scrollLeft -= (groupWidth + gap);
+        if (groupWidth > 0 && currentScroll >= groupWidth + gap) {
+          currentScroll -= (groupWidth + gap);
+          track.scrollLeft = currentScroll;
         }
+      } else if (track) {
+        // Sync our tracker if the user manually scrolled
+        currentScroll = track.scrollLeft;
       }
       animationId = requestAnimationFrame(scrollStep);
     };
@@ -142,63 +150,39 @@ export default function OffersSection({ setPage }) {
           </button>
           
           <div className="offers-marquee-track" ref={trackRef}>
-            {/* First Group */}
-            <div className="offers-marquee-group">
-              {OFFERS.map(offer => (
-                <div className="offer-item" key={`group1-${offer.id}`}>
-                  <div className="offer-image-wrapper">
-                    <img src={offer.image} alt={offer.title} className="offer-image" />
-                  </div>
-                  <div className="offer-content">
-                    <h3 className="offer-title">{offer.title}</h3>
-                    <p className="offer-desc">{offer.shortDesc}</p>
-                    <div className="offer-actions">
-                      <button className="offer-btn-book" onClick={() => setPage('booking', { offerId: offer.id })}>
-                        Book Now
-                      </button>
-                      <a 
-                        href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello, I'm interested in the ${offer.title} offer.`)}`} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        className="offer-whatsapp-btn"
-                        aria-label={`Inquire about ${offer.title} via WhatsApp`}
-                      >
-                        <WhatsAppIconSVG />
-                      </a>
+            {[0, 1, 2, 3].map((groupIndex) => (
+              <div 
+                className="offers-marquee-group" 
+                key={`group-${groupIndex}`} 
+                aria-hidden={groupIndex > 0 ? "true" : undefined}
+              >
+                {OFFERS.map(offer => (
+                  <div className="offer-item" key={`group${groupIndex}-${offer.id}`}>
+                    <div className="offer-image-wrapper">
+                      <img src={offer.image} alt={offer.title} className="offer-image" />
+                    </div>
+                    <div className="offer-content">
+                      <h3 className="offer-title">{offer.title}</h3>
+                      <p className="offer-desc">{offer.shortDesc}</p>
+                      <div className="offer-actions">
+                        <button className="offer-btn-book" onClick={() => setPage('booking', { offerId: offer.id })}>
+                          Book Now
+                        </button>
+                        <a 
+                          href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello, I'm interested in the ${offer.title} offer.`)}`} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="offer-whatsapp-btn"
+                          aria-label={`Inquire about ${offer.title} via WhatsApp`}
+                        >
+                          <WhatsAppIconSVG />
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Second Group (Duplicate for Infinite Scroll) */}
-            <div className="offers-marquee-group" aria-hidden="true">
-              {OFFERS.map(offer => (
-                <div className="offer-item" key={`group2-${offer.id}`}>
-                  <div className="offer-image-wrapper">
-                    <img src={offer.image} alt={offer.title} className="offer-image" />
-                  </div>
-                  <div className="offer-content">
-                    <h3 className="offer-title">{offer.title}</h3>
-                    <p className="offer-desc">{offer.shortDesc}</p>
-                    <div className="offer-actions">
-                      <button className="offer-btn-book" onClick={() => setPage('booking', { offerId: offer.id })}>
-                        Book Now
-                      </button>
-                      <a 
-                        href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello, I'm interested in the ${offer.title} offer.`)}`} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        className="offer-whatsapp-btn"
-                        aria-label={`Inquire about ${offer.title} via WhatsApp`}
-                      >
-                        <WhatsAppIconSVG />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ))}
           </div>
 
           <button 

@@ -58,6 +58,9 @@ const COUNTRIES = [
   { code: '+64', name: 'New Zealand', flag: 'nz' }
 ];
 
+const MAX_ADULTS = 5;
+const PEAK_SURCHARGE = 1500;
+
 export default function BookingForm({ formData, setFormData, onSubmit, user }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
@@ -131,7 +134,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
   };
 
   const handleAdultsCount = (val) => {
-    const newVal = Math.max(1, formData.adults + val);
+    const newVal = Math.max(1, Math.min(MAX_ADULTS, formData.adults + val));
     setFormData(prev => ({ ...prev, adults: newVal }));
   };
 
@@ -293,7 +296,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               <div className="counter-row">
                 <div className="counter-label-col">
                   <span className="counter-name">Adults</span>
-                  <span className="counter-sub">Age 13 or above</span>
+                  <span className="counter-sub">Age 13 or above · Max {MAX_ADULTS}</span>
                 </div>
                 <div className="counter-control-col">
                   <button
@@ -302,18 +305,26 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
                     onClick={(e) => { e.stopPropagation(); handleAdultsCount(-1); }}
                     disabled={formData.adults <= 1}
                   >
-                    
+                    −
                   </button>
                   <span className="counter-value">{formData.adults}</span>
                   <button
                     type="button"
                     className="counter-btn"
                     onClick={(e) => { e.stopPropagation(); handleAdultsCount(1); }}
+                    disabled={formData.adults >= MAX_ADULTS}
                   >
                     +
                   </button>
                 </div>
               </div>
+
+              {/* Peak surcharge notice */}
+              {formData.adults === MAX_ADULTS && (
+                <div style={{ marginTop: '0.8rem', padding: '0.7rem 1rem', backgroundColor: 'rgba(238,205,92,0.08)', border: '1px solid var(--color-gold-muted)', borderRadius: '6px', fontSize: '0.82rem', color: 'var(--color-gold-light)', lineHeight: 1.5 }}>
+                  <strong>Peak capacity selected.</strong> A KES {PEAK_SURCHARGE.toLocaleString()} surcharge applies for {MAX_ADULTS} adult guests.
+                </div>
+              )}
 
               <div className="dropdown-footer" style={{ marginTop: '1rem' }}>
                 <button

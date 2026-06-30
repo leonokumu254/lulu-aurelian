@@ -39,12 +39,16 @@ const inMemory = {
       unit_id: 'cocoa',
       check_in: '2026-07-04',
       check_out: '2026-07-09',
-      status: 'APPROVED',
+      adults: 2,
+      children: 0,
+      has_peak_surcharge: 0,
+      status: 'PENDING',
       secure_token: 'sec_token_dimitri_leonov_992a543b',
-      approved_by: 'd9b73489-cf2b-4fa8-bc3c-c9d34fb05ea3',
-      approved_at: new Date(Date.now() - 3600000 * 2),
-      created_at: new Date(Date.now() - 3600000 * 4),
-      updated_at: new Date(Date.now() - 3600000 * 2)
+      approved_by: null,
+      approved_at: null,
+      hold_expires_at: new Date(Date.now() + 3600000),
+      created_at: new Date(Date.now() - 3600000 * 0.5),
+      updated_at: new Date(Date.now() - 3600000 * 0.5)
     },
     {
       id: '331b2890-88af-45e0-94cb-9c17754b2bb0',
@@ -54,10 +58,14 @@ const inMemory = {
       unit_id: 'skyview',
       check_in: '2026-06-25',
       check_out: '2026-06-27',
+      adults: 3,
+      children: 0,
+      has_peak_surcharge: 0,
       status: 'PAID',
       secure_token: 'sec_token_brandon_miller_331b2890',
-      approved_by: 'd9b73489-cf2b-4fa8-bc3c-c9d34fb05ea3',
-      approved_at: new Date(Date.now() - 86400000),
+      approved_by: null,
+      approved_at: null,
+      hold_expires_at: new Date(Date.now() - 3600000),
       created_at: new Date(Date.now() - 86400000 * 1.5),
       updated_at: new Date(Date.now() - 86400000 * 0.5)
     }
@@ -96,7 +104,9 @@ const inMemory = {
 
   password_resets: [],
 
-  ical_links: []
+  ical_links: [],
+
+  processed_webhook_events: [] // idempotency store for webhook event IDs
 };
 
 // Check database provider configurations
@@ -268,9 +278,11 @@ export const db = {
       if (useMySQL) {
         await pool.query(
           `INSERT INTO bookings (
-            id, guest_name, guest_email, guest_phone, unit_id, check_in, check_out, 
-            status, secure_token, approved_by, approved_at, created_at, updated_at, cleaning_dates
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            id, guest_name, guest_email, guest_phone, unit_id, check_in, check_out,
+            adults, children, has_peak_surcharge,
+            status, secure_token, approved_by, approved_at,
+            hold_expires_at, created_at, updated_at, cleaning_dates
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             booking.id,
             booking.guest_name,
@@ -279,10 +291,14 @@ export const db = {
             booking.unit_id,
             booking.check_in,
             booking.check_out,
+            booking.adults  || 1,
+            booking.children || 0,
+            booking.has_peak_surcharge ? 1 : 0,
             booking.status || 'PENDING',
             booking.secure_token,
             booking.approved_by || null,
             booking.approved_at || null,
+            booking.hold_expires_at || null,
             booking.created_at || new Date(),
             booking.updated_at || new Date(),
             booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null
@@ -378,22 +394,38 @@ export const db = {
       return [...list].sort((a, b) => b.created_at - a.created_at);
     },
 
-    findExpiredApproved: async (ttlLimitMs) => {
-      const expirationThreshold = new Date(Date.now() - ttlLimitMs);
+    findExpiredPending: async () => {
+      const now = new Date();
       if (useMySQL) {
         const [rows] = await pool.query(
-          "SELECT * FROM bookings WHERE status = 'APPROVED' AND approved_at <= ?",
-          [expirationThreshold]
+          "SELECT * FROM bookings WHERE status = 'PENDING' AND hold_expires_at IS NOT NULL AND hold_expires_at <= ?",
+          [now]
         );
         return rows;
       }
 
-      return inMemory.bookings.filter(b => {
-        if (b.status === 'APPROVED' && b.approved_at) {
-          return new Date(b.approved_at).getTime() <= (Date.now() - ttlLimitMs);
-        }
-        return false;
-      });
+      return inMemory.bookings.filter(b =>
+        b.status === 'PENDING' &&
+        b.hold_expires_at &&
+        new Date(b.hold_expires_at) <= now
+      );
+    },
+
+    findExpiredAuthorizing: async () => {
+      // AUTHORIZING holds that never got a webhook — expire after 2 hours
+      const cutoff = new Date(Date.now() - 2 * 60 * 60 * 1000);
+      if (useMySQL) {
+        const [rows] = await pool.query(
+          "SELECT * FROM bookings WHERE status = 'AUTHORIZING' AND updated_at <= ?",
+          [cutoff]
+        );
+        return rows;
+      }
+
+      return inMemory.bookings.filter(b =>
+        b.status === 'AUTHORIZING' &&
+        new Date(b.updated_at).getTime() <= cutoff.getTime()
+      );
     },
 
     findPaidBookings: async () => {
@@ -587,8 +619,8 @@ export const db = {
       const now = new Date();
       if (useMySQL) {
         await pool.query(
-          'INSERT INTO payments (id, booking_id, amount, currency, gateway, transaction_ref, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [id, paymentData.booking_id, paymentData.amount, paymentData.currency || 'KES', paymentData.gateway, paymentData.transaction_ref || null, paymentData.status || 'PENDING', now, now]
+          'INSERT INTO payments (id, booking_id, amount, currency, gateway, transaction_ref, idempotency_key, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [id, paymentData.booking_id, paymentData.amount, paymentData.currency || 'KES', paymentData.gateway, paymentData.transaction_ref || null, paymentData.idempotency_key || null, paymentData.status || 'PENDING', now, now]
         );
         return { id, ...paymentData, status: paymentData.status || 'PENDING' };
       }
@@ -609,6 +641,42 @@ export const db = {
         return rows[0] || null;
       }
       return null;
+    },
+
+    // Idempotency: find an existing payment attempt for this booking+key
+    findByIdempotencyKey: async (booking_id, idempotency_key) => {
+      if (useMySQL) {
+        const [rows] = await pool.query(
+          'SELECT * FROM payments WHERE booking_id = ? AND idempotency_key = ?',
+          [booking_id, idempotency_key]
+        );
+        return rows[0] || null;
+      }
+      return null;
+    },
+
+    // Idempotency: check if a webhook event_id was already processed
+    findProcessedEvent: async (eventId) => {
+      if (useMySQL) {
+        const [rows] = await pool.query(
+          'SELECT id FROM processed_webhook_events WHERE event_id = ?',
+          [eventId]
+        );
+        return rows[0] || null;
+      }
+      return inMemory.processed_webhook_events.find(e => e.event_id === eventId) || null;
+    },
+
+    // Idempotency: record that this webhook event has been handled
+    recordProcessedEvent: async (eventId) => {
+      if (useMySQL) {
+        await pool.query(
+          'INSERT IGNORE INTO processed_webhook_events (event_id, processed_at) VALUES (?, ?)',
+          [eventId, new Date()]
+        );
+        return;
+      }
+      inMemory.processed_webhook_events.push({ event_id: eventId, processed_at: new Date() });
     }
   },
 
