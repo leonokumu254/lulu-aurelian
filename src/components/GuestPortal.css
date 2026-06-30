@@ -40,8 +40,8 @@
 /* Glassmorphic Utilities for Light Theme */
 .glass {
   background: var(--portal-card-bg);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--portal-card-border);
   border-radius: 16px;
   box-shadow: var(--portal-shadow);

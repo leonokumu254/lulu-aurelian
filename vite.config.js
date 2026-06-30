@@ -8,7 +8,7 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        autoprefixer()
+        autoprefixer({ remove: false })
       ],
     },
   },
@@ -35,6 +35,7 @@ export default defineConfig({
       }
     })
   ],
+
   server: {
     proxy: {
       '/api': {

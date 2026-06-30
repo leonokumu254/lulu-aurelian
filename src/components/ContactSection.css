@@ -18,8 +18,8 @@
 
 .contact-overlay {
   background: rgba(29, 25, 18, 0.85);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   padding: 4rem;
   width: 100%;
   flex: 1;
