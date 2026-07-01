@@ -271,7 +271,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               ) : portalTab === 'rate' ? (
                 <RateUs user={user} />
               ) : portalTab === 'settings' ? (
-                <ChangePassword user={user} />
+                <ChangePassword
+                  user={user}
+                  onProfileUpdate={(updatedUser) => {
+                    // Merge updated fields (name, phone) back into the global user state
+                    setUser(prev => prev ? { ...prev, ...updatedUser } : prev);
+                  }}
+                />
               ) : (
                 <GuestPortal user={user} onBookNew={() => setPortalTab('booking')} />
               )

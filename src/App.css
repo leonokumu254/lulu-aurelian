@@ -11,8 +11,8 @@
 
 .booking-view-container {
   flex-grow: 1;
-  padding-top: 8rem;
-  padding-bottom: 8rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .booking-header-offset {
@@ -63,12 +63,12 @@
 
 @media (max-width: 600px) {
   .booking-page-title {
-    font-size: 2.2rem;
-    margin-bottom: 2rem;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
   }
   .booking-view-container {
-    padding-top: 6rem;
-    padding-bottom: 5rem;
+    padding-top: 4.5rem;
+    padding-bottom: 4rem;
   }
 }
 
