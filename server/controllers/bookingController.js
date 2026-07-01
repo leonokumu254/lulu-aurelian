@@ -188,7 +188,7 @@ export const requestBooking = async (req, res, next) => {
 export const initiatePayment = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { phone, idempotency_key } = req.body;
+    const { phone, idempotency_key, secure_token } = req.body;
 
     if (!idempotency_key) {
       return res.status(400).json({ success: false, error: 'idempotency_key is required.' });
@@ -197,6 +197,13 @@ export const initiatePayment = async (req, res, next) => {
     const booking = await db.bookings.findById(id);
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking record not found.' });
+    }
+
+    // ── Auth: either session user or secure_token ownership ─────────────────
+    const hasSessionAuth = req.user && req.user.email;
+    const hasTokenAuth   = secure_token && booking.secure_token === secure_token;
+    if (!hasSessionAuth && !hasTokenAuth) {
+      return res.status(403).json({ success: false, error: 'Not authorized to pay for this booking.' });
     }
 
     if (booking.status !== 'PENDING') {

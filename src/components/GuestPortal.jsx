@@ -12,6 +12,7 @@ export default function GuestPortal({ user, onBookNew }) {
   const [paymentError, setPaymentError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [mpesaPhone, setMpesaPhone] = useState('');
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -69,13 +70,13 @@ export default function GuestPortal({ user, onBookNew }) {
     ? bookings.find(b => b.id === selectedBookingId) 
     : (activeBookings[0] || bookings[0]);
 
-  // Payment Timer Effect
+  // Payment Timer Effect — 1-hour hold matching server PAYMENT_TTL_MS
   useEffect(() => {
-    if (!activeBooking || activeBooking.status !== 'APPROVED') return;
-    
+    if (!activeBooking || (activeBooking.status !== 'APPROVED' && activeBooking.status !== 'PENDING')) return;
+
     const interval = setInterval(() => {
       const createdTime = new Date(activeBooking.created_at);
-      const expiryTime = new Date(createdTime.getTime() + 3 * 60 * 60 * 1000);
+      const expiryTime = new Date(createdTime.getTime() + 1 * 60 * 60 * 1000); // 1h
       const now = new Date();
       const diff = expiryTime - now;
 
@@ -92,25 +93,41 @@ export default function GuestPortal({ user, onBookNew }) {
     return () => clearInterval(interval);
   }, [activeBooking]);
 
+  // Pre-fill phone from user profile
+  useEffect(() => {
+    if (user && user.phone && !mpesaPhone) {
+      // Strip country code if present
+      let phone = user.phone.replace(/^\+254/, '');
+      setMpesaPhone(phone);
+    }
+  }, [user]);
+
   const handlePayment = async () => {
     if (!paymentMethod) return setPaymentError('Please select a payment method.');
     setProcessingPayment(true);
     setPaymentError(null);
     try {
+      const phone = mpesaPhone
+        ? (mpesaPhone.startsWith('0') ? `254${mpesaPhone.slice(1)}` : mpesaPhone)
+        : user.phone;
       const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${activeBooking.id}/pay`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ method: paymentMethod, phone: user.phone })
+        body: JSON.stringify({
+          phone,
+          idempotency_key: `${activeBooking.id}-${Date.now()}`,
+          method: paymentMethod
+        })
       });
       const data = await res.json();
       if (data.success) {
         setPaymentSuccess(true);
       } else {
-        setPaymentError(data.error || 'Payment was declined by the gateway provider. Please ensure you have sufficient funds and try again.');
+        setPaymentError(data.error || 'Payment was declined. Please ensure you have sufficient M-Pesa balance and try again.');
       }
     } catch (e) {
-      setPaymentError('Connection to payment gateway failed. Please check your internet connection and try again.');
+      setPaymentError('Connection failed. Please check your internet connection and try again.');
     } finally {
       setProcessingPayment(false);
     }
@@ -228,8 +245,22 @@ export default function GuestPortal({ user, onBookNew }) {
                           </div>
                         </label>
                       </div>
+                      {paymentMethod === 'mpesa' && (
+                        <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '0.85rem' }}>
+                          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#374151', marginBottom: '0.4rem' }}>M-Pesa Number</label>
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            value={mpesaPhone}
+                            onChange={(e) => setMpesaPhone(e.target.value)}
+                            placeholder="e.g. 712345678"
+                            style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '6px', border: '1.5px solid #d1d5db', fontSize: '1rem', boxSizing: 'border-box', outline: 'none' }}
+                          />
+                          <p style={{ fontSize: '0.74rem', color: '#9ca3af', margin: '0.3rem 0 0' }}>You'll receive an STK PIN prompt on this number.</p>
+                        </div>
+                      )}
                       <button className="btn-pay-now" onClick={handlePayment} disabled={processingPayment}>
-                        {processingPayment ? 'Processing...' : `Pay Now via ${paymentMethod.toUpperCase()}`}
+                        {processingPayment ? 'Sending STK Push...' : `Pay KES ${(activeBooking.total_price || 0).toLocaleString('en-KE')} via ${paymentMethod === 'mpesa' ? 'M-Pesa' : 'PayPal'}`}
                       </button>
                       <button 
                         onClick={async () => {

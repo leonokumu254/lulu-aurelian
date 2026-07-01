@@ -11,7 +11,7 @@ import {
   cancelBooking,
   getBlockedDates
 } from '../controllers/bookingController.js';
-import { authMiddleware, requireRole } from '../middleware/auth.js';
+import { authMiddleware, requireRole, optionalAuth } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -32,7 +32,8 @@ router.post('/webhook/stanbic', stanbicCallback);
 // ─── PROTECTED ROUTES ────────────────────────────────────────────────────────
 
 // Guest initiates Stanbic STK Push payment
-router.post('/:id/pay', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), initiatePayment);
+// Accepts: session cookie (logged-in users) OR secure_token in body (anonymous guests)
+router.post('/:id/pay', optionalAuth, initiatePayment);
 
 // Fetch guest's own bookings
 router.get('/my-bookings', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT'), getMyBookings);
