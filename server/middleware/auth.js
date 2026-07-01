@@ -67,3 +67,36 @@ export const requireRole = (...allowedRoles) => {
     next();
   };
 };
+
+/**
+ * Optional auth — decodes session if present but does NOT block unauthenticated requests.
+ * The downstream controller is responsible for checking req.user or a secure_token.
+ */
+export const optionalAuth = (req, res, next) => {
+  try {
+    let token = req.cookies?.accessToken;
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+      }
+    }
+    if (token) {
+      jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
+        if (!err && decoded) {
+          req.user = {
+            id: decoded.id,
+            name: decoded.name,
+            email: decoded.email,
+            role: decoded.role
+          };
+        }
+        next();
+      });
+    } else {
+      next(); // No token — proceed; controller will validate via secure_token
+    }
+  } catch {
+    next();
+  }
+};
