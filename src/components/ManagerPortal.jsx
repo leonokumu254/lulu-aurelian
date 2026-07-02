@@ -88,26 +88,59 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
 
   const pendingReviewsCount = reviews.filter(r => r.status === 'Pending').length;
 
-  const handleAddAgent = (e) => {
+  const handleAddAgent = async (e) => {
     e.preventDefault();
     if (!newAgent.name || !newAgent.email) return;
-    const member = {
-      id: `t-${Date.now()}`,
-      name: newAgent.name,
-      email: newAgent.email,
-      role: newAgent.role,
-      status: 'Active',
-      avatar: '/avatar.svg'
-    };
-    setTeam([...team, member]);
-    setNewAgent({ name: '', email: '', role: 'Agent' });
-    setShowAddAgent(false);
-    triggerToast('Operational agent profile created.');
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/users/invite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(newAgent)
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Optimistically add to team
+        const member = {
+          id: `temp-${Date.now()}`,
+          name: newAgent.name,
+          email: newAgent.email,
+          role: newAgent.role,
+          status: 'Invited',
+          avatar: '/avatar.svg'
+        };
+        setTeam([...team, member]);
+        setNewAgent({ name: '', email: '', role: 'Agent' });
+        setShowAddAgent(false);
+        triggerToast('Invitation dispatched to ' + newAgent.email);
+      } else {
+        triggerToast(data.error || 'Failed to invite agent.');
+      }
+    } catch (err) {
+      console.error(err);
+      triggerToast('Network error while inviting agent.');
+    }
   };
 
-  const handleRemoveAgent = (id) => {
-    setTeam(prev => prev.filter(t => t.id !== id));
-    triggerToast('Agent credentials revoked.');
+  const handleRemoveAgent = async (id) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/users/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setTeam(prev => prev.filter(t => t.id !== id));
+        triggerToast('Agent credentials revoked.');
+      } else {
+        const data = await response.json();
+        triggerToast(data.error || 'Failed to revoke access.');
+      }
+    } catch (err) {
+      console.error(err);
+      triggerToast('Network error while removing agent.');
+    }
   };
 
   const handleReviewAction = async (id, action) => {
