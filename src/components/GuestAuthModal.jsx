@@ -238,7 +238,7 @@ export default function GuestAuthModal({ isOpen, onClose, onAuthSuccess, onConti
             </form>
 
             <div className="guest-auth-footer">
-              <p>Don't have an account? <button onClick={() => switchMode('register')}>Create one</button></p>
+              <p>Don't have an account? <button onClick={() => switchMode('register')}>Sign up</button></p>
               <p><button onClick={() => switchMode('choice')}>← Back to options</button></p>
             </div>
           </div>

@@ -16,7 +16,8 @@ class EmailService {
       },
       tls: {
         rejectUnauthorized: false
-      }
+      },
+      family: 4 // Force IPv4 to prevent ENETUNREACH on Railway (IPv6 issue)
     });
   }
 
