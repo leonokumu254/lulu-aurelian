@@ -230,10 +230,10 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
             onClick={() => handleSuiteSelect('skyview')}
           >
             <div className="suite-select-header">
-              <span className="suite-select-title">Skyview Suite</span>
+              <span className="suite-select-title">Skyview Hideaway</span>
               <span className="suite-select-price">KES 5,500 / night</span>
             </div>
-            <p className="suite-select-desc">Penthouse, Panoramic Skyline views, 140 m²</p>
+            <p className="suite-select-desc">Penthouse, Panoramic Mt Kenya views</p>
           </div>
 
           <div
@@ -244,7 +244,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               <span className="suite-select-title">Cocoa Suite</span>
               <span className="suite-select-price">KES 5,000 / night</span>
             </div>
-            <p className="suite-select-desc">Cozy Retreat, Dark Walnut panels, Slate fireplace</p>
+            <p className="suite-select-desc">Luxury living with rich cocoa tones.</p>
           </div>
         </div>
       </div>

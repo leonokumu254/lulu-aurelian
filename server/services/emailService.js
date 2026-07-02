@@ -11,8 +11,8 @@ class EmailService {
       secure: false, // upgraded later with STARTTLS
       requireTLS: true,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: env.SMTP_USER,
+        pass: env.SMTP_PASS,
       },
       tls: {
         rejectUnauthorized: false
@@ -213,9 +213,14 @@ class EmailService {
   // ==========================================
 
   async sendEmail({ to, subject, html, text }) {
+    if (!env.SMTP_USER || !env.SMTP_PASS) {
+      console.warn(`[EMAIL DISPATCHER] Cannot send email. SMTP credentials are not configured in environment.`);
+      return { success: false, error: 'SMTP credentials missing' };
+    }
+
     try {
       const info = await this.transporter.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: env.EMAIL_FROM,
         to: to,
         subject: subject,
         text: text,

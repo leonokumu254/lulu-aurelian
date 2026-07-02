@@ -25,7 +25,12 @@ export const env = {
   DB_PASSWORD: process.env.DB_PASSWORD || '',
   DB_NAME: process.env.DB_NAME || 'lulu_aurelian',
   DATABASE_URL: process.env.DATABASE_URL || `mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
-  REDIS_URL: process.env.REDIS_URL
+  REDIS_URL: process.env.REDIS_URL,
+  
+  // Email Configuration
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASS: process.env.SMTP_PASS,
+  EMAIL_FROM: process.env.EMAIL_FROM || 'LULU AURELIAN <wantam532@gmail.com>'
 };
 
 // Check critical variables
