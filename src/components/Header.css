@@ -194,18 +194,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
-}
-
-.user-login-btn img {
-  width: 24px;
-  height: 24px;
+  padding: 4px;
+  color: var(--color-dark, #1D1912); /* currentColor drives the inline SVG */
+  border-radius: 50%;
+  transition: transform var(--transition-fast), background 0.15s;
 }
 
 .user-login-btn:hover {
-  transform: scale(1.1);
-  opacity: 0.8;
+  transform: scale(1.08);
+  background: rgba(29,25,18,0.06);
 }
 
 .user-capsule {

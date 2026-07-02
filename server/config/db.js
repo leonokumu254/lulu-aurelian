@@ -270,6 +270,26 @@ export const db = {
           inMemory.password_resets = inMemory.password_resets.filter(r => r.email !== user.email.toLowerCase());
         }
       }
+    },
+
+    updateProfile: async (id, { name, phone }) => {
+      const now = new Date();
+      if (useMySQL) {
+        await pool.query(
+          'UPDATE users SET name = ?, phone = ?, updated_at = ? WHERE id = ?',
+          [name, phone || null, now, id]
+        );
+        const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+        return rows[0] || null;
+      } else {
+        const user = inMemory.users.find(u => u.id === id);
+        if (user) {
+          user.name  = name;
+          user.phone = phone || null;
+          user.updated_at = now;
+        }
+        return user || null;
+      }
     }
   },
 

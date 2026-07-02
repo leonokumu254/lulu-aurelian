@@ -144,7 +144,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
       }
     } catch (err) {
       console.error('Booking submission error:', err);
-      setSubmitError('Connection error. Please ensure the server is running and try again.');
+      setSubmitError('Connection error. Please try again.');
       setSubmitting(false);
     }
   };

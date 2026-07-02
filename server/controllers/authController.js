@@ -330,3 +330,61 @@ export const logout = (req, res) => {
   res.clearCookie('refreshToken');
   return res.status(200).json({ success: true, message: 'Logged out successfully.' });
 };
+
+// ── Change password (requires current password) ──────────────────────────────
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, error: 'Current and new password are required.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, error: 'New password must be at least 6 characters.' });
+    }
+
+    const user = await db.users.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, error: 'User not found.' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await db.users.updatePassword(user.id, passwordHash);
+
+    return res.status(200).json({ success: true, message: 'Password updated successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ── Update profile (name, phone) ─────────────────────────────────────────────
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { name, phone } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, error: 'Name is required.' });
+    }
+
+    const updated = await db.users.updateProfile(req.user.id, {
+      name: name.trim(),
+      phone: phone ? phone.trim() : null
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully.',
+      user: {
+        id:    updated.id,
+        name:  updated.name,
+        email: updated.email,
+        phone: updated.phone || '',
+        role:  updated.role
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

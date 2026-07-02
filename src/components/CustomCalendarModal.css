@@ -173,11 +173,74 @@
   cursor: default;
 }
 
-.day-cell.disabled {
+/* ── Past dates (before today) ── subtly faded, not clickable ── */
+.day-cell.past {
   color: var(--color-border);
   cursor: not-allowed;
-  text-decoration: line-through;
-  opacity: 0.4;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ── Already-booked dates ── crossed out, on-brand ───────────── */
+/*
+   Uses a CSS background-image diagonal cross drawn in the brand's
+   warm gold-terracotta (#C05E2E → earthy, pairs with #BB8525 gold).
+   The date number stays visible so guests can read it.
+*/
+.day-cell.booked {
+  cursor: not-allowed;
+  /* Allow pointer-events so :hover tooltip shows — clicks rejected in handleDateClick */
+  pointer-events: auto;
+  color: #9B4B22;              /* deep terracotta — readable on cream */
+  background-color: rgba(192, 94, 46, 0.07);
+  border-radius: 4px;
+  position: relative;
+  background-image:
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 0.6px),
+      rgba(192, 94, 46, 0.55) calc(50% - 0.6px),
+      rgba(192, 94, 46, 0.55) calc(50% + 0.6px),
+      transparent calc(50% + 0.6px)
+    ),
+    linear-gradient(
+      to bottom left,
+      transparent calc(50% - 0.6px),
+      rgba(192, 94, 46, 0.55) calc(50% - 0.6px),
+      rgba(192, 94, 46, 0.55) calc(50% + 0.6px),
+      transparent calc(50% + 0.6px)
+    );
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* Tooltip on hover so user knows why they can't select */
+.day-cell.booked::after {
+  content: 'Booked';
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1D1912;
+  color: #F3F3E6;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding: 3px 7px;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+/* Show tooltip on parent hover (use :hover on a wrapper — since pointer-events
+   is none on .booked itself, we rely on the parent .days-grid hover trick
+   by re-enabling pointer-events only for tooltip display): */
+.day-cell.booked:hover::after {
+  opacity: 1;
 }
 
 /* Range Selection Styling */
@@ -375,5 +438,83 @@
   .calendar-select-btn {
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
+  }
+}
+
+/* ── Legend ─────────────────────────────────────────────── */
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 0.75rem 1rem 0.25rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.03em;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.available-swatch {
+  background: rgba(187, 133, 37, 0.1);
+  border: 1.5px solid rgba(187, 133, 37, 0.4);
+}
+
+.selected-swatch {
+  background: var(--color-gold-deep);
+  border: 1.5px solid var(--color-gold-deep);
+}
+
+.booked-swatch {
+  background-color: rgba(192, 94, 46, 0.08);
+  border: 1.5px solid rgba(192, 94, 46, 0.3);
+  background-image:
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 0.7px),
+      rgba(192, 94, 46, 0.7) calc(50% - 0.7px),
+      rgba(192, 94, 46, 0.7) calc(50% + 0.7px),
+      transparent calc(50% + 0.7px)
+    ),
+    linear-gradient(
+      to bottom left,
+      transparent calc(50% - 0.7px),
+      rgba(192, 94, 46, 0.7) calc(50% - 0.7px),
+      rgba(192, 94, 46, 0.7) calc(50% + 0.7px),
+      transparent calc(50% + 0.7px)
+    );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* On mobile, keep legend compact */
+@media (max-width: 480px) {
+  .calendar-legend {
+    gap: 0.85rem;
+    padding-top: 0.6rem;
+  }
+  .legend-item {
+    font-size: 0.65rem;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
   }
 }

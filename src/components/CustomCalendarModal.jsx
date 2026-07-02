@@ -101,16 +101,27 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
   // Determine classes for date cell
   const getDayClasses = (date) => {
     if (!date) return 'day-cell empty';
-    if (date < today || isDateBlocked(date)) return 'day-cell disabled';
 
     const dateStr = formatDateString(date);
     const classes = ['day-cell'];
 
+    // Past date (before today) — greyed, not clickable
+    if (date < today) {
+      classes.push('past');
+      return classes.join(' ');
+    }
+
+    // Already booked by someone else — crossed out in brand color
+    if (isDateBlocked(date)) {
+      classes.push('booked');
+      return classes.join(' ');
+    }
+
     const isStart = dateStr === checkIn;
-    const isEnd = dateStr === checkOut;
+    const isEnd   = dateStr === checkOut;
 
     if (isStart) classes.push('range-start');
-    if (isEnd) classes.push('range-end');
+    if (isEnd)   classes.push('range-end');
 
     if (checkInDate && checkOutDate && date > checkInDate && date < checkOutDate) {
       classes.push('range-mid');
@@ -280,6 +291,22 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
             >
               SELECT
             </button>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="calendar-legend">
+          <div className="legend-item">
+            <span className="legend-swatch available-swatch" />
+            <span>Available</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-swatch selected-swatch" />
+            <span>Your stay</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-swatch booked-swatch" />
+            <span>Already booked</span>
           </div>
         </div>
 

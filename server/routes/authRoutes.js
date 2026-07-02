@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { login, register, getMe, googleLogin, forgotPassword, resetPassword, refresh, logout } from '../controllers/authController.js';
+import { login, register, getMe, googleLogin, forgotPassword, resetPassword, refresh, logout, changePassword, updateProfile } from '../controllers/authController.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = Router();
@@ -15,5 +15,9 @@ router.post('/logout', logout);
 
 // Self-profile check (Requires active token)
 router.get('/me', authMiddleware, getMe);
+
+// Profile & security updates
+router.post('/change-password', authMiddleware, changePassword);
+router.put('/update-profile', authMiddleware, updateProfile);
 
 export default router;

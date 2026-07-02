@@ -103,7 +103,10 @@ export default function Header({ page, setPage, authUser, onLogout }) {
             </div>
           ) : (
             <button onClick={() => setPage('portal')} className="user-login-btn" aria-label="User Login">
-              <img src="/user-icon.svg" alt="User Login" />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="4" fill="currentColor" opacity="0.85"/>
+                <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.85"/>
+              </svg>
             </button>
           )}
         </div>
@@ -120,8 +123,11 @@ export default function Header({ page, setPage, authUser, onLogout }) {
             />
           ) : (
             <button onClick={() => { setPage('portal'); setMobileMenuOpen(false); }} className="user-login-btn mobile-login" aria-label="User Login">
-              <img src="/user-icon.svg" alt="User Login" />
-            </button>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="8" r="4" fill="currentColor" opacity="0.85"/>
+                  <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.85"/>
+                </svg>
+              </button>
           )}
           {/* Mobile menu trigger */}
           <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>

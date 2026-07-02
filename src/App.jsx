@@ -249,26 +249,20 @@ export default function App() {
 
   const handleCloseModal = () => {
     setSuccessDetails(null);
-    // Reset form personal info but keep dates/suite
-    setFormData(prev => ({
-      ...prev,
-      firstName: '',
-      lastName: '',
-      email: '',
-      confirmEmail: '',
-      phoneCountryCode: '+254',
-      phone: '',
-      specialRequests: '',
-      hasChildren: false,
-      children: 0,
-      adults: 1
-    }));
-    // Return back to Home page or stay in portal
-    if (page === 'portal') {
+    // Always navigate to the portal so the user can track/pay their pending booking
+    if (authUser) {
+      navigateToPage('portal');
       setPortalTab('dashboard');
     } else {
       navigateToPage('home');
     }
+  };
+
+  // Explicit "Pay Later" — same as close but always goes to portal/dashboard
+  const handlePayLater = () => {
+    setSuccessDetails(null);
+    navigateToPage('portal');
+    setPortalTab('dashboard');
   };
 
   return (
@@ -378,7 +372,11 @@ export default function App() {
 
       {/* Success Modal */}
       {successDetails && (
-        <SuccessModal bookingDetails={successDetails} onClose={handleCloseModal} />
+        <SuccessModal
+          bookingDetails={successDetails}
+          onClose={handleCloseModal}
+          onPayLater={handlePayLater}
+        />
       )}
 
       {/* Guest Auth Modal */}
