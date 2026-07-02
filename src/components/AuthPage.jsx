@@ -296,7 +296,7 @@ export default function AuthPage({ onLoginSuccess }) {
             </button>
 
             <p className="auth-switch">
-              Don't have an account? <button type="button" onClick={() => setMode('register')}>Register</button>
+              Don't have an account? <button type="button" onClick={() => setMode('register')}>Sign up</button>
             </p>
           </div>
         ) : mode === 'forgot' ? (
