@@ -30,7 +30,8 @@ export const env = {
   // Email Configuration
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
-  EMAIL_FROM: process.env.EMAIL_FROM || 'LULU AURELIAN <wantam532@gmail.com>'
+  EMAIL_FROM: process.env.EMAIL_FROM || 'LULU AURELIAN <wantam532@gmail.com>',
+  RESEND_API_KEY: process.env.RESEND_API_KEY
 };
 
 // Check critical variables
