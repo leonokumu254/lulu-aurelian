@@ -1,24 +1,10 @@
-import nodemailer from 'nodemailer';
 import { env } from '../config/env.js';
 import { EMAIL_TEMPLATES } from '../config/constants.js';
 import { db } from '../config/db.js';
 
 class EmailService {
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // upgraded later with STARTTLS
-      requireTLS: true,
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
-      },
-      family: 4 // Force IPv4 to prevent ENETUNREACH on Railway (IPv6 issue)
-    });
+    // Using Resend API (HTTP Port 443), bypassing Railway SMTP blocks.
   }
 
   // ==========================================
@@ -214,22 +200,35 @@ class EmailService {
   // ==========================================
 
   async sendEmail({ to, subject, html, text }) {
-    if (!env.SMTP_USER || !env.SMTP_PASS) {
-      console.warn(`[EMAIL DISPATCHER] Cannot send email. SMTP credentials are not configured in environment.`);
-      return { success: false, error: 'SMTP credentials missing' };
+    if (!env.RESEND_API_KEY) {
+      console.warn(`[EMAIL DISPATCHER] Cannot send email. RESEND_API_KEY is not configured in environment.`);
+      return { success: false, error: 'RESEND_API_KEY missing' };
     }
 
     try {
-      const info = await this.transporter.sendMail({
-        from: env.EMAIL_FROM,
-        to: to,
-        subject: subject,
-        text: text,
-        html: html || text
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: env.EMAIL_FROM,
+          to: typeof to === 'string' ? to.split(',').map(e => e.trim()) : to,
+          subject: subject,
+          html: html || text
+        })
       });
 
-      console.log(`[EMAIL DISPATCHER] Successfully sent to ${to}. Message ID: ${info.messageId}`);
-      return { success: true, messageId: info.messageId };
+      const data = await response.json();
+
+      if (response.ok && data.id) {
+        console.log(`[EMAIL DISPATCHER] Successfully sent to ${to}. Resend ID: ${data.id}`);
+        return { success: true, messageId: data.id };
+      } else {
+        console.error(`[EMAIL DISPATCHER] Resend API Error:`, data);
+        return { success: false, error: data.message || 'Resend API Error' };
+      }
     } catch (error) {
       console.error(`[EMAIL DISPATCHER] Failed to send email to ${to}:`, error);
       return { success: false, error: error.message };
