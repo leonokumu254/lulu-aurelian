@@ -265,11 +265,6 @@ export const EMAIL_TEMPLATES = {
     };
   },
 
-  /**
-   * Content for guest cancellation email.
-   * Sent from: server/services/emailService.js -> sendGuestCancellation(booking)
-   * Triggered by: Guest cancelling their own booking (server/controllers/bookingController.js -> cancelBooking)
-   */
   GUEST_CANCELLATION: (booking) => {
     return {
       text: `Dear ${booking.guest_name}, Your booking ${booking.id.substring(0, 8)} has been cancelled. We'd love to know why.`,
@@ -288,6 +283,32 @@ export const EMAIL_TEMPLATES = {
       button: {
         label: 'Provide Feedback',
         url: 'mailto:info@luluaurelian.co.ke'
+      }
+    };
+  },
+
+  /**
+   * Content for staff/agent onboarding invitation email.
+   * Sent from: server/routes/usersRoutes.js -> POST /api/users/invite
+   */
+  AGENT_INVITATION: (name, role, inviteToken) => {
+    return {
+      text: `Dear ${name}, you have been invited to join Lulu Aurelian Estate as a ${role}.`,
+      title: 'Staff Invitation',
+      subject: `Invitation to join Lulu Aurelian Estate as ${role}`,
+      preheader: `You have been granted secure access to the Manager Portal.`,
+      heroImage: 'https://a0.muscache.com/im/pictures/hosting/Hosting-1563631404126316993/original/a65cf4e4-7976-4589-80e2-47668ea56329.jpeg?im_w=1200',
+      badge: 'Secure Access',
+      headingLine1: 'Welcome',
+      headingLine2: 'Aboard',
+      paragraphs: [
+        `Dear ${name},`,
+        `You have been invited to join the Lulu Aurelian Estate operations team as a <strong>${role}</strong>.`,
+        'Please click the button below to securely accept your invitation and establish your login credentials.'
+      ],
+      button: {
+        label: 'Accept Invitation',
+        url: `https://www.luluaurelian.co.ke/#/auth/reset?token=${inviteToken}`
       }
     };
   }

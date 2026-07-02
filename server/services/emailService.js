@@ -83,9 +83,21 @@ class EmailService {
                   
                   <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
                     <tr>
-                      <td style="padding: 0 10px;"><a href="https://instagram.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: 600;">Instagram</a></td>
-                      <td style="padding: 0 10px;"><a href="https://tiktok.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: 600;">TikTok</a></td>
-                      <td style="padding: 0 10px;"><a href="https://facebook.com" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: 600;">Facebook</a></td>
+                      <td style="padding: 0 10px;">
+                        <a href="https://instagram.com" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios-filled/50/cfa873/instagram-new.png" alt="Instagram" width="24" height="24" style="display: block; border: 0;" />
+                        </a>
+                      </td>
+                      <td style="padding: 0 10px;">
+                        <a href="https://tiktok.com" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios-filled/50/cfa873/tiktok.png" alt="TikTok" width="24" height="24" style="display: block; border: 0;" />
+                        </a>
+                      </td>
+                      <td style="padding: 0 10px;">
+                        <a href="https://facebook.com" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios-filled/50/cfa873/facebook-new.png" alt="Facebook" width="24" height="24" style="display: block; border: 0;" />
+                        </a>
+                      </td>
                     </tr>
                   </table>
 
@@ -416,6 +428,24 @@ class EmailService {
 
     return this.sendEmail({
       to: booking.guest_email,
+      subject: data.subject,
+      text: data.text,
+      html
+    });
+  }
+
+  async sendAgentInvitation(email, name, role, inviteToken) {
+    const data = EMAIL_TEMPLATES.AGENT_INVITATION(name, role, inviteToken);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    return this.sendEmail({
+      to: email,
       subject: data.subject,
       text: data.text,
       html
