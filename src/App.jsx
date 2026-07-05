@@ -172,6 +172,7 @@ export default function App() {
           !el.closest('.gallery-modal-overlay') &&
           !el.closest('.booking-view-container') &&
           !el.closest('.lightbox-overlay') &&
+          !el.closest('.sm-overlay') &&
           !el.closest('footer')
         ) {
           el.setAttribute('data-aos', 'fade-up');

@@ -30,7 +30,8 @@ class EmailService {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
       <style>
-        body, p, a, td, span, strong, ul, li, div, h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
+        body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', serif !important; font-weight: 500 !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -84,18 +85,28 @@ class EmailService {
                   <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
                     <tr>
                       <td style="padding: 0 10px;">
-                        <a href="https://instagram.com" style="text-decoration: none;">
-                          <img src="https://img.icons8.com/ios-filled/50/cfa873/instagram-new.png" alt="Instagram" width="24" height="24" style="display: block; border: 0;" />
+                        <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios/50/cfa873/instagram-new.png" alt="Instagram" width="24" height="24" style="display: block; border: 0;" />
                         </a>
                       </td>
                       <td style="padding: 0 10px;">
-                        <a href="https://tiktok.com" style="text-decoration: none;">
-                          <img src="https://img.icons8.com/ios-filled/50/cfa873/tiktok.png" alt="TikTok" width="24" height="24" style="display: block; border: 0;" />
+                        <a href="https://www.facebook.com/share/1EY74Cxf23/" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios/50/cfa873/facebook-new.png" alt="Facebook" width="24" height="24" style="display: block; border: 0;" />
                         </a>
                       </td>
                       <td style="padding: 0 10px;">
-                        <a href="https://facebook.com" style="text-decoration: none;">
-                          <img src="https://img.icons8.com/ios-filled/50/cfa873/facebook-new.png" alt="Facebook" width="24" height="24" style="display: block; border: 0;" />
+                        <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios/50/cfa873/tiktok.png" alt="TikTok" width="24" height="24" style="display: block; border: 0;" />
+                        </a>
+                      </td>
+                      <td style="padding: 0 10px;">
+                        <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios/50/cfa873/airbnb.png" alt="Airbnb" width="24" height="24" style="display: block; border: 0;" />
+                        </a>
+                      </td>
+                      <td style="padding: 0 10px;">
+                        <a href="https://www.booking.com/Share-F7S7E5V" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios/50/cfa873/booking.png" alt="Booking.com" width="24" height="24" style="display: block; border: 0;" />
                         </a>
                       </td>
                     </tr>

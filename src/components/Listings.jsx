@@ -109,7 +109,7 @@ function ListingImageCarousel({ listing, onClick }) {
       <div className="images-mosaic">
         {listing.previewImages.slice(0, 5).map((img, i) => (
           <div key={i} className={`mosaic-item item-${i}`}>
-            <img src={img} alt={`${listing.name} view ${i + 1}`} className="listing-image" />
+            <img src={img} alt={`Lulu Aurelian Estate - ${listing.name} Airbnb in Nyeri, Kenya - view ${i + 1}`} className="listing-image" />
           </div>
         ))}
         <button className="floating-view-btn">
@@ -123,7 +123,7 @@ function ListingImageCarousel({ listing, onClick }) {
         <div className="carousel-scroll" onScroll={handleScroll} ref={scrollRef}>
           {listing.previewImages.map((img, i) => (
             <div key={i} className="carousel-item">
-              <img src={img} alt={`${listing.name} mobile view ${i + 1}`} className="listing-image" />
+              <img src={img} alt={`Lulu Aurelian Estate - ${listing.name} Airbnb in Nyeri, Kenya - view ${i + 1}`} className="listing-image" />
             </div>
           ))}
         </div>
