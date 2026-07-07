@@ -292,19 +292,21 @@ export const EMAIL_TEMPLATES = {
    * Sent from: server/routes/usersRoutes.js -> POST /api/users/invite
    */
   AGENT_INVITATION: (name, role, inviteToken) => {
+    const displayRole = role === 'Manager' ? 'Primary Host' : 'Co-host';
     return {
-      text: `Dear ${name}, you have been invited to join Lulu Aurelian Estate as a ${role}.`,
-      title: 'Staff Invitation',
-      subject: `Invitation to join Lulu Aurelian Estate as ${role}`,
-      preheader: `You have been granted secure access to the Manager Portal.`,
+      text: `Dear ${name}, you have been invited to co-manage listings on Lulu Aurelian Estate.`,
+      title: 'Co-host Invitation',
+      subject: `Invitation to co-host on Lulu Aurelian Estate`,
+      preheader: `You have been invited to help manage our listings.`,
       heroImage: 'https://a0.muscache.com/im/pictures/hosting/Hosting-1563631404126316993/original/a65cf4e4-7976-4589-80e2-47668ea56329.jpeg?im_w=1200',
-      badge: 'Secure Access',
-      headingLine1: 'Welcome',
-      headingLine2: 'Aboard',
+      badge: 'Co-host Request',
+      headingLine1: 'Co-host',
+      headingLine2: 'Invitation',
       paragraphs: [
         `Dear ${name},`,
-        `You have been invited to join the Lulu Aurelian Estate operations team as a <strong>${role}</strong>.`,
-        'Please click the button below to securely accept your invitation and establish your login credentials.'
+        `You have been invited to co-host listings on Lulu Aurelian Estate as a <strong>${displayRole}</strong>.`,
+        'As a co-host, you will be able to help manage reservations, oversee operations, and ensure guests have a flawless experience.',
+        'Please review this request. If you agree, click the button below to accept your invitation and set up your access permissions.'
       ],
       button: {
         label: 'Accept Invitation',

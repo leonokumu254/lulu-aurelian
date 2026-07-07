@@ -60,6 +60,22 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
   const [newAgent, setNewAgent] = useState({ name: '', email: '', role: 'Agent' });
   const [showAddAgent, setShowAddAgent] = useState(false);
 
+  const [bookings, setBookings] = useState([]);
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings`, {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) setBookings(data);
+        }
+      } catch (err) {}
+    };
+    fetchBookings();
+  }, []);
+
   const [reviews, setReviews] = useState([]);
   useEffect(() => {
     const fetchReviews = async () => {
@@ -87,6 +103,40 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
   }, []);
 
   const pendingReviewsCount = reviews.filter(r => r.status === 'Pending').length;
+
+  const cohosts = team.filter(t => t.role !== 'GUEST');
+  
+  // Combine registered guests and guests from bookings
+  const unifiedGuests = [];
+  const seenEmails = new Set();
+
+  team.filter(t => t.role === 'GUEST').forEach(g => {
+    unifiedGuests.push({
+      id: g.id,
+      name: g.name,
+      email: g.email,
+      avatar: g.avatar || '/user-icon.svg',
+      type: 'Registered'
+    });
+    seenEmails.add(g.email.toLowerCase());
+  });
+
+  bookings.forEach(b => {
+    if (b.guest_email && !seenEmails.has(b.guest_email.toLowerCase())) {
+      unifiedGuests.push({
+        id: `booking-${b.id}`,
+        name: b.guest_name || 'Unknown Guest',
+        email: b.guest_email,
+        avatar: '/user-icon.svg',
+        type: 'Booking Guest'
+      });
+      seenEmails.add(b.guest_email.toLowerCase());
+    }
+  });
+
+  const calculatedAvgRating = reviews.length > 0
+    ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+    : '0.0';
 
   const handleAddAgent = async (e) => {
     e.preventDefault();
@@ -189,21 +239,21 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
           <div className="stat-icon"><TrendingUp size={24} /></div>
           <div className="stat-details">
             <h3>Bookings</h3>
-            <p>142</p>
+            <p>{bookings.length}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon"><Users size={24} /></div>
           <div className="stat-details">
-            <h3>Active Guests</h3>
-            <p>28</p>
+            <h3>Total Guests</h3>
+            <p>{unifiedGuests.length}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon"><Star size={24} /></div>
           <div className="stat-details">
             <h3>Avg Rating</h3>
-            <p>4.9</p>
+            <p>{calculatedAvgRating}</p>
           </div>
         </div>
       </div>
@@ -265,16 +315,12 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
             {/* TEAM MANAGER SECTION */}
             <div className="team-col glass" style={{ maxWidth: '800px', margin: '0 auto' }}>
               <div className="column-header-row">
-                <h3>Staff Access Roster</h3>
-                <button onClick={() => setShowAddAgent(!showAddAgent)} className="btn-add-agent-trigger">
-                  <UserPlus size={16} />
-                  <span>Onboard Agent</span>
-                </button>
+                <h3 className="cohost-title">Co-hosts</h3>
               </div>
 
               {showAddAgent && (
                 <form onSubmit={handleAddAgent} className="add-agent-form card-border animate-slide-up">
-                  <h4>New Profile Onboarding</h4>
+                  <h4>Invite a co-host</h4>
                   <div className="form-group-row">
                     <input
                       type="text"
@@ -294,42 +340,73 @@ export default function ManagerPortal({ user, managerTab = 'pricing' }) {
                       value={newAgent.role}
                       onChange={(e) => setNewAgent({ ...newAgent, role: e.target.value })}
                     >
-                      <option value="Agent">Agent</option>
-                      <option value="Manager">Manager</option>
+                      <option value="Agent">Listing owner</option>
+                      <option value="Manager">Primary Host</option>
                     </select>
                   </div>
                   <div className="form-actions">
                     <button type="button" onClick={() => setShowAddAgent(false)} className="btn-agent-cancel">Cancel</button>
-                    <button type="submit" className="btn-agent-submit">Confirm Profile</button>
+                    <button type="submit" className="btn-agent-submit">Send Invitation</button>
                   </div>
                 </form>
               )}
 
-              <div className="team-list">
-                {team.map(member => (
-                  <div key={member.id} className="team-member-card card-border">
-                    <div className="member-left">
-                      <img src={member.avatar} alt={member.name} className="member-avatar" />
-                      <div>
-                        <h4>{member.name}</h4>
-                        <p>{member.email}</p>
-                      </div>
+              <div className="cohost-grid">
+                {cohosts.map(member => (
+                  <div key={member.id} className="cohost-card">
+                    <img src={member.avatar} alt={member.name} className="cohost-avatar" />
+                    
+                    <div className="cohost-info">
+                      <span className="cohost-role-text" style={{ color: member.role === 'Manager' ? '#10B981' : '#717171' }}>
+                        {member.role === 'Manager' ? 'Primary Host' : 'Guest'}
+                      </span>
+                      <h4 className="cohost-name">{member.name}</h4>
+                      <span className="cohost-access-level">
+                        {member.role === 'Manager' ? 'Full access • 100% per booking' : 'Limited access'}
+                      </span>
                     </div>
 
-                    <div className="member-right">
-                      <div className="member-role-badge">
-                        {member.role === 'Manager' ? <ShieldCheck size={14} className="shield" /> : <Mail size={14} />}
-                        <span>{member.role}</span>
-                      </div>
+                    {member.email !== 'manager@lulu.com' && (
+                      <button onClick={() => handleRemoveAgent(member.id)} className="btn-cohost-remove" title="Remove co-host">
+                        <Trash size={14} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                <button className="cohost-invite-card" onClick={() => setShowAddAgent(!showAddAgent)}>
+                  <div className="invite-icon-wrapper">
+                    <Plus size={24} />
+                  </div>
+                  <span className="invite-text">Invite a co-host</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-                      {member.email !== 'manager@lulu.com' && (
-                        <button onClick={() => handleRemoveAgent(member.id)} className="btn-member-revoke" title="Revoke access tokens">
-                          <Trash size={14} />
-                        </button>
-                      )}
+        {managerTab === 'guests' && (
+          <div className="team-moderation-view animate-fade-in">
+            <div className="team-col glass" style={{ maxWidth: '900px', margin: '0 auto' }}>
+              <div className="column-header-row">
+                <h3 className="cohost-title">Guest Directory <span style={{ color: '#BB8525', fontSize: '1rem', marginLeft: '8px', background: 'rgba(187, 133, 37, 0.1)', padding: '2px 8px', borderRadius: '12px' }}>{unifiedGuests.length} Total</span></h3>
+              </div>
+              
+              <div className="cohost-grid">
+                {unifiedGuests.map(guest => (
+                  <div key={guest.id} className="cohost-card">
+                    <img src={guest.avatar} alt={guest.name} className="cohost-avatar" />
+                    
+                    <div className="cohost-info">
+                      <span className="cohost-role-text" style={{ color: '#BB8525' }}>{guest.type}</span>
+                      <h4 className="cohost-name">{guest.name}</h4>
+                      <span className="cohost-access-level">{guest.email}</span>
                     </div>
                   </div>
                 ))}
+                {unifiedGuests.length === 0 && (
+                   <p style={{ color: '#717171', padding: '20px' }}>No guests found.</p>
+                )}
               </div>
             </div>
           </div>

@@ -315,83 +315,89 @@ Pearl Concierge Team`;
           </button>
         </div>
       ) : (
-        /* Triage Grid Queue */
-        <div className="triage-grid">
-          {filteredBookings.length > 0 ? (
-            filteredBookings.map(b => {
-              const ttl = getTTL(b);
-              return (
-                <div key={b.id} className={`triage-card glass ${b.status.toLowerCase()}-border`}>
-                  <div className="card-top">
-                    <span className="booking-ref">{b.id.substring(0, 8)}</span>
-                    <span className="booking-time">{b.submitted}</span>
-                  </div>
-
-                  <div className="guest-info">
-                    <h3>{b.guest}</h3>
-                    <p className="guest-phone">{b.phone}</p>
-                  </div>
-
-                  <div className="booking-details">
-                    <div className="detail-row">
-                      <span className="detail-lbl">Suite:</span>
-                      <span className="detail-val suite-name">{getSuiteName(b.suite)}</span>
+        /* Bookings Data Table */
+        <div className="bookings-table-wrapper glass">
+          <table className="bookings-table">
+            <thead>
+              <tr>
+                <th>Booking Ref</th>
+                <th>Guest Details</th>
+                <th>Suite & Period</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBookings.length > 0 ? (
+                filteredBookings.map(b => {
+                  const ttl = getTTL(b);
+                  return (
+                    <tr key={b.id} className={`${b.status.toLowerCase()}-row`}>
+                      <td className="ref-cell">
+                        <span className="booking-ref">{b.id.substring(0, 8)}</span>
+                        <span className="booking-time">{b.submitted}</span>
+                      </td>
+                      <td className="guest-cell">
+                        <span className="guest-name">{b.guest}</span>
+                        <span className="guest-phone">{b.phone}</span>
+                      </td>
+                      <td className="period-cell">
+                        <span className="suite-name">{getSuiteName(b.suite)}</span>
+                        <span className="period-dates">{formatDateBeautifully(b.checkIn)} - {formatDateBeautifully(b.checkOut)}</span>
+                      </td>
+                      <td className="status-cell">
+                        <div className="badge-col">
+                          <span className={`status-pill ${b.status.toLowerCase()}`}>
+                            {b.rawStatus === 'APPROVED' ? 'Awaiting Payment' : b.status}
+                          </span>
+                          
+                          {b.rawStatus === 'APPROVED' && ttl !== null && (
+                            <span className={`ttl-badge ${ttl < 14400 ? 'critical' : ''}`}>
+                              <Clock size={12} className="clock-icon" />
+                              {formatTTL(ttl)}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="actions-cell">
+                        <div className="table-actions">
+                          {b.rawStatus === 'APPROVED' && (
+                            <button 
+                              onClick={() => handleDecline(b.id)} 
+                              className="btn-decline-icon"
+                              title="Decline Reservation"
+                              disabled={actionLoading === b.id}
+                            >
+                              <X size={16} />
+                            </button>
+                          )}
+                          
+                          {(b.rawStatus === 'PENDING' || b.rawStatus === 'APPROVED' || b.rawStatus === 'PAID') && (
+                            <button 
+                              onClick={() => openWhatsAppModal(b)} 
+                              className="btn-whatsapp-text"
+                            >
+                              <MessageSquare size={16} />
+                              <span>Dispatch WhatsApp</span>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="5">
+                    <div className="empty-queue-card">
+                      <RefreshCw size={36} className="empty-icon" />
+                      <p>No reservations matching the active criteria.</p>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-lbl">Period:</span>
-                      <span className="detail-val">{formatDateBeautifully(b.checkIn)} to {formatDateBeautifully(b.checkOut)}</span>
-                    </div>
-                  </div>
-
-                  <div className="card-actions-wrapper">
-                    {/* Status Badges & TTL */}
-                    <div className="badge-row">
-                      <span className={`status-pill ${b.status.toLowerCase()}`}>
-                        {b.rawStatus === 'APPROVED' ? 'Awaiting Payment' : b.status}
-                      </span>
-                      
-                      {b.rawStatus === 'APPROVED' && ttl !== null && (
-                        <span className={`ttl-badge ${ttl < 14400 ? 'critical' : ''}`}>
-                          <Clock size={12} className="clock-icon" />
-                          {formatTTL(ttl)}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Operations Buttons */}
-                    <div className="action-buttons">
-                      {b.rawStatus === 'APPROVED' && (
-                        <button 
-                          onClick={() => handleDecline(b.id)} 
-                          className="btn-decline"
-                          title="Decline Reservation"
-                          disabled={actionLoading === b.id}
-                        >
-                          <X size={16} />
-                          <span>{actionLoading === b.id ? 'Processing...' : 'Decline'}</span>
-                        </button>
-                      )}
-                      
-                      {(b.rawStatus === 'PENDING' || b.rawStatus === 'APPROVED' || b.rawStatus === 'PAID') && (
-                        <button 
-                          onClick={() => openWhatsAppModal(b)} 
-                          className="btn-whatsapp"
-                        >
-                          <MessageSquare size={16} />
-                          <span>Dispatch WhatsApp</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="empty-queue-card glass">
-              <RefreshCw size={36} className="empty-icon" />
-              <p>No reservations matching the active criteria.</p>
-            </div>
-          )}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
 
