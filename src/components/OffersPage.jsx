@@ -33,7 +33,7 @@ export default function OffersPage({ setPage }) {
                 <button className="offer-btn-book" onClick={() => setPage('booking', { offerId: offer.id })}>
                   Book Now
                 </button>
-                <a href="https://wa.me/254111284609" target="_blank" rel="noreferrer" className="offer-whatsapp-btn">
+                <a href="https://wa.me/254112299384" target="_blank" rel="noreferrer" className="offer-whatsapp-btn">
                   <Phone size={18} />
                 </a>
               </div>

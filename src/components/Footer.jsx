@@ -64,7 +64,7 @@ export default function Footer({ setPage }) {
           <ul className="footer-links-list">
             <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Skyview Hideaway</button></li>
             <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Cocoa Retreat</button></li>
-             
+            <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Neema</button></li>
           </ul>
         </div>
 

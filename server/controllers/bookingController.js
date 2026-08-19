@@ -236,13 +236,20 @@ export const initiatePayment = async (req, res, next) => {
       });
     }
 
-    // ── Determine amount (base + optional peak surcharge) ────────────────
+    // ── Determine amount (base + optional length discount & peak surcharge)
     const BASE_PRICE    = booking.unit_id === 'skyview' ? 5500 : 5000;
     const nights        = Math.round(
       (new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)
     );
+    const baseCost      = BASE_PRICE * nights;
+    let discountPercent = 0;
+    if (nights >= 30) discountPercent = 20;
+    else if (nights >= 7) discountPercent = 10;
+    else if (nights >= 3) discountPercent = 5;
+    const lengthDiscountValue = baseCost * (discountPercent / 100);
+
     const surcharge     = booking.has_peak_surcharge ? PEAK_GUEST_SURCHARGE : 0;
-    const totalAmount   = (BASE_PRICE * nights) + surcharge;
+    const totalAmount   = Math.max(0, baseCost - lengthDiscountValue) + surcharge;
 
     // ── Call Stanbic STK Push ────────────────────────────────────────────
     const { stanbicService } = await import('../services/stanbicService.js');

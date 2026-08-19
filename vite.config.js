@@ -2,9 +2,28 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import autoprefixer from 'autoprefixer'
+import { resolve } from 'path'
+
+// Rewrite clean URLs to .html files in dev server
+function unitPageRoutes() {
+  return {
+    name: 'unit-page-routes',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const cleanUrls = ['/skyview', '/cocoa', '/neema'];
+        if (cleanUrls.includes(req.url)) {
+          req.url = `${req.url}.html`;
+        }
+        next();
+      });
+    }
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig({
+  appType: 'mpa',
+
   css: {
     postcss: {
       plugins: [
@@ -13,6 +32,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    unitPageRoutes(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -35,6 +55,17 @@ export default defineConfig({
       }
     })
   ],
+
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        skyview: resolve(__dirname, 'skyview.html'),
+        cocoa: resolve(__dirname, 'cocoa.html'),
+        neema: resolve(__dirname, 'neema.html'),
+      },
+    },
+  },
 
   server: {
     proxy: {

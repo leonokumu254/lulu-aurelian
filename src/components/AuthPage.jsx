@@ -237,7 +237,16 @@ export default function AuthPage({ onLoginSuccess }) {
 
         {mode === 'login' ? (
           <div className="auth-view animate-fade-in">
-            <h2>Welcome back, glad to see you</h2> 
+            {new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
+              <>
+                <h2>Sign in to secure your reservation</h2>
+                <p className="auth-checkout-tip">
+                  Access exclusive guest privileges and finalize your stay at Lulu Aurelian.
+                </p>
+              </>
+            ) : (
+              <h2>Welcome back, glad to see you</h2>
+            )}
             
             {error && <div className="auth-error">{error}</div>}
 
@@ -381,7 +390,16 @@ export default function AuthPage({ onLoginSuccess }) {
           </div>
         ) : (
           <div className="auth-view animate-fade-in">
-            <h2>Welcome, Create your new account</h2>
+            {new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
+              <>
+                <h2>Create an account to secure your booking</h2>
+                <p className="auth-checkout-tip">
+                  Join our guest circle to finalize your stay and enjoy bespoke reservation support.
+                </p>
+              </>
+            ) : (
+              <h2>Welcome, Create your new account</h2>
+            )}
             
             {error && <div className="auth-error">{error}</div>}
 

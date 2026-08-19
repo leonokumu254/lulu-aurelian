@@ -14,6 +14,11 @@ const SUITES_METADATA = {
     name: 'Cocoa Retreat',
     price: 5000,
     image: '/assets/cocoa/cocoa_1.jpg'
+  },
+  neema: {
+    name: 'Neema',
+    price: 5000,
+    image: '/assets/Neema/neema_1.jpeg'
   }
 };
 
@@ -24,7 +29,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
 
   React.useEffect(() => {
     const handlePricingUpdate = () => {
-      setPrices({ skyview: getSuitePrice('skyview'), cocoa: getSuitePrice('cocoa') });
+      setPrices({ skyview: getSuitePrice('skyview'), cocoa: getSuitePrice('cocoa'), neema: getSuitePrice('neema') });
     };
     window.addEventListener('pricingUpdated', handlePricingUpdate);
     return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
@@ -312,14 +317,15 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
           ) : nights === 0 ? 'Select Dates to Book' : 'Reserve Now!'}
         </button>
 
+        {(formData.suite === 'skyview' || formData.suite === 'cocoa') && (
         <div className="external-booking-channels-summary">
           <span className="channels-label">Or book on your favorite platform:</span>
-          <div className="channels-buttons">
+          <div className="channels-links">
             <a
               href={formData.suite === 'skyview' ? 'https://www.airbnb.com/h/pearlapartmentsnyeri' : 'https://www.airbnb.com/h/cocoapearlapartment'}
               target="_blank"
               rel="noopener noreferrer"
-              className="channel-btn airbnb-btn"
+              className="channel-link channel-airbnb"
               title="Book via Airbnb"
             >
               <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" className="channel-icon" />
@@ -329,13 +335,14 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
               href={formData.suite === 'skyview' ? 'https://www.booking.com/Share-F7S7E5V' : 'https://www.booking.com/Share-KWW4dvn'}
               target="_blank"
               rel="noopener noreferrer"
-              className="channel-btn booking-btn"
+              className="channel-link channel-booking"
               title="Book via Booking.com"
             >
               <img src="/bookingcom-logo-svgrepo-com.svg" alt="Booking.com" className="channel-icon" />
             </a>
           </div>
         </div>
+        )}
 
       </div>
     </div>

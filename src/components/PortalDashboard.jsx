@@ -16,6 +16,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
   const [viewMode, setViewMode] = useState('operational'); // operational (Agent), administrative (Manager), guest
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(!user);
+  const [guestsCount, setGuestsCount] = useState(0);
 
   // Check for existing JWT on mount – auto-login if valid
   useEffect(() => {
@@ -65,6 +66,17 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
         setViewMode('guest');
       } else {
         setViewMode('operational');
+      }
+
+      if (user.role === 'manager' || user.role === 'agent') {
+        fetch(`${import.meta.env.VITE_API_URL || ''}/api/users`, { credentials: 'include' })
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              setGuestsCount(data.filter(u => u.role === 'GUEST').length);
+            }
+          })
+          .catch(err => console.error('Failed to fetch guests count', err));
       }
     }
   }, [user]);
@@ -138,6 +150,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               >
                 <Star size={20} />
                 <span>Moderation</span>
+              </button>
+              <button 
+                className={`nav-item ${viewMode === 'guests' ? 'active' : ''}`}
+                onClick={() => { setViewMode('guests'); setMobileMenuOpen(false); }}
+              >
+                <User size={20} />
+                <span>Guest Directory</span>
               </button>
               <button 
                 className={`nav-item ${viewMode === 'operational' ? 'active' : ''}`}
@@ -237,7 +256,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               <Menu size={24} />
             </button>
             <h1>
-              {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Suite PINs' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
+              {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Suite PINs' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
             </h1>
             <button className="btn-home" onClick={() => { window.location.hash = '#/'; }}>
               <Home size={18} />
@@ -287,7 +306,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               <SuitePasscodes />
             ) : viewMode === 'cms' ? (
               <ContentStudio user={user} />
-            ) : (viewMode === 'pricing' || viewMode === 'team' || viewMode === 'moderation') ? (
+            ) : (viewMode === 'pricing' || viewMode === 'team' || viewMode === 'moderation' || viewMode === 'guests') ? (
               <ManagerPortal user={user} managerTab={viewMode} />
             ) : (
               <div className="portal-empty-state">

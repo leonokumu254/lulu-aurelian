@@ -11,5 +11,8 @@ export const getSuitePrice = (suiteId) => {
   } catch (e) {
     console.error('Error reading pricing from localStorage', e);
   }
-  return suiteId === 'skyview' ? 5500 : 5000;
+  
+  if (suiteId === 'skyview') return 5500;
+  if (suiteId === 'neema') return 5000;
+  return 5000; // default for cocoa
 };

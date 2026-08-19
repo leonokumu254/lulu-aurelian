@@ -195,3 +195,65 @@
     gap: 0.85rem;
   }
 }
+
+.external-booking-channels-summary {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.channels-label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.channels-links {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.channel-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.channel-link img, .channel-icon {
+  width: 100px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.channel-airbnb {
+  background-color: #fff0f2;
+  border: 1px solid #ffcdd2;
+  color: #ff385c;
+}
+.channel-airbnb:hover {
+  background-color: #ffe0e6;
+  border-color: #ffb3c1;
+}
+
+.channel-booking {
+  background-color: #f0f5fa;
+  border: 1px solid #bbdefb;
+  color: #003580;
+}
+.channel-booking:hover {
+  background-color: #e1edf8;
+  border-color: #90caf9;
+}
