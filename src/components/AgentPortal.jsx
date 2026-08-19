@@ -179,13 +179,13 @@ Details:
 To secure your dates, please proceed to paying the required deposit. We will process your booking immediately upon receipt.
 
 Warm regards,
-Pearl Concierge Team`;
+LuluAurelian Concierge Team`;
     } else if (booking.rawStatus === 'PAID' || booking.rawStatus === 'COMPLETED') {
       const isCocoa = booking.suite === 'cocoa';
-      const wifiNet = isCocoa ? 'LULU_COCOA' : 'LULU_SKYVIEW';
+      const wifiNet = isCocoa ? 'LULU_COCOA' : 'PEARL_16';
       const wifiPass = isCocoa ? 'Cocoa@2026' : 'Skyview@2026';
-      const houseNo = isCocoa ? 'C-12' : 'S-45';
-      const floor = isCocoa ? '1st Floor' : '4th Floor';
+      const houseNo = isCocoa ? 's-19' : 'S-16';
+      const floor = isCocoa ? '1st Floor' : '6th Floor';
 
       msg = `Dear ${booking.guest}, your payment has been CONFIRMED! Welcome to ${getSuiteName(booking.suite)} at Pearl Apartments (Lulu Aurelian Estate).
 
@@ -209,7 +209,7 @@ Details:
 Please complete your deposit payment within the next 3 hours to secure your dates.
 
 Warm regards,
-Pearl Concierge Team`;
+LuluAurelian Concierge Team`;
     }
 
     setSelectedBooking(booking);

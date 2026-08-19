@@ -21,6 +21,8 @@ import PortalDashboard from './components/PortalDashboard';
 import AuthPage from './components/AuthPage';
 import GuestAuthModal from './components/GuestAuthModal';
 import BookingStatusWidget from './components/BookingStatusWidget';
+import CheckoutPage from './components/CheckoutPage';
+
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -88,6 +90,27 @@ export default function App() {
     checkSession();
   }, []);
 
+  // Handle redirect to checkout after login success if query params dictate it
+  useEffect(() => {
+    if (authUser) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectTo = searchParams.get('redirect');
+      if (redirectTo === 'checkout') {
+        const suite = searchParams.get('suite') || 'skyview';
+        const checkIn = searchParams.get('checkIn') || '';
+        const checkOut = searchParams.get('checkOut') || '';
+        const adults = parseInt(searchParams.get('adults'), 10) || 1;
+        const children = parseInt(searchParams.get('children'), 10) || 0;
+
+        // Clear query parameters visually so they don't clutter the url
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Redirect to checkout
+        navigateToPage('checkout', { suite, checkIn, checkOut, adults, children });
+      }
+    }
+  }, [authUser]);
+
   const handleLogout = async () => {
     try {
       await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/logout`, { method: 'POST', credentials: 'include' });
@@ -112,29 +135,40 @@ export default function App() {
     const handleRoute = () => {
       const hash = window.location.hash;
       if (hash.startsWith('#/booking')) {
-        setPage('booking');
-        
         // Parse query params if available
         const queryIdx = hash.indexOf('?');
+        let checkInParam = '';
+        let checkOutParam = '';
         if (queryIdx !== -1) {
           const queryStr = hash.substring(queryIdx + 1);
           const params = new URLSearchParams(queryStr);
-          
-          const suiteParam = params.get('suite');
-          const checkInParam = params.get('checkIn');
-          const checkOutParam = params.get('checkOut');
-          const offerIdParam = params.get('offerId');
+          checkInParam = params.get('checkIn');
+          checkOutParam = params.get('checkOut');
           
           setFormData(prev => ({
             ...prev,
-            suite: (suiteParam === 'skyview' || suiteParam === 'cocoa') ? suiteParam : prev.suite,
             checkIn: checkInParam || prev.checkIn,
-            checkOut: checkOutParam || prev.checkOut,
-            offerId: offerIdParam ? parseInt(offerIdParam, 10) : prev.offerId
+            checkOut: checkOutParam || prev.checkOut
           }));
         }
+
+        // Set search params on the home page so listings can read them
+        const searchParams = new URLSearchParams(window.location.search);
+        if (checkInParam) searchParams.set('checkIn', checkInParam);
+        if (checkOutParam) searchParams.set('checkOut', checkOutParam);
+        const newUrl = `${window.location.pathname}?${searchParams.toString()}#/`;
+        window.history.pushState({}, '', newUrl);
+
+        setPage('home');
+        setTimeout(() => {
+          const el = document.getElementById('suites');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      } else if (hash.startsWith('#/checkout')) {
+        setPage('checkout');
       } else if (hash.startsWith('#/portal') || hash.startsWith('#/dashboard')) {
         setPage('portal');
+
       } else if (hash.startsWith('#/offers')) {
         setPage('offers');
       } else {
@@ -222,6 +256,21 @@ export default function App() {
       
       window.location.hash = `#/booking${queryStr}`;
       window.scrollTo(0, 0);
+    } else if (newPage === 'checkout') {
+      const suite = params.suite || formData.suite;
+      const checkIn = params.checkIn || formData.checkIn;
+      const checkOut = params.checkOut || formData.checkOut;
+      const adults = params.adults || formData.adults;
+      const children = params.children || formData.children;
+      
+      let queryStr = `?suite=${suite}`;
+      if (checkIn) queryStr += `&checkIn=${checkIn}`;
+      if (checkOut) queryStr += `&checkOut=${checkOut}`;
+      if (adults) queryStr += `&adults=${adults}`;
+      if (children) queryStr += `&children=${children}`;
+      
+      window.location.hash = `#/checkout${queryStr}`;
+      window.scrollTo(0, 0);
     } else if (newPage === 'portal') {
       window.location.hash = '#/portal';
       window.scrollTo(0, 0);
@@ -234,13 +283,29 @@ export default function App() {
   // Callback from Hero search
   const handleHeroSearch = (checkIn, checkOut) => {
     setFormData(prev => ({ ...prev, checkIn, checkOut }));
-    navigateToPage('booking', { checkIn, checkOut });
+    
+    // Set query params in the browser history
+    const searchParams = new URLSearchParams(window.location.search);
+    if (checkIn) searchParams.set('checkIn', checkIn);
+    if (checkOut) searchParams.set('checkOut', checkOut);
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}${window.location.hash || '#/'}`;
+    window.history.pushState({}, '', newUrl);
+
+    const el = document.getElementById('suites');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Callback from Listings cards
   const handleBookSelect = (suiteId) => {
     setFormData(prev => ({ ...prev, suite: suiteId }));
-    navigateToPage('booking', { suite: suiteId });
+    
+    // Scroll smoothly to suites listing section
+    const el = document.getElementById('suites');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Callback on final booking request
@@ -273,8 +338,8 @@ export default function App() {
         <meta name="description" content="Lulu Aurelian Estate is the epitome of luxury penthouse living and refined hospitality in East Africa. Our estate offers an unparalleled blend of modern elegance and bespoke services, featuring meticulously designed suites like the Cocoa Suite and Skyview Suite, both offering breathtaking panoramic views. Guests experience a world-class stay with dedicated concierge assistance, gourmet dining options, premium amenities, and immaculate housekeeping services. Whether you are seeking a peaceful retreat, a romantic getaway, or an executive stay, our property ensures an unforgettable experience tailored to your exact desires. From seamless direct bookings and integrated payment gateways to secure user portals for both guests and management, Lulu Aurelian Estate is committed to providing seamless convenience and sophisticated comfort. Discover opulence, tranquility, and exclusivity at Lulu Aurelian Estate, where every detail is crafted to exceed your highest expectations in modern hospitality." />
       </Helmet>
 
-      {/* Global Header Navigation - Hidden on Portal for full dashboard layout */}
-      {page !== 'portal' && (
+      {/* Global Header Navigation - Hidden on Portal & Checkout for full dashboard / transactional layout */}
+      {page !== 'portal' && page !== 'checkout' && (
         <Header page={page} setPage={(p, params) => navigateToPage(p, params)} authUser={authUser} onLogout={handleLogout} />
       )}
 
@@ -315,6 +380,8 @@ export default function App() {
         </div>
       ) : page === 'offers' ? (
         <OffersPage setPage={(p, params) => navigateToPage(p, params)} />
+      ) : page === 'checkout' ? (
+        <CheckoutPage user={authUser} setUser={setAuthUser} onLogout={handleLogout} />
       ) : (
         <div className="booking-view-container container">
           <div className="booking-header-offset" />
@@ -361,7 +428,7 @@ export default function App() {
       )}
 
       {/* Shared Persistent Footer & Location */}
-      {page !== 'portal' && (
+      {page !== 'portal' && page !== 'checkout' && (
         <>
           <Location />
           <Footer setPage={(p, params) => navigateToPage(p, params)} />
@@ -369,7 +436,7 @@ export default function App() {
       )}
 
       {/* Shared WhatsApp floating bubble */}
-      {page !== 'portal' && <WhatsAppIcon />}
+      {page !== 'portal' && page !== 'checkout' && <WhatsAppIcon />}
 
       {/* Success Modal */}
       {successDetails && (

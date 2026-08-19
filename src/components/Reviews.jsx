@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Star, Loader2 } from 'lucide-react';
 import './Reviews.css';
 
-export default function Reviews() {
+export default function Reviews({ unitId }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,10 +34,15 @@ export default function Reviews() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Filter reviews by unit if unitId is provided
+  const displayReviews = unitId 
+    ? reviews.filter(r => r.unit_id === unitId)
+    : reviews;
+
   const calculateAverageRating = () => {
-    if (reviews.length === 0) return '0.0';
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
+    if (displayReviews.length === 0) return '0.0';
+    const sum = displayReviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / displayReviews.length).toFixed(1);
   };
 
   return (
@@ -46,9 +51,13 @@ export default function Reviews() {
         <div className="reviews-header">
           <h2 className="reviews-title">
             <Star className="reviews-title-star" fill="currentColor" size={28} />
-            {loading ? '...' : calculateAverageRating()} · {reviews.length} Review{reviews.length !== 1 ? 's' : ''}
+            {loading ? '...' : calculateAverageRating()} · {displayReviews.length} Review{displayReviews.length !== 1 ? 's' : ''}
           </h2>
-          <p className="reviews-subtitle">What our guests are saying about Lulu Aurelian</p>
+          <p className="reviews-subtitle">
+            {unitId 
+              ? 'What guests say about their stay in this suite'
+              : 'What our guests are saying about Lulu Aurelian'}
+          </p>
         </div>
 
         {loading ? (
@@ -60,13 +69,13 @@ export default function Reviews() {
           <div className="reviews-error">
             <p>{error}</p>
           </div>
-        ) : reviews.length === 0 ? (
+        ) : displayReviews.length === 0 ? (
           <div className="reviews-empty">
-            <p>No reviews have been published yet.</p>
+            <p>No reviews have been published for this suite yet.</p>
           </div>
         ) : (
           <div className="reviews-grid">
-            {reviews.map((review) => (
+            {displayReviews.map((review) => (
               <div key={review.id} className="review-card">
                 <div className="review-author-info">
                   <div className="review-avatar">
@@ -91,3 +100,4 @@ export default function Reviews() {
     </section>
   );
 }
+

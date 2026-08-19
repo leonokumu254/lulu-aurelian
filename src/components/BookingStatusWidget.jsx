@@ -86,7 +86,7 @@ export default function BookingStatusWidget({ user }) {
             <div className="status-details-grid">
               <div className="detail-item">
                 <span className="label">Suite</span>
-                <span className="value" style={{ textTransform: 'capitalize' }}>{activeBooking.unit_id === 'skyview' ? 'Skyview Hideaway' : activeBooking.unit_id === 'cocoa' ? 'Cocoa Retreat' : activeBooking.unit_id}</span>
+                <span className="value" style={{ textTransform: 'capitalize' }}>{activeBooking.unit_id === 'skyview' ? 'Skyview Hideaway' : activeBooking.unit_id === 'cocoa' ? 'Cocoa Retreat' : activeBooking.unit_id === 'neema' ? 'Neema Haven' : activeBooking.unit_id}</span>
               </div>
               <div className="detail-item">
                 <span className="label">Check In</span>

@@ -83,7 +83,7 @@ export const initiatePaypalPayment = async (req, res, next) => {
   try {
     const { booking_id } = req.body;
     const booking = await db.bookings.findById(booking_id);
-
+  
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking not found.' });
     }

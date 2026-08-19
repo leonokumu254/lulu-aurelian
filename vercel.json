@@ -3,6 +3,18 @@
     {
       "source": "/api/(.*)",
       "destination": "https://lulu-aurelian-production.up.railway.app/api/$1"
+    },
+    {
+      "source": "/skyview",
+      "destination": "/skyview.html"
+    },
+    {
+      "source": "/cocoa",
+      "destination": "/cocoa.html"
+    },
+    {
+      "source": "/neema",
+      "destination": "/neema.html"
     }
   ]
 }

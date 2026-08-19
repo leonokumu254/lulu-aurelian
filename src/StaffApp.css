@@ -1,0 +1,151 @@
+.staff-app-root {
+  background-color: #0A0A0A;
+  color: #E8D5B5;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Loading Screen */
+.staff-loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #12100C;
+  color: #BB8525;
+}
+
+.staff-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(187, 133, 37, 0.1);
+  border-top-color: #BB8525;
+  border-radius: 50%;
+  animation: staff-spin 1s infinite linear;
+  margin-bottom: 20px;
+}
+
+@keyframes staff-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Login Container */
+.staff-login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: radial-gradient(circle at center, #1E1A13 0%, #0A0A0A 100%);
+  box-sizing: border-box;
+}
+
+.staff-login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.staff-logo {
+  width: 90px;
+  height: auto;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.staff-login-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  letter-spacing: 3px;
+  color: #BB8525;
+  margin: 0 0 5px 0;
+}
+
+.staff-login-header h2 {
+  font-size: 0.95rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(232, 213, 181, 0.7);
+  margin: 0;
+}
+
+/* Error Banner */
+.staff-error-banner {
+  max-width: 440px;
+  width: 100%;
+  background-color: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.staff-error-banner p {
+  color: #ef4444;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Auth Card Wrapper */
+.staff-auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(20, 18, 15, 0.85);
+  border: 1px solid rgba(187, 133, 37, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Auth Card Custom overrides inside AuthPage */
+.staff-auth-card .auth-container {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 24px 16px !important;
+  margin: 0 !important;
+}
+
+/* Footer styling */
+.staff-login-footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(232, 213, 181, 0.4);
+}
+
+.staff-login-footer p {
+  margin: 0 0 10px 0;
+}
+
+.back-to-site {
+  color: #BB8525;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-to-site:hover {
+  color: #E8D5B5;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .staff-login-header h1 {
+    font-size: 1.8rem;
+  }
+  .staff-login-header h2 {
+    font-size: 0.85rem;
+  }
+  .staff-auth-card {
+    padding: 0;
+  }
+}

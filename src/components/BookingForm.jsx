@@ -22,6 +22,12 @@ const SUITE_PREVIEWS = {
     price: 'KES 5,000',
     image: '/assets/cocoa/cocoa_1.jpg',
     tagline: 'Chilled environment with luxury experience '
+  },
+  neema: {
+    name: 'Neema',
+    price: 'KES 5,000',
+    image: '/assets/Neema/neema_1.jpeg',
+    tagline: 'A peaceful and luxurious retreat'
   }
 };
 
@@ -245,6 +251,17 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               <span className="suite-select-price">KES 5,000 / night</span>
             </div>
             <p className="suite-select-desc">Luxury living with rich cocoa tones.</p>
+          </div>
+
+          <div
+            className={`suite-select-card ${formData.suite === 'neema' ? 'active' : ''}`}
+            onClick={() => handleSuiteSelect('neema')}
+          >
+            <div className="suite-select-header">
+              <span className="suite-select-title">Neema</span>
+              <span className="suite-select-price">KES 5,000 / night</span>
+            </div>
+            <p className="suite-select-desc">Peaceful and luxurious retreat.</p>
           </div>
         </div>
       </div>

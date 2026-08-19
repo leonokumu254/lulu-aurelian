@@ -8,9 +8,9 @@ export default function SuitePasscodes() {
   const [error, setError] = useState('');
   const [savingUnit, setSavingUnit] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
-  const [passcodes, setPasscodes] = useState({ skyview: '', cocoa: '' });
-  const [savedPasscodes, setSavedPasscodes] = useState({ skyview: '', cocoa: '' });
-  const [showSaved, setShowSaved] = useState({ skyview: false, cocoa: false });
+  const [passcodes, setPasscodes] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [savedPasscodes, setSavedPasscodes] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [showSaved, setShowSaved] = useState({ skyview: false, cocoa: false, neema: false });
 
   // Fetch current passcode settings
   const fetchSettings = async () => {
@@ -55,7 +55,7 @@ export default function SuitePasscodes() {
       ...prev,
       [unitId]: randomPin
     }));
-    triggerToast(`Recommended 4-digit PIN generated for ${unitId === 'cocoa' ? 'Cocoa Retreat' : 'Skyview Hideaway'}!`);
+    triggerToast(`Recommended 4-digit PIN generated for ${getUnitName(unitId)}!`);
   };
 
   const handleInputChange = (unitId, val) => {
@@ -90,7 +90,7 @@ export default function SuitePasscodes() {
           ...prev,
           [unitId]: pin
         }));
-        triggerToast(`Successfully saved key box PIN for ${unitId === 'cocoa' ? 'Cocoa Retreat' : 'Skyview Hideaway'}!`);
+        triggerToast(`Successfully saved key box PIN for ${getUnitName(unitId)}!`);
       } else {
         triggerToast(data.error || 'Failed to update passcode.');
       }
@@ -106,14 +106,16 @@ export default function SuitePasscodes() {
     const pin = savedPasscodes[unitId];
     if (pin) {
       navigator.clipboard.writeText(pin);
-      triggerToast(`Copied ${unitId === 'cocoa' ? 'Cocoa Retreat' : 'Skyview Hideaway'} PIN to clipboard!`);
+      triggerToast(`Copied ${getUnitName(unitId)} PIN to clipboard!`);
     } else {
       triggerToast('No PIN saved to copy.');
     }
   };
 
   const getUnitName = (unitId) => {
-    return unitId === 'cocoa' ? 'Cocoa Retreat' : 'Skyview Hideaway';
+    if (unitId === 'cocoa') return 'Cocoa Retreat';
+    if (unitId === 'neema') return 'Neema';
+    return 'Skyview Hideaway';
   };
 
   return (
@@ -155,7 +157,7 @@ export default function SuitePasscodes() {
         </div>
       ) : (
         <div className="units-passcodes-grid">
-          {['skyview', 'cocoa'].map(unitId => {
+          {['skyview', 'cocoa', 'neema'].map(unitId => {
             const currentVal = passcodes[unitId] || '';
             const isSaving = savingUnit === unitId;
             return (
