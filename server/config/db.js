@@ -655,6 +655,22 @@ export const db = {
       return false;
     },
 
+    findByBookingId: async (booking_id) => {
+      if (useMySQL) {
+        const [rows] = await pool.query('SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC', [booking_id]);
+        return rows;
+      }
+      return [];
+    },
+
+    updateStatusByBookingId: async (booking_id, status) => {
+      if (useMySQL) {
+        await pool.query('UPDATE payments SET status = ?, updated_at = ? WHERE booking_id = ?', [status, new Date(), booking_id]);
+        return true;
+      }
+      return false;
+    },
+
     findByRef: async (transaction_ref) => {
       if (useMySQL) {
         const [rows] = await pool.query('SELECT * FROM payments WHERE transaction_ref = ?', [transaction_ref]);

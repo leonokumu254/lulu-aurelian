@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "dev:agent": "vite --config vite.agent.config.js",
-    "build:agent": "vite build --config vite.agent.config.js",
-    "preview:agent": "vite preview --config vite.agent.config.js",
+    "dev:staff": "vite --config vite.staff.config.js",
+    "build:staff": "vite build --config vite.staff.config.js",
+    "preview:staff": "vite preview --config vite.staff.config.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

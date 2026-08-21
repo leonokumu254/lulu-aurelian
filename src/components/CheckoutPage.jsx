@@ -163,6 +163,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   const [timeRemaining, setTimeRemaining] = useState('1h 0m 0s');
   const [mpesaPhone, setMpesaPhone] = useState('');
   const [paypalEmail, setPaypalEmail] = useState('');
+  const [mpesaCode, setMpesaCode] = useState('');
   
   const idempotencyKey = useRef(null);
 
@@ -361,9 +362,13 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     if (!createdBooking) return;
 
     if (paymentMethod === 'mpesa') {
-      const norm = normalizePhone(mpesaPhone);
-      if (norm.length !== 12) {
-        setPaymentError('Please enter a valid Safaricom number e.g. 0712 345 678');
+      if (!mpesaPhone) {
+        setPaymentError('Please enter your M-Pesa phone number.');
+        return;
+      }
+      const cleanPhone = mpesaPhone.trim();
+      if (cleanPhone.length < 9) {
+        setPaymentError('Please enter a valid M-Pesa phone number.');
         return;
       }
     }
@@ -372,19 +377,24 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     setPaymentError(null);
 
     try {
+      const payload = {
+        secure_token: createdBooking.secureToken,
+        method: paymentMethod
+      };
+
+      if (paymentMethod === 'mpesa') {
+        payload.phone = normalizePhone(mpesaPhone);
+      } else {
+        payload.email = paypalEmail;
+      }
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL || ''}/api/bookings/${createdBooking.bookingId}/pay`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({
-            phone: paymentMethod === 'mpesa' ? normalizePhone(mpesaPhone) : undefined,
-            email: paymentMethod === 'paypal' ? paypalEmail : undefined,
-            idempotency_key: idempotencyKey.current,
-            secure_token: createdBooking.secureToken,
-            method: paymentMethod
-          })
+          body: JSON.stringify(payload)
         }
       );
 
@@ -752,14 +762,15 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
               {step === 2 && createdBooking && (
                 <div className="card-body-content animate-slide-down">
                   {paymentComplete ? (
-                    <div className="payment-success-card">
-                      <div className="success-icon-ring">
+                    <div className="payment-success-card animate-slide-down">
+                      <div className="success-icon-ring" style={{ color: '#1a9e35', borderColor: '#1a9e35' }}>
                         <Check size={36} />
                       </div>
-                      <h3 className="payment-status-title">Payment Triggered!</h3>
+                      <h3 className="payment-status-title">STK Push Initiated!</h3>
                       <p className="payment-status-desc">
-                        An STK Push has been sent to your phone. Please check your screen and enter your 
-                        <strong> M-Pesa PIN</strong> to complete payment. Your reservation confirms automatically.
+                        A direct payment request has been sent to your M-Pesa phone number. 
+                        Please enter your M-Pesa PIN on your phone handset to authorize the transaction. 
+                        Once completed, your booking status will update to Confirmed automatically.
                       </p>
                       <button onClick={handleGoToPortal} className="btn-primary checkout-action-btn">
                         Go to Guest Portal Dashboard
@@ -791,7 +802,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                           </div>
                           <div className="method-text">
                             <strong>M-Pesa STK Push</strong>
-                            <span>Pay instantly via Safaricom</span>
+                            <span>Automated prompt on your phone</span>
                           </div>
                         </label>
 
@@ -816,17 +827,30 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       {/* Payment inputs */}
                       {paymentMethod === 'mpesa' && (
                         <div className="payment-input-group animate-slide-down">
-                          <label className="checkout-label">M-Pesa Number</label>
-                          <div className="phone-input-group">
-                            <span className="phone-prefix">+254</span>
-                            <input 
-                              type="tel"
-                              value={mpesaPhone}
-                              onChange={(e) => setMpesaPhone(e.target.value)}
-                              placeholder="712 345 678"
-                            />
+                          <div style={{ background: 'rgba(26, 158, 53, 0.05)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+                            <h4 style={{ margin: '0 0 0.5rem', color: '#1a9e35', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px' }}>AUTOMATED PAYMENT PROMPT</h4>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.6' }}>
+                              We will send a direct payment prompt to the phone number below for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>. Please ensure your handset is unlocked.
+                            </p>
                           </div>
-                          <p className="input-hint">Make sure your phone is unlocked and active.</p>
+
+                          <label className="checkout-label">M-Pesa Phone Number</label>
+                          <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                            <span className="phone-prefix" style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.75rem 1rem', border: '1px solid rgba(255, 255, 255, 0.1)', borderRight: 'none', borderRadius: '8px 0 0 8px', color: '#E8D5B5', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center' }}>+254</span>
+                            <div className="input-with-icon no-left-padding" style={{ flex: 1, position: 'relative' }}>
+                              <Phone size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(232, 213, 181, 0.4)' }} />
+                              <input 
+                                type="tel"
+                                value={mpesaPhone}
+                                onChange={(e) => setMpesaPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                                placeholder="712345678"
+                                className="checkout-input"
+                                style={{ paddingLeft: '36px', borderRadius: '0 8px 8px 0', borderLeft: 'none' }}
+                                required
+                              />
+                            </div>
+                          </div>
+                          <p className="input-hint">Enter your Safaricom number without country code (e.g. 712345678).</p>
                         </div>
                       )}
 
@@ -860,10 +884,10 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                         }}
                       >
                         {processingPayment 
-                          ? 'Processing transaction...' 
+                          ? 'Initiating STK Push request...' 
                           : paymentMethod === 'paypal' 
                             ? 'PAY VIA PAYPAL' 
-                            : `PAY KES ${totalCost.toLocaleString('en-KE')} NOW`}
+                            : 'SEND STK PUSH'}
                       </button>
 
                       <button className="btn-outline-link" onClick={handleGoToPortal}>

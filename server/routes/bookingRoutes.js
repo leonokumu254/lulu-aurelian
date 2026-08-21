@@ -9,7 +9,9 @@ import {
   getUnitSettings,
   updateUnitSettings,
   cancelBooking,
-  getBlockedDates
+  getBlockedDates,
+  approveBooking,
+  declineBooking
 } from '../controllers/bookingController.js';
 import { authMiddleware, requireRole, optionalAuth } from '../middleware/auth.js';
 
@@ -43,6 +45,12 @@ router.put('/:id/cancel', authMiddleware, requireRole('GUEST', 'MANAGER', 'AGENT
 
 // Fetch all bookings (Agents & Managers)
 router.get('/', authMiddleware, requireRole('MANAGER', 'AGENT'), getBookings);
+
+// Approve / Confirm manual payment (Managers & Agents)
+router.put('/:id/approve', authMiddleware, requireRole('MANAGER', 'AGENT'), approveBooking);
+
+// Decline manual payment (Managers & Agents)
+router.put('/:id/decline', authMiddleware, requireRole('MANAGER', 'AGENT'), declineBooking);
 
 // Unit settings
 router.get('/unit-settings', authMiddleware, requireRole('MANAGER', 'AGENT'), getUnitSettings);

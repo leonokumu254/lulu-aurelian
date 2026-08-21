@@ -127,6 +127,29 @@ export default function AgentPortal({ user }) {
 
 
 
+  // Approve booking via API
+  const handleApprove = async (id) => {
+    setActionLoading(id);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${id}/approve`, {
+        method: 'PUT',
+        credentials: 'include'
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        triggerToast('Booking approved and guest notified!');
+        await fetchBookings(); // Refresh list
+      } else {
+        triggerToast(data.error || 'Failed to approve booking.');
+      }
+    } catch (err) {
+      triggerToast('Connection error. Please try again.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   // Decline booking via API
   const handleDecline = async (id) => {
     setActionLoading(id);
@@ -240,6 +263,7 @@ LuluAurelian Concierge Team`;
   const filteredBookings = bookings.filter(b => {
     let mappedFilter = filter;
     if (filter === 'Awaiting Payment') mappedFilter = 'Approved';
+    if (filter === 'Awaiting Verification') mappedFilter = 'Authorizing';
     const matchesFilter = filter === 'All' || b.status === mappedFilter;
     const matchesSearch = b.guest.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           b.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -289,7 +313,7 @@ LuluAurelian Concierge Team`;
         
         <div className="filter-group">
           <Filter size={16} className="filter-icon" />
-          {['All', 'Pending', 'Awaiting Payment', 'Paid', 'Completed', 'Cancelled', 'Declined'].map(cat => (
+          {['All', 'Pending', 'Awaiting Verification', 'Awaiting Payment', 'Paid', 'Completed', 'Cancelled', 'Declined'].map(cat => (
             <button
               key={cat}
               className={`filter-btn ${filter === cat ? 'active' : ''}`}
@@ -348,7 +372,9 @@ LuluAurelian Concierge Team`;
                       <td className="status-cell">
                         <div className="badge-col">
                           <span className={`status-pill ${b.status.toLowerCase()}`}>
-                            {b.rawStatus === 'APPROVED' ? 'Awaiting Payment' : b.status}
+                            {b.rawStatus === 'APPROVED' ? 'Awaiting Payment' : 
+                             b.rawStatus === 'AUTHORIZING' ? 'Awaiting Verification' : 
+                             b.status}
                           </span>
                           
                           {b.rawStatus === 'APPROVED' && ttl !== null && (
@@ -361,6 +387,29 @@ LuluAurelian Concierge Team`;
                       </td>
                       <td className="actions-cell">
                         <div className="table-actions">
+                          {b.rawStatus === 'AUTHORIZING' && (
+                            <>
+                              <button 
+                                onClick={() => handleApprove(b.id)} 
+                                className="btn-approve-icon"
+                                title="Approve Payment & Confirm Booking"
+                                disabled={actionLoading === b.id}
+                                style={{ color: '#10B981', background: 'rgba(16, 185, 129, 0.1)', border: 'none', borderRadius: '4px', padding: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginRight: '6px' }}
+                              >
+                                <Check size={16} />
+                              </button>
+                              <button 
+                                onClick={() => handleDecline(b.id)} 
+                                className="btn-decline-icon"
+                                title="Decline Reservation"
+                                disabled={actionLoading === b.id}
+                                style={{ color: '#EF4444', background: 'rgba(239, 68, 68, 0.1)', border: 'none', borderRadius: '4px', padding: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                              >
+                                <X size={16} />
+                              </button>
+                            </>
+                          )}
+
                           {b.rawStatus === 'APPROVED' && (
                             <button 
                               onClick={() => handleDecline(b.id)} 
