@@ -12,6 +12,7 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
   const [timeRemaining, setTimeRemaining] = useState('1h 0m 0s');
   const [mpesaPhone, setMpesaPhone] = useState('');
   const [paypalEmail, setPaypalEmail] = useState('');
+  const [mpesaCode, setMpesaCode] = useState('');
   // Stable key per modal instance — prevents duplicate STK push on retry
   const idempotencyKey = useRef(null);
 
@@ -59,37 +60,40 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
   };
 
   const handlePayment = async () => {
-    // Phone validation
     if (paymentMethod === 'mpesa') {
-      const norm = normalizePhone(mpesaPhone);
-      if (norm.length !== 12) {
-        setPaymentError('Please enter a valid Safaricom number e.g. 0712 345 678');
+      if (!mpesaPhone) {
+        setPaymentError('Please enter your M-Pesa phone number.');
         return;
       }
-    }
-
-    // Regenerate key only on first attempt; keep same key on retry (idempotency)
-    if (!idempotencyKey.current) {
-      idempotencyKey.current = `${bookingDetails.bookingId}-${Date.now()}`;
+      const cleanPhone = mpesaPhone.trim();
+      if (cleanPhone.length < 9) {
+        setPaymentError('Please enter a valid M-Pesa phone number.');
+        return;
+      }
     }
 
     setProcessingPayment(true);
     setPaymentError(null);
 
     try {
+      const payload = {
+        secure_token:    bookingDetails.secureToken,
+        method:          paymentMethod
+      };
+
+      if (paymentMethod === 'mpesa') {
+        payload.phone = normalizePhone(mpesaPhone);
+      } else {
+        payload.email = paypalEmail;
+      }
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL || ''}/api/bookings/${bookingDetails.bookingId}/pay`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({
-            phone:           paymentMethod === 'mpesa' ? normalizePhone(mpesaPhone) : undefined,
-            email:           paymentMethod === 'paypal' ? paypalEmail : undefined,
-            idempotency_key: idempotencyKey.current,
-            secure_token:    bookingDetails.secureToken,
-            method:          paymentMethod
-          })
+          body: JSON.stringify(payload)
         }
       );
 
@@ -106,11 +110,9 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
 
       if (data.success) {
         setPaymentComplete(true);
-        // Rotate key so next distinct attempt gets a fresh idempotency key
-        idempotencyKey.current = `${bookingDetails.bookingId}-${Date.now()}`;
       } else {
         setPaymentError(
-          data.error || 'Payment was declined. Please ensure you have sufficient M-Pesa balance and try again.'
+          data.error || 'Payment initiation failed. Please check your phone number and try again.'
         );
       }
     } catch (e) {
@@ -121,7 +123,7 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
     }
   };
 
-  // ── STK Push sent ───────────────────────────────────────────────────────────
+  // ── Details submitted ──────────────────────────────────────────────────────
   if (paymentComplete) {
     return (
       <div className="sm-overlay animate-fade-in" role="dialog" aria-modal="true">
@@ -129,14 +131,13 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
           <div className="sm-icon-ring success">
             <Check size={36} strokeWidth={2.5} />
           </div>
-          <h2 className="sm-title">STK Push Sent!</h2>
+          <h2 className="sm-title">STK Push Initiated!</h2>
           <p className="sm-subtitle">
-            Check your phone and enter your <strong>M-Pesa PIN</strong> to complete payment
-            for <strong>{bookingDetails.suiteName}</strong>.
-            Your booking confirms automatically once payment is received.
+            A direct payment request has been sent to your phone number for <strong>{bookingDetails.suiteName}</strong>.
+            Please enter your M-Pesa PIN on your phone handset to authorize the transaction. Once completed, your booking status will update to Confirmed automatically.
           </p>
           <button onClick={onClose} className="sm-btn-primary" style={{ marginTop: '1.5rem' }}>
-            Got It — I'll Check My Phone
+            Got It
           </button>
         </div>
       </div>
@@ -231,22 +232,35 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
                 </div>
                 <div className="sm-option-info">
                   <strong>M-Pesa STK Push</strong>
-                  <span>Pay instantly via your phone</span>
+                  <span>Automated prompt on your phone</span>
                 </div>
               </label>
 
               {paymentMethod === 'mpesa' && (
                 <div className="sm-input-block animate-fade-in">
+                  <div style={{ background: 'rgba(26, 158, 53, 0.05)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '12px', padding: '1rem', marginBottom: '1rem', fontSize: '0.8rem', color: '#E8D5B5', lineHeight: '1.5' }}>
+                    <strong style={{ display: 'block', color: '#1a9e35', marginBottom: '0.3rem', letterSpacing: '0.5px' }}>AUTOMATED PAYMENT PROMPT</strong>
+                    <p style={{ margin: 0, color: 'rgba(232, 213, 181, 0.85)' }}>
+                      We will trigger a secure M-Pesa PIN prompt on the phone number below for <strong>KES {(bookingDetails.totalCost || 0).toLocaleString('en-KE')}</strong>.
+                    </p>
+                  </div>
+
                   <label className="sm-label">M-Pesa Phone Number</label>
-                  <input
-                    type="tel"
-                    value={mpesaPhone}
-                    onChange={(e) => setMpesaPhone(e.target.value)}
-                    placeholder="e.g. 0712 345 678"
-                    className="sm-input"
-                    inputMode="numeric"
-                  />
-                  <p className="sm-hint">Enter your Safaricom number — you'll receive a PIN prompt.</p>
+                  <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span className="phone-prefix" style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.65rem 0.85rem', border: '1.5px solid rgba(255, 255, 255, 0.1)', borderRight: 'none', borderRadius: '6px 0 0 6px', color: '#E8D5B5', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center' }}>+254</span>
+                    <div className="input-with-icon no-left-padding" style={{ flex: 1, position: 'relative' }}>
+                      <input
+                        type="tel"
+                        value={mpesaPhone}
+                        onChange={(e) => setMpesaPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                        placeholder="712345678"
+                        className="sm-input"
+                        style={{ paddingLeft: '12px', borderRadius: '0 6px 6px 0', borderLeft: 'none', width: '100%', boxSizing: 'border-box' }}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <p className="sm-hint">Enter your Safaricom phone number without country code (e.g. 712345678).</p>
                 </div>
               )}
 
@@ -290,15 +304,15 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
                 }}
               >
                 {processingPayment
-                  ? '⏳ Sending STK Push...'
+                  ? '⏳ Initiating STK Push request...'
                   : paymentMethod === 'paypal'
                     ? 'PAY NOW VIA PAYPAL'
-                    : `PAY KES ${(bookingDetails.totalCost || 0).toLocaleString('en-KE')} NOW`}
+                    : 'SEND STK PUSH'}
               </button>
 
               <div className="sm-secure-row">
                 <ShieldCheck size={13} />
-                <span>Secured &amp; encrypted payments</span>
+                <span>Secured payments via M-Pesa</span>
               </div>
 
               <button className="sm-cancel-link" onClick={handlePayLater}>

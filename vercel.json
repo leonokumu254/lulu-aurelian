@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://lulu-aurelian-production.up.railway.app/api/$1"
+      "destination": "https://api.luluaurelian.co.ke/api/$1"
     },
     {
       "source": "/skyview",

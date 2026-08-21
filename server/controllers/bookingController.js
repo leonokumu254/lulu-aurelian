@@ -3,6 +3,7 @@ import { db } from '../config/db.js';
 import { env } from '../config/env.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
+import { mpesaService } from '../services/mpesaService.js';
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
@@ -183,16 +184,12 @@ export const requestBooking = async (req, res, next) => {
 };
 
 
-// ─── PAYMENT: Initiate Stanbic Paybill STK Push ─────────────────────────────
+// ─── PAYMENT: Submit M-Pesa Till Transaction Code ───────────────────────────
 
 export const initiatePayment = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { phone, idempotency_key, secure_token } = req.body;
-
-    if (!idempotency_key) {
-      return res.status(400).json({ success: false, error: 'idempotency_key is required.' });
-    }
+    const { phone, secure_token } = req.body;
 
     const booking = await db.bookings.findById(id);
     if (!booking) {
@@ -226,14 +223,10 @@ export const initiatePayment = async (req, res, next) => {
       });
     }
 
-    // ── Idempotency guard — don't re-call Stanbic for duplicate attempts ─
-    const existing = await db.payments.findByIdempotencyKey(booking.id, idempotency_key);
-    if (existing) {
-      return res.status(200).json({
-        success:       true,
-        message:       'Payment already initiated. Check your phone for the STK prompt.',
-        transactionId: existing.transaction_ref
-      });
+    // Use requested phone or booking contact phone
+    const targetPhone = phone || booking.guest_phone;
+    if (!targetPhone) {
+      return res.status(400).json({ success: false, error: 'M-Pesa phone number is required.' });
     }
 
     // ── Determine amount (base + optional length discount & peak surcharge)
@@ -251,46 +244,123 @@ export const initiatePayment = async (req, res, next) => {
     const surcharge     = booking.has_peak_surcharge ? PEAK_GUEST_SURCHARGE : 0;
     const totalAmount   = Math.max(0, baseCost - lengthDiscountValue) + surcharge;
 
-    // ── Call Stanbic STK Push ────────────────────────────────────────────
-    const { stanbicService } = await import('../services/stanbicService.js');
-    // Use idempotency_key as the dbsReferenceId — Stanbic echoes it back
-    // as BillRefNumber in the callback, letting us match the payment record.
-    const dbsReferenceId = idempotency_key;
+    // Trigger Daraja STK Push
+    console.log(`[DARAJA STK PUSH]: Initiating checkout for booking ${booking.id} | Phone: ${targetPhone} | Amount: ${totalAmount}`);
+    const stkResponse = await mpesaService.initiateSTKPush(targetPhone, totalAmount, booking.id.substring(0, 8).toUpperCase());
 
-    let stanbicResult;
-    try {
-      stanbicResult = await stanbicService.initiateSTKPush(
-        phone || booking.guest_phone,
-        totalAmount,
-        dbsReferenceId
-      );
-    } catch (stanbicErr) {
-      console.error('[STANBIC STK ERROR]:', stanbicErr.message);
-      return res.status(502).json({ success: false, error: 'Payment gateway temporarily unavailable. Please try again.' });
+    if (!stkResponse || !stkResponse.success) {
+      return res.status(500).json({ success: false, error: 'Failed to initiate M-Pesa STK Push. Please verify your phone number and try again.' });
     }
 
-    // ── Persist payment attempt ──────────────────────────────────────────
+    // ── Persist payment attempt with CheckoutRequestID as transaction_ref ──────────────────
     await db.payments.create({
       booking_id:       booking.id,
       amount:           totalAmount,
       currency:         'KES',
-      gateway:          'STANBIC',
-      transaction_ref:  dbsReferenceId,  // BillRefNumber Stanbic will echo back
-      idempotency_key,
+      gateway:          'MPESA',
+      transaction_ref:  stkResponse.checkoutRequestId,
       status:           'PENDING'
     });
 
-    // ── Transition booking to AUTHORIZING ────────────────────────────────
+    // Transition booking status to AUTHORIZING (Awaiting Callback)
     await db.bookings.updateStatus(booking.id, 'AUTHORIZING');
 
     return res.status(200).json({
       success:       true,
-      message:       'STK Push sent to your phone. Enter your PIN to complete payment.',
-      transactionId: stanbicResult.transactionId,
-      amount:        totalAmount,
-      surcharge:     surcharge > 0 ? { reason: '5-guest peak surcharge', amount: surcharge } : null
+      message:       'STK Push sent successfully! Please authorize on your phone.',
+      checkoutRequestId: stkResponse.checkoutRequestId,
+      amount:        totalAmount
     });
 
+  } catch (error) {
+    console.error('[STK PUSH ERROR]:', error.message);
+    return res.status(500).json({ success: false, error: error.message || 'M-Pesa service communication error.' });
+  }
+};
+
+
+// ─── STAFF ACTIONS: Manual Booking Approvals & Declines ─────────────────────
+
+export const approveBooking = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await db.bookings.findById(id);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking record not found.' });
+    }
+
+    if (booking.status !== 'AUTHORIZING' && booking.status !== 'PENDING') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot approve booking in status: ${booking.status}`
+      });
+    }
+
+    // Find M-Pesa transaction reference (if any)
+    const payments = await db.payments.findByBookingId(id);
+    const latestPayment = payments && payments[0];
+    const transactionRef = latestPayment ? latestPayment.transaction_ref : 'MANUAL_APPROVAL';
+
+    // Update payment record to COMPLETED
+    if (latestPayment) {
+      await db.payments.updateStatus(latestPayment.transaction_ref, 'COMPLETED');
+    }
+
+    // Transition booking status to PAID
+    const approvedBy = req.user ? req.user.name : 'Staff';
+    const confirmedBooking = await db.bookings.updateStatus(id, 'PAID', {
+      approved_by: approvedBy,
+      approved_at: new Date()
+    });
+
+    console.log(`[STAFF APPROVAL]: ✅ Booking ${id} approved by ${approvedBy}. Payment Ref: ${transactionRef}`);
+
+    // Send credentials and alert
+    emailService.sendFulfillmentCredentials(confirmedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
+    whatsappService.sendBookingStatusAlert(confirmedBooking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+
+    return res.status(200).json({
+      success: true,
+      message: 'Booking approved and payment confirmed. Credentials dispatched to guest.',
+      booking: confirmedBooking
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const declineBooking = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await db.bookings.findById(id);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking record not found.' });
+    }
+
+    const deletableStatuses = ['PENDING', 'AUTHORIZING'];
+    if (!deletableStatuses.includes(booking.status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot decline booking in status: ${booking.status}`
+      });
+    }
+
+    // Update associated payments to FAILED
+    await db.payments.updateStatusByBookingId(id, 'FAILED');
+
+    // Update booking status to DECLINED
+    const declinedBooking = await db.bookings.updateStatus(id, 'DECLINED');
+
+    console.log(`[STAFF DECLINE]: Booking ${id} declined.`);
+
+    // Send cancellation/decline alert
+    emailService.sendGuestCancellation(declinedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
+
+    return res.status(200).json({
+      success: true,
+      message: 'Booking request has been declined.',
+      booking: declinedBooking
+    });
   } catch (error) {
     next(error);
   }

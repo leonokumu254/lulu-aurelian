@@ -42,10 +42,10 @@ export default defineConfig({
   ],
 
   build: {
-    outDir: 'dist-agent',
+    outDir: 'dist-staff',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'agent.html')
+        main: resolve(__dirname, 'staff.html')
       }
     }
   },

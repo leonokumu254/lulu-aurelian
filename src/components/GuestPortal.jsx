@@ -18,6 +18,7 @@ export default function GuestPortal({ user, onBookNew }) {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [mpesaPhone, setMpesaPhone] = useState('');
+  const [mpesaCode, setMpesaCode] = useState('');
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -107,29 +108,49 @@ export default function GuestPortal({ user, onBookNew }) {
     }
   }, [user]);
 
+  // Normalize phone helper
+  const normalizePhone = (raw) => {
+    let p = (raw || '').replace(/[^0-9]/g, '');
+    if (p.startsWith('0')) p = '254' + p.slice(1);
+    if (!p.startsWith('254')) p = '254' + p;
+    return p;
+  };
+
   const handlePayment = async () => {
     if (!paymentMethod) return setPaymentError('Please select a payment method.');
+    
+    if (paymentMethod === 'mpesa') {
+      if (!mpesaPhone) {
+        return setPaymentError('Please enter your M-Pesa phone number.');
+      }
+      const cleanPhone = mpesaPhone.trim();
+      if (cleanPhone.length < 9) {
+        return setPaymentError('Please enter a valid Safaricom phone number.');
+      }
+    }
+
     setProcessingPayment(true);
     setPaymentError(null);
     try {
-      const phone = mpesaPhone
-        ? (mpesaPhone.startsWith('0') ? `254${mpesaPhone.slice(1)}` : mpesaPhone)
-        : user.phone;
+      const payload = {
+        method: paymentMethod
+      };
+
+      if (paymentMethod === 'mpesa') {
+        payload.phone = normalizePhone(mpesaPhone);
+      }
+
       const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${activeBooking.id}/pay`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          phone,
-          idempotency_key: `${activeBooking.id}-${Date.now()}`,
-          method: paymentMethod
-        })
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
       if (data.success) {
         setPaymentSuccess(true);
       } else {
-        setPaymentError(data.error || 'Payment was declined. Please ensure you have sufficient M-Pesa balance and try again.');
+        setPaymentError(data.error || 'Payment initiation failed. Please check your phone number and try again.');
       }
     } catch (e) {
       setPaymentError('Connection failed. Please check your internet connection and try again.');
@@ -225,83 +246,109 @@ export default function GuestPortal({ user, onBookNew }) {
                 <div className="action-card-footer" style={{ flexDirection: activeBooking.status === 'APPROVED' ? 'column' : 'row', alignItems: activeBooking.status === 'APPROVED' ? 'stretch' : 'center', gap: '1.5rem' }}>
 
                   {activeBooking.status === 'APPROVED' && timeRemaining !== 'Expired' ? (
-                    <div className="payment-gateway-block">
-                      <div className="payment-timer-alert">
-                        <span>Payment Window Closes In:</span>
-                        <strong>{timeRemaining || 'Calculating...'}</strong>
-                      </div>
-                      <div className="payment-options">
-                        <label className={`pay-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}>
-                          <input type="radio" name="payment" value="mpesa" checked={paymentMethod === 'mpesa'} onChange={() => setPaymentMethod('mpesa')} />
-                          <div className="pay-option-content">
-                            <strong>M-Pesa STK Push</strong>
-                            <span>Pay instantly via your phone</span>
-                          </div>
-                        </label>
-                        <label className={`pay-option ${paymentMethod === 'paypal' ? 'selected' : ''}`}>
-                          <input type="radio" name="payment" value="paypal" checked={paymentMethod === 'paypal'} onChange={() => setPaymentMethod('paypal')} />
-                          <div className="pay-option-content">
-                            <strong>PayPal / Card</strong>
-                            <span>Checkout via PayPal</span>
-                          </div>
-                        </label>
-                      </div>
-                      {paymentMethod === 'mpesa' && (
-                        <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '0.85rem' }}>
-                          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#374151', marginBottom: '0.4rem' }}>M-Pesa Number</label>
-                          <input
-                            type="tel"
-                            inputMode="numeric"
-                            value={mpesaPhone}
-                            onChange={(e) => setMpesaPhone(e.target.value)}
-                            placeholder="e.g. 712345678"
-                            style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '6px', border: '1.5px solid #d1d5db', fontSize: '1rem', boxSizing: 'border-box', outline: 'none' }}
-                          />
-                          <p style={{ fontSize: '0.74rem', color: '#9ca3af', margin: '0.3rem 0 0' }}>You'll receive an STK PIN prompt on this number.</p>
+                    paymentSuccess ? (
+                      <div className="payment-success-card animate-fade-in" style={{ padding: '1.5rem', textAlign: 'center', background: 'rgba(26, 158, 53, 0.05)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '12px', width: '100%' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(26, 158, 53, 0.1)', color: '#1a9e35', marginBottom: '0.75rem' }}>
+                          <Check size={24} />
                         </div>
-                      )}
-                      <button className="btn-pay-now" onClick={handlePayment} disabled={processingPayment}>
-                        {processingPayment ? 'Sending STK Push...' : `Pay KES ${(activeBooking.total_price || 0).toLocaleString('en-KE')} via ${paymentMethod === 'mpesa' ? 'M-Pesa' : 'PayPal'}`}
-                      </button>
-                      <button
-                        onClick={async () => {
-                          const confirmCancel = window.confirm('Are you sure you want to cancel this booking?');
-                          if (!confirmCancel) return;
+                        <h4 style={{ margin: '0 0 0.5rem', color: '#E8D5B5' }}>STK Push Initiated!</h4>
+                        <p style={{ fontSize: '0.85rem', color: 'rgba(232, 213, 181, 0.8)', margin: 0, lineHeight: '1.5' }}>
+                          A direct payment request has been sent to your M-Pesa phone. Please enter your M-Pesa PIN on your phone handset to authorize the transaction. Once completed, your booking status will update to Confirmed automatically.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="payment-gateway-block" style={{ width: '100%' }}>
+                        <div className="payment-timer-alert">
+                          <span>Payment Window Closes In:</span>
+                          <strong>{timeRemaining || 'Calculating...'}</strong>
+                        </div>
+                        <div className="payment-options">
+                          <label className={`pay-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}>
+                            <input type="radio" name="payment" value="mpesa" checked={paymentMethod === 'mpesa'} onChange={() => setPaymentMethod('mpesa')} />
+                            <div className="pay-option-content">
+                              <strong>M-Pesa STK Push</strong>
+                              <span>Automated prompt on your phone</span>
+                            </div>
+                          </label>
+                          <label className={`pay-option ${paymentMethod === 'paypal' ? 'selected' : ''}`}>
+                            <input type="radio" name="payment" value="paypal" checked={paymentMethod === 'paypal'} onChange={() => setPaymentMethod('paypal')} />
+                            <div className="pay-option-content">
+                              <strong>PayPal / Card</strong>
+                              <span>Checkout via PayPal</span>
+                            </div>
+                          </label>
+                        </div>
+                        {paymentMethod === 'mpesa' && (
+                          <div style={{ background: 'rgba(26, 158, 53, 0.05)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '8px', padding: '1rem', color: '#E8D5B5', marginTop: '1rem' }}>
+                            <strong style={{ display: 'block', fontSize: '0.85rem', color: '#1a9e35', marginBottom: '0.5rem' }}>AUTOMATED PAYMENT PROMPT</strong>
+                            <p style={{ fontSize: '0.8rem', color: 'rgba(232, 213, 181, 0.85)', margin: '0 0 0.75rem', lineHeight: '1.5' }}>
+                              We will send a direct payment prompt to the phone number below for <strong>KES {(activeBooking.total_price || 0).toLocaleString('en-KE')}</strong>.
+                            </p>
+                            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'rgba(232, 213, 181, 0.9)', marginBottom: '0.4rem' }}>M-Pesa Phone Number</label>
+                            <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center' }}>
+                              <span className="phone-prefix" style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.55rem 0.75rem', border: '1px solid rgba(255, 255, 255, 0.1)', borderRight: 'none', borderRadius: '6px 0 0 6px', color: '#E8D5B5', fontSize: '0.9rem' }}>+254</span>
+                              <input
+                                type="tel"
+                                value={mpesaPhone}
+                                onChange={(e) => setMpesaPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                                placeholder="712345678"
+                                style={{ flex: 1, padding: '0.55rem 0.75rem', borderRadius: '0 6px 6px 0', border: '1.5px solid rgba(255, 255, 255, 0.1)', borderLeft: 'none', background: 'rgba(29, 25, 18, 0.8)', color: '#E8D5B5', fontSize: '0.95rem', boxSizing: 'border-box', outline: 'none' }}
+                              />
+                            </div>
+                            <p style={{ fontSize: '0.74rem', color: 'rgba(232, 213, 181, 0.5)', margin: '0.3rem 0 0' }}>Enter your Safaricom phone number without country code.</p>
+                          </div>
+                        )}
+                        {paymentError && (
+                          <div style={{ color: '#ef4444', fontSize: '0.85rem', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.2)', marginTop: '1rem' }}>
+                            {paymentError}
+                          </div>
+                        )}
+                        <button className="btn-pay-now" onClick={handlePayment} disabled={processingPayment} style={{ background: paymentMethod === 'mpesa' ? '#1a9e35' : undefined, marginTop: '1rem' }}>
+                          {processingPayment 
+                            ? 'Initiating STK Push request...' 
+                            : paymentMethod === 'mpesa' 
+                              ? 'SEND STK PUSH' 
+                              : `Pay KES ${(activeBooking.total_price || 0).toLocaleString('en-KE')} via PayPal`}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            const confirmCancel = window.confirm('Are you sure you want to cancel this booking?');
+                            if (!confirmCancel) return;
 
-                          try {
-                            const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${activeBooking.id}/cancel`, {
-                              method: 'PUT',
-                              credentials: 'include'
-                            });
-                            const data = await res.json();
-                            if (data.success) {
-                              // Immediately update local state to reflect cancellation
-                              setBookings(prev => prev.map(b => b.id === activeBooking.id ? { ...b, status: 'CANCELLED' } : b));
-                            } else {
-                              alert(data.error || 'Failed to cancel booking.');
+                            try {
+                              const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${activeBooking.id}/cancel`, {
+                                method: 'PUT',
+                                credentials: 'include'
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setBookings(prev => prev.map(b => b.id === activeBooking.id ? { ...b, status: 'CANCELLED' } : b));
+                              } else {
+                                alert(data.error || 'Failed to cancel booking.');
+                              }
+                            } catch (err) {
+                              alert('Connection error. Could not cancel booking.');
                             }
-                          } catch (err) {
-                            alert('Connection error. Could not cancel booking.');
-                          }
-                        }}
-                        className="btn-cancel-booking"
-                        style={{
-                          width: '100%',
-                          padding: '1rem',
-                          marginTop: '0.5rem',
-                          background: 'transparent',
-                          border: 'none',
-                          color: '#6B7280',
-                          fontSize: '0.95rem',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
-                          textAlign: 'center'
-                        }}
-                      >
-                        Cancel Booking
-                      </button>
-                    </div>
+                          }}
+                          className="btn-cancel-booking"
+                          style={{
+                            width: '100%',
+                            padding: '1rem',
+                            marginTop: '0.5rem',
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#6B7280',
+                            fontSize: '0.95rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                            textAlign: 'center'
+                          }}
+                        >
+                          Cancel Booking
+                        </button>
+                      </div>
+                    )
                   ) : activeBooking.status === 'APPROVED' && timeRemaining === 'Expired' ? (
                     <div className="payment-timer-alert expired">
                       <span>Payment Window Expired</span>

@@ -3,10 +3,10 @@ import { env } from '../config/env.js';
 
 class MpesaService {
   constructor() {
-    this.consumerKey = process.env.MPESA_CONSUMER_KEY || 'YOUR_APP_CONSUMER_KEY';
-    this.consumerSecret = process.env.MPESA_CONSUMER_SECRET || 'YOUR_APP_CONSUMER_SECRET';
-    this.passkey = process.env.MPESA_PASSKEY || 'YOUR_PASSKEY';
-    this.shortcode = process.env.MPESA_SHORTCODE || '174379'; // Test shortcode
+    this.consumerKey = env.MPESA_CONSUMER_KEY || 'YOUR_APP_CONSUMER_KEY';
+    this.consumerSecret = env.MPESA_CONSUMER_SECRET || 'YOUR_APP_CONSUMER_SECRET';
+    this.passkey = env.MPESA_PASSKEY || 'YOUR_PASSKEY';
+    this.shortcode = env.MPESA_SHORTCODE || '174379'; // Test shortcode
     this.environment = env.NODE_ENV === 'production' ? 'api' : 'sandbox'; // sandbox vs api (live)
     this.baseUrl = `https://${this.environment}.safaricom.co.ke`;
   }
@@ -43,7 +43,7 @@ class MpesaService {
     };
     
     const formattedPhone = formatPhone(phoneNumber);
-
+ 
     const payload = {
       BusinessShortCode: this.shortcode,
       Password: password,
@@ -53,7 +53,7 @@ class MpesaService {
       PartyA: formattedPhone,
       PartyB: this.shortcode,
       PhoneNumber: formattedPhone,
-      CallBackURL: `https://www.luluaurelian.co.ke/api/payments/mpesa/callback`, // Must be HTTPS
+      CallBackURL: env.MPESA_CALLBACK_URL || `https://www.luluaurelian.co.ke/api/payments/mpesa/callback`, // Must be HTTPS
       AccountReference: reference,
       TransactionDesc: `Booking ${reference}`
     };

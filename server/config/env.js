@@ -14,6 +14,11 @@ export const env = {
   JWT_SECRET: process.env.JWT_SECRET || 'fallback-super-secret-key-pearl-apartments',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '8h',
   MPESA_CALLBACK_SECRET: process.env.MPESA_CALLBACK_SECRET || 'mpesa-webhook-fallback-secret',
+  MPESA_CONSUMER_KEY:    process.env.MPESA_CONSUMER_KEY    || '',
+  MPESA_CONSUMER_SECRET: process.env.MPESA_CONSUMER_SECRET || '',
+  MPESA_PASSKEY:         process.env.MPESA_PASSKEY         || '',
+  MPESA_SHORTCODE:       process.env.MPESA_SHORTCODE       || '174379',
+  MPESA_CALLBACK_URL:    process.env.MPESA_CALLBACK_URL    || 'https://www.luluaurelian.co.ke/api/payments/mpesa/callback',
   // Stanbic Kilele API (register at https://kilele.stanbicbank.co.ke)
   STANBIC_CLIENT_KEY:    process.env.STANBIC_CLIENT_KEY    || '',
   STANBIC_CLIENT_SECRET: process.env.STANBIC_CLIENT_SECRET || '',
