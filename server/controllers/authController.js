@@ -20,17 +20,23 @@ const generateTokensAndSetCookies = (res, user) => {
     { expiresIn: '7d' }
   );
 
-  res.cookie('accessToken', accessToken, {
+  const baseCookieOptions = {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
+  };
+
+  if (process.env.COOKIE_DOMAIN) {
+    baseCookieOptions.domain = process.env.COOKIE_DOMAIN;
+  }
+
+  res.cookie('accessToken', accessToken, {
+    ...baseCookieOptions,
     maxAge: 15 * 60 * 1000 // 15 mins
   });
 
   res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    ...baseCookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
@@ -326,8 +332,12 @@ export const refresh = async (req, res, next) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  const cookieOptions = {};
+  if (process.env.COOKIE_DOMAIN) {
+    cookieOptions.domain = process.env.COOKIE_DOMAIN;
+  }
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
   return res.status(200).json({ success: true, message: 'Logged out successfully.' });
 };
 

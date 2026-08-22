@@ -110,26 +110,26 @@ const inMemory = {
 };
 
 // Check database provider configurations
-// Build URL from env (uses DB_* vars) or fallback to existing DATABASE_URL
-const databaseUrl = env.DATABASE_URL ||
-  `mysql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
-const isMySQLConfigured = databaseUrl.startsWith('mysql:') || databaseUrl.includes('3306');
+const isMySQLConfigured = Boolean(env.DATABASE_URL || env.DB_HOST || env.DB_USER);
 let pool = null;
 let useMySQL = false;
 
 if (isMySQLConfigured || env.NODE_ENV === 'production') {
-  if (env.NODE_ENV === 'production' && !isMySQLConfigured) {
-    console.error('[DATABASE SERVICE FATAL]: Production Database configuration is missing!');
-    process.exit(1); // Force crash instead of using memory fallback
-  }
-
   try {
-    pool = mysql.createPool({
-      uri: databaseUrl,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
-    });
+    const poolConfig = env.DATABASE_URL
+      ? { uri: env.DATABASE_URL, waitForConnections: true, connectionLimit: 10, queueLimit: 0 }
+      : {
+          host: env.DB_HOST,
+          port: parseInt(env.DB_PORT || '3306', 10),
+          user: env.DB_USER,
+          password: env.DB_PASSWORD,
+          database: env.DB_NAME,
+          waitForConnections: true,
+          connectionLimit: 10,
+          queueLimit: 0
+        };
+
+    pool = mysql.createPool(poolConfig);
     useMySQL = true; // Always true in production
   } catch (err) {
     if (env.NODE_ENV === 'production') {
@@ -140,7 +140,7 @@ if (isMySQLConfigured || env.NODE_ENV === 'production') {
     console.warn('[DATABASE SERVICE]: Falling back to high-fidelity In-Memory Database for workspace testing.');
   }
 } else {
-  console.log('[DATABASE SERVICE]: In-memory storage active. (No MySQL DATABASE_URL supplied).');
+  console.log('[DATABASE SERVICE]: In-memory storage active.');
 }
 
 // -------------------------------------------------------------
@@ -492,9 +492,11 @@ export const db = {
     getAllPublished: async () => {
       if (useMySQL) {
         const [rows] = await pool.query(
-          `SELECT r.*, b.guest_name, b.unit_id 
+          `SELECT r.*, 
+                  COALESCE(b.guest_name, 'Valued Guest') AS guest_name, 
+                  COALESCE(b.unit_id, 'Suite') AS unit_id 
            FROM reviews r 
-           INNER JOIN bookings b ON r.booking_id = b.id 
+           LEFT JOIN bookings b ON r.booking_id = b.id 
            WHERE r.is_published = 1 
            ORDER BY r.created_at DESC`
         );
@@ -518,9 +520,11 @@ export const db = {
     getAll: async () => {
       if (useMySQL) {
         const [rows] = await pool.query(
-          `SELECT r.*, b.guest_name, b.unit_id 
+          `SELECT r.*, 
+                  COALESCE(b.guest_name, 'Valued Guest') AS guest_name, 
+                  COALESCE(b.unit_id, 'Suite') AS unit_id 
            FROM reviews r 
-           INNER JOIN bookings b ON r.booking_id = b.id 
+           LEFT JOIN bookings b ON r.booking_id = b.id 
            ORDER BY r.created_at DESC`
         );
         return rows;

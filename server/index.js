@@ -22,7 +22,10 @@ const app = express();
 app.set('trust proxy', true); // Required for express-rate-limit when hosted on Railway
 
 // --- SECURITY MIDDLEWARES ---
-app.use(helmet()); // Protect HTTP headers
+app.use(helmet({
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+})); // Protect HTTP headers with Google OAuth popup support
 
 // Rate limiting (max 100 requests per 15 mins per IP)
 const limiter = rateLimit({
@@ -37,18 +40,29 @@ app.use('/api', limiter);
 const allowedOrigins = [
   'https://luluaurelian.co.ke',
   'https://www.luluaurelian.co.ke',
+  'http://luluaurelian.co.ke',
+  'http://www.luluaurelian.co.ke',
+  'https://staff.luluaurelian.co.ke',
+  'http://staff.luluaurelian.co.ke',
+  'https://agent.luluaurelian.co.ke',
+  'http://agent.luluaurelian.co.ke',
   'https://lulu-aurelian.vercel.app',
   'http://localhost:5173',
-  'http://localhost:5000'
+  'http://localhost:5000',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+    if (
+      allowedOrigins.includes(origin) ||
+      /^https?:\/\/(.+\.)?luluaurelian\.co\.ke$/.test(origin) ||
+      /^https?:\/\/lulu-aurelian.*\.vercel\.app$/.test(origin)
+    ) {
+      return callback(null, true);
     }
-    return callback(null, true);
+    return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-mpesa-secret'],
