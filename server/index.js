@@ -3,10 +3,16 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { cronService } from './services/cronService.js';
 import { initRedis } from './config/redis.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Route imports
 import authRoutes from './routes/authRoutes.js';
@@ -91,21 +97,49 @@ app.use('/api/cms', cmsRoutes);
 app.use('/api/ical', icalRoutes);
 
 
-// Health check & root diagnostic endpoints
-app.get('/', (req, res) => {
-  res.status(200).json({
-    name: 'Lulu Aurelian Estate API',
-    status: 'online',
-    version: '1.0.0'
-  });
-});
+// --- STATIC ASSETS & SPA FRONTEND FALLBACK SERVING ---
+const staffDistDir = path.join(__dirname, '../dist-staff');
+const mainDistDir = path.join(__dirname, '../dist');
 
+if (fs.existsSync(staffDistDir)) {
+  app.use(express.static(staffDistDir));
+}
+if (fs.existsSync(mainDistDir)) {
+  app.use(express.static(mainDistDir));
+}
+
+// Health check diagnostic endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date(),
     environment: env.NODE_ENV,
     uptime: process.uptime()
+  });
+});
+
+// SPA Fallback for non-API GET requests
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next(); // Pass missing /api routes to notFoundHandler
+  }
+
+  const staffHtml = path.join(staffDistDir, 'staff.html');
+  const staffIndexHtml = path.join(staffDistDir, 'index.html');
+  const mainIndexHtml = path.join(mainDistDir, 'index.html');
+
+  if (fs.existsSync(staffHtml)) {
+    return res.sendFile(staffHtml);
+  } else if (fs.existsSync(staffIndexHtml)) {
+    return res.sendFile(staffIndexHtml);
+  } else if (fs.existsSync(mainIndexHtml)) {
+    return res.sendFile(mainIndexHtml);
+  }
+
+  res.status(200).json({
+    name: 'Lulu Aurelian Estate API',
+    status: 'online',
+    version: '1.0.0'
   });
 });
 
