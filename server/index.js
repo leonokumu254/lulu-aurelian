@@ -49,7 +49,7 @@ const allowedOrigins = [
   'https://lulu-aurelian.vercel.app',
   'http://localhost:5173',
   'http://localhost:5000',
-  'http://localhost:3000'
+  'http://localhost:3000' 
 ];
 
 app.use(cors({
@@ -91,7 +91,15 @@ app.use('/api/cms', cmsRoutes);
 app.use('/api/ical', icalRoutes);
 
 
-// Health check diagnostic endpoint
+// Health check & root diagnostic endpoints
+app.get('/', (req, res) => {
+  res.status(200).json({
+    name: 'Lulu Aurelian Estate API',
+    status: 'online',
+    version: '1.0.0'
+  });
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
