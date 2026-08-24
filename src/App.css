@@ -57,18 +57,22 @@
 @media (max-width: 1024px) {
   .booking-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 2.5rem;
+    gap: 1.5rem;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .booking-page-title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
   }
   .booking-view-container {
-    padding-top: 4.5rem;
-    padding-bottom: 4rem;
+    padding-top: 3.5rem;
+    padding-bottom: 2rem;
+  }
+  .back-link-btn {
+    margin-bottom: 0.8rem;
   }
 }
 

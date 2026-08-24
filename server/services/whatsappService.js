@@ -14,9 +14,15 @@ class WhatsappService {
   async sendBookingStatusAlert(booking, status) {
     let message;
     if (status === 'PAID') {
-      const passcode = await db.unit_settings.getPasscode(booking.unit_id);
-      const bookingWithPasscode = { ...booking, passcode };
-      message = WHATSAPP_TEMPLATES.BOOKING_PAID_FULFILLMENT(bookingWithPasscode);
+      const settings = await db.unit_settings.getSettings(booking.unit_id);
+      const bookingWithSettings = {
+        ...booking,
+        passcode: settings.passcode,
+        house_number: settings.house_number,
+        wifi_ssid: settings.wifi_ssid,
+        wifi_password: settings.wifi_password
+      };
+      message = WHATSAPP_TEMPLATES.BOOKING_PAID_FULFILLMENT(bookingWithSettings);
     } else {
       message = WHATSAPP_TEMPLATES.BOOKING_STATUS_ALERT(booking, status);
     }

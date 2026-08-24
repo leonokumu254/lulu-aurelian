@@ -159,13 +159,17 @@ export default function OffersSection({ setPage }) {
                 {OFFERS.map(offer => (
                   <div className="offer-item" key={`group${groupIndex}-${offer.id}`}>
                     <div className="offer-image-wrapper">
-                      <img src={offer.image} alt={offer.title} className="offer-image" />
+                      <img src={offer.image} alt={offer.title} className="offer-image" loading="lazy" />
                     </div>
                     <div className="offer-content">
                       <h3 className="offer-title">{offer.title}</h3>
                       <p className="offer-desc">{offer.shortDesc}</p>
                       <div className="offer-actions">
-                        <button className="offer-btn-book" onClick={() => setPage('booking', { offerId: offer.id })}>
+                        <button 
+                          className="offer-btn-book" 
+                          onClick={() => setPage('booking', { offerId: offer.id })}
+                          tabIndex={groupIndex > 0 ? -1 : undefined}
+                        >
                           Book Now
                         </button>
                         <a 
@@ -174,6 +178,7 @@ export default function OffersSection({ setPage }) {
                           rel="noreferrer" 
                           className="offer-whatsapp-btn"
                           aria-label={`Inquire about ${offer.title} via WhatsApp`}
+                          tabIndex={groupIndex > 0 ? -1 : undefined}
                         >
                           <WhatsAppIconSVG />
                         </a>

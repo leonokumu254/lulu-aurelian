@@ -5,7 +5,7 @@ import './OffersPage.css';
 
 export default function OffersPage({ setPage }) {
   return (
-    <div className="offers-page container">
+    <main className="offers-page container">
       <div className="offers-page-header">
         <button onClick={() => setPage('home')} className="back-link-btn">
           <ArrowLeft size={16} />
@@ -24,7 +24,7 @@ export default function OffersPage({ setPage }) {
         {OFFERS.map(offer => (
           <div className="offer-item" key={offer.id}>
             <div className="offer-image-wrapper">
-              <img src={offer.image} alt={offer.title} className="offer-image" />
+              <img src={offer.image} alt={offer.title} className="offer-image" loading="lazy" />
             </div>
             <div className="offer-content">
               <h3 className="offer-title">{offer.title}</h3>
@@ -41,6 +41,6 @@ export default function OffersPage({ setPage }) {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

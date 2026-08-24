@@ -358,7 +358,7 @@ export default function App() {
           />
         </div>
       ) : page === 'home' ? (
-        <div className="home-view">
+        <main className="home-view">
           <Hero onSearch={handleHeroSearch} />
           <About />
           <Listings onBookSelect={handleBookSelect} />
@@ -377,13 +377,13 @@ export default function App() {
           <Reviews />
           <ContactSection />
           <Newsletter />
-        </div>
+        </main>
       ) : page === 'offers' ? (
         <OffersPage setPage={(p, params) => navigateToPage(p, params)} />
       ) : page === 'checkout' ? (
         <CheckoutPage user={authUser} setUser={setAuthUser} onLogout={handleLogout} />
       ) : (
-        <div className="booking-view-container container">
+        <main className="booking-view-container container">
           <div className="booking-header-offset" />
           
           <button onClick={() => navigateToPage('home')} className="back-link-btn">
@@ -424,7 +424,7 @@ export default function App() {
               />
             </div>
           </div>
-        </div>
+        </main>
       )}
 
       {/* Shared Persistent Footer & Location */}

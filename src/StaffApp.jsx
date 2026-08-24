@@ -122,7 +122,7 @@ export default function StaffApp() {
           )}
 
           <div className="staff-auth-card">
-            <AuthPage onLoginSuccess={handleLoginSuccess} />
+            <AuthPage onLoginSuccess={handleLoginSuccess} isStaffPortal={true} />
           </div>
           
           <footer className="staff-login-footer">

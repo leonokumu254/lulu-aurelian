@@ -567,17 +567,42 @@ export const getUnitSettings = async (req, res, next) => {
 export const updateUnitSettings = async (req, res, next) => {
   try {
     const { unitId } = req.params;
-    const { passcode } = req.body;
+    const { passcode, house_number, wifi_ssid, wifi_password } = req.body;
 
-    if (!passcode || passcode.length !== 4 || isNaN(passcode)) {
-      return res.status(400).json({ success: false, error: 'Passcode must be exactly a 4-digit number.' });
+    const fieldsToUpdate = {};
+
+    if (passcode !== undefined) {
+      if (!passcode || passcode.length !== 4 || isNaN(passcode)) {
+        return res.status(400).json({ success: false, error: 'Passcode must be exactly a 4-digit number.' });
+      }
+      fieldsToUpdate.passcode = passcode;
     }
 
-    await db.unit_settings.setPasscode(unitId, passcode);
+    if (house_number !== undefined) {
+      fieldsToUpdate.house_number = house_number.trim();
+    }
+
+    if (wifi_ssid !== undefined) {
+      fieldsToUpdate.wifi_ssid = wifi_ssid.trim();
+    }
+
+    if (wifi_password !== undefined) {
+      fieldsToUpdate.wifi_password = wifi_password.trim();
+    }
+
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(400).json({ success: false, error: 'No fields provided for update.' });
+    }
+
+    await db.unit_settings.setSettings(unitId, fieldsToUpdate);
+
+    let displayName = 'Skyview Hideaway';
+    if (unitId === 'cocoa') displayName = 'Cocoa Retreat';
+    if (unitId === 'neema') displayName = 'Neema Haven';
 
     return res.status(200).json({
       success: true,
-      message: `Passcode for ${unitId === 'cocoa' ? 'Cocoa Retreat' : 'Skyview Hideaway'} updated successfully!`
+      message: `Settings for ${displayName} updated successfully!`
     });
   } catch (error) {
     next(error);

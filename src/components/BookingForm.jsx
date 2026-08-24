@@ -201,7 +201,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
 
   const digits = formData.phone ? formData.phone.replace(/\D/g, '') : '';
   const isPhoneValid = digits.length >= 9 && digits.length <= 15;
-  const hasStoredDetails = !!(user && formData.firstName && formData.lastName && formData.email && formData.phone && isPhoneValid && !phoneError);
+  const hasStoredDetails = !!(user && formData.firstName && formData.email);
 
   return (
     <div className="booking-form-container">
@@ -266,95 +266,112 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
         </div>
       </div>
 
-      {/* Dates & Guests (Airbnb Box) */}
+      {/* Check-In and Check-Out Dates (Homepage Format) */}
       <div className="form-group">
-        <label className="form-label">Dates & Guests</label>
-        <div className="airbnb-booking-box">
-          {/* Top Row: Dates */}
-          <div className="booking-box-dates" onClick={() => setIsCalendarOpen(true)}>
-            <div className="booking-box-col check-in">
-              <span className="booking-box-label">CHECK-IN</span>
-              <span className={`booking-box-value ${!formData.checkIn ? 'placeholder' : ''}`}>
-                {formatDateForDisplay(formData.checkIn)}
-              </span>
-            </div>
-
-            <div className="booking-box-col-divider" />
-
-            <div className="booking-box-col check-out">
-              <span className="booking-box-label">CHECKOUT</span>
-              <span className={`booking-box-value ${!formData.checkOut ? 'placeholder' : ''}`}>
-                {formatDateForDisplay(formData.checkOut)}
-              </span>
-            </div>
+        <label className="form-label">Dates</label>
+        <div className="form-group-row">
+          <div className="homepage-style-input-group" onClick={() => setIsCalendarOpen(true)} style={{ cursor: 'pointer' }}>
+            <label className="filter-label">
+              <Calendar size={18} className="filter-icon" />
+              <span>Check-in Date</span>
+            </label>
+            <input
+              type="text"
+              className="filter-input"
+              readOnly
+              placeholder="Add date"
+              value={formData.checkIn ? formatDateForDisplay(formData.checkIn) : ''}
+            />
           </div>
 
-          <div className="booking-box-row-divider" />
+          <div className="homepage-style-input-group" onClick={() => setIsCalendarOpen(true)} style={{ cursor: 'pointer' }}>
+            <label className="filter-label">
+              <Calendar size={18} className="filter-icon" />
+              <span>Check-out Date</span>
+            </label>
+            <input
+              type="text"
+              className="filter-input"
+              readOnly
+              placeholder="Add date"
+              value={formData.checkOut ? formatDateForDisplay(formData.checkOut) : ''}
+            />
+          </div>
+        </div>
+      </div>
 
-          {/* Bottom Row: Guests Trigger */}
-          <div
-            className="booking-box-guests-trigger"
-            onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
-          >
-            <div className="booking-box-guests-content">
-              <span className="booking-box-label">GUESTS</span>
-              <span className="booking-box-value">
-                {formData.adults + (formData.hasChildren ? formData.children : 0)} guest
-                {(formData.adults + (formData.hasChildren ? formData.children : 0)) > 1 ? 's' : ''}
-                {formData.hasChildren && formData.children > 0 ? `, ${formData.children} child${formData.children > 1 ? 'ren' : ''}` : ''}
-              </span>
-            </div>
+      {/* Guests (Homepage Style Box) */}
+      <div className="form-group" style={{ position: 'relative' }}>
+        <label className="form-label">Guests</label>
+        <div 
+          className="homepage-style-input-group guests-trigger-group" 
+          onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
+          style={{ cursor: 'pointer' }}
+        >
+          <label className="filter-label" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Users size={18} className="filter-icon" />
+              <span>Guests Count</span>
+            </span>
             <ChevronDown size={18} className={`dropdown-arrow ${isGuestDropdownOpen ? 'open' : ''}`} />
-          </div>
+          </label>
+          <input
+            type="text"
+            className="filter-input"
+            readOnly
+            value={
+              `${formData.adults + (formData.hasChildren ? formData.children : 0)} guest${(formData.adults + (formData.hasChildren ? formData.children : 0)) > 1 ? 's' : ''}` +
+              (formData.hasChildren && formData.children > 0 ? `, ${formData.children} child${formData.children > 1 ? 'ren' : ''}` : '')
+            }
+          />
+        </div>
 
-          {/* Guests Dropdown Panel */}
-          {isGuestDropdownOpen && (
-            <div className="booking-box-guests-dropdown" ref={dropdownRef}>
-              <div className="counter-row">
-                <div className="counter-label-col">
-                  <span className="counter-name">Adults</span>
-                  <span className="counter-sub">Age 13 or above · Max {MAX_ADULTS}</span>
-                </div>
-                <div className="counter-control-col">
-                  <button
-                    type="button"
-                    className="counter-btn"
-                    onClick={(e) => { e.stopPropagation(); handleAdultsCount(-1); }}
-                    disabled={formData.adults <= 1}
-                  >
-                    −
-                  </button>
-                  <span className="counter-value">{formData.adults}</span>
-                  <button
-                    type="button"
-                    className="counter-btn"
-                    onClick={(e) => { e.stopPropagation(); handleAdultsCount(1); }}
-                    disabled={formData.adults >= MAX_ADULTS}
-                  >
-                    +
-                  </button>
-                </div>
+        {/* Guests Dropdown Panel */}
+        {isGuestDropdownOpen && (
+          <div className="booking-box-guests-dropdown" ref={dropdownRef} style={{ width: '100%', boxSizing: 'border-box' }}>
+            <div className="counter-row">
+              <div className="counter-label-col">
+                <span className="counter-name">Adults</span>
+                <span className="counter-sub">Age 13 or above · Max {MAX_ADULTS}</span>
               </div>
-
-              {/* Peak surcharge notice */}
-              {formData.adults === MAX_ADULTS && (
-                <div style={{ marginTop: '0.8rem', padding: '0.7rem 1rem', backgroundColor: 'rgba(238,205,92,0.08)', border: '1px solid var(--color-gold-muted)', borderRadius: '6px', fontSize: '0.82rem', color: 'var(--color-gold-light)', lineHeight: 1.5 }}>
-                  <strong>Peak capacity selected.</strong> A KES {PEAK_SURCHARGE.toLocaleString()} surcharge applies for {MAX_ADULTS} adult guests.
-                </div>
-              )}
-
-              <div className="dropdown-footer" style={{ marginTop: '1rem' }}>
+              <div className="counter-control-col">
                 <button
                   type="button"
-                  className="dropdown-close-btn"
-                  onClick={(e) => { e.stopPropagation(); setIsGuestDropdownOpen(false); }}
+                  className="counter-btn"
+                  onClick={(e) => { e.stopPropagation(); handleAdultsCount(-1); }}
+                  disabled={formData.adults <= 1}
                 >
-                  Apply
+                  −
+                </button>
+                <span className="counter-value">{formData.adults}</span>
+                <button
+                  type="button"
+                  className="counter-btn"
+                  onClick={(e) => { e.stopPropagation(); handleAdultsCount(1); }}
+                  disabled={formData.adults >= MAX_ADULTS}
+                >
+                  +
                 </button>
               </div>
             </div>
-          )}
-        </div>
+
+            {formData.adults === MAX_ADULTS && (
+              <div style={{ marginTop: '0.8rem', padding: '0.7rem 1rem', backgroundColor: 'rgba(238,205,92,0.08)', border: '1px solid var(--color-gold-muted)', borderRadius: '6px', fontSize: '0.82rem', color: 'var(--color-gold-light)', lineHeight: 1.5 }}>
+                <strong>Peak capacity selected.</strong> A KES {PEAK_SURCHARGE.toLocaleString()} surcharge applies for {MAX_ADULTS} adult guests.
+              </div>
+            )}
+
+            <div className="dropdown-footer" style={{ marginTop: '1rem' }}>
+              <button
+                type="button"
+                className="dropdown-close-btn"
+                onClick={(e) => { e.stopPropagation(); setIsGuestDropdownOpen(false); }}
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Traveling with Children Radio Button Selection */}
@@ -404,34 +421,67 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
       {/* Contact Information */}
       <div className="form-group-divider" />
       <h2 className="form-section-title">Personal Information</h2>
-      <p style={{ fontSize: '1rem', fontStyle: 'italic', color: 'var(--color-gold-deep)', marginBottom: '1.5rem', fontWeight: 500 }}>"We hate paperwork too"</p>
+      <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: 'var(--color-gold-deep)', marginBottom: '1rem', fontWeight: 500 }}>"We hate paperwork too"</p>
 
       {hasStoredDetails && !isEditingProfile ? (
         <div className="confirmed-details-container glass">
           <div className="confirmed-details-header">
             <Shield size={16} className="verified-icon" />
-            <span>Profile Details</span>
+            <span>Logged in as {formData.firstName} {formData.lastName}</span>
           </div>
           <div className="confirmed-details-grid">
             <div className="detail-item">
-              <span className="detail-label">Name</span>
-              <span className="detail-value">{formData.firstName} {formData.lastName}</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">Email Address</span>
+              <span className="detail-label">Email</span>
               <span className="detail-value">{formData.email}</span>
             </div>
-            <div className="detail-item">
-              <span className="detail-label">Phone Number</span>
-              <span className="detail-value">{formData.phoneCountryCode} {formData.phone}</span>
-            </div>
+            {formData.phone ? (
+              <div className="detail-item">
+                <span className="detail-label">Phone</span>
+                <span className="detail-value">{formData.phoneCountryCode} {formData.phone}</span>
+              </div>
+            ) : null}
           </div>
+
+          {!formData.phone && (
+            <div className="form-group" style={{ marginTop: '0.8rem' }}>
+              <label className="form-label">Phone Number (Required for M-Pesa & SMS confirmation)</label>
+              <div
+                className={`phone-input-wrapper ${phoneError ? 'input-error' : ''}`}
+                ref={phoneDropdownRef}
+              >
+                <div
+                  className="phone-country-trigger"
+                  onClick={togglePhoneDropdown}
+                >
+                  <img
+                    src={`https://flagcdn.com/w20/${selectedCountry.flag}.png`}
+                    alt={selectedCountry.name}
+                    className="phone-country-flag"
+                  />
+                  <span className="phone-country-arrow">▼</span>
+                </div>
+                <div className="phone-divider" />
+                <span className="phone-prefix-display">{selectedCountry.code}</span>
+                <input
+                  type="tel"
+                  placeholder="712 123456"
+                  className="phone-main-input"
+                  value={formData.phone || ''}
+                  onChange={handlePhoneChange}
+                  required
+                />
+              </div>
+              {phoneError && <span className="field-error-msg">{phoneError}</span>}
+            </div>
+          )}
+
           <button
             type="button"
             className="btn-edit-details"
             onClick={() => setIsEditingProfile(true)}
+            style={{ marginTop: '0.5rem' }}
           >
-            Modify Details
+            Edit Profile Info
           </button>
         </div>
       ) : (
@@ -441,7 +491,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               <label className="form-label">First Name</label>
               <input
                 type="text"
-                placeholder="e.g. Alexander"
+                placeholder="First name"
                 className="form-input text-input"
                 value={formData.firstName || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
@@ -453,7 +503,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               <label className="form-label">Last Name</label>
               <input
                 type="text"
-                placeholder="e.g. Mercer"
+                placeholder="Last name"
                 className="form-input text-input"
                 value={formData.lastName || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
@@ -462,33 +512,16 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
             </div>
           </div>
 
-          <div className="form-group-row">
-            <div className="form-group">
-              <label className="form-label">Email Address</label>
-              <input
-                type="email"
-                placeholder="alexander@domain.com"
-                className="form-input text-input"
-                value={formData.email || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Confirm Email Address</label>
-              <input
-                type="email"
-                placeholder="alexander@domain.com"
-                className={`form-input text-input ${formData.email && formData.confirmEmail && formData.email.toLowerCase() !== formData.confirmEmail.toLowerCase() ? 'input-error' : ''}`}
-                value={formData.confirmEmail || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, confirmEmail: e.target.value }))}
-                required
-              />
-              {formData.email && formData.confirmEmail && formData.email.toLowerCase() !== formData.confirmEmail.toLowerCase() && (
-                <span className="field-error-msg">Email addresses do not match</span>
-              )}
-            </div>
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
+            <input
+              type="email"
+              placeholder="name@example.com"
+              className="form-input text-input"
+              value={formData.email || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value, confirmEmail: e.target.value }))}
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -537,7 +570,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
                       className="phone-search-input"
                       value={phoneSearchQuery}
                       onChange={(e) => setPhoneSearchQuery(e.target.value)}
-                      onClick={(e) => e.stopPropagation()} // Prevent closing dropdown on search box click
+                      onClick={(e) => e.stopPropagation()}
                       autoFocus
                     />
                   </div>
@@ -576,7 +609,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               style={{ marginTop: '0.5rem', display: 'block' }}
               onClick={() => setIsEditingProfile(false)}
             >
-              Lock Details
+              Save & Lock Details
             </button>
           )}
         </>

@@ -5,6 +5,54 @@
  */
 
 // ==========================================
+// UNIT SPECIFIC WELCOME DETAILS
+// ==========================================
+export const UNIT_WELCOME_DETAILS = {
+  skyview: {
+    name: 'Skyview Hideaway',
+    floor: 'Penthouse Level (6th Floor)',
+    directions: 'Take the elevator to the 5th floor, and walk up the final flight of stairs to the private penthouse entrance. You will find the lockbox on the right side of the main door.',
+    wifiSSID: 'LuluAurelian_Skyview_5G',
+    wifiPass: 'SkyviewLuxury2026!',
+    location: 'Skyline Lifestyle Apartments, Penthouse Floor, Nyeri',
+    mapUrl: 'https://maps.google.com/?q=-0.433276973199735,36.96868842933756',
+    rules: [
+      'Strict No-Smoking policy inside the penthouse or on the stairs.',
+      'Terrace doors should remain locked when not in use.',
+      'Check-out time is strictly 11:00 AM.'
+    ]
+  },
+  cocoa: {
+    name: 'Cocoa Retreat',
+    floor: '4th Floor (Suite 4B)',
+    directions: 'Take the elevator directly to the 4th floor. Cocoa Retreat is the second door on your right, marked with a gold plaque. The lockbox is mounted beside the door frame.',
+    wifiSSID: 'LuluAurelian_Cocoa_5G',
+    wifiPass: 'CocoaLuxury2026!',
+    location: 'Skyline Lifestyle Apartments, 4th Floor, Nyeri',
+    mapUrl: 'https://maps.google.com/?q=-0.433276973199735,36.96868842933756',
+    rules: [
+      'Strict No-Smoking policy inside the suite.',
+      'Quiet hours are between 10:00 PM and 7:00 AM.',
+      'Check-out time is strictly 11:00 AM.'
+    ]
+  },
+  neema: {
+    name: 'Neema Haven',
+    floor: '2nd Floor (Suite 2A)',
+    directions: 'Take the elevator directly to the 2nd floor. Neema Haven is located directly opposite the elevator exit. The lockbox is mounted underneath the unit door handle.',
+    wifiSSID: 'LuluAurelian_Neema_5G',
+    wifiPass: 'NeemaLuxury2026!',
+    location: 'Skyline Lifestyle Apartments, 2nd Floor, Nyeri',
+    mapUrl: 'https://maps.google.com/?q=-0.433276973199735,36.96868842933756',
+    rules: [
+      'Strict No-Smoking policy inside the suite.',
+      'Please leave the balcony door locked during high winds.',
+      'Check-out time is strictly 11:00 AM.'
+    ]
+  }
+};
+
+// ==========================================
 // EMAIL CONTENT TEMPLATES
 // ==========================================
 export const EMAIL_TEMPLATES = {
@@ -14,18 +62,24 @@ export const EMAIL_TEMPLATES = {
    * Triggered by: public guest booking requests (server/controllers/bookingController.js -> requestBooking)
    */
   BOOKING_CONFIRMATION: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Dear ${booking.guest_name}, We have received your booking request for Unit ${booking.unit_id}.`,
+      text: `Dear ${booking.guest_name}, We have received your booking request for ${details.name}.`,
       title: 'Reservation Request Received',
       subject: `Reservation Request Received: Ref #${booking.id.substring(0, 8)}`,
-      preheader: `Your booking for Unit ${booking.unit_id} is awaiting payment.`,
-      heroImage: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      preheader: `Your booking for ${details.name} is awaiting payment.`,
+      heroImage: unitId === 'cocoa' 
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
+        : unitId === 'neema'
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
+        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
       badge: 'Action Required',
       headingLine1: 'Awaiting',
       headingLine2: 'Payment',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `We have received your booking request for <strong>Unit ${booking.unit_id}</strong> (Check-in: ${booking.check_in}).`
+        `We have received your booking request for <strong>${details.name}</strong> (Check-in: ${booking.check_in}, Check-out: ${booking.check_out}).`
       ],
       alertText: 'Your reservation status is currently <strong>AWAITING PAYMENT</strong>. Please ensure your payment is completed within the strict 3-hour payment window to secure your dates.',
       bookingRef: booking.id.substring(0, 8).toUpperCase(),
@@ -42,36 +96,42 @@ export const EMAIL_TEMPLATES = {
    * Triggered by: successful payments (server/controllers/bookingController.js -> verifyPaymentWebhook, or server/controllers/paymentController.js -> mpesaCallback/capturePaypalPayment)
    */
   FULFILLMENT_CREDENTIALS: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Dear ${booking.guest_name}, Thank you for completing your deposit payment! Your stay is fully SECURED.`,
+      text: `Dear ${booking.guest_name}, Thank you for completing your deposit payment! Your stay at ${details.name} is fully SECURED.`,
       title: 'Your Stay Credentials',
-      subject: `Your Stay Credentials - Unit ${booking.unit_id.toUpperCase()}`,
-      preheader: `Your digital lock passcode and check-in instructions for Unit ${booking.unit_id}.`,
-      heroImage: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o=',
+      subject: `Your Stay Credentials - ${details.name.toUpperCase()}`,
+      preheader: `Your digital lock passcode and check-in instructions for ${details.name}.`,
+      heroImage: unitId === 'cocoa' 
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
+        : unitId === 'neema'
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
+        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
       badge: 'Stay Secured',
       headingLine1: "You're almost",
       headingLine2: 'There.',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `Thank you for completing your payment. Your stay is fully secured. Below is your check-in access credentials bundle for <strong>Unit ${booking.unit_id.toUpperCase()}</strong>:`
+        `Thank you for completing your payment. Your stay at <strong>${details.name}</strong> is fully secured. Below is your check-in access credentials bundle for your convenience:`
       ],
       credentials: {
         title: 'Credentials Bundle',
         items: [
           { label: 'Check-In Date & Time', value: `${booking.check_in} from 14:00 PM (2:00 PM)` },
-          { label: 'Check-Out Date & Time', value: `${booking.check_out} at 11:00 AM(11:00)` },
-          { label: 'Location', value: 'Skyline Apartments, Nyeri' },
+          { label: 'Check-Out Date & Time', value: `${booking.check_out} at 11:00 AM (11:00 AM)` },
+          { label: 'Suite Name', value: details.name },
+          { label: 'House/Room Number', value: booking.house_number || 'N/A' },
+          { label: 'Floor Level', value: details.floor },
           { label: 'Key Box PIN', value: booking.passcode || '9841', extra: '(To retrieve the room key from the lock box)' },
-          { label: 'Wi-Fi SSID', value: 'LuluAurelian_Luxury_5G' },
-          { label: 'Wi-Fi Password', value: 'AurelianLuxury2026!' }
+          { label: 'Wi-Fi SSID', value: booking.wifi_ssid || details.wifiSSID },
+          { label: 'Wi-Fi Password', value: booking.wifi_password || details.wifiPass },
+          { label: 'Check-In Directions', value: details.directions }
         ]
       },
       rules: {
         title: 'Stay Rules & Guidelines',
-        items: [
-          'Strict No-Smoking policy inside the suite.',
-          'Check-out time is strictly 11:00 AM.'
-        ]
+        items: details.rules
       },
       button: {
         label: 'View Itinerary',
@@ -161,18 +221,20 @@ export const EMAIL_TEMPLATES = {
    * Triggered by: Daily stay lifecycle cron (server/services/cronService.js -> runLifecycleMessagingHooks)
    */
   CHECK_IN_FOLLOW_UP: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Good morning ${booking.guest_name}, We hope you had a restful night in the ${booking.unit_id.toUpperCase()} suite.`,
+      text: `Good morning ${booking.guest_name}, We hope you had a restful night in the ${details.name} suite.`,
       title: 'Morning Comfort Check-in',
-      subject: `Morning Comfort Check-in - Suite ${booking.unit_id.toUpperCase()}`,
-      preheader: `Checking in on your stay at Unit ${booking.unit_id.toUpperCase()}`,
+      subject: `Morning Comfort Check-in - ${details.name}`,
+      preheader: `Checking in on your stay at ${details.name}`,
       heroImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQd-WSmf7IU8rhoVMkpn_IpS8lY_CY7akhhm1gaF7HPA&s=10',
       badge: 'Guest Services',
       headingLine1: 'Good',
       headingLine2: 'Morning.',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `We hope you had a restful night in the <strong>${booking.unit_id.toUpperCase()}</strong> suite.`,
+        `We hope you had a restful night in the <strong>${details.name}</strong> suite.`,
         'This is our morning comfort check-in. If you need any assistance, breakfast additions, private tours, or custom housekeeping schedules, please respond directly to this email and your concierge will assist you immediately.'
       ],
       button: {
@@ -188,10 +250,12 @@ export const EMAIL_TEMPLATES = {
    * Triggered by: Daily stay lifecycle cron (server/services/cronService.js -> runLifecycleMessagingHooks)
    */
   CHECKOUT_REVIEW_REQUEST: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Dear ${booking.guest_name}, Thank you for choosing Pearl Apartments (Lulu Aurelian Estate) for your stay.`,
+      text: `Dear ${booking.guest_name}, Thank you for choosing ${details.name} (Lulu Aurelian Estate) for your stay.`,
       title: 'Share Your Experience',
-      subject: `Share Your Stay Experience (Ref #${booking.id.substring(0, 8)})`,
+      subject: `Share Your Stay Experience at ${details.name} (Ref #${booking.id.substring(0, 8)})`,
       preheader: `We trust you had a flawless experience.`,
       heroImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx1QRw7IQroE1OvYqdqcw1U3-J1lI3WUFl_1-IedA0LQ&s=10',
       badge: 'Guest Feedback',
@@ -199,7 +263,7 @@ export const EMAIL_TEMPLATES = {
       headingLine2: 'Stay?',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        'Thank you for choosing Lulu Aurelian Estate for your stay. We trust you had a flawless experience.',
+        `Thank you for choosing ${details.name} for your stay. We trust you had a flawless experience.`,
         'As we continuously refine our boutique hospitality, we would highly value your review. It only takes a minute.'
       ],
       button: {
@@ -266,8 +330,10 @@ export const EMAIL_TEMPLATES = {
   },
 
   GUEST_CANCELLATION: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Dear ${booking.guest_name}, Your booking ${booking.id.substring(0, 8)} has been cancelled. We'd love to know why.`,
+      text: `Dear ${booking.guest_name}, Your booking at ${details.name} (Ref #${booking.id.substring(0, 8)}) has been cancelled. We'd love to know why.`,
       title: 'Booking Cancelled',
       subject: `Booking Cancelled: Ref #${booking.id.substring(0, 8)}`,
       preheader: `Your reservation has been cancelled successfully.`,
@@ -277,7 +343,7 @@ export const EMAIL_TEMPLATES = {
       headingLine2: 'Cancelled',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `This email confirms that your booking request for <strong>Unit ${booking.unit_id.toUpperCase()}</strong> (Check-in: ${booking.check_in}) has been successfully cancelled.`,
+        `This email confirms that your booking request for <strong>${details.name}</strong> (Check-in: ${booking.check_in}) has been successfully cancelled.`,
         'We would love to understand what happened. Could you please take a moment to reply to this email and let us know your reason for cancelling? Your feedback helps us improve our luxury experience for future stays.'
       ],
       button: {
@@ -326,7 +392,9 @@ export const WHATSAPP_TEMPLATES = {
    * Triggered by: booking updates or request creation (server/controllers/bookingController.js)
    */
   BOOKING_STATUS_ALERT: (booking, status) => {
-    return `Hello *${booking.guest_name}*, this is Lulu Aurelian Estate. Your booking for Unit *${booking.unit_id.toUpperCase()}* is currently *${status}*. Status updates and receipt coordinates will be dispatched to your email at ${booking.guest_email}. Reference ID: ${booking.id.substring(0, 8)}`;
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    return `Hello *${booking.guest_name}*, this is Lulu Aurelian Estate. Your booking for *${details.name}* is currently *${status}*. Status updates and receipt coordinates will be dispatched to your email at ${booking.guest_email}. Reference ID: ${booking.id.substring(0, 8)}`;
   },
 
   /**
@@ -335,23 +403,30 @@ export const WHATSAPP_TEMPLATES = {
    * Triggered by: successful payments (server/controllers/bookingController.js)
    */
   BOOKING_PAID_FULFILLMENT: (booking) => {
-    return `Dear *${booking.guest_name}*, thank you for your payment! Your reservation for Unit *${booking.unit_id.toUpperCase()}* is fully confirmed.
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    return `Dear *${booking.guest_name}*, thank you for your payment! Your reservation for *${details.name}* is fully confirmed.
 
 *Stay Details & Occupancy Dates:*
 • Check-In: ${booking.check_in} from 14:00 PM (2:00 PM)
 • Check-Out: ${booking.check_out} at 11:00 AM (11:00 AM)
 
-*Location:*
-• Skyline Apartments, Nyeri
+*Location & Suite:*
+• Suite Name: ${details.name}
+• House/Room Number: ${booking.house_number || 'N/A'}
+• Floor Level: ${details.floor}
+• Address: ${details.location}
 
 *Credentials:*
 • Key Box PIN: *${booking.passcode || '9841'}* (To retrieve room key from the lock box)
-• Wi-Fi SSID: LuluAurelian_Luxury_5G
-• Wi-Fi Password: AurelianLuxury2026!
+• Wi-Fi SSID: ${booking.wifi_ssid || details.wifiSSID}
+• Wi-Fi Password: ${booking.wifi_password || details.wifiPass}
+
+*Check-In Directions:*
+${details.directions}
 
 *House Rules:*
-1. Strict No-Smoking policy inside the suite.
-2. Check-out is strictly 11:00 AM.
+${details.rules.map((rule, idx) => `${idx + 1}. ${rule}`).join('\n')}
 
 We look forward to hosting you!`;
   },
@@ -383,3 +458,4 @@ We look forward to hosting you!`;
     return `Hello *${booking.guest_name}*, we trust your stay was flawless. To help us maintain our standards, please review us: https://www.luluaurelian.co.ke/#/review?token=${booking.secure_token}`;
   }
 };
+

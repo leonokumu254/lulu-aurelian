@@ -50,25 +50,28 @@ export default function About() {
             <div className="about-gallery-left" data-aos="fade-up" data-aos-delay="100">
               <img
                 src="/assets/cocoa/cocoa_14.avif"
-                alt="Lulu Aurelian Estate - Cocoa Suite cozy luxury living room in Nyeri, Kenya"
+                alt="Lulu Aurelian Estate Cocoa Retreat living room with high-speed Wi-Fi setup and spotless hardwood floors in Nyeri, Kenya."
                 className="about-gallery-img"
                 onClick={handleScrollToSuites}
+                loading="lazy"
               />
             </div>
             <div className="about-gallery-right-top" data-aos="fade-up" data-aos-delay="300">
               <img
                 src="/assets/skyview/skyview_5.jpg"
-                alt="Lulu Aurelian Estate - Skyview Suite elegant living room Airbnb in Nyeri"
+                alt="Lulu Aurelian Estate Skyview Hideaway living room with panoramic windows and elegant sofa seating in Nyeri, Kenya."
                 className="about-gallery-img"
                 onClick={handleScrollToSuites}
+                loading="lazy"
               />
             </div>
             <div className="about-gallery-right-bottom" data-aos="fade-up" data-aos-delay="500">
               <img
                 src="/assets/skyview/skyview_13.jpg"
-                alt="Lulu Aurelian Estate - Skyview Suite luxury bedroom with scenic views in Nyeri"
+                alt="Lulu Aurelian Estate Skyview Hideaway primary bedroom with king size bed and scenic panoramic window views in Nyeri, Kenya."
                 className="about-gallery-img"
                 onClick={handleScrollToSuites}
+                loading="lazy"
               />
             </div>
           </div>

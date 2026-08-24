@@ -82,7 +82,7 @@ export default function Reviews({ unitId }) {
                     {review.guest_name ? review.guest_name.charAt(0).toUpperCase() : '?'}
                   </div>
                   <div>
-                    <h4 className="feedback-name">{review.guest_name || 'Anonymous Guest'}</h4>
+                    <h3 className="feedback-name">{review.guest_name || 'Anonymous Guest'}</h3>
                     <p className="feedback-date">{formatDate(review.created_at)}</p>
                   </div>
                 </div>

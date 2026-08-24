@@ -1,5 +1,5 @@
 import { env } from '../config/env.js';
-import { EMAIL_TEMPLATES } from '../config/constants.js';
+import { EMAIL_TEMPLATES, UNIT_WELCOME_DETAILS } from '../config/constants.js';
 import { db } from '../config/db.js';
 
 class EmailService {
@@ -218,6 +218,37 @@ class EmailService {
     `;
   }
 
+  _renderLocationBlock(unitId) {
+    const details = UNIT_WELCOME_DETAILS[(unitId || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
+    return `
+      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 22px; border-radius: 16px; margin-bottom: 25px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td width="36" valign="top" style="padding-top: 2px;">
+              <img src="https://img.icons8.com/ios-filled/50/cfa873/marker.png" alt="Map Pin" width="24" height="24" style="display: block;" />
+            </td>
+            <td>
+              <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.5px;">Location & Coordinates</h4>
+              <p style="margin: 0 0 12px 0; font-size: 13px; color: #666666; line-height: 1.5; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+                <strong>${details.name}</strong><br/>
+                ${details.location}
+              </p>
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <a href="${details.mapUrl}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #cfa873; color: #ffffff; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
+                      📍 Open Location Pin on Google Maps &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+  }
+
   // ==========================================
   // SERVICE METHODS
   // ==========================================
@@ -265,6 +296,7 @@ class EmailService {
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
       this._renderAlertBox(data.alertText) +
+      this._renderLocationBlock(booking.unit_id) +
       this._renderBookingRef(data.bookingRef) +
       this._renderButton(data.button);
 
@@ -279,14 +311,21 @@ class EmailService {
   }
 
   async sendFulfillmentCredentials(booking) {
-    const passcode = await db.unit_settings.getPasscode(booking.unit_id);
-    const bookingWithPasscode = { ...booking, passcode };
-    const data = EMAIL_TEMPLATES.FULFILLMENT_CREDENTIALS(bookingWithPasscode);
+    const settings = await db.unit_settings.getSettings(booking.unit_id);
+    const bookingWithSettings = {
+      ...booking,
+      passcode: settings.passcode,
+      house_number: settings.house_number,
+      wifi_ssid: settings.wifi_ssid,
+      wifi_password: settings.wifi_password
+    };
+    const data = EMAIL_TEMPLATES.FULFILLMENT_CREDENTIALS(bookingWithSettings);
     const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
       this._renderCredentialsBox(data.credentials) +
+      this._renderLocationBlock(booking.unit_id) +
       this._renderRulesList(data.rules) +
       this._renderButton(data.button);
 

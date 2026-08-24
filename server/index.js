@@ -101,11 +101,27 @@ app.use('/api/ical', icalRoutes);
 const staffDistDir = path.join(__dirname, '../dist-staff');
 const mainDistDir = path.join(__dirname, '../dist');
 
+const staticOptions = {
+  maxAge: '1d',
+  setHeaders: (res, filePath) => {
+    // Vite compiles assets into the "assets" folder with cache-busting hashes
+    if (filePath.includes(path.sep + 'assets' + path.sep) || filePath.includes('/assets/')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (filePath.endsWith('.html')) {
+      // HTML files must always revalidate to fetch new builds instantly
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    } else {
+      // General static assets (logos, images, favicon)
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  }
+};
+
 if (fs.existsSync(staffDistDir)) {
-  app.use(express.static(staffDistDir));
+  app.use(express.static(staffDistDir, staticOptions));
 }
 if (fs.existsSync(mainDistDir)) {
-  app.use(express.static(mainDistDir));
+  app.use(express.static(mainDistDir, staticOptions));
 }
 
 // Health check diagnostic endpoint

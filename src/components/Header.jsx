@@ -155,7 +155,11 @@ export default function Header({ page, setPage, authUser, onLogout, unitName }) 
                   </button>
               )}
               {/* Mobile menu trigger */}
-              <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              <button 
+                className="mobile-menu-toggle" 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}
+              >
                 {mobileMenuOpen ? <X size={24} id='close-nav' /> : <Menu size={24} id='open-nav' />}
               </button>
             </div>
