@@ -19,6 +19,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null,
       includeAssets: ['lulu_aurelian_logo.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Lulu Aurelian Staff Console',

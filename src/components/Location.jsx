@@ -16,7 +16,7 @@ export default function Location() {
         
         <div className="location-map-wrapper">
           <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1932.9804676571891!2d36.96724454986338!3d-0.4337598584716331!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182861001b95451f%3A0x13d296c5a51f2d92!2sSKYLINE%20LIFESTYLE%20APARTMENTS!5e0!3m2!1sen!2ske!4v1782334343184!5m2!1sen!2ske" 
+            src="https://maps.google.com/maps?q=-0.433276973199735,36.96868842933756&z=17&output=embed" 
             width="100%" 
             height="450" 
             style={{ border: 0 }} 

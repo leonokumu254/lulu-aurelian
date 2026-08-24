@@ -9,7 +9,15 @@ export default function SuitePasscodes() {
   const [savingUnit, setSavingUnit] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
   const [passcodes, setPasscodes] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [houseNumbers, setHouseNumbers] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [wifiSSIDs, setWifiSSIDs] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [wifiPasswords, setWifiPasswords] = useState({ skyview: '', cocoa: '', neema: '' });
+
   const [savedPasscodes, setSavedPasscodes] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [savedHouseNumbers, setSavedHouseNumbers] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [savedWifiSSIDs, setSavedWifiSSIDs] = useState({ skyview: '', cocoa: '', neema: '' });
+  const [savedWifiPasswords, setSavedWifiPasswords] = useState({ skyview: '', cocoa: '', neema: '' });
+
   const [showSaved, setShowSaved] = useState({ skyview: false, cocoa: false, neema: false });
 
   // Fetch current passcode settings
@@ -22,12 +30,24 @@ export default function SuitePasscodes() {
       const data = await response.json();
       if (response.ok && data.success) {
         setSettings(data.settings);
-        const map = {};
+        const pMap = {};
+        const hMap = {};
+        const ssidMap = {};
+        const passMap = {};
         data.settings.forEach(s => {
-          map[s.unit_id] = s.passcode;
+          pMap[s.unit_id] = s.passcode || '';
+          hMap[s.unit_id] = s.house_number || '';
+          ssidMap[s.unit_id] = s.wifi_ssid || '';
+          passMap[s.unit_id] = s.wifi_password || '';
         });
-        setPasscodes(map);
-        setSavedPasscodes(map);
+        setPasscodes(pMap);
+        setSavedPasscodes(pMap);
+        setHouseNumbers(hMap);
+        setSavedHouseNumbers(hMap);
+        setWifiSSIDs(ssidMap);
+        setSavedWifiSSIDs(ssidMap);
+        setWifiPasswords(passMap);
+        setSavedWifiPasswords(passMap);
       } else {
         setError(data.error || 'Failed to load suite settings.');
       }
@@ -69,7 +89,7 @@ export default function SuitePasscodes() {
 
   const handleSave = async (unitId) => {
     const pin = passcodes[unitId];
-    if (!pin || pin.length !== 4) {
+    if (pin && (pin.length !== 4 || isNaN(pin))) {
       triggerToast('Error: PIN must be exactly 4 digits.');
       return;
     }
@@ -82,7 +102,12 @@ export default function SuitePasscodes() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify({ passcode: pin })
+        body: JSON.stringify({
+          passcode: pin,
+          house_number: houseNumbers[unitId],
+          wifi_ssid: wifiSSIDs[unitId],
+          wifi_password: wifiPasswords[unitId]
+        })
       });
       const data = await response.json();
       if (response.ok && data.success) {
@@ -90,13 +115,25 @@ export default function SuitePasscodes() {
           ...prev,
           [unitId]: pin
         }));
-        triggerToast(`Successfully saved key box PIN for ${getUnitName(unitId)}!`);
+        setSavedHouseNumbers(prev => ({
+          ...prev,
+          [unitId]: houseNumbers[unitId]
+        }));
+        setSavedWifiSSIDs(prev => ({
+          ...prev,
+          [unitId]: wifiSSIDs[unitId]
+        }));
+        setSavedWifiPasswords(prev => ({
+          ...prev,
+          [unitId]: wifiPasswords[unitId]
+        }));
+        triggerToast(`Successfully saved settings for ${getUnitName(unitId)}!`);
       } else {
-        triggerToast(data.error || 'Failed to update passcode.');
+        triggerToast(data.error || 'Failed to update settings.');
       }
     } catch (err) {
       console.error(err);
-      triggerToast('Connection error. Failed to save passcode.');
+      triggerToast('Connection error. Failed to save settings.');
     } finally {
       setSavingUnit(null);
     }
@@ -221,9 +258,45 @@ export default function SuitePasscodes() {
                     </div>
                   </div>
 
-                  <div className="security-notice">
+                  <div className="pin-input-group" style={{ marginTop: '1.2rem' }}>
+                    <label className="pin-input-label">House / Room Number</label>
+                    <input
+                      type="text"
+                      className="pin-input-field"
+                      style={{ width: '100%', boxSizing: 'border-box' }}
+                      placeholder="e.g. Penthouse 601"
+                      value={houseNumbers[unitId] || ''}
+                      onChange={(e) => setHouseNumbers(prev => ({ ...prev, [unitId]: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="pin-input-group" style={{ marginTop: '1.2rem' }}>
+                    <label className="pin-input-label">Wi-Fi Name (SSID)</label>
+                    <input
+                      type="text"
+                      className="pin-input-field"
+                      style={{ width: '100%', boxSizing: 'border-box' }}
+                      placeholder="e.g. LuluAurelian_Skyview"
+                      value={wifiSSIDs[unitId] || ''}
+                      onChange={(e) => setWifiSSIDs(prev => ({ ...prev, [unitId]: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="pin-input-group" style={{ marginTop: '1.2rem' }}>
+                    <label className="pin-input-label">Wi-Fi Password</label>
+                    <input
+                      type="text"
+                      className="pin-input-field"
+                      style={{ width: '100%', boxSizing: 'border-box' }}
+                      placeholder="Wi-Fi Password"
+                      value={wifiPasswords[unitId] || ''}
+                      onChange={(e) => setWifiPasswords(prev => ({ ...prev, [unitId]: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="security-notice" style={{ marginTop: '1.2rem' }}>
                     <p>
-                      Guests will receive this PIN on confirmation to unlock the lock box housing their room key.
+                      Guests will receive these credentials dynamically in their email and WhatsApp check-in instructions.
                     </p>
                   </div>
                 </div>
@@ -231,7 +304,7 @@ export default function SuitePasscodes() {
                 <div className="unit-card-footer">
                   <button
                     onClick={() => handleSave(unitId)}
-                    disabled={isSaving || currentVal.length !== 4}
+                    disabled={isSaving || (currentVal && (currentVal.length !== 4 || isNaN(currentVal)))}
                     className="btn-primary btn-save-pin"
                   >
                     {isSaving ? (
@@ -242,7 +315,7 @@ export default function SuitePasscodes() {
                     ) : (
                       <>
                         <Save size={16} />
-                        <span>Save PIN Settings</span>
+                        <span>Save Suite Settings</span>
                       </>
                     )}
                   </button>

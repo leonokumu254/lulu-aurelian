@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 /* Design Tokens & Variables */
 :root {
   --color-dark: #1D1912;
   --color-bg: #F3F3E6;
   --color-gold-bright: #EECD5C;
   --color-gold-muted: #D2A63C;
-  --color-gold-deep: #BB8525;
+  --color-gold-deep: #9E6C15;
   --color-white: #FFFFFF;
   --color-muted: rgba(29, 25, 18, 0.65);
   --color-border: rgba(29, 25, 18, 0.08);

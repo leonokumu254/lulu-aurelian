@@ -14,3 +14,16 @@ createRoot(document.getElementById('root')).render(
     </HelmetProvider>
   </StrictMode>,
 )
+
+// Defer Service Worker registration to prevent render-blocking on initial load
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then((registration) => {
+        console.log('PWA Service Worker registered successfully:', registration.scope);
+      })
+      .catch((error) => {
+        console.error('PWA Service Worker registration failed:', error);
+      });
+  });
+}

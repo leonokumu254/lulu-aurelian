@@ -3,7 +3,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import './AuthPage.css';
 
-export default function AuthPage({ onLoginSuccess }) {
+export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
   const [mode, setMode] = useState('login'); // 'login' | 'register' | 'forgot' | 'reset'
   const [resetToken, setResetToken] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -228,12 +228,13 @@ export default function AuthPage({ onLoginSuccess }) {
     }
   };
 
-  return (
-    <div className="auth-page-wrapper">
-      <div className="auth-card">
+  const cardContent = (
+    <div className="auth-card">
+      {!isStaffPortal && (
         <div className="auth-brand">
-          <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem', }}>Lulu   < span id ="login-text">Aurelian </span> </span>
+          <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem', }}>Lulu <span id="login-text">Aurelian</span></span>
         </div>
+      )}
 
         {mode === 'login' ? (
           <div className="auth-view animate-fade-in">
@@ -460,6 +461,15 @@ export default function AuthPage({ onLoginSuccess }) {
           </div>
         )}
       </div>
+  );
+
+  if (isStaffPortal) {
+    return cardContent;
+  }
+
+  return (
+    <div className="auth-page-wrapper">
+      {cardContent}
     </div>
   );
 }

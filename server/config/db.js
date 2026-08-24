@@ -93,8 +93,9 @@ const inMemory = {
   ],
 
   unit_settings: [
-    { unit_id: 'skyview', passcode: '9841' },
-    { unit_id: 'cocoa', passcode: '1234' }
+    { unit_id: 'skyview', passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
+    { unit_id: 'cocoa', passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
+    { unit_id: 'neema', passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
   ],
 
   blogs: [
@@ -141,6 +142,31 @@ if (isMySQLConfigured || env.NODE_ENV === 'production') {
   }
 } else {
   console.log('[DATABASE SERVICE]: In-memory storage active.');
+}
+
+// Perform a quick self-migration on boot to ensure columns exist in production/VPS MySQL
+if (useMySQL) {
+  (async () => {
+    try {
+      const [columns] = await pool.query('DESCRIBE unit_settings');
+      const columnNames = columns.map(c => c.Field);
+      
+      if (!columnNames.includes('house_number')) {
+        await pool.query("ALTER TABLE unit_settings ADD COLUMN house_number VARCHAR(50) NOT NULL DEFAULT ''");
+        console.log('[DB MIGRATE]: Added house_number column to unit_settings table.');
+      }
+      if (!columnNames.includes('wifi_ssid')) {
+        await pool.query("ALTER TABLE unit_settings ADD COLUMN wifi_ssid VARCHAR(100) NOT NULL DEFAULT ''");
+        console.log('[DB MIGRATE]: Added wifi_ssid column to unit_settings table.');
+      }
+      if (!columnNames.includes('wifi_password')) {
+        await pool.query("ALTER TABLE unit_settings ADD COLUMN wifi_password VARCHAR(100) NOT NULL DEFAULT ''");
+        console.log('[DB MIGRATE]: Added wifi_password column to unit_settings table.');
+      }
+    } catch (err) {
+      console.warn('[DB MIGRATE WARN]: Automatic self-migration skipped or failed:', err.message);
+    }
+  })();
 }
 
 // -------------------------------------------------------------
@@ -721,33 +747,70 @@ export const db = {
   },
 
   unit_settings: {
-    getPasscode: async (unitId) => {
+    getSettings: async (unitId) => {
+      const cleanId = (unitId || 'skyview').toLowerCase();
       if (useMySQL) {
-        const [rows] = await pool.query('SELECT passcode FROM unit_settings WHERE unit_id = ?', [unitId]);
+        const [rows] = await pool.query('SELECT * FROM unit_settings WHERE unit_id = ?', [cleanId]);
         if (rows.length > 0) {
-          return rows[0].passcode;
+          return rows[0];
         }
-        const defaultPin = unitId === 'cocoa' ? '1234' : '9841';
-        await pool.query('INSERT IGNORE INTO unit_settings (unit_id, passcode) VALUES (?, ?)', [unitId, defaultPin]);
-        return defaultPin;
+        const defaults = {
+          skyview: { passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
+          cocoa: { passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
+          neema: { passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+        };
+        const def = defaults[cleanId] || defaults.skyview;
+        await pool.query(
+          'INSERT IGNORE INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password) VALUES (?, ?, ?, ?, ?)',
+          [cleanId, def.passcode, def.house_number, def.wifi_ssid, def.wifi_password]
+        );
+        return { unit_id: cleanId, ...def };
       }
-      const found = inMemory.unit_settings.find(u => u.unit_id === unitId);
-      return found ? found.passcode : (unitId === 'cocoa' ? '1234' : '9841');
+      const found = inMemory.unit_settings.find(u => u.unit_id === cleanId);
+      if (found) return found;
+
+      const defaults = {
+        skyview: { passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
+        cocoa: { passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
+        neema: { passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+      };
+      const def = { unit_id: cleanId, ...(defaults[cleanId] || defaults.skyview) };
+      inMemory.unit_settings.push(def);
+      return def;
+    },
+
+    getPasscode: async (unitId) => {
+      const settings = await db.unit_settings.getSettings(unitId);
+      return settings.passcode;
     },
 
     setPasscode: async (unitId, passcode) => {
+      return db.unit_settings.setSettings(unitId, { passcode });
+    },
+
+    setSettings: async (unitId, fields) => {
+      const cleanId = (unitId || 'skyview').toLowerCase();
       if (useMySQL) {
+        const existing = await db.unit_settings.getSettings(cleanId);
+        const merged = { ...existing, ...fields };
         await pool.query(
-          'INSERT INTO unit_settings (unit_id, passcode) VALUES (?, ?) ON DUPLICATE KEY UPDATE passcode = ?',
-          [unitId, passcode, passcode]
+          `INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password)
+           VALUES (?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE
+             passcode = VALUES(passcode),
+             house_number = VALUES(house_number),
+             wifi_ssid = VALUES(wifi_ssid),
+             wifi_password = VALUES(wifi_password)`,
+          [cleanId, merged.passcode, merged.house_number, merged.wifi_ssid, merged.wifi_password]
         );
         return true;
       }
-      const found = inMemory.unit_settings.find(u => u.unit_id === unitId);
+      const found = inMemory.unit_settings.find(u => u.unit_id === cleanId);
       if (found) {
-        found.passcode = passcode;
+        Object.assign(found, fields);
       } else {
-        inMemory.unit_settings.push({ unit_id: unitId, passcode });
+        const defaults = { passcode: '0000', house_number: '', wifi_ssid: '', wifi_password: '' };
+        inMemory.unit_settings.push({ unit_id: cleanId, ...defaults, ...fields });
       }
       return true;
     },
@@ -755,7 +818,17 @@ export const db = {
     getAll: async () => {
       if (useMySQL) {
         const [rows] = await pool.query('SELECT * FROM unit_settings');
+        const ids = rows.map(r => r.unit_id);
+        for (const id of ['skyview', 'cocoa', 'neema']) {
+          if (!ids.includes(id)) {
+            const seeded = await db.unit_settings.getSettings(id);
+            rows.push(seeded);
+          }
+        }
         return rows;
+      }
+      for (const id of ['skyview', 'cocoa', 'neema']) {
+        await db.unit_settings.getSettings(id);
       }
       return inMemory.unit_settings;
     }

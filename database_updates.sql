@@ -49,6 +49,22 @@ UPDATE bookings
   WHERE status = 'PENDING'
   AND hold_expires_at IS NULL;
 
+-- STEP 8: Add welcome details to unit_settings
+ALTER TABLE unit_settings ADD COLUMN house_number VARCHAR(50) NOT NULL DEFAULT '';
+ALTER TABLE unit_settings ADD COLUMN wifi_ssid VARCHAR(100) NOT NULL DEFAULT '';
+ALTER TABLE unit_settings ADD COLUMN wifi_password VARCHAR(100) NOT NULL DEFAULT '';
+
+-- Seed or insert defaults
+INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password) 
+VALUES 
+  ('skyview', '9841', '601', 'LuluAurelian_Skyview_5G', 'SkyviewLuxury2026!'),
+  ('cocoa', '1234', '402', 'LuluAurelian_Cocoa_5G', 'CocoaLuxury2026!'),
+  ('neema', '9841', '201', 'LuluAurelian_Neema_5G', 'NeemaLuxury2026!')
+ON DUPLICATE KEY UPDATE 
+  house_number = VALUES(house_number),
+  wifi_ssid = VALUES(wifi_ssid),
+  wifi_password = VALUES(wifi_password);
+
 -- ================================================================
--- Verify with:   DESCRIBE bookings;   DESCRIBE payments;
+-- Verify with:   DESCRIBE bookings;   DESCRIBE payments;   DESCRIBE unit_settings;
 -- ================================================================

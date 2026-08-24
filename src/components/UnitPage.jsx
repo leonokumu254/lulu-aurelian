@@ -42,6 +42,19 @@ const UNIT_DATA = {
       './assets/skyview/skyview_13.jpg',
       './assets/skyview/skyview_10.jpg'
     ],
+    alts: [
+      'Lulu Aurelian Estate Skyview Hideaway living room with panoramic windows and elegant sofa seating in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway bright living area with natural light and dedicated workspace in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway modern living space with smart TV and premium furnishings in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway cozy lounge corner with chic decor and mountain views in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway guest bedroom with premium queen bed and serene lighting in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway full exterior view showcasing modern architecture and secure parking in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway private balcony with comfortable lounge seating and skyline views in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway open-plan dining area with elegant dining set and tasteful art in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway interior hallway with spotless finishes and warm ambient lighting in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway primary bedroom with king size bed and scenic panoramic window views in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Skyview Hideaway primary bedroom angle showing spacious layout and modern wardrobe in Nyeri, Kenya.'
+    ],
     airbnbUrl: 'https://www.airbnb.com/h/pearlapartmentsnyeri',
     bookingUrl: 'https://www.booking.com/Share-F7S7E5V'
   },
@@ -77,6 +90,17 @@ const UNIT_DATA = {
       './assets/cocoa/cocoa_12.avif',
       './assets/cocoa/cocoa_15.avif'
     ],
+    alts: [
+      'Lulu Aurelian Estate Cocoa Retreat living area with cozy premium furnishings and warm ambient lighting in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat well-lit interior showing plush seating and earthy aesthetic decor in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat elegant dining space with sturdy wooden table and comfortable chairs in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat exterior facade highlighting secure entry and quiet neighborhood setting in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat primary bedroom with plush king size bed and crisp luxury linens in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat secondary living space angle with pristine floors and natural light in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat beautifully appointed bedroom with serene color palette and soft lighting in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat full bathroom with soothing modern design and spotless glass shower in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Cocoa Retreat guest bedroom with premium bedding and dedicated storage space in Nyeri, Kenya.'
+    ],
     airbnbUrl: 'https://www.airbnb.com/h/cocoapearlapartment',
     bookingUrl: 'https://www.booking.com/Share-KWW4dvn'
   },
@@ -108,6 +132,14 @@ const UNIT_DATA = {
       './assets/Neema/neema_2.jpeg',
       './assets/Neema/neema_3.jpeg',
       './assets/Neema/neema_4.jpeg'
+    ],
+    alts: [
+      'Lulu Aurelian Estate Neema Haven tranquil living room with modern seating and bright airy windows in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Neema Haven fully equipped kitchen with sleek countertops and premium appliances in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Neema Haven pristine bathroom with high-end fixtures and spotless tiling in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Neema Haven primary bedroom featuring a king-size bed and luxurious crisp linens in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Neema Haven guest bedroom with comfortable queen bed and serene atmosphere in Nyeri, Kenya.',
+      'Lulu Aurelian Estate Neema Haven inviting dining area with contemporary table setting and tasteful decor in Nyeri, Kenya.'
     ],
     airbnbUrl: '/',
     bookingUrl: '/'
@@ -292,12 +324,12 @@ export default function UnitPage({ unitId }) {
         {/* Desktop Mosaic Grid */}
         <div className="unit-mosaic">
           <div className="mosaic-main" onClick={() => openLightbox(0)}>
-            <img src={unit.images[0]} alt={`${unit.name} — main view of this luxury Airbnb in Nyeri`} />
+            <img src={unit.images[0]} alt={unit.alts ? unit.alts[0] : `${unit.name} — main view of this luxury Airbnb in Nyeri`} />
           </div>
           <div className="mosaic-grid">
             {unit.images.slice(1, 5).map((img, i) => (
               <div key={i} className="mosaic-thumb" onClick={() => openLightbox(i + 1)}>
-                <img src={img} alt={`${unit.name} — interior view ${i + 2}`} />
+                <img src={img} alt={unit.alts ? unit.alts[i + 1] : `${unit.name} — interior view ${i + 2}`} />
               </div>
             ))}
             <button className="mosaic-show-all" onClick={() => openLightbox(0)}>
@@ -312,7 +344,7 @@ export default function UnitPage({ unitId }) {
           <div className="unit-carousel-scroll" ref={scrollRef} onScroll={handleScroll}>
             {unit.images.map((img, i) => (
               <div key={i} className="unit-carousel-slide" onClick={() => openLightbox(i)}>
-                <img src={img} alt={`${unit.name} — view ${i + 1}`} />
+                <img src={img} alt={unit.alts ? unit.alts[i] : `${unit.name} — view ${i + 1}`} />
               </div>
             ))}
           </div>
@@ -602,7 +634,7 @@ export default function UnitPage({ unitId }) {
               <ChevronLeft size={36} />
             </button>
             <div className="unit-lightbox-img-wrap" onClick={(e) => e.stopPropagation()}>
-              <img src={unit.images[lightboxIndex]} alt={`${unit.name} — photo ${lightboxIndex + 1}`} />
+              <img src={unit.images[lightboxIndex]} alt={unit.alts ? unit.alts[lightboxIndex] : `${unit.name} — photo ${lightboxIndex + 1}`} />
             </div>
             <button className="unit-lightbox-arrow next" onClick={(e) => { e.stopPropagation(); setLightboxIndex(prev => (prev + 1) % unit.images.length); }}>
               <ChevronRight size={36} />

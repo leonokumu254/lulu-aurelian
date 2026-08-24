@@ -10,9 +10,9 @@ export default function ContactSection() {
         {/* Full-width Atmosphere & Details */}
         <div className="contact-atmosphere" data-aos="fade-up">
           <div className="contact-overlay">
-            <h3 className="contact-details-title">
+            <h2 className="contact-details-title">
               <span className="contact-title-lulu">Lulu</span> <span className="contact-title-aurelian">Aurelian</span>
-            </h3>
+            </h2>
             
             <div className="contact-detail-items">
               <div className="contact-item">
