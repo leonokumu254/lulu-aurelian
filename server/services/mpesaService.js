@@ -77,6 +77,59 @@ class MpesaService {
       throw err;
     }
   }
+
+  /**
+   * Query the status of an STK Push transaction.
+   * Endpoint: POST /mpesa/stkpushquery/v1/query
+   * 
+   * ResultCode values:
+   *   0    — Payment successful
+   *   1032 — Cancelled by user
+   *   1037 — Timeout (user didn't respond)
+   *   1    — Insufficient balance / other failure
+   * 
+   * If the transaction is still processing, Safaricom returns a non-200
+   * with errorCode "500.01.01".
+   */
+  async querySTKPushStatus(checkoutRequestId) {
+    const token = await this.getOAuthToken();
+    const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+    const password = this.generatePassword(timestamp);
+
+    const payload = {
+      BusinessShortCode: this.shortcode,
+      Password: password,
+      Timestamp: timestamp,
+      CheckoutRequestID: checkoutRequestId
+    };
+
+    try {
+      const response = await fetch(`${this.baseUrl}/mpesa/stkpushquery/v1/query`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      // Non-200 with "being processed" means still pending
+      if (!response.ok) {
+        if (data.errorCode === '500.01.01' || (data.errorMessage && data.errorMessage.includes('being processed'))) {
+          return { ResultCode: 'PENDING', ResultDesc: 'Transaction is still being processed.' };
+        }
+        throw new Error(data.errorMessage || `STK Query failed (HTTP ${response.status})`);
+      }
+
+      return data;
+    } catch (err) {
+      console.error('[MPESA]: STK Query Error:', err.message);
+      // Return PENDING so frontend keeps polling instead of showing an error
+      return { ResultCode: 'PENDING', ResultDesc: err.message };
+    }
+  }
 }
 
 export const mpesaService = new MpesaService();

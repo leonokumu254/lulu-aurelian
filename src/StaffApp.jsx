@@ -108,27 +108,13 @@ export default function StaffApp() {
           setPage={() => {}}
         />
       ) : (
-        <div className="staff-login-container">
-          <header className="staff-login-header">
-            <img src="/lulu_aurelian_logo.svg" alt="Lulu Aurelian Logo" className="staff-logo" />
-            <h1>LULU AURELIAN ESTATE</h1>
-            <h2>Staff Operations Console</h2>
-          </header>
-          
+        <div className="staff-app-auth-wrapper">
           {errorMsg && (
             <div className="staff-error-banner">
               <p>{errorMsg}</p>
             </div>
           )}
-
-          <div className="staff-auth-card">
-            <AuthPage onLoginSuccess={handleLoginSuccess} isStaffPortal={true} />
-          </div>
-          
-          <footer className="staff-login-footer">
-            <p>© {new Date().getFullYear()} Lulu Aurelian Estate. All rights reserved.</p>
-            <a href="https://www.luluaurelian.co.ke" className="back-to-site">Go to Guest Website</a>
-          </footer>
+          <AuthPage onLoginSuccess={handleLoginSuccess} isStaffPortal={true} />
         </div>
       )}
     </div>

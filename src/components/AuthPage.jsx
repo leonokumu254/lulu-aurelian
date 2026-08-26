@@ -230,11 +230,14 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
 
   const cardContent = (
     <div className="auth-card">
-      {!isStaffPortal && (
-        <div className="auth-brand">
-          <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem', }}>Lulu <span id="login-text">Aurelian</span></span>
-        </div>
-      )}
+      <div className="auth-brand">
+        <h1 className="auth-brand-logo">LULU AURELIAN</h1>
+        {isStaffPortal ? (
+          <p className="auth-brand-subtitle">STAFF OPERATIONS </p>
+        ) : (
+          <p className="auth-brand-subtitle">LUXURY RESIDENCES</p>
+        )}
+      </div>
 
         {mode === 'login' ? (
           <div className="auth-view animate-fade-in">
@@ -246,7 +249,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
                 </p>
               </>
             ) : (
-              <h2>Welcome back, glad to see you</h2>
+              <h2>{isStaffPortal ? 'Sign In' : 'Welcome Back'}</h2>
             )}
             
             {error && <div className="auth-error">{error}</div>}

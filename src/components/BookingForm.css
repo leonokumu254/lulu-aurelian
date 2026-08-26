@@ -991,3 +991,166 @@
   }
 }
 
+/* ======================================================
+   Image 1: Confirm Guest Details Card Styling
+   ====================================================== */
+.confirm-guest-details-card {
+  background-color: #f7f5ed;
+  border: 1px solid #e8e3d8;
+  border-radius: 16px;
+  padding: 2rem 2.25rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.confirm-card-header {
+  margin-bottom: 1.25rem;
+}
+
+.confirm-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.welcome-back-banner {
+  margin-bottom: 1rem;
+}
+
+.welcome-back-tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #a3721d;
+  margin-bottom: 0.35rem;
+}
+
+.welcome-back-name {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin: 0 0 0.4rem 0;
+}
+
+.welcome-back-subtext {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: #716c63;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.confirm-card-divider {
+  border: none;
+  border-top: 1px solid #e5e0d5;
+  margin: 1.25rem 0 1.5rem 0;
+}
+
+.confirm-card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.confirm-card-form .checkout-label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2d2b27;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.confirm-card-form .input-with-icon input {
+  background-color: #ffffff;
+  border: 1px solid #dfd9ce;
+  border-radius: 8px;
+  height: 48px;
+  padding: 0 1rem 0 2.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.confirm-card-form .input-with-icon input:focus {
+  border-color: #a3721d;
+  box-shadow: 0 0 0 3px rgba(163, 114, 29, 0.1);
+}
+
+.confirm-card-form .input-with-icon svg {
+  position: absolute;
+  left: 14px;
+  color: #8c8577;
+  pointer-events: none;
+}
+
+.confirm-card-form .phone-input-group {
+  display: flex;
+  background-color: #ffffff;
+  border: 1px solid #dfd9ce;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 48px;
+  align-items: center;
+}
+
+.confirm-card-form .checkout-textarea {
+  background-color: #ffffff;
+  border: 1px solid #dfd9ce;
+  border-radius: 8px;
+  min-height: 100px;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  outline: none;
+  resize: vertical;
+}
+
+.confirm-card-form .checkout-textarea:focus {
+  border-color: #a3721d;
+  box-shadow: 0 0 0 3px rgba(163, 114, 29, 0.1);
+}
+
+.btn-continue-payment {
+  width: 100%;
+  height: 52px;
+  background-color: #a3721d;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(163, 114, 29, 0.25);
+  margin-top: 0.5rem;
+}
+
+.btn-continue-payment:hover {
+  background-color: #8c6016;
+  box-shadow: 0 6px 18px rgba(163, 114, 29, 0.35);
+}
+
+.btn-continue-payment:active {
+  transform: scale(0.99);
+}
+
+@media (max-width: 768px) {
+  .confirm-guest-details-card {
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+}
+

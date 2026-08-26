@@ -72,18 +72,40 @@ class EmailService {
               <!-- Footer block -->
               <tr>
                 <td align="center" style="padding: 40px 30px; background-color: #1a1a1a; color: #ffffff;">
-                  <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 400; letter-spacing: 1px;">Lulu Aurelian Estate</h3>
+                  <h3 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 400; letter-spacing: 1px;">Lulu Aurelian Estate</h3>
                   <p style="margin: 0 0 20px 0; font-size: 13px; color: #999999; line-height: 1.5;">Skyline Apartments, Nyeri, Kenya</p>
                   
+                  <!-- Direct Concierge Contact Links -->
+                  <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+                    <tr>
+                      <td style="padding: 5px 8px;">
+                        <a href="tel:+254112299384" style="display: inline-block; padding: 10px 18px; background-color: #2a2a2a; color: #cfa873; text-decoration: none; border-radius: 30px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px;">
+                          📞 Call: +254 112 299 384
+                        </a>
+                      </td>
+                      <td style="padding: 5px 8px;">
+                        <a href="https://wa.me/254112299384" target="_blank" style="display: inline-block; padding: 10px 18px; background-color: #25D366; color: #ffffff; text-decoration: none; border-radius: 30px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px;">
+                          💬 Chat on WhatsApp
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+
                   <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                      <td style="padding: 0 15px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Website</a></td>
-                      <td style="padding: 0 15px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Guest Portal</a></td>
+                      <td style="padding: 0 10px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Website</a></td>
+                      <td style="padding: 0 5px; color: #555555;">•</td>
+                      <td style="padding: 0 10px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Guest Portal</a></td>
                     </tr>
                   </table>
                   
                   <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
                     <tr>
+                      <td style="padding: 0 10px;">
+                        <a href="https://wa.me/254112299384" target="_blank" style="text-decoration: none;">
+                          <img src="https://img.icons8.com/ios/50/cfa873/whatsapp.png" alt="WhatsApp" width="24" height="24" style="display: block; border: 0;" />
+                        </a>
+                      </td>
                       <td style="padding: 0 10px;">
                         <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" style="text-decoration: none;">
                           <img src="https://img.icons8.com/ios/50/cfa873/instagram-new.png" alt="Instagram" width="24" height="24" style="display: block; border: 0;" />
@@ -296,7 +318,6 @@ class EmailService {
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
       this._renderAlertBox(data.alertText) +
-      this._renderLocationBlock(booking.unit_id) +
       this._renderBookingRef(data.bookingRef) +
       this._renderButton(data.button);
 

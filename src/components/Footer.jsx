@@ -64,7 +64,7 @@ export default function Footer({ setPage }) {
           <ul className="footer-links-list">
             <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Skyview Hideaway</button></li>
             <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Cocoa Retreat</button></li>
-            <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Neema</button></li>
+            <li><button onClick={() => { setPage('booking'); }} className="footer-link-btn">Neema Haven</button></li>
           </ul>
         </div>
 
@@ -93,8 +93,6 @@ export default function Footer({ setPage }) {
             © {new Date().getFullYear()} Lulu Aurelian Estate. All Rights Reserved. Crafted for premium experiences.
           </p>
           <div className="footer-legal-links">
-            <button onClick={() => setPage('portal')} className="footer-portal-link-btn">Staff Portal</button>
-            <span className="separator">•</span>
             <a href="#privacy">Privacy Policy</a>
             <span className="separator">•</span>
             <a href="#terms">Terms & Conditions</a>

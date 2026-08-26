@@ -79,6 +79,89 @@ export const mpesaCallback = async (req, res, next) => {
   }
 };
 
+/**
+ * Poll the status of an M-Pesa STK Push payment.
+ * Checks local DB first (callback may have already resolved it),
+ * then falls back to querying Safaricom's STK Push Query API.
+ */
+export const queryMpesaStatus = async (req, res) => {
+  try {
+    const { checkoutRequestId } = req.body;
+
+    if (!checkoutRequestId) {
+      return res.status(400).json({ success: false, error: 'Missing checkoutRequestId.' });
+    }
+
+    // 1. Check local DB first — the callback may have already handled it
+    const payment = await db.payments.findByRef(checkoutRequestId);
+
+    if (payment && payment.status === 'COMPLETED') {
+      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
+    }
+
+    if (payment && payment.status === 'FAILED') {
+      return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment was cancelled or failed.' });
+    }
+
+    // 2. Query Safaricom directly
+    const queryResult = await mpesaService.querySTKPushStatus(checkoutRequestId);
+    const resultCode = String(queryResult.ResultCode);
+
+    if (resultCode === '0') {
+      // Payment successful — update records (idempotent if callback already did this)
+      if (payment) {
+        await db.payments.updateStatus(checkoutRequestId, 'COMPLETED');
+        await db.bookings.updateStatus(payment.booking_id, 'PAID');
+
+        const booking = await db.bookings.findById(payment.booking_id);
+        if (booking) {
+          emailService.sendFulfillmentCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
+          whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+        }
+      }
+      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
+    }
+
+    if (resultCode === '1032') {
+      // Cancelled by user — revert booking to PENDING so they can retry
+      if (payment) {
+        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      }
+      return res.status(200).json({ success: true, status: 'CANCELLED', message: 'Payment cancelled by user.' });
+    }
+
+    if (resultCode === '1037') {
+      // Timeout — user didn't respond
+      if (payment) {
+        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      }
+      return res.status(200).json({ success: true, status: 'TIMEOUT', message: 'STK Push timed out. Please try again.' });
+    }
+
+    if (resultCode === 'PENDING') {
+      return res.status(200).json({ success: true, status: 'PENDING', message: 'Payment is still being processed.' });
+    }
+
+    // Any other result code = failure
+    if (payment) {
+      await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+      await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+    }
+    return res.status(200).json({
+      success: true,
+      status: 'FAILED',
+      message: queryResult.ResultDesc || 'Payment failed.'
+    });
+
+  } catch (error) {
+    console.error('[MPESA QUERY ERROR]:', error.message);
+    // Return PENDING rather than error so frontend keeps polling
+    return res.status(200).json({ success: true, status: 'PENDING', message: 'Unable to verify status yet.' });
+  }
+};
+
 export const initiatePaypalPayment = async (req, res, next) => {
   try {
     const { booking_id } = req.body;

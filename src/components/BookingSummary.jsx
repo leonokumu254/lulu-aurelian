@@ -23,7 +23,7 @@ const SUITES_METADATA = {
 };
 
 export default function BookingSummary({ formData, onSubmit, guestUser }) {
-  const [prices, setPrices] = useState({ skyview: getSuitePrice('skyview'), cocoa: getSuitePrice('cocoa') });
+  const [prices, setPrices] = useState({ skyview: getSuitePrice('skyview'), cocoa: getSuitePrice('cocoa'), neema: getSuitePrice('neema') });
   const [cleaningDates, setCleaningDates] = useState([]);
   const [newCleaningDate, setNewCleaningDate] = useState('');
 
