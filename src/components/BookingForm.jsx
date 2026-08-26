@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, Info, Shield, ChevronDown, AlertCircle } from 'lucide-react';
+import { Calendar, Users, Info, Shield, ChevronDown, AlertCircle, User, Mail, Phone } from 'lucide-react';
 import CustomCalendarModal from './CustomCalendarModal';
 import './BookingForm.css';
 
@@ -418,151 +418,104 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
         )}
       </div>
 
-      {/* Contact Information */}
-      <div className="form-group-divider" />
-      <h2 className="form-section-title">Personal Information</h2>
-      <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: 'var(--color-gold-deep)', marginBottom: '1rem', fontWeight: 500 }}>"We hate paperwork too"</p>
+      {/* 1. Confirm Guest Details Section (Matching Image 1) */}
+      <div className="confirm-guest-details-card">
+        <div className="confirm-card-header">
+          <h2 className="confirm-card-title">1. Confirm guest details</h2>
+        </div>
 
-      {hasStoredDetails && !isEditingProfile ? (
-        <div className="confirmed-details-container glass">
-          <div className="confirmed-details-header">
-            <Shield size={16} className="verified-icon" />
-            <span>Logged in as {formData.firstName} {formData.lastName}</span>
-          </div>
-          <div className="confirmed-details-grid">
-            <div className="detail-item">
-              <span className="detail-label">Email</span>
-              <span className="detail-value">{formData.email}</span>
-            </div>
-            {formData.phone ? (
-              <div className="detail-item">
-                <span className="detail-label">Phone</span>
-                <span className="detail-value">{formData.phoneCountryCode} {formData.phone}</span>
-              </div>
-            ) : null}
-          </div>
+        <div className="welcome-back-banner">
+          <span className="welcome-back-tag">WELCOME BACK</span>
+          <h3 className="welcome-back-name">
+            Hello, {formData.firstName || (user && user.name ? user.name.split(' ')[0] : 'Valued Guest')}
+          </h3>
+          <p className="welcome-back-subtext">
+            We've prepared your details for a seamless reservation. Please review and confirm your contact information below.
+          </p>
+        </div>
 
-          {!formData.phone && (
-            <div className="form-group" style={{ marginTop: '0.8rem' }}>
-              <label className="form-label">Phone Number (Required for M-Pesa & SMS confirmation)</label>
-              <div
-                className={`phone-input-wrapper ${phoneError ? 'input-error' : ''}`}
-                ref={phoneDropdownRef}
-              >
-                <div
-                  className="phone-country-trigger"
-                  onClick={togglePhoneDropdown}
-                >
-                  <img
-                    src={`https://flagcdn.com/w20/${selectedCountry.flag}.png`}
-                    alt={selectedCountry.name}
-                    className="phone-country-flag"
-                  />
-                  <span className="phone-country-arrow">▼</span>
-                </div>
-                <div className="phone-divider" />
-                <span className="phone-prefix-display">{selectedCountry.code}</span>
+        <hr className="confirm-card-divider" />
+
+        <div className="confirm-card-form">
+          <div className="form-group-row">
+            <div className="form-group">
+              <label className="checkout-label">First Name</label>
+              <div className="input-with-icon">
+                <User size={16} />
                 <input
-                  type="tel"
-                  placeholder="712 123456"
-                  className="phone-main-input"
-                  value={formData.phone || ''}
-                  onChange={handlePhoneChange}
+                  type="text"
+                  placeholder="First Name"
+                  className="form-input text-input"
+                  value={formData.firstName || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                   required
                 />
               </div>
-              {phoneError && <span className="field-error-msg">{phoneError}</span>}
-            </div>
-          )}
-
-          <button
-            type="button"
-            className="btn-edit-details"
-            onClick={() => setIsEditingProfile(true)}
-            style={{ marginTop: '0.5rem' }}
-          >
-            Edit Profile Info
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className="form-group-row">
-            <div className="form-group">
-              <label className="form-label">First Name</label>
-              <input
-                type="text"
-                placeholder="First name"
-                className="form-input text-input"
-                value={formData.firstName || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                required
-              />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Last Name</label>
+              <label className="checkout-label">Last Name</label>
+              <div className="input-with-icon">
+                <User size={16} />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  className="form-input text-input"
+                  value={formData.lastName || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="checkout-label">Email Address</label>
+            <div className="input-with-icon">
+              <Mail size={16} />
               <input
-                type="text"
-                placeholder="Last name"
+                type="email"
+                placeholder="email@example.com"
                 className="form-input text-input"
-                value={formData.lastName || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                value={formData.email || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value, confirmEmail: e.target.value }))}
                 required
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Email Address</label>
-            <input
-              type="email"
-              placeholder="name@example.com"
-              className="form-input text-input"
-              value={formData.email || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value, confirmEmail: e.target.value }))}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Phone Number</label>
-            <div
-              className={`phone-input-wrapper ${phoneError ? 'input-error' : ''}`}
-              ref={phoneDropdownRef}
-            >
+            <label className="checkout-label">Phone Number (M-Pesa Preferred)</label>
+            <div className="phone-input-group" ref={phoneDropdownRef}>
               <div
                 className="phone-country-trigger"
                 onClick={togglePhoneDropdown}
+                style={{ background: '#f3efe6', borderRight: '1px solid #dfd9ce', padding: '0 0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', height: '100%', userSelect: 'none' }}
               >
                 <img
                   src={`https://flagcdn.com/w20/${selectedCountry.flag}.png`}
                   alt={selectedCountry.name}
                   className="phone-country-flag"
                 />
+                <span className="phone-prefix-display" style={{ margin: 0, fontWeight: 600, fontSize: '0.9rem', color: '#2d2b27' }}>{selectedCountry.code}</span>
                 <span className="phone-country-arrow">▼</span>
               </div>
 
-              <div className="phone-divider" />
-
-              <span className="phone-prefix-display">{selectedCountry.code}</span>
-
-              <input
-                type="tel"
-                placeholder="712 123456"
-                className="phone-main-input"
-                value={formData.phone || ''}
-                onChange={handlePhoneChange}
-                required
-              />
-
-              {phoneError && (
-                <div className="phone-error-icon-container">
-                  <AlertCircle size={18} className="phone-error-icon" />
-                </div>
-              )}
+              <div className="input-with-icon no-left-padding" style={{ flex: 1, position: 'relative' }}>
+                <Phone size={16} style={{ left: '12px' }} />
+                <input
+                  type="tel"
+                  placeholder="712 345 678"
+                  className="phone-main-input"
+                  style={{ paddingLeft: '38px', height: '48px', border: 'none', background: 'transparent' }}
+                  value={formData.phone || ''}
+                  onChange={handlePhoneChange}
+                  required
+                />
+              </div>
 
               {isPhoneDropdownOpen && (
-                <div className="phone-country-dropdown">
+                <div className="phone-country-dropdown" style={{ top: '100%', left: 0 }}>
                   <div className="phone-search-wrapper">
                     <input
                       type="text"
@@ -590,40 +543,37 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
                         <span className="phone-option-code">{c.code}</span>
                       </div>
                     ))}
-                    {filteredCountries.length === 0 && (
-                      <div className="phone-no-results">No countries found</div>
-                    )}
                   </div>
                 </div>
               )}
             </div>
-            {phoneError && (
-              <span className="field-error-msg">{phoneError}</span>
-            )}
+            {phoneError && <span className="field-error-msg">{phoneError}</span>}
           </div>
 
-          {user && (
-            <button
-              type="button"
-              className="btn-edit-details"
-              style={{ marginTop: '0.5rem', display: 'block' }}
-              onClick={() => setIsEditingProfile(false)}
-            >
-              Save & Lock Details
-            </button>
-          )}
-        </>
-      )}
+          <div className="form-group">
+            <label className="checkout-label">Special Requests (Optional)</label>
+            <textarea
+              rows="4"
+              placeholder="Dietary preferences, arrival time, room temperature preferences..."
+              className="checkout-textarea"
+              value={formData.specialRequests || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, specialRequests: e.target.value }))}
+            />
+          </div>
 
-      <div className="form-group">
-        <label className="form-label">Special Requests (Optional)</label>
-        <textarea
-          rows="4"
-          placeholder="Early check-in requests, special pillow selection, etc."
-          className="form-input text-textarea"
-          value={formData.specialRequests}
-          onChange={(e) => setFormData(prev => ({ ...prev, specialRequests: e.target.value }))}
-        />
+          <button
+            type="button"
+            className="btn-continue-payment"
+            onClick={() => {
+              const summarySubmitBtn = document.querySelector('.summary-submit-btn');
+              if (summarySubmitBtn) {
+                summarySubmitBtn.click();
+              }
+            }}
+          >
+            CONTINUE TO PAYMENT
+          </button>
+        </div>
       </div>
 
       <CustomCalendarModal

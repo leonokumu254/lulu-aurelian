@@ -138,6 +138,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 <span>Pricing</span>
               </button>
               <button 
+                className={`nav-item ${viewMode === 'calendar' ? 'active' : ''}`}
+                onClick={() => { setViewMode('calendar'); setMobileMenuOpen(false); }}
+              >
+                <Calendar size={20} />
+                <span>Calendar & iCal</span>
+              </button>
+              <button 
                 className={`nav-item ${viewMode === 'team' ? 'active' : ''}`}
                 onClick={() => { setViewMode('team'); setMobileMenuOpen(false); }}
               >
@@ -252,16 +259,23 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
         <main className="dashboard-main-content">
           {/* Top Header */}
           <header className="dashboard-top-header">
-            <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(true)}>
-              <Menu size={24} />
-            </button>
-            <h1>
-              {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Suite PINs' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
-            </h1>
-            <button className="btn-home" onClick={() => { window.location.hash = '#/'; }}>
-              <Home size={18} />
-              <span>Home</span>
-            </button>
+            <div className="header-title-group">
+              <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(true)}>
+                <Menu size={22} />
+              </button>
+              <div>
+                <h1>
+                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Suite PINs' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
+                </h1>
+              </div>
+            </div>
+
+            <div className="header-right-actions">
+              <button className="btn-home" onClick={() => { window.location.hash = '#/'; }}>
+                <Home size={16} />
+                <span>Website</span>
+              </button>
+            </div>
           </header>
 
           {/* Dynamic Content */}
@@ -306,12 +320,8 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               <SuitePasscodes />
             ) : viewMode === 'cms' ? (
               <ContentStudio user={user} />
-            ) : (viewMode === 'pricing' || viewMode === 'team' || viewMode === 'moderation' || viewMode === 'guests') ? (
-              <ManagerPortal user={user} managerTab={viewMode} />
             ) : (
-              <div className="portal-empty-state">
-                <p>Welcome to your portal.</p>
-              </div>
+              <ManagerPortal user={user} managerTab={viewMode === 'administrative' ? 'pricing' : viewMode} onTabChange={setViewMode} />
             )}
           </div>
         </main>

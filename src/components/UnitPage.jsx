@@ -4,6 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import CustomCalendarModal from './CustomCalendarModal';
 import Reviews from './Reviews';
+import { getSuitePrice } from '../utils/pricing';
 import './UnitPage.css';
 
 const UNIT_DATA = {
@@ -156,11 +157,21 @@ const ICON_MAP = {
 
 export default function UnitPage({ unitId }) {
   const unit = UNIT_DATA[unitId];
+  const [currentPrice, setCurrentPrice] = useState(() => getSuitePrice(unitId));
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const scrollRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setCurrentPrice(getSuitePrice(unitId));
+    const handlePricingUpdate = () => {
+      setCurrentPrice(getSuitePrice(unitId));
+    };
+    window.addEventListener('pricingUpdated', handlePricingUpdate);
+    return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
+  }, [unitId]);
 
   // Booking states
   const getQueryParam = (name) => {
@@ -283,7 +294,7 @@ export default function UnitPage({ unitId }) {
     }
   }
 
-  const baseCost = unit.price * nights;
+  const baseCost = currentPrice * nights;
   
   // Weekly/Monthly discount
   let discountPercent = 0;
@@ -418,7 +429,7 @@ export default function UnitPage({ unitId }) {
           {/* RIGHT: Booking Card (sticky) */}
           <aside className="unit-booking-card glass" id="booking-card">
             <div className="booking-card-price">
-              <span className="price-amount">KES {unit.price.toLocaleString('en-KE')}</span>
+              <span className="price-amount">KES {currentPrice.toLocaleString('en-KE')}</span>
               <span className="price-per">/ night</span>
             </div>
 
@@ -541,7 +552,7 @@ export default function UnitPage({ unitId }) {
               <div className="widget-price-breakdown animate-fade-in">
                 <p className="breakdown-subtitle">You won't be charged yet</p>
                 <div className="breakdown-row">
-                  <span>KES {unit.price.toLocaleString('en-KE')} x {nights} night{nights !== 1 ? 's' : ''}</span>
+                  <span>KES {currentPrice.toLocaleString('en-KE')} x {nights} night{nights !== 1 ? 's' : ''}</span>
                   <span>KES {baseCost.toLocaleString('en-KE')}</span>
                 </div>
                 {lengthDiscountValue > 0 && (
@@ -598,7 +609,7 @@ export default function UnitPage({ unitId }) {
       {/* Mobile Sticky CTA Bar */}
       <div className="mobile-sticky-cta-bar glass">
         <div className="mobile-cta-price">
-          <span className="price-val">KES {unit.price.toLocaleString('en-KE')}</span>
+          <span className="price-val">KES {currentPrice.toLocaleString('en-KE')}</span>
           <span className="price-unit">/ night</span>
           {nights > 0 && <span className="price-nights-label"> · {nights} {nights === 1 ? 'night' : 'nights'}</span>}
         </div>

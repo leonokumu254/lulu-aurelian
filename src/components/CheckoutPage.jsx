@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone } from 'lucide-react';
+import { getSuitePrice } from '../utils/pricing';
 import './CheckoutPage.css';
 
 const SUITES_METADATA = {
@@ -51,6 +52,16 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
 
   const suiteId = params.suite;
   const suite = SUITES_METADATA[suiteId] || SUITES_METADATA.skyview;
+  const [suitePrice, setSuitePrice] = useState(() => getSuitePrice(suiteId));
+
+  useEffect(() => {
+    setSuitePrice(getSuitePrice(suiteId));
+    const handlePricingUpdate = () => {
+      setSuitePrice(getSuitePrice(suiteId));
+    };
+    window.addEventListener('pricingUpdated', handlePricingUpdate);
+    return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
+  }, [suiteId]);
 
   // ── Date Formatting ──────────────────────────────────────────────────────
   const formatDate = (dateStr) => {
@@ -69,7 +80,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   }
 
   // Cost calculations
-  const baseCost = suite.price * nights;
+  const baseCost = suitePrice * nights;
   let discountPercent = 0;
   if (nights >= 30) discountPercent = 20;
   else if (nights >= 7) discountPercent = 10;
@@ -164,6 +175,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   const [mpesaPhone, setMpesaPhone] = useState('');
   const [paypalEmail, setPaypalEmail] = useState('');
   const [mpesaCode, setMpesaCode] = useState('');
+  const [stkPushSent, setStkPushSent] = useState(false);
+  const [checkoutRequestId, setCheckoutRequestId] = useState(null);
   
   const idempotencyKey = useRef(null);
 
@@ -185,6 +198,53 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     }, 1000);
     return () => clearInterval(interval);
   }, [createdBooking]);
+
+  // ── STK Push status polling ────────────────────────────────────────────────
+  useEffect(() => {
+    if (!stkPushSent || !checkoutRequestId) return;
+
+    let pollCount = 0;
+    const maxPolls = 24; // 24 × 5s = 2 minutes
+
+    const interval = setInterval(async () => {
+      pollCount++;
+
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/payments/mpesa/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ checkoutRequestId })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'COMPLETED') {
+          setStkPushSent(false);
+          setPaymentComplete(true);
+          clearInterval(interval);
+          return;
+        }
+
+        if (data.status === 'CANCELLED' || data.status === 'TIMEOUT' || data.status === 'FAILED') {
+          setStkPushSent(false);
+          setPaymentError(data.message || 'Payment was not completed. Please try again.');
+          clearInterval(interval);
+          return;
+        }
+      } catch (err) {
+        console.error('[POLL ERROR]:', err);
+      }
+
+      if (pollCount >= maxPolls) {
+        setStkPushSent(false);
+        setPaymentError('Payment verification timed out. If you completed the payment, your booking will update shortly.');
+        clearInterval(interval);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [stkPushSent, checkoutRequestId]);
 
   // Normalize Safaricom phone numbers
   const normalizePhone = (raw) => {
@@ -408,7 +468,13 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
       }
 
       if (data.success) {
-        setPaymentComplete(true);
+        // STK Push sent — start polling for confirmation
+        if (data.checkoutRequestId) {
+          setStkPushSent(true);
+          setCheckoutRequestId(data.checkoutRequestId);
+        } else {
+          setPaymentComplete(true);
+        }
       } else {
         setPaymentError(data.error || 'Payment failed. Ensure you have sufficient balance and try again.');
       }
@@ -766,15 +832,46 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       <div className="success-icon-ring" style={{ color: '#1a9e35', borderColor: '#1a9e35' }}>
                         <Check size={36} />
                       </div>
-                      <h3 className="payment-status-title">STK Push Initiated!</h3>
+                      <h3 className="payment-status-title">Payment Confirmed!</h3>
                       <p className="payment-status-desc">
-                        A direct payment request has been sent to your M-Pesa phone number. 
-                        Please enter your M-Pesa PIN on your phone handset to authorize the transaction. 
-                        Once completed, your booking status will update to Confirmed automatically.
+                        Your M-Pesa payment has been successfully received and verified.
+                        Your booking is now confirmed — check-in credentials have been sent to your email.
                       </p>
                       <button onClick={handleGoToPortal} className="btn-primary checkout-action-btn">
                         Go to Guest Portal Dashboard
                       </button>
+                    </div>
+                  ) : stkPushSent ? (
+                    <div className="payment-success-card animate-slide-down">
+                      <div style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem',
+                        padding: '2rem 1rem', textAlign: 'center'
+                      }}>
+                        {/* Pulsing phone animation */}
+                        <div style={{
+                          width: '80px', height: '80px', borderRadius: '50%',
+                          background: 'rgba(26, 158, 53, 0.1)', border: '2px solid rgba(26, 158, 53, 0.4)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          animation: 'pulse 2s ease-in-out infinite'
+                        }}>
+                          <Phone size={36} style={{ color: '#1a9e35' }} />
+                        </div>
+                        <h3 className="payment-status-title" style={{ color: '#1a9e35' }}>Check Your Phone</h3>
+                        <p className="payment-status-desc">
+                          An M-Pesa payment prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
+                          Enter your M-Pesa PIN to complete the transaction.
+                        </p>
+                        <div style={{
+                          display: 'flex', alignItems: 'center', gap: '0.5rem',
+                          color: 'rgba(232, 213, 181, 0.6)', fontSize: '0.85rem'
+                        }}>
+                          <div style={{
+                            width: '8px', height: '8px', borderRadius: '50%',
+                            background: '#1a9e35', animation: 'pulse 1.5s ease-in-out infinite'
+                          }} />
+                          Verifying payment status...
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <div className="payment-methods-block">

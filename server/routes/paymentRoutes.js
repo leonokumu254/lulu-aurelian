@@ -1,16 +1,19 @@
 import { Router } from 'express';
 import {
   initiateMpesaPayment,
-  mpesaCallback
+  mpesaCallback,
+  queryMpesaStatus
 } from '../controllers/paymentController.js';
 
 const router = Router();
 
-// M-Pesa (legacy — kept for backwards compatibility)
+// M-Pesa Daraja Direct — STK Push
 router.post('/mpesa/initiate', initiateMpesaPayment);
+
+// M-Pesa Daraja Direct — STK Push Callback (Safaricom server-to-server)
 router.post('/mpesa/callback', mpesaCallback);
 
-// NOTE: Stanbic STK Push is now handled via /api/bookings/:id/pay
-// and the Stanbic callback via /api/bookings/webhook/stanbic
+// M-Pesa Daraja Direct — STK Push Status Query (frontend polling)
+router.post('/mpesa/query', queryMpesaStatus);
 
 export default router;
