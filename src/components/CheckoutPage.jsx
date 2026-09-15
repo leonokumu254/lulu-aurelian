@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home } from 'lucide-react';
+import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home, Copy, CheckCircle } from 'lucide-react';
 import { getSuitePrice } from '../utils/pricing';
 import './CheckoutPage.css';
 
@@ -189,8 +189,16 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   const [mpesaCode, setMpesaCode] = useState('');
   const [stkPushSent, setStkPushSent] = useState(false);
   const [checkoutRequestId, setCheckoutRequestId] = useState(null);
+  const [copiedField, setCopiedField] = useState('');
   
   const idempotencyKey = useRef(null);
+
+  const handleCopyText = (text, field) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(''), 2500);
+  };
 
   // Timer loop for booking hold window
   useEffect(() => {
@@ -939,28 +947,28 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                             onChange={() => setPaymentMethod('mpesa')}
                           />
                           <div className="method-logo mpesa-logo">
-                            <img src="/mpesa-logo.jpg" alt="M-Pesa" />
+                            <img src="/mpesa-logo.jpg" alt="M-Pesa Buy Goods" />
                           </div>
                           <div className="method-text">
-                            <strong>M-Pesa STK Push</strong>
-                            <span>Automated prompt on your phone</span>
+                            <strong>Buy Goods (Till Number)</strong>
+                            <span>Till No: 174379 • STK Push & Manual</span>
                           </div>
                         </label>
 
-                        <label className={`payment-option-label ${paymentMethod === 'paypal' ? 'active' : ''}`}>
+                        <label className={`payment-option-label ${paymentMethod === 'contact_staff' ? 'active' : ''}`}>
                           <input 
                             type="radio" 
                             name="method"
-                            value="paypal"
-                            checked={paymentMethod === 'paypal'}
-                            onChange={() => setPaymentMethod('paypal')}
+                            value="contact_staff"
+                            checked={paymentMethod === 'contact_staff'}
+                            onChange={() => setPaymentMethod('contact_staff')}
                           />
-                          <div className="method-logo paypal-logo">
-                            <img src="/paypal.svg" alt="PayPal" />
+                          <div className="method-logo staff-contact-logo" style={{ background: '#25D366' }}>
+                            <Phone size={20} color="#fff" />
                           </div>
                           <div className="method-text">
-                            <strong>PayPal / Cards</strong>
-                            <span>Checkout globally</span>
+                            <strong>Other Payment Methods</strong>
+                            <span>Different method? Contact Support</span>
                           </div>
                         </label>
                       </div>
@@ -968,10 +976,49 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       {/* Payment inputs */}
                       {paymentMethod === 'mpesa' && (
                         <div className="payment-input-group animate-slide-down">
-                          <div style={{ background: 'rgba(26, 158, 53, 0.05)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
-                            <h4 style={{ margin: '0 0 0.5rem', color: '#1a9e35', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px' }}>AUTOMATED PAYMENT PROMPT</h4>
-                            <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.6' }}>
-                              We will send a direct payment prompt to the phone number below for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>. Please ensure your handset is unlocked.
+                          {/* Official Buy Goods Details Card */}
+                          <div style={{ background: 'rgba(232, 213, 181, 0.06)', border: '1.5px solid rgba(187, 133, 37, 0.35)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(232, 213, 181, 0.15)', paddingBottom: '0.4rem' }}>
+                              <h4 style={{ margin: 0, color: '#1a9e35', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                OFFICIAL TILL DETAILS
+                              </h4>
+                              <span style={{ fontSize: '0.72rem', background: '#1a9e35', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                              <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                                <span style={{ display: 'block', fontSize: '0.7rem', color: 'rgba(232, 213, 181, 0.7)', fontWeight: 600 }}>TILL NUMBER</span>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+                                  <strong style={{ fontSize: '1.15rem', color: '#E8D5B5', letterSpacing: '1px' }}>174379</strong>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopyText('174379', 'till')}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
+                                    title="Copy Till Number"
+                                  >
+                                    {copiedField === 'till' ? <CheckCircle size={15} /> : <Copy size={15} />}
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                                <span style={{ display: 'block', fontSize: '0.7rem', color: 'rgba(232, 213, 181, 0.7)', fontWeight: 600 }}>BOOKING REF</span>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+                                  <strong style={{ fontSize: '0.95rem', color: '#E8D5B5', wordBreak: 'break-all' }}>{createdBooking?.bookingId || 'PENDING'}</strong>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopyText(createdBooking?.bookingId, 'ref')}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'ref' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
+                                    title="Copy Booking Reference"
+                                  >
+                                    {copiedField === 'ref' ? <CheckCircle size={15} /> : <Copy size={15} />}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.5' }}>
+                              Enter your Safaricom phone below to receive an automated Buy Goods STK prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>, or pay manually via your M-Pesa menu using Till No <strong>174379</strong>.
                             </p>
                           </div>
 
@@ -995,16 +1042,96 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                         </div>
                       )}
 
-                      {paymentMethod === 'paypal' && (
+                      {paymentMethod === 'contact_staff' && (
                         <div className="payment-input-group animate-slide-down">
-                          <label className="checkout-label">PayPal Email Address</label>
-                          <input 
-                            type="email"
-                            value={paypalEmail}
-                            onChange={(e) => setPaypalEmail(e.target.value)}
-                            placeholder="name@domain.com"
-                            className="checkout-input"
-                          />
+                          <div style={{
+                            background: 'rgba(232, 213, 181, 0.06)',
+                            border: '1px solid rgba(232, 213, 181, 0.2)',
+                            borderRadius: '12px',
+                            padding: '1.25rem',
+                            marginBottom: '1rem'
+                          }}>
+                            <h4 style={{ margin: '0 0 0.5rem', color: '#E8D5B5', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px' }}>
+                              ALTERNATIVE PAYMENT METHODS — CONTACT SUPPORT
+                            </h4>
+                            <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.6' }}>
+                              Direct checkout is processed via <strong>M-Pesa Buy Goods only</strong>. If you have a different payment method (such as <strong>Direct Bank Transfer (EFT/RTGS)</strong>, <strong>Credit/Debit Card</strong>, <strong>Corporate Cheque</strong>, or <strong>Invoice</strong>), our support concierge is ready to assist:
+                            </p>
+                            <ul style={{ margin: '0 0 1rem 1.25rem', padding: 0, fontSize: '0.82rem', color: 'rgba(232, 213, 181, 0.75)', lineHeight: '1.6' }}>
+                              <li>Your 60-minute reservation hold remains active while you contact support.</li>
+                              <li>Have your Booking Reference ready: <strong style={{ color: '#E8D5B5' }}>{createdBooking?.bookingId || 'PENDING'}</strong></li>
+                              <li>Suite credentials will be issued immediately once payment is verified.</li>
+                            </ul>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                              <a 
+                                href={`https://wa.me/254112299384?text=${encodeURIComponent(
+                                  `Hello Lulu Aurelian Estate Support,\n\nI have created a reservation hold and would like to arrange an alternative payment method.\n\nBooking Ref: ${createdBooking?.bookingId || 'PENDING'}\nSuite: ${suite.name}\nCheck-in: ${formatDate(params.checkIn)}\nCheck-out: ${formatDate(params.checkOut)}\nTotal: KES ${totalCost.toLocaleString('en-KE')}\nGuest: ${guestDetails.firstName} ${guestDetails.lastName}\nPhone: +254 ${guestDetails.phone}`
+                                )}`}
+                                target="_blank" 
+                                rel="noreferrer" 
+                                className="btn-primary"
+                                style={{
+                                  backgroundColor: '#25D366',
+                                  borderColor: '#25D366',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '8px',
+                                  textDecoration: 'none',
+                                  padding: '0.75rem 1rem',
+                                  borderRadius: '8px',
+                                  color: '#fff',
+                                  fontWeight: 600,
+                                  fontSize: '0.9rem'
+                                }}
+                              >
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2z"/>
+                                </svg>
+                                Chat with Support on WhatsApp
+                              </a>
+
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                <a 
+                                  href="tel:+254112299384"
+                                  className="btn-secondary"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    textDecoration: 'none',
+                                    padding: '0.65rem',
+                                    border: '1px solid rgba(232, 213, 181, 0.25)',
+                                    borderRadius: '8px',
+                                    color: '#E8D5B5',
+                                    fontSize: '0.8rem'
+                                  }}
+                                >
+                                  <Phone size={14} /> Call: +254 112 299 384
+                                </a>
+                                <a 
+                                  href={`mailto:pearlisprime@gmail.com?subject=${encodeURIComponent(`Alternative Payment Request - Booking ${createdBooking?.bookingId || ''}`)}&body=${encodeURIComponent(`Hello Support,\n\nI have reserved ${suite.name} (Ref: ${createdBooking?.bookingId || 'PENDING'}) for KES ${totalCost.toLocaleString('en-KE')} and have an alternative payment method.`)}`}
+                                  className="btn-secondary"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    textDecoration: 'none',
+                                    padding: '0.65rem',
+                                    border: '1px solid rgba(232, 213, 181, 0.25)',
+                                    borderRadius: '8px',
+                                    color: '#E8D5B5',
+                                    fontSize: '0.8rem'
+                                  }}
+                                >
+                                  <Mail size={14} /> Email Support
+                                </a>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
 
@@ -1015,21 +1142,42 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                         </div>
                       )}
 
-                      <button 
-                        onClick={handlePayment}
-                        disabled={processingPayment || timeRemaining === 'Expired'}
-                        className="btn-primary checkout-action-btn"
-                        style={{
-                          backgroundColor: paymentMethod === 'paypal' ? '#002994' : '#1a9e35',
-                          borderColor: paymentMethod === 'paypal' ? '#002994' : '#1a9e35'
-                        }}
-                      >
-                        {processingPayment 
-                          ? 'Initiating STK Push request...' 
-                          : paymentMethod === 'paypal' 
-                            ? 'PAY VIA PAYPAL' 
-                            : 'SEND STK PUSH'}
-                      </button>
+                      {paymentMethod === 'mpesa' ? (
+                        <button 
+                          onClick={handlePayment}
+                          disabled={processingPayment || timeRemaining === 'Expired'}
+                          className="btn-primary checkout-action-btn"
+                          style={{
+                            backgroundColor: '#1a9e35',
+                            borderColor: '#1a9e35'
+                          }}
+                        >
+                          {processingPayment 
+                            ? '⏳ Initiating Buy Goods STK Push...' 
+                            : `PAY VIA BUY GOODS (KES ${totalCost.toLocaleString('en-KE')})`}
+                        </button>
+                      ) : (
+                        <a 
+                          href={`https://wa.me/254112299384?text=${encodeURIComponent(
+                            `Hello Lulu Aurelian Estate Support,\n\nI have created a reservation hold and would like to arrange an alternative payment method.\n\nBooking Ref: ${createdBooking?.bookingId || 'PENDING'}\nSuite: ${suite.name}\nCheck-in: ${formatDate(params.checkIn)}\nCheck-out: ${formatDate(params.checkOut)}\nTotal: KES ${totalCost.toLocaleString('en-KE')}\nGuest: ${guestDetails.firstName} ${guestDetails.lastName}\nPhone: +254 ${guestDetails.phone}`
+                          )}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn-primary checkout-action-btn"
+                          style={{
+                            backgroundColor: '#25D366',
+                            borderColor: '#25D366',
+                            textAlign: 'center',
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          CONTACT SUPPORT ON WHATSAPP
+                        </a>
+                      )}
 
                       <button className="btn-outline-link" onClick={handleGoToPortal}>
                         I will pay later from my Guest Portal

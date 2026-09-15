@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Key, RefreshCw, Save, CheckCircle, AlertCircle, Shield, Eye, EyeOff, Copy } from 'lucide-react';
+import { Key, RefreshCw, Save, CheckCircle, AlertCircle, Shield, Eye, EyeOff, Copy, Building2, Filter } from 'lucide-react';
 import './SuitePasscodes.css';
 
 export default function SuitePasscodes() {
@@ -8,6 +8,7 @@ export default function SuitePasscodes() {
   const [error, setError] = useState('');
   const [savingUnit, setSavingUnit] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('all');
   const [passcodes, setPasscodes] = useState({ skyview: '', cocoa: '', neema: '' });
   const [houseNumbers, setHouseNumbers] = useState({ skyview: '', cocoa: '', neema: '' });
   const [wifiSSIDs, setWifiSSIDs] = useState({ skyview: '', cocoa: '', neema: '' });
@@ -173,13 +174,56 @@ export default function SuitePasscodes() {
         <div className="header-title-row">
           <Key className="header-icon" size={28} />
           <div>
-            <h1 className="portal-title">Suite Key Box PINs</h1>
+            <h1 className="portal-title">Key Suites Access & PIN Vault</h1>
             <p className="portal-subtitle">
-              Manage the 4-digit security codes used by guests to access the room keys. Updated codes are instantly synchronized with guest dispatch payloads.
+              Manage and access the 4-digit security codes used by guests to access the room keys. Select a unit from the dropdown below to view or update its key code.
             </p>
           </div>
         </div>
       </div>
+
+      {/* Unit Selector Dropdown */}
+      <div className="suite-unit-filter-wrapper glass-panel">
+        <div className="filter-label-group">
+          <div className="filter-icon-box">
+            <Building2 className="filter-icon" size={20} />
+          </div>
+          <div>
+            <span className="filter-heading">Unit to Access Code:</span>
+            <p className="filter-subtext">Select which suite unit's key box PIN and credentials to display</p>
+          </div>
+        </div>
+        <div className="filter-select-container">
+          <select
+            id="unit-access-select"
+            className="unit-dropdown-select"
+            value={selectedUnit}
+            onChange={(e) => setSelectedUnit(e.target.value)}
+            aria-label="Select suite unit to access code"
+          >
+            <option value="all">🏢 All Suites (Skyview, Cocoa, Neema)</option>
+            <option value="skyview">✨ Skyview Hideaway — Key & Access Code</option>
+            <option value="cocoa">🌿 Cocoa Retreat — Key & Access Code</option>
+            <option value="neema">🕊️ Neema — Key & Access Code</option>
+          </select>
+        </div>
+      </div>
+
+      {selectedUnit !== 'all' && (
+        <div className="single-unit-indicator animate-fade-in">
+          <div className="indicator-left">
+            <Key size={16} />
+            <span>Currently Viewing Key Code For: <strong>{getUnitName(selectedUnit)}</strong></span>
+          </div>
+          <button 
+            type="button" 
+            className="btn-show-all-units" 
+            onClick={() => setSelectedUnit('all')}
+          >
+            View All Units
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="passcode-loader">
@@ -194,7 +238,9 @@ export default function SuitePasscodes() {
         </div>
       ) : (
         <div className="units-passcodes-grid">
-          {['skyview', 'cocoa', 'neema'].map(unitId => {
+          {['skyview', 'cocoa', 'neema']
+            .filter(unitId => selectedUnit === 'all' || unitId === selectedUnit)
+            .map(unitId => {
             const currentVal = passcodes[unitId] || '';
             const isSaving = savingUnit === unitId;
             return (

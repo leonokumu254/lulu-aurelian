@@ -177,7 +177,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 onClick={() => { setViewMode('passcodes'); setMobileMenuOpen(false); }}
               >
                 <Key size={20} />
-                <span>Suite PINs</span>
+                <span>Key Suites</span>
               </button>
               <button 
                 className={`nav-item ${viewMode === 'cms' ? 'active' : ''}`}
@@ -203,7 +203,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 onClick={() => { setViewMode('passcodes'); setMobileMenuOpen(false); }}
               >
                 <Key size={20} />
-                <span>Suite PINs</span>
+                <span>Key Suites</span>
               </button>
               <button 
                 className={`nav-item ${viewMode === 'cms' ? 'active' : ''}`}
@@ -265,7 +265,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               </button>
               <div>
                 <h1>
-                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Suite PINs' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
+                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
                 </h1>
               </div>
             </div>

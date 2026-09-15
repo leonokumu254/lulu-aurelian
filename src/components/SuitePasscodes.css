@@ -8,7 +8,127 @@
 }
 
 .passcodes-header {
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
+}
+
+/* Suite Unit Filter Dropdown Bar */
+.suite-unit-filter-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 2rem;
+  border-radius: 14px;
+  background: rgba(240, 237, 230, 0.65);
+  border: 1px solid rgba(187, 133, 37, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  flex-wrap: wrap;
+}
+
+.filter-label-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(187, 133, 37, 0.12);
+  color: #BB8525;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(187, 133, 37, 0.2);
+}
+
+.filter-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1D1912;
+  display: block;
+}
+
+.filter-subtext {
+  font-size: 0.8rem;
+  color: #6B6255;
+  margin: 0.15rem 0 0;
+}
+
+.filter-select-container {
+  min-width: 320px;
+  flex: 0 1 auto;
+}
+
+.unit-dropdown-select {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #1D1912;
+  background: #ffffff;
+  border: 1.5px solid rgba(187, 133, 37, 0.35);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.unit-dropdown-select:hover {
+  border-color: #BB8525;
+  box-shadow: 0 4px 12px rgba(187, 133, 37, 0.12);
+}
+
+.unit-dropdown-select:focus {
+  border-color: #BB8525;
+  box-shadow: 0 0 0 3px rgba(187, 133, 37, 0.15);
+}
+
+/* Single Unit Active Indicator Banner */
+.single-unit-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: rgba(187, 133, 37, 0.08);
+  border: 1px solid rgba(187, 133, 37, 0.25);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  color: #1D1912;
+  font-size: 0.9rem;
+}
+
+.indicator-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #8c6014;
+}
+
+.indicator-left strong {
+  color: #1D1912;
+}
+
+.btn-show-all-units {
+  background: none;
+  border: 1px solid rgba(187, 133, 37, 0.4);
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8c6014;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-show-all-units:hover {
+  background: #BB8525;
+  color: #ffffff;
 }
 
 .header-title-row {
