@@ -518,3 +518,18 @@
     height: 14px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   19-INCH MONITOR RESPONSIVENESS (1366x768, 1440x900, 1280x1024)
+   ══════════════════════════════════════════════════════════ */
+@media screen and (max-height: 880px) and (min-width: 600px) {
+  .calendar-modal-overlay {
+    padding-top: 30px;
+  }
+  .calendar-modal-container {
+    padding: 1.25rem 1.75rem 1.5rem;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
+  }
+}
+

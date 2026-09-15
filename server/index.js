@@ -23,6 +23,7 @@ import userRoutes from './routes/usersRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import cmsRoutes from './routes/cmsRoutes.js';
 import icalRoutes from './routes/icalRoutes.js';
+import pricingRoutes from './routes/pricingRoutes.js';
 
 const app = express();
 app.set('trust proxy', true); // Required for express-rate-limit when hosted on Railway
@@ -68,7 +69,8 @@ app.use(cors({
     ) {
       return callback(null, true);
     }
-    return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+    console.warn(`[CORS BLOCKED]: Origin '${origin}' is not in allowedOrigins.`);
+    return callback(new Error(`The CORS policy for this site does not allow access from the specified Origin: ${origin}`), false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-mpesa-secret'],
@@ -95,6 +97,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/cms', cmsRoutes);
 app.use('/api/ical', icalRoutes);
+app.use('/api/pricing', pricingRoutes);
 
 
 // --- STATIC ASSETS & SPA FRONTEND FALLBACK SERVING ---

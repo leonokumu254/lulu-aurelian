@@ -70,20 +70,20 @@
   text-align: center;
 }
 
-.form-group {
+.auth-card .form-group {
   margin-bottom: 1.2rem;
   display: flex;
   flex-direction: column;
 }
 
-.form-row {
+.auth-card .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
-.form-group label,
-.form-group label#label {
+.auth-card .form-group label,
+.auth-card .form-group label#label {
   font-size: 0.78rem;
   font-weight: 600;
   color: #d1d5db;
@@ -91,7 +91,7 @@
   display: block;
 }
 
-.form-group input {
+.auth-card .form-group input {
   width: 100%;
   height: 46px;
   padding: 0 1rem;
@@ -106,21 +106,21 @@
   box-sizing: border-box;
 }
 
-.form-group input:focus {
+.auth-card .form-group input:focus {
   border-color: #cfa873;
   box-shadow: 0 0 0 3px rgba(207, 168, 115, 0.15);
 }
 
-.password-wrapper {
+.auth-card .password-wrapper {
   position: relative;
   width: 100%;
 }
 
-.password-wrapper input {
+.auth-card .password-wrapper input {
   padding-right: 2.75rem;
 }
 
-.password-wrapper button {
+.auth-card .password-wrapper button {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -135,11 +135,11 @@
   justify-content: center;
 }
 
-.password-wrapper button:hover {
+.auth-card .password-wrapper button:hover {
   color: #cfa873;
 }
 
-.form-options {
+.auth-card .form-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -147,7 +147,7 @@
   font-size: 0.82rem;
 }
 
-.remember-me {
+.auth-card .remember-me {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -155,11 +155,11 @@
   cursor: pointer;
 }
 
-.remember-me input {
+.auth-card .remember-me input {
   accent-color: #cfa873;
 }
 
-.forgot-pw {
+.auth-card .forgot-pw {
   color: #cfa873;
   text-decoration: none;
   background: none;

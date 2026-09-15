@@ -265,3 +265,65 @@
     letter-spacing: 0.2em;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   19-INCH MONITOR RESPONSIVENESS (1366x768, 1440x900, 1280x1024)
+   ══════════════════════════════════════════════════════════ */
+@media screen and (min-width: 801px) and (max-width: 1440px), screen and (max-height: 880px) and (min-width: 801px) {
+  .hero-section {
+    min-height: 540px;
+    height: 100vh;
+    padding-top: 3.8rem;
+  }
+
+  .hero-content {
+    margin-top: auto;
+    margin-bottom: 1.25rem;
+    max-width: 720px;
+  }
+
+  .hero-tagline {
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-title {
+    font-size: 2.8rem;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-description {
+    font-size: 1.05rem;
+    max-width: 540px;
+    line-height: 1.45;
+  }
+
+  .hero-filter-container {
+    max-width: 820px;
+    margin-bottom: auto;
+  }
+
+  .hero-filter-bar {
+    padding: 0.65rem 1.25rem;
+  }
+
+  .filter-input-group {
+    padding: 0.35rem 0.75rem;
+  }
+
+  .filter-label {
+    font-size: 0.72rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .filter-value {
+    font-size: 0.95rem;
+  }
+
+  .hero-reserve-btn {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.82rem;
+  }
+}

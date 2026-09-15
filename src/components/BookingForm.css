@@ -823,9 +823,19 @@
     margin-bottom: 0.5rem;
   }
 
-  .form-input, .text-input, .text-textarea, .phone-main-input {
+  .form-input, .text-input, .text-textarea {
     font-size: 16px !important;
     padding: 0.65rem 0.8rem !important;
+  }
+
+  .phone-main-input {
+    font-size: 16px !important;
+    padding: 0.65rem 0.8rem 0.65rem 38px !important;
+  }
+
+  .input-with-icon input,
+  .confirm-card-form .input-with-icon input {
+    padding-left: 44px !important;
   }
 
   .phone-country-trigger {
@@ -1072,12 +1082,17 @@
   border: 1px solid #dfd9ce;
   border-radius: 8px;
   height: 48px;
-  padding: 0 1rem 0 2.6rem;
+  padding: 0 1rem 0 44px !important;
   font-family: var(--font-sans);
   font-size: 0.95rem;
   color: #1a1a1a;
   outline: none;
+  box-sizing: border-box;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.confirm-card-form .input-with-icon.no-left-padding input {
+  padding-left: 38px !important;
 }
 
 .confirm-card-form .input-with-icon input:focus {
@@ -1088,8 +1103,11 @@
 .confirm-card-form .input-with-icon svg {
   position: absolute;
   left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #8c8577;
   pointer-events: none;
+  z-index: 2;
 }
 
 .confirm-card-form .phone-input-group {

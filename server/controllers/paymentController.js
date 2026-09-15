@@ -16,13 +16,23 @@ export const initiateMpesaPayment = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Booking is not awaiting payment.' });
     }
 
+    // Determine amount dynamically
+    let amount = booking.total_price;
+    if (!amount) {
+      const unitPricing = await db.pricing.getUnitPricing(booking.unit_id);
+      const isOneBed = booking.booking_type === 'one_bedroom';
+      const baseRate = isOneBed ? unitPricing.one_bedroom_price : unitPricing.entire_price;
+      const nights = Math.max(1, Math.round((new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)));
+      amount = baseRate * nights;
+    }
+
     // Call Daraja API
-    const response = await mpesaService.initiateSTKPush(phone_number, booking.total_price, booking.id.substring(0, 8).toUpperCase());
+    const response = await mpesaService.initiateSTKPush(phone_number, amount, booking.id.substring(0, 8).toUpperCase());
 
     // Save PENDING transaction in DB with CheckoutRequestID as the transaction ref temporarily to link the webhook later
     await db.payments.create({
       booking_id: booking.id,
-      amount: booking.total_price,
+      amount: amount,
       gateway: 'MPESA',
       transaction_ref: response.checkoutRequestId, 
       status: 'PENDING'
@@ -171,12 +181,21 @@ export const initiatePaypalPayment = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Booking not found.' });
     }
 
-    const response = await paypalService.createOrder(booking.total_price, booking.id.substring(0, 8).toUpperCase());
+    let amount = booking.total_price;
+    if (!amount) {
+      const unitPricing = await db.pricing.getUnitPricing(booking.unit_id);
+      const isOneBed = booking.booking_type === 'one_bedroom';
+      const baseRate = isOneBed ? unitPricing.one_bedroom_price : unitPricing.entire_price;
+      const nights = Math.max(1, Math.round((new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)));
+      amount = baseRate * nights;
+    }
+
+    const response = await paypalService.createOrder(amount, booking.id.substring(0, 8).toUpperCase());
 
     // Save PENDING transaction
     await db.payments.create({
       booking_id: booking.id,
-      amount: booking.total_price,
+      amount: amount,
       gateway: 'PAYPAL',
       transaction_ref: response.orderId,
       status: 'PENDING'

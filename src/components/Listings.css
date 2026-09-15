@@ -188,6 +188,27 @@
   line-height: 1.4;
 }
 
+.bnb-card-rates {
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.bnb-rate-highlight {
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--color-dark);
+}
+
+.bnb-rate-label {
+  font-size: 0.82rem;
+  color: var(--color-gold-deep, #c9a050);
+  font-weight: 500;
+}
+
 /* ====== Responsive ====== */
 
 @media (max-width: 1024px) {

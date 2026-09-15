@@ -282,18 +282,23 @@
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .input-with-icon svg {
   position: absolute;
   left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-muted);
   pointer-events: none;
+  z-index: 2;
 }
 
 .input-with-icon input {
   width: 100%;
-  padding: 0.85rem 1rem 0.85rem 2.75rem;
+  height: 48px;
+  padding: 0.85rem 1rem 0.85rem 44px !important;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background-color: var(--color-white);
@@ -302,6 +307,11 @@
   color: var(--color-dark);
   transition: var(--transition-fast);
   outline: none;
+  box-sizing: border-box;
+}
+
+.input-with-icon.no-left-padding input {
+  padding-left: 36px !important;
 }
 
 .input-with-icon input:focus {
@@ -825,4 +835,122 @@
   color: var(--color-muted);
   font-size: 0.9rem;
 }
+
+/* Accommodation Selector in Checkout */
+.checkout-accommodation-box {
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  background: rgba(232, 213, 181, 0.08);
+  border: 1px solid rgba(232, 213, 181, 0.25);
+  border-radius: 12px;
+}
+
+.accommodation-toggle-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .accommodation-toggle-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-accom-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 1rem 1.15rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-accom-option:hover {
+  background: #ffffff;
+  border-color: rgba(201, 160, 80, 0.4);
+}
+
+.btn-accom-option.selected {
+  background: #ffffff;
+  border-color: #c9a050;
+  box-shadow: 0 4px 14px rgba(201, 160, 80, 0.15);
+}
+
+.accom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.35rem;
+}
+
+.accom-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.accom-price {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #c9a050;
+}
+
+.accom-sub {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════════════════
+   19-INCH MONITOR RESPONSIVENESS (1366x768, 1440x900, 1280x1024)
+   ══════════════════════════════════════════════════════════ */
+@media screen and (min-width: 769px) and (max-width: 1440px), screen and (max-height: 880px) and (min-width: 769px) {
+  .checkout-main-content {
+    max-width: 1140px;
+    padding: 1.75rem 1.5rem 3.5rem;
+  }
+
+  .checkout-grid-container {
+    grid-template-columns: 1fr 360px;
+    gap: 2rem;
+  }
+
+  .checkout-card {
+    padding: 1.5rem 1.75rem;
+  }
+
+  .summary-sticky-card {
+    top: 75px;
+    padding: 1.25rem 1.5rem;
+    max-height: calc(100vh - 85px);
+    overflow-y: auto;
+  }
+
+  .summary-separator {
+    margin: 1rem 0;
+  }
+
+  .checkout-accommodation-box {
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+  }
+
+  .accommodation-toggle-row {
+    gap: 0.75rem;
+  }
+
+  .btn-accom-option {
+    padding: 0.75rem 0.9rem;
+  }
+}
+
+
 

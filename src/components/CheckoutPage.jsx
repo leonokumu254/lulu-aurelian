@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone } from 'lucide-react';
+import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home } from 'lucide-react';
 import { getSuitePrice } from '../utils/pricing';
 import './CheckoutPage.css';
 
@@ -31,7 +31,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     checkIn: '',
     checkOut: '',
     adults: 1,
-    children: 0
+    children: 0,
+    bookingType: 'entire'
   });
 
   useEffect(() => {
@@ -45,23 +46,34 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
         checkIn: searchParams.get('checkIn') || '',
         checkOut: searchParams.get('checkOut') || '',
         adults: parseInt(searchParams.get('adults'), 10) || 1,
-        children: parseInt(searchParams.get('children'), 10) || 0
+        children: parseInt(searchParams.get('children'), 10) || 0,
+        bookingType: searchParams.get('bookingType') || searchParams.get('booking_type') || 'entire'
       });
     }
   }, []);
 
   const suiteId = params.suite;
+  const bookingType = params.bookingType || 'entire';
+  const isOneBed = bookingType === 'one_bedroom';
   const suite = SUITES_METADATA[suiteId] || SUITES_METADATA.skyview;
-  const [suitePrice, setSuitePrice] = useState(() => getSuitePrice(suiteId));
+  const [suitePrice, setSuitePrice] = useState(() => getSuitePrice(suiteId, bookingType));
 
   useEffect(() => {
-    setSuitePrice(getSuitePrice(suiteId));
+    setSuitePrice(getSuitePrice(suiteId, bookingType));
     const handlePricingUpdate = () => {
-      setSuitePrice(getSuitePrice(suiteId));
+      setSuitePrice(getSuitePrice(suiteId, bookingType));
     };
     window.addEventListener('pricingUpdated', handlePricingUpdate);
     return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
-  }, [suiteId]);
+  }, [suiteId, bookingType]);
+
+  const handleBookingTypeChange = (newType) => {
+    setParams(prev => ({
+      ...prev,
+      bookingType: newType,
+      adults: (newType === 'one_bedroom' && prev.adults > 3) ? 3 : prev.adults
+    }));
+  };
 
   // ── Date Formatting ──────────────────────────────────────────────────────
   const formatDate = (dateStr) => {
@@ -87,8 +99,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   else if (nights >= 3) discountPercent = 5;
   const lengthDiscountValue = baseCost * (discountPercent / 100);
 
-  const maxAdults = 5;
-  const isPeakSurcharge = params.adults === maxAdults;
+  const maxAdults = isOneBed ? 3 : 5;
+  const isPeakSurcharge = !isOneBed && params.adults === 5;
   const peakSurchargeAmount = isPeakSurcharge ? 1500 : 0;
   const totalCost = Math.max(0, baseCost - lengthDiscountValue) + peakSurchargeAmount;
 
@@ -365,6 +377,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
         guest_email: guestDetails.email.trim().toLowerCase(),
         guest_phone: `+254${guestDetails.phone.trim()}`,
         unit_id: suiteId,
+        booking_type: bookingType,
         check_in: params.checkIn,
         check_out: params.checkOut,
         adults: params.adults,
@@ -390,6 +403,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
           bookingId: data.booking.id,
           secureToken: data.booking.secure_token,
           suiteName: suite.name,
+          bookingType: bookingType,
           checkIn: params.checkIn,
           checkOut: params.checkOut,
           adults: params.adults,
@@ -538,6 +552,36 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
 
               {step === 1 && (
                 <div className="card-body-content animate-slide-down">
+                  {/* ACCOMMODATION SELECTION (ENTIRE VS 1 BEDROOM) */}
+                  <div className="checkout-accommodation-box">
+                    <label className="checkout-label">Select Accommodation Option</label>
+                    <div className="accommodation-toggle-row">
+                      <button
+                        type="button"
+                        className={`btn-accom-option ${bookingType === 'entire' ? 'selected' : ''}`}
+                        onClick={() => handleBookingTypeChange('entire')}
+                      >
+                        <div className="accom-header">
+                          <span className="accom-title">Entire Apartment</span>
+                          <span className="accom-price">KES {getSuitePrice(suiteId, 'entire').toLocaleString('en-KE')} / night</span>
+                        </div>
+                        <span className="accom-sub">Full 2-bedroom luxury suite · Up to 5 guests</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className={`btn-accom-option ${bookingType === 'one_bedroom' ? 'selected' : ''}`}
+                        onClick={() => handleBookingTypeChange('one_bedroom')}
+                      >
+                        <div className="accom-header">
+                          <span className="accom-title">1 Bedroom Option</span>
+                          <span className="accom-price">KES {getSuitePrice(suiteId, 'one_bedroom').toLocaleString('en-KE')} / night</span>
+                        </div>
+                        <span className="accom-sub">1 Bedroom master suite · Up to 3 guests</span>
+                      </button>
+                    </div>
+                  </div>
+
                   {user ? (
                     /* Authenticated guest editable summary */
                     <div className="profile-verified-card">
@@ -1034,6 +1078,16 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                     </span>
                   </div>
                 </div>
+
+                <div className="overview-spec">
+                  <Home size={16} />
+                  <div>
+                    <span className="spec-label">Accommodation</span>
+                    <span className="spec-val">
+                      {isOneBed ? '1 Bedroom Option' : 'Entire Apartment'}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="summary-separator" />
@@ -1042,7 +1096,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
 
               <div className="summary-pricing-rows">
                 <div className="pricing-row">
-                  <span>KES {suite.price.toLocaleString('en-KE')} x {nights} night{nights !== 1 ? 's' : ''}</span>
+                  <span>KES {suitePrice.toLocaleString('en-KE')} x {nights} night{nights !== 1 ? 's' : ''} ({isOneBed ? '1 Bed' : 'Entire'})</span>
                   <span>KES {baseCost.toLocaleString('en-KE')}</span>
                 </div>
 

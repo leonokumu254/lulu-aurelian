@@ -65,6 +65,26 @@ ON DUPLICATE KEY UPDATE
   wifi_ssid = VALUES(wifi_ssid),
   wifi_password = VALUES(wifi_password);
 
+-- STEP 9: Add unit_pricing table for dynamic live rates (Entire vs 1 Bedroom)
+CREATE TABLE IF NOT EXISTS unit_pricing (
+  unit_id VARCHAR(50) PRIMARY KEY,
+  entire_price DECIMAL(10,2) NOT NULL DEFAULT 5000.00,
+  one_bedroom_price DECIMAL(10,2) NOT NULL DEFAULT 4000.00,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO unit_pricing (unit_id, entire_price, one_bedroom_price) VALUES
+  ('skyview', 5500.00, 4000.00),
+  ('cocoa', 5000.00, 4000.00),
+  ('neema', 5000.00, 4000.00)
+ON DUPLICATE KEY UPDATE 
+  entire_price = VALUES(entire_price),
+  one_bedroom_price = VALUES(one_bedroom_price);
+
+-- STEP 10: Add booking_type column to bookings table
+ALTER TABLE bookings ADD COLUMN booking_type VARCHAR(30) NOT NULL DEFAULT 'entire' AFTER unit_id;
+
 -- ================================================================
--- Verify with:   DESCRIBE bookings;   DESCRIBE payments;   DESCRIBE unit_settings;
+-- Verify with:   DESCRIBE bookings;   DESCRIBE payments;   DESCRIBE unit_pricing;
 -- ================================================================
+

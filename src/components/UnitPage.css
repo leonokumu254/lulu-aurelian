@@ -892,3 +892,115 @@
   }
 }
 
+/* Accommodation Option Switcher on Unit Page */
+.unit-booking-type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 0.35rem;
+  background: rgba(232, 213, 181, 0.12);
+  border: 1px solid rgba(232, 213, 181, 0.25);
+  border-radius: 10px;
+}
+
+.type-toggle-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.5rem;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.type-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.type-toggle-btn.active {
+  background: #ffffff;
+  border-color: #c9a050;
+  box-shadow: 0 2px 8px rgba(201, 160, 80, 0.2);
+}
+
+.type-toggle-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.type-toggle-rate {
+  font-size: 0.78rem;
+  color: #c9a050;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   19-INCH MONITOR RESPONSIVENESS (1366x768, 1440x900, 1280x1024)
+   ══════════════════════════════════════════════════════════ */
+@media screen and (min-width: 769px) and (max-width: 1440px), screen and (max-height: 880px) and (min-width: 769px) {
+  .unit-hero-section {
+    max-width: 1140px;
+    padding: 0 1.5rem;
+    margin-top: 50px;
+  }
+
+  .unit-mosaic {
+    max-height: 380px;
+  }
+
+  .unit-main {
+    max-width: 1140px;
+    padding: 1.75rem 1.5rem 4rem;
+  }
+
+  .unit-content-grid {
+    grid-template-columns: 1fr 340px;
+    gap: 2rem;
+  }
+
+  .unit-name {
+    font-size: 2.2rem;
+  }
+
+  .unit-booking-card {
+    top: 75px;
+    padding: 1.25rem 1.4rem;
+    max-height: calc(100vh - 85px);
+    overflow-y: auto;
+  }
+
+  .price-amount {
+    font-size: 1.5rem;
+  }
+
+  .booking-card-price {
+    margin-bottom: 1rem;
+  }
+
+  .unit-booking-type-toggle {
+    margin-bottom: 1rem;
+    padding: 0.25rem;
+  }
+
+  .type-toggle-btn {
+    padding: 0.45rem 0.35rem;
+  }
+
+  .booking-widget-inputs {
+    margin-bottom: 1rem;
+  }
+
+  .booking-card-channels {
+    margin-top: 1rem;
+  }
+}
+
+
+

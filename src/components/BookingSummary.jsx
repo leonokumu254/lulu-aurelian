@@ -36,7 +36,8 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
   }, []);
 
   const suiteData = SUITES_METADATA[formData.suite] || SUITES_METADATA.skyview;
-  const currentSuitePrice = prices[formData.suite] || prices.skyview;
+  const isOneBed = formData.bookingType === 'one_bedroom';
+  const currentSuitePrice = getSuitePrice(formData.suite, isOneBed ? 'one_bedroom' : 'entire');
 
   // Calculate nights
   let nights = 0;
@@ -103,6 +104,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
       guest_email: formData.email.trim().toLowerCase(),
       guest_phone: `${formData.phoneCountryCode}${formData.phone.trim()}`,
       unit_id: formData.suite,
+      booking_type: formData.bookingType || 'entire',
       check_in: formData.checkIn,
       check_out: formData.checkOut,
       adults: formData.adults || 1,

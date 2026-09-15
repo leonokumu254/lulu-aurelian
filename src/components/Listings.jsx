@@ -65,11 +65,13 @@ const LISTINGS = [
 function ListingCard({ listing }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = React.useRef(null);
-  const [prices, setPrices] = useState(getSuitePrice(listing.id));
+  const [entirePrice, setEntirePrice] = useState(() => getSuitePrice(listing.id, 'entire'));
+  const [oneBedPrice, setOneBedPrice] = useState(() => getSuitePrice(listing.id, 'one_bedroom'));
 
   React.useEffect(() => {
     const handlePricingUpdate = () => {
-      setPrices(getSuitePrice(listing.id));
+      setEntirePrice(getSuitePrice(listing.id, 'entire'));
+      setOneBedPrice(getSuitePrice(listing.id, 'one_bedroom'));
     };
     window.addEventListener('pricingUpdated', handlePricingUpdate);
     return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
@@ -163,6 +165,10 @@ function ListingCard({ listing }) {
         <p className="bnb-card-specs">
           {listing.beds} · 2 beds · {listing.baths}
         </p>
+        <div className="bnb-card-rates">
+          <span className="bnb-rate-highlight">From KES {oneBedPrice.toLocaleString('en-KE')}</span>
+          <span className="bnb-rate-label"> (1 Bed) · KES {entirePrice.toLocaleString('en-KE')} (Entire) / nt</span>
+        </div>
       </div>
     </a>
   );

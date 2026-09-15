@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Users, Info, Shield, ChevronDown, AlertCircle, User, Mail, Phone } from 'lucide-react';
 import CustomCalendarModal from './CustomCalendarModal';
+import { getSuitePrice } from '../utils/pricing';
 import './BookingForm.css';
 
 // Helper to format YYYY-MM-DD into M/D/YYYY
@@ -237,7 +238,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
           >
             <div className="suite-select-header">
               <span className="suite-select-title">Skyview Hideaway</span>
-              <span className="suite-select-price">KES 5,500 / night</span>
+              <span className="suite-select-price">KES {getSuitePrice('skyview', 'entire').toLocaleString('en-KE')} / night</span>
             </div>
             <p className="suite-select-desc">Penthouse, Panoramic Mt Kenya views</p>
           </div>
@@ -248,7 +249,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
           >
             <div className="suite-select-header">
               <span className="suite-select-title">Cocoa Suite</span>
-              <span className="suite-select-price">KES 5,000 / night</span>
+              <span className="suite-select-price">KES {getSuitePrice('cocoa', 'entire').toLocaleString('en-KE')} / night</span>
             </div>
             <p className="suite-select-desc">Luxury living with rich cocoa tones.</p>
           </div>
@@ -258,10 +259,42 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
             onClick={() => handleSuiteSelect('neema')}
           >
             <div className="suite-select-header">
-              <span className="suite-select-title">Neema</span>
-              <span className="suite-select-price">KES 5,000 / night</span>
+              <span className="suite-select-title">Neema Haven</span>
+              <span className="suite-select-price">KES {getSuitePrice('neema', 'entire').toLocaleString('en-KE')} / night</span>
             </div>
             <p className="suite-select-desc">Peaceful and luxurious retreat.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Accommodation Type: Entire Apartment vs 1 Bedroom Option */}
+      <div className="form-group">
+        <label className="form-label">Accommodation Type</label>
+        <div className="suite-selector-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+          <div
+            className={`suite-select-card ${(formData.bookingType || 'entire') === 'entire' ? 'active' : ''}`}
+            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'entire' }))}
+          >
+            <div className="suite-select-header">
+              <span className="suite-select-title">Entire Apartment</span>
+              <span className="suite-select-price">KES {getSuitePrice(formData.suite, 'entire').toLocaleString('en-KE')} / night</span>
+            </div>
+            <p className="suite-select-desc">Full suite access: all bedrooms, living lounge, dining & private kitchen.</p>
+          </div>
+
+          <div
+            className={`suite-select-card ${formData.bookingType === 'one_bedroom' ? 'active' : ''}`}
+            onClick={() => setFormData(prev => ({ 
+              ...prev, 
+              bookingType: 'one_bedroom',
+              adults: Math.min(prev.adults || 1, 3) 
+            }))}
+          >
+            <div className="suite-select-header">
+              <span className="suite-select-title">1 Bedroom Option</span>
+              <span className="suite-select-price" style={{ color: '#15803D' }}>KES {getSuitePrice(formData.suite, 'one_bedroom').toLocaleString('en-KE')} / night</span>
+            </div>
+            <p className="suite-select-desc">Master bedroom with luxury ensuite bathroom & exclusive amenities (up to 3 guests).</p>
           </div>
         </div>
       </div>
@@ -445,7 +478,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
                 <input
                   type="text"
                   placeholder="First Name"
-                  className="form-input text-input"
+                  className="checkout-input"
                   value={formData.firstName || ''}
                   onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                   required
@@ -460,7 +493,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
                 <input
                   type="text"
                   placeholder="Last Name"
-                  className="form-input text-input"
+                  className="checkout-input"
                   value={formData.lastName || ''}
                   onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                   required
@@ -476,7 +509,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
               <input
                 type="email"
                 placeholder="email@example.com"
-                className="form-input text-input"
+                className="checkout-input"
                 value={formData.email || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value, confirmEmail: e.target.value }))}
                 required
