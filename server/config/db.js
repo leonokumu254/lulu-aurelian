@@ -98,6 +98,12 @@ const inMemory = {
     { unit_id: 'neema', passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
   ],
 
+  unit_pricing: [
+    { unit_id: 'skyview', entire_price: 5500, one_bedroom_price: 4000 },
+    { unit_id: 'cocoa', entire_price: 5000, one_bedroom_price: 4000 },
+    { unit_id: 'neema', entire_price: 5000, one_bedroom_price: 4000 }
+  ],
+
   blogs: [
     { id: 'b-1', title: 'Top 5 Penthouses in East Africa', author: 'Aurelius Vance', category: 'Luxury Travel', content: 'Explore the pinnacle of luxury living in the heart of East Africa. From sweeping views of the skyline to dedicated butler service, these top 5 penthouses redefine opulence.', date: '2026-06-15' },
     { id: 'b-2', title: 'Curating the Ultimate Butler Experience', author: 'Sarah Jenkins', category: 'Hospitality', content: 'Hospitality is more than just service; it is an art form. Discover how Lulu Aurelian Estate trains its dedicated concierges to anticipate every need before it is spoken.', date: '2026-06-02' }
@@ -162,6 +168,36 @@ if (useMySQL) {
       if (!columnNames.includes('wifi_password')) {
         await pool.query("ALTER TABLE unit_settings ADD COLUMN wifi_password VARCHAR(100) NOT NULL DEFAULT ''");
         console.log('[DB MIGRATE]: Added wifi_password column to unit_settings table.');
+      }
+
+      // Check/create unit_pricing table for live dynamic rates
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS unit_pricing (
+          unit_id VARCHAR(50) PRIMARY KEY,
+          entire_price DECIMAL(10,2) NOT NULL DEFAULT 5000.00,
+          one_bedroom_price DECIMAL(10,2) NOT NULL DEFAULT 4000.00,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      await pool.query(`
+        INSERT INTO unit_pricing (unit_id, entire_price, one_bedroom_price) VALUES
+          ('skyview', 5500.00, 4000.00),
+          ('cocoa', 5000.00, 4000.00),
+          ('neema', 5000.00, 4000.00)
+        ON DUPLICATE KEY UPDATE unit_id=unit_id
+      `);
+
+      // Check booking_type column in bookings table
+      try {
+        const [bookingCols] = await pool.query('DESCRIBE bookings');
+        const bookingColNames = bookingCols.map(c => c.Field);
+        if (!bookingColNames.includes('booking_type')) {
+          await pool.query("ALTER TABLE bookings ADD COLUMN booking_type VARCHAR(30) NOT NULL DEFAULT 'entire' AFTER unit_id");
+          console.log('[DB MIGRATE]: Added booking_type column to bookings table.');
+        }
+      } catch (bErr) {
+        console.warn('[DB MIGRATE]: Could not alter bookings table:', bErr.message);
       }
     } catch (err) {
       console.warn('[DB MIGRATE WARN]: Automatic self-migration skipped or failed:', err.message);
@@ -321,40 +357,74 @@ export const db = {
 
   bookings: {
     create: async (booking) => {
+      const bType = booking.booking_type === 'one_bedroom' ? 'one_bedroom' : 'entire';
       if (useMySQL) {
-        await pool.query(
-          `INSERT INTO bookings (
-            id, guest_name, guest_email, guest_phone, unit_id, check_in, check_out,
-            adults, children, has_peak_surcharge,
-            status, secure_token, approved_by, approved_at,
-            hold_expires_at, created_at, updated_at, cleaning_dates
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            booking.id,
-            booking.guest_name,
-            booking.guest_email,
-            booking.guest_phone,
-            booking.unit_id,
-            booking.check_in,
-            booking.check_out,
-            booking.adults  || 1,
-            booking.children || 0,
-            booking.has_peak_surcharge ? 1 : 0,
-            booking.status || 'PENDING',
-            booking.secure_token,
-            booking.approved_by || null,
-            booking.approved_at || null,
-            booking.hold_expires_at || null,
-            booking.created_at || new Date(),
-            booking.updated_at || new Date(),
-            booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null
-          ]
-        );
-        return booking;
+        try {
+          await pool.query(
+            `INSERT INTO bookings (
+              id, guest_name, guest_email, guest_phone, unit_id, booking_type, check_in, check_out,
+              adults, children, has_peak_surcharge,
+              status, secure_token, approved_by, approved_at,
+              hold_expires_at, created_at, updated_at, cleaning_dates
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              booking.id,
+              booking.guest_name,
+              booking.guest_email,
+              booking.guest_phone,
+              booking.unit_id,
+              bType,
+              booking.check_in,
+              booking.check_out,
+              booking.adults  || 1,
+              booking.children || 0,
+              booking.has_peak_surcharge ? 1 : 0,
+              booking.status || 'PENDING',
+              booking.secure_token,
+              booking.approved_by || null,
+              booking.approved_at || null,
+              booking.hold_expires_at || null,
+              booking.created_at || new Date(),
+              booking.updated_at || new Date(),
+              booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null
+            ]
+          );
+        } catch (insertErr) {
+          // Fallback if booking_type column hasn't migrated yet
+          await pool.query(
+            `INSERT INTO bookings (
+              id, guest_name, guest_email, guest_phone, unit_id, check_in, check_out,
+              adults, children, has_peak_surcharge,
+              status, secure_token, approved_by, approved_at,
+              hold_expires_at, created_at, updated_at, cleaning_dates
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              booking.id,
+              booking.guest_name,
+              booking.guest_email,
+              booking.guest_phone,
+              booking.unit_id,
+              booking.check_in,
+              booking.check_out,
+              booking.adults  || 1,
+              booking.children || 0,
+              booking.has_peak_surcharge ? 1 : 0,
+              booking.status || 'PENDING',
+              booking.secure_token,
+              booking.approved_by || null,
+              booking.approved_at || null,
+              booking.hold_expires_at || null,
+              booking.created_at || new Date(),
+              booking.updated_at || new Date(),
+              booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null
+            ]
+          );
+        }
+        return { ...booking, booking_type: bType };
       }
 
       // Convert to parsed JSON if not already for in-memory
-      const memBooking = { ...booking };
+      const memBooking = { ...booking, booking_type: bType };
       if (typeof memBooking.cleaning_dates === 'string') {
         try { memBooking.cleaning_dates = JSON.parse(memBooking.cleaning_dates); } catch (e) { }
       }
@@ -874,6 +944,110 @@ export const db = {
       const initialLength = inMemory.blogs.length;
       inMemory.blogs = inMemory.blogs.filter(b => b.id !== id);
       return inMemory.blogs.length < initialLength;
+    }
+  },
+
+  pricing: {
+    getAll: async () => {
+      const SUITE_NAMES = {
+        skyview: 'Skyview Hideaway',
+        cocoa: 'Cocoa Retreat',
+        neema: 'Neema Haven'
+      };
+
+      if (useMySQL) {
+        try {
+          const [rows] = await pool.query('SELECT * FROM unit_pricing');
+          if (rows && rows.length > 0) {
+            return rows.map(r => ({
+              id: r.unit_id,
+              name: SUITE_NAMES[r.unit_id] || r.unit_id,
+              entirePrice: parseFloat(r.entire_price),
+              oneBedroomPrice: parseFloat(r.one_bedroom_price)
+            }));
+          }
+        } catch (err) {
+          console.warn('[DB PRICING ERROR]:', err.message);
+        }
+      }
+
+      return inMemory.unit_pricing.map(r => ({
+        id: r.unit_id,
+        name: SUITE_NAMES[r.unit_id] || r.unit_id,
+        entirePrice: parseFloat(r.entire_price),
+        oneBedroomPrice: parseFloat(r.one_bedroom_price)
+      }));
+    },
+
+    getUnitPricing: async (unitId) => {
+      const cleanId = String(unitId || '').toLowerCase();
+      if (useMySQL) {
+        try {
+          const [rows] = await pool.query('SELECT * FROM unit_pricing WHERE unit_id = ?', [cleanId]);
+          if (rows && rows.length > 0) {
+            return {
+              unit_id: cleanId,
+              entire_price: parseFloat(rows[0].entire_price),
+              one_bedroom_price: parseFloat(rows[0].one_bedroom_price)
+            };
+          }
+        } catch (err) {
+          console.warn('[DB PRICING ERROR]:', err.message);
+        }
+      }
+
+      const found = inMemory.unit_pricing.find(u => u.unit_id === cleanId);
+      if (found) {
+        return {
+          unit_id: cleanId,
+          entire_price: parseFloat(found.entire_price),
+          one_bedroom_price: parseFloat(found.one_bedroom_price)
+        };
+      }
+
+      // Default fallback
+      const defaultEntire = cleanId === 'skyview' ? 5500 : 5000;
+      return { unit_id: cleanId, entire_price: defaultEntire, one_bedroom_price: 4000 };
+    },
+
+    updateAll: async (pricingList) => {
+      for (const p of pricingList) {
+        const cleanId = String(p.id || p.unit_id).toLowerCase();
+        const entire = parseFloat(p.entirePrice || p.entire_price || p.basePrice || 5000);
+        const oneBed = parseFloat(p.oneBedroomPrice || p.one_bedroom_price || 4000);
+
+        if (useMySQL) {
+          try {
+            await pool.query(
+              `INSERT INTO unit_pricing (unit_id, entire_price, one_bedroom_price)
+               VALUES (?, ?, ?)
+               ON DUPLICATE KEY UPDATE 
+                 entire_price = VALUES(entire_price),
+                 one_bedroom_price = VALUES(one_bedroom_price)`,
+              [cleanId, entire, oneBed]
+            );
+          } catch (err) {
+            console.warn('[DB PRICING UPDATE ERROR]:', err.message);
+          }
+        }
+
+        const memIndex = inMemory.unit_pricing.findIndex(u => u.unit_id === cleanId);
+        if (memIndex !== -1) {
+          inMemory.unit_pricing[memIndex] = {
+            unit_id: cleanId,
+            entire_price: entire,
+            one_bedroom_price: oneBed
+          };
+        } else {
+          inMemory.unit_pricing.push({
+            unit_id: cleanId,
+            entire_price: entire,
+            one_bedroom_price: oneBed
+          });
+        }
+      }
+
+      return await db.pricing.getAll();
     }
   }
 };

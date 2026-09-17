@@ -17,8 +17,19 @@ class MpesaService {
       const response = await fetch(`${this.baseUrl}/oauth/v1/generate?grant_type=client_credentials`, {
         headers: { Authorization: `Basic ${auth}` }
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.errorMessage || 'Failed to get M-Pesa token');
+      const rawText = await response.text();
+      let data = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (e) {
+        throw new Error(`Invalid response from Daraja OAuth (HTTP ${response.status}): ${rawText.slice(0, 300) || 'Empty body'}`);
+      }
+      if (!response.ok) {
+        throw new Error(data.errorMessage || data.error_description || `Failed to get M-Pesa token (HTTP ${response.status})`);
+      }
+      if (!data.access_token) {
+        throw new Error(`M-Pesa token missing in response (HTTP ${response.status}): ${rawText}`);
+      }
       return data.access_token;
     } catch (err) {
       console.error('[MPESA]: Auth Error:', err.message);
@@ -48,7 +59,7 @@ class MpesaService {
       BusinessShortCode: this.shortcode,
       Password: password,
       Timestamp: timestamp,
-      TransactionType: "CustomerPayBillOnline",
+      TransactionType: "CustomerBuyGoodsOnline",
       Amount: Math.ceil(amount),
       PartyA: formattedPhone,
       PartyB: this.shortcode,
@@ -68,8 +79,15 @@ class MpesaService {
         body: JSON.stringify(payload)
       });
       
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.errorMessage || 'STK Push failed');
+      const rawText = await response.text();
+      let data = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (e) {
+        throw new Error(`Invalid response from STK Push (HTTP ${response.status}): ${rawText.slice(0, 300) || 'Empty body'}`);
+      }
+
+      if (!response.ok) throw new Error(data.errorMessage || data.ResponseDescription || `STK Push failed (HTTP ${response.status})`);
       
       return { success: true, checkoutRequestId: data.CheckoutRequestID, data };
     } catch (err) {
@@ -81,15 +99,6 @@ class MpesaService {
   /**
    * Query the status of an STK Push transaction.
    * Endpoint: POST /mpesa/stkpushquery/v1/query
-   * 
-   * ResultCode values:
-   *   0    — Payment successful
-   *   1032 — Cancelled by user
-   *   1037 — Timeout (user didn't respond)
-   *   1    — Insufficient balance / other failure
-   * 
-   * If the transaction is still processing, Safaricom returns a non-200
-   * with errorCode "500.01.01".
    */
   async querySTKPushStatus(checkoutRequestId) {
     const token = await this.getOAuthToken();
@@ -113,20 +122,25 @@ class MpesaService {
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
+      const rawText = await response.text();
+      let data = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (e) {
+        throw new Error(`Invalid response from STK Query (HTTP ${response.status}): ${rawText.slice(0, 300) || 'Empty body'}`);
+      }
 
       // Non-200 with "being processed" means still pending
       if (!response.ok) {
         if (data.errorCode === '500.01.01' || (data.errorMessage && data.errorMessage.includes('being processed'))) {
           return { ResultCode: 'PENDING', ResultDesc: 'Transaction is still being processed.' };
         }
-        throw new Error(data.errorMessage || `STK Query failed (HTTP ${response.status})`);
+        throw new Error(data.errorMessage || data.ResultDesc || `STK Query failed (HTTP ${response.status})`);
       }
 
       return data;
     } catch (err) {
       console.error('[MPESA]: STK Query Error:', err.message);
-      // Return PENDING so frontend keeps polling instead of showing an error
       return { ResultCode: 'PENDING', ResultDesc: err.message };
     }
   }

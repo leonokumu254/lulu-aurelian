@@ -188,6 +188,34 @@
   line-height: 1.4;
 }
 
+.bnb-card-action {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-gold-deep, #BB8525);
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease;
+}
+
+.bnb-card:hover .bnb-card-action {
+  color: #93651b;
+}
+
+.bnb-action-arrow {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.bnb-card:hover .bnb-action-arrow {
+  transform: translateX(4px);
+}
+
 /* ====== Responsive ====== */
 
 @media (max-width: 1024px) {

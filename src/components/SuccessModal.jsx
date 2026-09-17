@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, X, Calendar, Users, Clock, ChevronLeft, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Check, X, Calendar, Users, Clock, ChevronLeft, ShieldCheck, AlertTriangle, Phone, Copy, CheckCircle } from 'lucide-react';
 import './SuccessModal.css';
 
 export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
@@ -13,8 +13,16 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
   const [mpesaPhone, setMpesaPhone] = useState('');
   const [paypalEmail, setPaypalEmail] = useState('');
   const [mpesaCode, setMpesaCode] = useState('');
+  const [copiedField, setCopiedField] = useState('');
   // Stable key per modal instance — prevents duplicate STK push on retry
   const idempotencyKey = useRef(null);
+
+  const handleCopyText = (text, field) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(''), 2500);
+  };
 
   // All hooks must be called before any conditional return
   useEffect(() => {
@@ -222,26 +230,60 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
             <p className="sm-section-label">Select Payment Method</p>
 
             <div className="sm-options">
-              {/* M-Pesa */}
+              {/* M-Pesa Buy Goods */}
               <label className={`sm-option mpesa ${paymentMethod === 'mpesa' ? 'active' : ''}`}>
                 <input type="radio" name="gateway" value="mpesa"
                   checked={paymentMethod === 'mpesa'}
                   onChange={() => setPaymentMethod('mpesa')} />
                 <div className="sm-option-icon">
-                  <img src="/mpesa-logo.jpg" alt="M-Pesa" />
+                  <img src="/mpesa-logo.jpg" alt="M-Pesa Buy Goods" />
                 </div>
                 <div className="sm-option-info">
-                  <strong>M-Pesa STK Push</strong>
-                  <span>Automated prompt on your phone</span>
+                  <strong>Buy Goods (Till Number)</strong>
+                  <span>Till No: 174379 • STK Push & Manual</span>
                 </div>
               </label>
 
               {paymentMethod === 'mpesa' && (
                 <div className="sm-input-block animate-fade-in">
-                  <div style={{ background: 'rgba(26, 158, 53, 0.05)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '12px', padding: '1rem', marginBottom: '1rem', fontSize: '0.8rem', color: '#E8D5B5', lineHeight: '1.5' }}>
-                    <strong style={{ display: 'block', color: '#1a9e35', marginBottom: '0.3rem', letterSpacing: '0.5px' }}>AUTOMATED PAYMENT PROMPT</strong>
-                    <p style={{ margin: 0, color: 'rgba(232, 213, 181, 0.85)' }}>
-                      We will trigger a secure M-Pesa PIN prompt on the phone number below for <strong>KES {(bookingDetails.totalCost || 0).toLocaleString('en-KE')}</strong>.
+                  {/* Official Buy Goods Till Box */}
+                  <div style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', borderRadius: '10px', padding: '0.85rem', marginBottom: '1rem', color: '#1e293b' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.35rem' }}>
+                      <strong style={{ fontSize: '0.82rem', color: '#0f172a', letterSpacing: '0.5px' }}>OFFICIAL TILL DETAILS</strong>
+                      <span style={{ fontSize: '0.7rem', background: '#10b981', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div style={{ background: '#ffffff', padding: '0.5rem 0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>TILL NUMBER</span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+                          <strong style={{ fontSize: '1rem', color: '#0f172a', letterSpacing: '1px' }}>174379</strong>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyText('174379', 'till')}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#10b981' : '#64748b' }}
+                            title="Copy Till Number"
+                          >
+                            {copiedField === 'till' ? <CheckCircle size={14} /> : <Copy size={14} />}
+                          </button>
+                        </div>
+                      </div>
+                      <div style={{ background: '#ffffff', padding: '0.5rem 0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>BOOKING REF</span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+                          <strong style={{ fontSize: '0.88rem', color: '#0f172a', wordBreak: 'break-all' }}>{bookingDetails?.bookingId}</strong>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyText(bookingDetails?.bookingId, 'ref')}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'ref' ? '#10b981' : '#64748b' }}
+                            title="Copy Booking Reference"
+                          >
+                            {copiedField === 'ref' ? <CheckCircle size={14} /> : <Copy size={14} />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.74rem', color: '#475569', lineHeight: '1.4' }}>
+                      Enter your phone below for an automated prompt, or manually open <strong>M-Pesa &gt; Lipa na M-Pesa &gt; Buy Goods and Services</strong> and enter Till No <strong>174379</strong>.
                     </p>
                   </div>
 
@@ -264,51 +306,123 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
                 </div>
               )}
 
-              {/* PayPal */}
-              <label className={`sm-option paypal ${paymentMethod === 'paypal' ? 'active' : ''}`}>
-                <input type="radio" name="gateway" value="paypal"
-                  checked={paymentMethod === 'paypal'}
-                  onChange={() => setPaymentMethod('paypal')} />
-                <div className="sm-option-icon paypal-icon">
-                  <img src="/paypal.svg" alt="PayPal" />
+              {/* Alternative Payment / Contact Staff */}
+              <label className={`sm-option ${paymentMethod === 'contact_staff' ? 'active' : ''}`}>
+                <input type="radio" name="gateway" value="contact_staff"
+                  checked={paymentMethod === 'contact_staff'}
+                  onChange={() => setPaymentMethod('contact_staff')} />
+                <div className="sm-option-icon" style={{ background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', width: '38px', height: '26px' }}>
+                  <Phone size={16} color="#fff" />
                 </div>
                 <div className="sm-option-info">
-                  <strong>PayPal / Card</strong>
-                  <span>Checkout via PayPal</span>
+                  <strong>Other Payment Methods</strong>
+                  <span>Different method? Contact Support</span>
                 </div>
               </label>
 
-              {paymentMethod === 'paypal' && (
-                <div className="sm-input-block animate-fade-in">
-                  <label className="sm-label">PayPal Email Address</label>
-                  <input
-                    type="email"
-                    value={paypalEmail}
-                    onChange={(e) => setPaypalEmail(e.target.value)}
-                    placeholder="yourname@example.com"
-                    className="sm-input"
-                  />
+              {paymentMethod === 'contact_staff' && (
+                <div className="sm-input-block animate-fade-in" style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '0.9rem', color: '#1e293b' }}>
+                  <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', color: '#334155', lineHeight: '1.5' }}>
+                    Online checkout is processed via <strong>M-Pesa Buy Goods only</strong>. If you have a different payment method (such as <strong>Bank Transfer</strong>, <strong>Card</strong>, or <strong>Invoice</strong>), please contact our support desk directly:
+                  </p>
+                  <a
+                    href={`https://wa.me/254112299384?text=${encodeURIComponent(
+                      `Hello Lulu Aurelian Estate Support,\n\nI have created a reservation hold (Ref: ${bookingDetails?.bookingId || ''}) for ${bookingDetails?.suiteName || ''}.\nTotal: KES ${(bookingDetails?.totalCost || 0).toLocaleString('en-KE')}.\nI have a different payment method and would like assistance to complete payment.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      background: '#25D366',
+                      color: '#fff',
+                      textDecoration: 'none',
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '6px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      marginBottom: '0.4rem'
+                    }}
+                  >
+                    Chat on WhatsApp (+254 112 299 384)
+                  </a>
+                  <a
+                    href="tel:+254112299384"
+                    style={{
+                      border: '1px solid #94a3b8',
+                      color: '#0f172a',
+                      textDecoration: 'none',
+                      padding: '0.4rem',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      display: 'block',
+                      textAlign: 'center',
+                      marginBottom: '0.35rem',
+                      background: '#fff'
+                    }}
+                  >
+                    Call Support: +254 112 299 384
+                  </a>
+                  <a
+                    href={`mailto:pearlisprime@gmail.com?subject=${encodeURIComponent(`Payment Inquiry - Booking ${bookingDetails?.bookingId}`)}`}
+                    style={{
+                      border: '1px solid #94a3b8',
+                      color: '#0f172a',
+                      textDecoration: 'none',
+                      padding: '0.4rem',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      display: 'block',
+                      textAlign: 'center',
+                      background: '#fff'
+                    }}
+                  >
+                    Email Support: pearlisprime@gmail.com
+                  </a>
                 </div>
               )}
             </div>
 
             {/* CTA */}
             <div className="sm-cta">
-              <button
-                onClick={handlePayment}
-                disabled={processingPayment || timeRemaining === 'Expired'}
-                className="sm-pay-btn"
-                style={{
-                  background:   paymentMethod === 'paypal' ? '#002994' : '#1a9e35',
-                  borderColor:  paymentMethod === 'paypal' ? '#002994' : '#1a9e35'
-                }}
-              >
-                {processingPayment
-                  ? '⏳ Initiating STK Push request...'
-                  : paymentMethod === 'paypal'
-                    ? 'PAY NOW VIA PAYPAL'
-                    : 'SEND STK PUSH'}
-              </button>
+              {paymentMethod === 'mpesa' ? (
+                <button
+                  onClick={handlePayment}
+                  disabled={processingPayment || timeRemaining === 'Expired'}
+                  className="sm-pay-btn"
+                  style={{
+                    background: '#1a9e35',
+                    borderColor: '#1a9e35'
+                  }}
+                >
+                  {processingPayment
+                    ? '⏳ Initiating Buy Goods STK Push...'
+                    : `PAY VIA BUY GOODS (KES ${(bookingDetails?.totalCost || 0).toLocaleString('en-KE')})`}
+                </button>
+              ) : (
+                <a
+                  href={`https://wa.me/254112299384?text=${encodeURIComponent(
+                    `Hello Lulu Aurelian Estate Support,\n\nI have created a reservation hold (Ref: ${bookingDetails?.bookingId || ''}) for ${bookingDetails?.suiteName || ''}.\nTotal: KES ${(bookingDetails?.totalCost || 0).toLocaleString('en-KE')}.\nI have a different payment method and would like assistance to complete payment.`
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="sm-pay-btn"
+                  style={{
+                    background: '#25D366',
+                    borderColor: '#25D366',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    textAlign: 'center'
+                  }}
+                >
+                  CONTACT SUPPORT ON WHATSAPP
+                </a>
+              )}
 
               <div className="sm-secure-row">
                 <ShieldCheck size={13} />

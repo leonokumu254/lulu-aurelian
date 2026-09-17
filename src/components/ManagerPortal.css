@@ -1927,3 +1927,113 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════
+   19-INCH MONITOR RESPONSIVENESS (1366x768, 1440x900, 1280x1024)
+   ══════════════════════════════════════════════════════════ */
+@media screen and (min-width: 993px) and (max-width: 1440px), screen and (max-height: 880px) and (min-width: 993px) {
+  .dashboard-stats-row {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .stat-card {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-details h3 {
+    font-size: 0.72rem;
+  }
+
+  .stat-details p {
+    font-size: 1.15rem;
+  }
+
+  .manager-sub-tabs-bar {
+    padding: 4px;
+    gap: 6px;
+  }
+
+  .manager-tab-pill {
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+
+  .dashboard-grid-3col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .suite-pricing-card img {
+    height: 135px !important;
+  }
+
+  .pricing-inputs-grid {
+    gap: 0.75rem !important;
+  }
+
+  .price-input-group label {
+    font-size: 0.72rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .price-input-group input {
+    font-size: 1.05rem !important;
+    padding: 0.5rem 0.6rem 0.5rem 2.8rem !important;
+  }
+
+  .btn-engine-publish {
+    padding: 0.7rem 1.5rem !important;
+    font-size: 0.88rem !important;
+  }
+
+  .single-unit-calendar-box {
+    padding: 16px;
+  }
+
+  .unit-cal-grid-split {
+    gap: 14px;
+  }
+
+  .unit-visual-cal-card {
+    padding: 12px;
+  }
+
+  .cal-day {
+    font-size: 0.78rem;
+  }
+
+  .card-box-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .dashboard-card-box {
+    padding: 14px;
+  }
+
+  .cohost-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .cohost-card {
+    padding: 14px;
+  }
+
+  .reviews-feed {
+    gap: 0.75rem;
+  }
+
+  .review-card {
+    padding: 1rem;
+  }
+}
+
+

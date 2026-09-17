@@ -66,8 +66,11 @@ export const requestBooking = async (req, res, next) => {
       guest_name, guest_email, guest_phone,
       unit_id, check_in, check_out,
       adults = 1, children = 0,
+      booking_type = 'entire',
       cleaning_dates
     } = req.body;
+
+    const normalizedBookingType = booking_type === 'one_bedroom' ? 'one_bedroom' : 'entire';
 
     // ── Input validation ──────────────────────────────────────────────────
     if (!guest_name || !guest_email || !guest_phone || !unit_id || !check_in || !check_out) {
@@ -91,6 +94,13 @@ export const requestBooking = async (req, res, next) => {
     const adultCount   = parseInt(adults, 10)   || 1;
     const childCount   = parseInt(children, 10) || 0;
     const totalAdults  = adultCount;
+
+    if (normalizedBookingType === 'one_bedroom' && totalAdults > 3) {
+      return res.status(400).json({
+        success: false,
+        error: '1 Bedroom option accommodates up to 2-3 guests. For larger groups, please book the Entire Apartment.'
+      });
+    }
 
     if (totalAdults > MAX_ADULT_GUESTS) {
       return res.status(400).json({
@@ -132,6 +142,7 @@ export const requestBooking = async (req, res, next) => {
       guest_email:     guest_email.trim().toLowerCase(),
       guest_phone:     guest_phone.trim(),
       unit_id:         unit_id.trim().toLowerCase(),
+      booking_type:    normalizedBookingType,
       check_in,
       check_out,
       adults:          totalAdults,
@@ -229,8 +240,10 @@ export const initiatePayment = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'M-Pesa phone number is required.' });
     }
 
-    // ── Determine amount (base + optional length discount & peak surcharge)
-    const BASE_PRICE    = booking.unit_id === 'skyview' ? 5500 : 5000;
+    // ── Determine amount (dynamically fetched from DB rates)
+    const unitPricing   = await db.pricing.getUnitPricing(booking.unit_id);
+    const isOneBed      = booking.booking_type === 'one_bedroom';
+    const BASE_PRICE    = isOneBed ? unitPricing.one_bedroom_price : unitPricing.entire_price;
     const nights        = Math.round(
       (new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)
     );

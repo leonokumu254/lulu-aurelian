@@ -4,7 +4,7 @@ import {
   FileText, Users, CheckCircle, MessageSquare, ShieldCheck, Mail, Star, AlertTriangle, X
 } from 'lucide-react';
 import './ManagerPortal.css';
-import { DEFAULT_SUITES_PRICING } from '../utils/pricing';
+import { DEFAULT_SUITES_PRICING, fetchLivePricing } from '../utils/pricing';
 
 const SUITE_IMAGES = {
   skyview: '/assets/skyview/skyview_1.jpg',
@@ -447,7 +447,12 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
         if (Array.isArray(parsed) && parsed.length > 0) {
           return DEFAULT_SUITES_PRICING.map(def => {
             const match = parsed.find(p => p.id === def.id);
-            return match && match.basePrice ? { ...def, basePrice: parseFloat(match.basePrice) } : def;
+            return {
+              ...def,
+              entirePrice: match ? parseFloat(match.entirePrice ?? match.basePrice ?? def.entirePrice) : def.entirePrice,
+              oneBedroomPrice: match ? parseFloat(match.oneBedroomPrice ?? def.oneBedroomPrice) : def.oneBedroomPrice,
+              basePrice: match ? parseFloat(match.entirePrice ?? match.basePrice ?? def.basePrice) : def.basePrice
+            };
           });
         }
       }
@@ -455,34 +460,67 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
     return DEFAULT_SUITES_PRICING;
   });
 
+  const [pricingSaving, setPricingSaving] = useState(false);
+
+  // Sync with live DB on load
+  useEffect(() => {
+    fetchLivePricing().then(liveData => {
+      if (Array.isArray(liveData) && liveData.length > 0) {
+        setSuites(liveData);
+      }
+    }).catch(e => console.warn('Could not load live pricing:', e));
+  }, []);
+
   const [pricingModal, setPricingModal] = useState({ open: false, type: 'success', title: '', message: '', details: [] });
 
-  const handleBasePriceChange = (id, val) => {
+  const handleEntirePriceChange = (id, val) => {
     const numVal = parseFloat(val) || 0;
-    setSuites(prev => prev.map(s => s.id === id ? { ...s, basePrice: numVal } : s));
+    setSuites(prev => prev.map(s => s.id === id ? { ...s, entirePrice: numVal, basePrice: numVal } : s));
   };
 
-  const savePricingSettings = () => {
+  const handleOneBedroomPriceChange = (id, val) => {
+    const numVal = parseFloat(val) || 0;
+    setSuites(prev => prev.map(s => s.id === id ? { ...s, oneBedroomPrice: numVal } : s));
+  };
+
+  const savePricingSettings = async () => {
+    setPricingSaving(true);
     try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/pricing`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ pricing: suites })
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem('lulu_pricing', JSON.stringify(data.pricing));
+        window.dispatchEvent(new Event('pricingUpdated'));
+        setPricingModal({
+          open: true,
+          type: 'success',
+          title: 'Pricing Published to Database!',
+          message: 'The new rates for 1 Bedroom (KES 4,000) and Entire Apartment have been saved to the database and are now live across all pages, booking forms, and client payment processing.',
+          details: data.pricing
+        });
+      } else {
+        throw new Error(data.error || 'Failed to update pricing on server.');
+      }
+    } catch (err) {
+      console.error('Failed to publish pricing:', err);
+      // Fallback save to local storage
       localStorage.setItem('lulu_pricing', JSON.stringify(suites));
-      // Dispatch event so all components update pricing dynamically
       window.dispatchEvent(new Event('pricingUpdated'));
       setPricingModal({
         open: true,
-        type: 'success',
-        title: 'Pricing Published Successfully!',
-        message: 'The new nightly rates have been saved and applied across all website pages and booking forms.',
+        type: 'error',
+        title: 'Network Notice',
+        message: `Saved locally, but server update returned: ${err.message}. Ensure backend is running.`,
         details: suites
       });
-    } catch (err) {
-      console.error('Failed to publish pricing:', err);
-      setPricingModal({
-        open: true,
-        type: 'error',
-        title: 'Failed to Publish Pricing',
-        message: 'An error occurred while saving room rates to storage. Please try again.',
-        details: []
-      });
+    } finally {
+      setPricingSaving(false);
     }
   };
 
@@ -916,30 +954,53 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
 
             <div className="section-header-box">
               <h2>Suite Pricing Management</h2>
-              <p>Update the standard nightly rate for the suites.</p>
+              <p>Configure live nightly rates for Entire Apartment bookings and 1 Bedroom bookings. Changes publish directly to the live database and reflect across all client pages instantly.</p>
             </div>
 
             <div className="dashboard-grid-3col">
               {suites.map(s => {
                 const suiteImg = SUITE_IMAGES[s.id] || `/assets/${s.id}/${s.id}_1.jpg`;
+                const entireVal = s.entirePrice ?? s.basePrice ?? 5000;
+                const oneBedVal = s.oneBedroomPrice ?? 4000;
+
                 return (
                   <div key={s.id} className="suite-pricing-card glass" style={{ overflow: 'hidden', padding: 0 }}>
                     <img src={suiteImg} alt={s.name} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
                     <div style={{ padding: '1.5rem' }}>
-                      <div className="pricing-card-header">
-                        <h4>{s.name}</h4>
+                      <div className="pricing-card-header" style={{ marginBottom: '1.25rem' }}>
+                        <h4 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>{s.name}</h4>
+                        <span style={{ fontSize: '0.75rem', color: '#78716C', fontWeight: 500 }}>ID: {s.id}</span>
                       </div>
 
-                      <div className="pricing-inputs-grid" style={{ gridTemplateColumns: '1fr' }}>
+                      <div className="pricing-inputs-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {/* Entire Apartment Rate */}
                         <div className="price-input-group">
-                          <label>Nightly Rate (KES)</label>
-                          <div className="input-prefix-wrapper">
-                            <span className="prefix" style={{ fontSize: '1.1rem', color: '#1D1912', fontWeight: 800 }}>KES</span>
+                          <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#1D1912', marginBottom: '4px', display: 'block' }}>
+                            Entire Apartment Rate
+                          </label>
+                          <div className="input-prefix-wrapper" style={{ position: 'relative' }}>
+                            <span className="prefix" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.9rem', color: '#78716C', fontWeight: 700 }}>KES</span>
                             <input
                               type="number"
-                              value={s.basePrice}
-                              onChange={(e) => handleBasePriceChange(s.id, e.target.value)}
-                              style={{ fontSize: '1.4rem', fontWeight: 800, padding: '0.8rem 1rem 0.8rem 3.5rem', color: '#BB8525' }}
+                              value={entireVal}
+                              onChange={(e) => handleEntirePriceChange(s.id, e.target.value)}
+                              style={{ width: '100%', fontSize: '1.2rem', fontWeight: 700, padding: '0.7rem 0.8rem 0.7rem 3.2rem', color: '#BB8525', borderRadius: '8px', border: '1px solid rgba(187,133,37,0.3)', boxSizing: 'border-box' }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* 1 Bedroom Rate */}
+                        <div className="price-input-group">
+                          <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#1D1912', marginBottom: '4px', display: 'block' }}>
+                            1 Bedroom Option Rate (Standard KES 4,000)
+                          </label>
+                          <div className="input-prefix-wrapper" style={{ position: 'relative' }}>
+                            <span className="prefix" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.9rem', color: '#78716C', fontWeight: 700 }}>KES</span>
+                            <input
+                              type="number"
+                              value={oneBedVal}
+                              onChange={(e) => handleOneBedroomPriceChange(s.id, e.target.value)}
+                              style={{ width: '100%', fontSize: '1.2rem', fontWeight: 700, padding: '0.7rem 0.8rem 0.7rem 3.2rem', color: '#15803D', borderRadius: '8px', border: '1px solid rgba(22,163,74,0.3)', boxSizing: 'border-box' }}
                             />
                           </div>
                         </div>
@@ -951,8 +1012,13 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
             </div>
 
             <div className="publish-pricing-row">
-              <button onClick={savePricingSettings} className="btn-engine-publish">
-                Publish Pricing
+              <button 
+                onClick={savePricingSettings} 
+                className="btn-engine-publish"
+                disabled={pricingSaving}
+                style={{ padding: '0.85rem 2rem', fontSize: '1rem', fontWeight: 600, cursor: 'pointer' }}
+              >
+                {pricingSaving ? 'Publishing Rates to Database...' : 'Publish Live Pricing to All Clients'}
               </button>
             </div>
           </div>

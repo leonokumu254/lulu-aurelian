@@ -231,26 +231,28 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
   const cardContent = (
     <div className="auth-card">
       <div className="auth-brand">
-        <h1 className="auth-brand-logo">LULU AURELIAN</h1>
-        {isStaffPortal ? (
-          <p className="auth-brand-subtitle">STAFF OPERATIONS </p>
-        ) : (
-          <p className="auth-brand-subtitle">LUXURY RESIDENCES</p>
+        <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem' }}>
+          Lulu <span id="login-text">Aurelian </span>
+        </span>
+        {isStaffPortal && (
+          <p style={{ color: 'var(--color-gold-deep)', fontSize: '0.8rem', marginTop: '6px', letterSpacing: '1px', fontWeight: 600 }}>
+            STAFF OPERATIONS
+          </p>
         )}
       </div>
 
-        {mode === 'login' ? (
-          <div className="auth-view animate-fade-in">
-            {new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
-              <>
-                <h2>Sign in to secure your reservation</h2>
-                <p className="auth-checkout-tip">
-                  Access exclusive guest privileges and finalize your stay at Lulu Aurelian.
-                </p>
-              </>
-            ) : (
-              <h2>{isStaffPortal ? 'Sign In' : 'Welcome Back'}</h2>
-            )}
+      {mode === 'login' ? (
+        <div className="auth-view animate-fade-in">
+          {new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
+            <>
+              <h2>Sign in to finalize your booking</h2>
+              <p className="auth-checkout-tip">
+                You're just one step away from reserving your luxury stay.
+              </p>
+            </>
+          ) : (
+            <h2>{isStaffPortal ? 'Sign In to Staff Operations' : 'Welcome back, glad to see you'}</h2>
+          )}
             
             {error && <div className="auth-error">{error}</div>}
 

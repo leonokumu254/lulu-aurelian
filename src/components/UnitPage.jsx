@@ -157,7 +157,17 @@ const ICON_MAP = {
 
 export default function UnitPage({ unitId }) {
   const unit = UNIT_DATA[unitId];
-  const [currentPrice, setCurrentPrice] = useState(() => getSuitePrice(unitId));
+
+  // Booking states & options
+  const getQueryParam = (name) => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name) || '';
+  };
+
+  const [bookingType, setBookingType] = useState(() => getQueryParam('bookingType') || getQueryParam('booking_type') || 'entire');
+  const isOneBed = bookingType === 'one_bedroom';
+
+  const [currentPrice, setCurrentPrice] = useState(() => getSuitePrice(unitId, bookingType));
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -165,19 +175,13 @@ export default function UnitPage({ unitId }) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    setCurrentPrice(getSuitePrice(unitId));
+    setCurrentPrice(getSuitePrice(unitId, bookingType));
     const handlePricingUpdate = () => {
-      setCurrentPrice(getSuitePrice(unitId));
+      setCurrentPrice(getSuitePrice(unitId, bookingType));
     };
     window.addEventListener('pricingUpdated', handlePricingUpdate);
     return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
-  }, [unitId]);
-
-  // Booking states
-  const getQueryParam = (name) => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(name) || '';
-  };
+  }, [unitId, bookingType]);
 
   const [checkIn, setCheckIn] = useState(getQueryParam('checkIn'));
   const [checkOut, setCheckOut] = useState(getQueryParam('checkOut'));
@@ -187,6 +191,13 @@ export default function UnitPage({ unitId }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
+
+  const handleBookingTypeChange = (type) => {
+    setBookingType(type);
+    if (type === 'one_bedroom' && adults > 3) {
+      setAdults(3);
+    }
+  };
 
   // Fetch blocked dates for current unit
   useEffect(() => {
@@ -304,8 +315,8 @@ export default function UnitPage({ unitId }) {
   const lengthDiscountValue = baseCost * (discountPercent / 100);
 
   // Surcharges
-  const maxAdults = 5;
-  const isPeakSurcharge = adults === maxAdults;
+  const maxAdults = isOneBed ? 3 : 5;
+  const isPeakSurcharge = !isOneBed && adults === 5;
   const peakSurchargeAmount = isPeakSurcharge ? 1500 : 0;
 
   const totalCost = Math.max(0, baseCost - lengthDiscountValue) + peakSurchargeAmount;
@@ -314,7 +325,7 @@ export default function UnitPage({ unitId }) {
     if (nights === 0) {
       setIsCalendarOpen(true);
     } else {
-      window.location.href = `/#/checkout?suite=${unit.id}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&hasChildren=${hasChildren ? 1 : 0}`;
+      window.location.href = `/#/checkout?suite=${unit.id}&bookingType=${bookingType}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&hasChildren=${hasChildren ? 1 : 0}`;
     }
   };
 
@@ -381,9 +392,9 @@ export default function UnitPage({ unitId }) {
                 <span className="name-secondary">{unit.name.split(' ').slice(1).join(' ')}</span>
               </h1>
               <div className="unit-specs">
-                <span><Users size={16} /> {unit.guests}</span>
+                <span><Users size={16} /> {isOneBed ? 'Up to 3 Guests' : unit.guests}</span>
                 <span className="spec-dot">•</span>
-                <span><Bed size={16} /> {unit.beds}</span>
+                <span><Bed size={16} /> {isOneBed ? '1 Bedroom Suite' : unit.beds}</span>
               </div>
             </div>
 
@@ -431,6 +442,26 @@ export default function UnitPage({ unitId }) {
             <div className="booking-card-price">
               <span className="price-amount">KES {currentPrice.toLocaleString('en-KE')}</span>
               <span className="price-per">/ night</span>
+            </div>
+
+            {/* Accommodation Option Switcher */}
+            <div className="unit-booking-type-toggle">
+              <button
+                type="button"
+                className={`type-toggle-btn ${bookingType === 'entire' ? 'active' : ''}`}
+                onClick={() => handleBookingTypeChange('entire')}
+              >
+                <span className="type-toggle-label">Entire Suite</span>
+                <span className="type-toggle-rate">KES {getSuitePrice(unitId, 'entire').toLocaleString('en-KE')}</span>
+              </button>
+              <button
+                type="button"
+                className={`type-toggle-btn ${bookingType === 'one_bedroom' ? 'active' : ''}`}
+                onClick={() => handleBookingTypeChange('one_bedroom')}
+              >
+                <span className="type-toggle-label">1 Bedroom</span>
+                <span className="type-toggle-rate">KES {getSuitePrice(unitId, 'one_bedroom').toLocaleString('en-KE')}</span>
+              </button>
             </div>
 
             {/* Interactive Inputs */}
@@ -485,8 +516,8 @@ export default function UnitPage({ unitId }) {
                         <span className="counter-val">{adults}</span>
                         <button 
                           className="counter-btn" 
-                          onClick={() => setAdults(prev => Math.min(5, prev + 1))}
-                          disabled={adults >= 5}
+                          onClick={() => setAdults(prev => Math.min(isOneBed ? 3 : 5, prev + 1))}
+                          disabled={adults >= (isOneBed ? 3 : 5)}
                         >
                           +
                         </button>
@@ -518,7 +549,7 @@ export default function UnitPage({ unitId }) {
                     </div>
 
                     <div className="guest-dropdown-note">
-                      Max 5 guests. Peak surcharge applies for 5 adults.
+                      Max {isOneBed ? '3' : '5'} guests.{!isOneBed ? ' Peak surcharge applies for 5 adults.' : ''}
                     </div>
 
                     <button 

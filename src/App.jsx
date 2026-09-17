@@ -22,7 +22,7 @@ import AuthPage from './components/AuthPage';
 import GuestAuthModal from './components/GuestAuthModal';
 import BookingStatusWidget from './components/BookingStatusWidget';
 import CheckoutPage from './components/CheckoutPage';
-
+import { fetchLivePricing } from './utils/pricing';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -54,6 +54,11 @@ export default function App() {
   
   // Portal Tab State
   const [portalTab, setPortalTab] = useState('dashboard');
+
+  // Fetch live pricing on app mount so clients always see the latest admin rates
+  useEffect(() => {
+    fetchLivePricing();
+  }, []);
 
   // Check for existing session on mount using HttpOnly cookies
   useEffect(() => {
@@ -101,12 +106,13 @@ export default function App() {
         const checkOut = searchParams.get('checkOut') || '';
         const adults = parseInt(searchParams.get('adults'), 10) || 1;
         const children = parseInt(searchParams.get('children'), 10) || 0;
+        const bookingType = searchParams.get('bookingType') || searchParams.get('booking_type') || 'entire';
 
         // Clear query parameters visually so they don't clutter the url
         window.history.replaceState({}, document.title, window.location.pathname);
 
         // Redirect to checkout
-        navigateToPage('checkout', { suite, checkIn, checkOut, adults, children });
+        window.location.hash = `#/checkout?suite=${suite}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&bookingType=${bookingType}`;
       }
     }
   }, [authUser]);

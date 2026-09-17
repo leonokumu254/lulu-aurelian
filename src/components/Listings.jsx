@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './Listings.css';
-import { getSuitePrice } from '../utils/pricing';
 
 const LISTINGS = [
   {
     id: 'skyview',
     name: 'Skyview Hideaway',
     tagline: 'Exclusive Mt Kenya views',
-    price: 5500,
-
-
     previewImages: [
       './assets/skyview/skyview_12.avif',
       './assets/skyview/skyview_2.jpg',
@@ -28,9 +24,6 @@ const LISTINGS = [
     name: 'Cocoa Retreat',
     location: 'Apartment in Nyeri',
     tagline: 'Homely with rich brown tones',
-    price: 5000,
-
-
     previewImages: [
       './assets/cocoa/cocoa_1.jpg',
       './assets/cocoa/cocoa_18.jpeg',
@@ -47,7 +40,6 @@ const LISTINGS = [
     name: 'Neema Haven',
     location: 'Apartment in Nyeri',
     tagline: 'Peaceful retreat for the sunset lovers',
-    price: 5000,
     previewImages: [
       './assets/Neema/neema_1.jpeg',
       './assets/Neema/neema_kitchen.jpeg',
@@ -65,15 +57,6 @@ const LISTINGS = [
 function ListingCard({ listing }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = React.useRef(null);
-  const [prices, setPrices] = useState(getSuitePrice(listing.id));
-
-  React.useEffect(() => {
-    const handlePricingUpdate = () => {
-      setPrices(getSuitePrice(listing.id));
-    };
-    window.addEventListener('pricingUpdated', handlePricingUpdate);
-    return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
-  }, [listing.id]);
 
   const scrollToIndex = (index) => {
     if (scrollRef.current) {
@@ -163,6 +146,10 @@ function ListingCard({ listing }) {
         <p className="bnb-card-specs">
           {listing.beds} · 2 beds · {listing.baths}
         </p>
+        <div className="bnb-card-action">
+          <span className="bnb-action-label">Book to View Rates</span>
+          <span className="bnb-action-arrow">→</span>
+        </div>
       </div>
     </a>
   );

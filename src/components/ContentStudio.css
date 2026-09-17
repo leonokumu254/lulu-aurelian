@@ -53,11 +53,11 @@
   margin-bottom: 1.5rem;
 }
 
-.form-group {
+.cms-studio-view .form-group {
   margin-bottom: 1.25rem;
 }
 
-.form-group label {
+.cms-studio-view .form-group label {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
@@ -65,9 +65,9 @@
   margin-bottom: 0.5rem;
 }
 
-.form-group input[type="text"],
-.form-group select,
-.form-group textarea {
+.cms-studio-view .form-group input[type="text"],
+.cms-studio-view .form-group select,
+.cms-studio-view .form-group textarea {
   width: 100%;
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(29, 25, 18, 0.12);
@@ -79,9 +79,9 @@
   transition: all 0.3s ease;
 }
 
-.form-group input[type="text"]:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.cms-studio-view .form-group input[type="text"]:focus,
+.cms-studio-view .form-group select:focus,
+.cms-studio-view .form-group textarea:focus {
   outline: none;
   border-color: rgba(187, 133, 37, 0.4);
 }
