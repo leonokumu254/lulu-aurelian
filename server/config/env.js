@@ -24,6 +24,11 @@ export const env = {
   STANBIC_CLIENT_SECRET: process.env.STANBIC_CLIENT_SECRET || '',
   STANBIC_SHORTCODE:     process.env.STANBIC_SHORTCODE     || '',
   STANBIC_CALLBACK_URL:  process.env.STANBIC_CALLBACK_URL  || 'https://www.luluaurelian.co.ke/api/bookings/webhook/stanbic',
+  // PayHero API (register at https://app.payhero.co.ke)
+  PAYHERO_API_USERNAME:  process.env.PAYHERO_API_USERNAME  || '',
+  PAYHERO_API_KEY:       process.env.PAYHERO_API_KEY       || '',
+  PAYHERO_CHANNEL_ID:    process.env.PAYHERO_CHANNEL_ID    || '',
+  PAYHERO_CALLBACK_URL:  process.env.PAYHERO_CALLBACK_URL  || 'https://www.luluaurelian.co.ke/api/payments/payhero/callback',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: process.env.DB_PORT || '3306',
   DB_USER: process.env.DB_USER || 'root',

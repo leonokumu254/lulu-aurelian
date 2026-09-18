@@ -23,7 +23,8 @@ function parseICalData(icsText) {
     
     let dtstart = null;
     let dtend = null;
-    let summary = 'iCal Sync Hold';
+    let summary = 'External Booking';
+    let uid = null;
 
     const lines = block.split(/\r?\n/);
     for (let line of lines) {
@@ -41,11 +42,15 @@ function parseICalData(icsText) {
         const parts = line.split(':');
         const val = parts.slice(1).join(':');
         if (val) summary = val.trim();
+      } else if (line.startsWith('UID')) {
+        const parts = line.split(':');
+        const val = parts.slice(1).join(':');
+        if (val) uid = val.trim();
       }
     }
 
     if (dtstart && dtend) {
-      events.push({ check_in: dtstart, check_out: dtend, summary });
+      events.push({ check_in: dtstart, check_out: dtend, summary, uid });
     }
   }
 
@@ -84,8 +89,11 @@ export const exportICal = async (req, res, next) => {
           `DTSTAMP:${formatICalDate(created)}`,
           `DTSTART;VALUE=DATE:${start.toISOString().split('T')[0].replace(/-/g, '')}`,
           `DTEND;VALUE=DATE:${end.toISOString().split('T')[0].replace(/-/g, '')}`,
-          `SUMMARY:Reserved - ${booking.guest_name || 'Guest'}`,
+          `SUMMARY:Reserved - Lulu Aurelian Estate`,
+          'DESCRIPTION:Reserved stay at Lulu Aurelian Estate',
           'STATUS:CONFIRMED',
+          'TRANSP:OPAQUE',
+          'X-MICROSOFT-CDO-BUSYSTATUS:BUSY',
           'END:VEVENT'
         );
       }
@@ -108,9 +116,14 @@ export const importICalSync = async (req, res, next) => {
     let content = icsContent;
 
     if (!content && icalUrl) {
-      const fetchRes = await fetch(icalUrl);
+      const fetchRes = await fetch(icalUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 LuluAurelianCalendarSync/1.0',
+          'Accept': 'text/calendar, text/plain, */*'
+        }
+      });
       if (!fetchRes.ok) {
-        return res.status(400).json({ error: 'Failed to download iCal feed from URL.' });
+        return res.status(400).json({ error: `Failed to download iCal feed from URL (HTTP ${fetchRes.status}).` });
       }
       content = await fetchRes.text();
     }
@@ -124,15 +137,32 @@ export const importICalSync = async (req, res, next) => {
       return res.status(400).json({ error: 'No valid events or dates found in iCal feed.' });
     }
 
+    // Fetch existing bookings to deduplicate
+    const allBookings = await db.bookings.getAll();
+    const existingUnitBookings = allBookings.filter(b =>
+      (b.unit_id || b.suite || b.unit || '').toLowerCase() === unitId.toLowerCase()
+    );
+
     const createdBlocks = [];
     for (const evt of events) {
-      const blockId = 'ical_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      // Check if this date range is already blocked/booked
+      const alreadyExists = existingUnitBookings.some(b => {
+        const bIn = String(b.check_in || b.checkIn || '').split('T')[0];
+        const bOut = String(b.check_out || b.checkOut || '').split('T')[0];
+        return bIn === evt.check_in && bOut === evt.check_out;
+      });
+
+      if (alreadyExists) {
+        continue; // Skip duplicate block
+      }
+
+      const blockId = 'ical_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
       const newBlock = {
         id: blockId,
-        guest_name: `BLOCKED: iCal Sync (${evt.summary})`,
+        guest_name: `BLOCKED: iCal Sync (${evt.summary || 'OTA Booking'})`,
         guest_email: 'ical-sync@luluaurelian.co.ke',
         guest_phone: 'N/A',
-        unit_id: unitId,
+        unit_id: unitId.toLowerCase(),
         check_in: evt.check_in,
         check_out: evt.check_out,
         adults: 1,
@@ -143,19 +173,21 @@ export const importICalSync = async (req, res, next) => {
 
       try {
         await db.bookings.create(newBlock);
+        createdBlocks.push(newBlock);
       } catch (err) {
-        // If DB fails, block is still returned
+        console.warn('Could not persist iCal block:', err.message);
       }
-      createdBlocks.push(newBlock);
     }
 
     return res.status(200).json({
       success: true,
-      message: `Synced ${createdBlocks.length} date block(s) for ${unitId.toUpperCase()}`,
-      blocks: createdBlocks
+      message: `Synced ${createdBlocks.length} new date block(s) for ${unitId.toUpperCase()} (${events.length - createdBlocks.length} existing/duplicate skipped).`,
+      blocks: createdBlocks,
+      totalEvents: events.length
     });
   } catch (error) {
     console.error('iCal Sync error:', error);
     next(error);
   }
 };
+

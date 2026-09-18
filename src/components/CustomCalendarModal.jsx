@@ -11,10 +11,19 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
   const [checkOut, setCheckOut] = useState(initialCheckOut || '');
   const [currentMonthOffset, setCurrentMonthOffset] = useState(0);
 
-  // Parse YYYY-MM-DD string to Date object
+  // Parse YYYY-MM-DD or ISO string to Date object (local midnight)
   const parseDateString = (str) => {
     if (!str) return null;
-    const [y, m, d] = str.split('-').map(Number);
+    if (str instanceof Date) {
+      return new Date(str.getFullYear(), str.getMonth(), str.getDate());
+    }
+    const cleanStr = String(str).split('T')[0].trim();
+    const parts = cleanStr.split('-');
+    if (parts.length < 3) return null;
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    const d = parseInt(parts[2], 10);
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
     return new Date(y, m - 1, d);
   };
 
@@ -71,10 +80,14 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
 
   const isDateBlocked = (date) => {
     if (!date) return false;
+    const targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     return blockedDates.some(range => {
       const start = parseDateString(range.checkIn);
       const end = parseDateString(range.checkOut);
-      return date >= start && date < end; // allow checkout on checkin date of another booking
+      if (!start || !end) return false;
+      const startTime = start.getTime();
+      const endTime = end.getTime();
+      return targetTime >= startTime && targetTime < endTime; // allow checkout on checkin date of another booking
     });
   };
 
@@ -90,10 +103,25 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
       const selectedDate = parseDateString(dateStr);
       const startSelected = parseDateString(checkIn);
 
-      if (selectedDate < startSelected) {
+      if (selectedDate <= startSelected) {
         setCheckIn(dateStr);
+        setCheckOut('');
       } else {
-        setCheckOut(dateStr);
+        // Prevent selecting a span that overlaps any blocked dates
+        const spansBlocked = blockedDates.some(range => {
+          const start = parseDateString(range.checkIn);
+          const end = parseDateString(range.checkOut);
+          if (!start || !end) return false;
+          return start < selectedDate && end > startSelected;
+        });
+
+        if (spansBlocked) {
+          // Dates in between are blocked - reset check-in to newly selected date
+          setCheckIn(dateStr);
+          setCheckOut('');
+        } else {
+          setCheckOut(dateStr);
+        }
       }
     }
   };
@@ -229,15 +257,20 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
               <span>SUN</span>
             </div>
             <div className="days-grid">
-              {leftDays.map((day, idx) => (
-                <div
-                  key={`left-${idx}`}
-                  className={getDayClasses(day)}
-                  onClick={() => handleDateClick(day)}
-                >
-                  {day ? day.getDate() : ''}
-                </div>
-              ))}
+              {leftDays.map((day, idx) => {
+                const isBlocked = day && isDateBlocked(day);
+                return (
+                  <div
+                    key={`left-${idx}`}
+                    className={getDayClasses(day)}
+                    onClick={() => handleDateClick(day)}
+                    title={isBlocked ? 'Reserved / Not Available' : (day && day < today ? 'Past Date' : '')}
+                  >
+                    {day ? day.getDate() : ''}
+                    {isBlocked && <span className="calendar-cross-x" aria-hidden="true" />}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -253,15 +286,20 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
               <span>SUN</span>
             </div>
             <div className="days-grid">
-              {rightDays.map((day, idx) => (
-                <div
-                  key={`right-${idx}`}
-                  className={getDayClasses(day)}
-                  onClick={() => handleDateClick(day)}
-                >
-                  {day ? day.getDate() : ''}
-                </div>
-              ))}
+              {rightDays.map((day, idx) => {
+                const isBlocked = day && isDateBlocked(day);
+                return (
+                  <div
+                    key={`right-${idx}`}
+                    className={getDayClasses(day)}
+                    onClick={() => handleDateClick(day)}
+                    title={isBlocked ? 'Reserved / Not Available' : (day && day < today ? 'Past Date' : '')}
+                  >
+                    {day ? day.getDate() : ''}
+                    {isBlocked && <span className="calendar-cross-x" aria-hidden="true" />}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

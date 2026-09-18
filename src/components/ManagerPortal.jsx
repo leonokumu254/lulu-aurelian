@@ -298,7 +298,8 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
               const isPast = day < today;
               const booking = getBookingForDate(day);
               const isBlocked = booking && (booking.guest_name || '').toLowerCase().includes('blocked');
-              const isBooked = booking && !isBlocked;
+              const isPaid = booking && ['paid', 'confirmed', 'approved', 'completed'].includes((booking.status || '').toLowerCase());
+              const isPending = booking && ['pending', 'authorizing'].includes((booking.status || '').toLowerCase());
 
               const y = day.getFullYear();
               const m = String(day.getMonth() + 1).padStart(2, '0');
@@ -308,9 +309,9 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
               return (
                 <div
                   key={idx}
-                  className={`unit-day-cell ${isPast ? 'past' : ''} ${isBlocked ? 'blocked-crossed' : ''} ${isBooked ? 'booked-guest' : ''}`}
+                  className={`unit-day-cell ${isPast ? 'past' : ''} ${isBlocked ? 'blocked-crossed' : ''} ${isPaid ? 'paid-crossed' : ''} ${isPending ? 'pending-hold' : ''}`}
                   onClick={() => {
-                    if (isPast) return;
+                    if (isPast || isBlocked || isPaid) return;
                     if (!blockStartDate || (blockStartDate && blockEndDate)) {
                       setBlockStartDate(dateStr);
                       setBlockEndDate('');
@@ -318,10 +319,10 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
                       setBlockEndDate(dateStr);
                     }
                   }}
-                  title={booking ? `${booking.guest_name} (${booking.status})` : 'Available'}
+                  title={booking ? `${booking.guest_name} (${booking.status}) - Not Available` : 'Available'}
                 >
                   <span className="num-label">{day.getDate()}</span>
-                  {isBlocked && <span className="red-cross-line" />}
+                  {(isBlocked || isPaid) && <span className="red-cross-line" />}
                 </div>
               );
             })}
@@ -330,7 +331,7 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
           <div className="unit-cal-legend">
             <div><span className="dot-indicator avail" /> Free</div>
             <div><span className="dot-indicator blocked" /> Blocked</div>
-            <div><span className="dot-indicator booked" /> Booked</div>
+            <div><span className="dot-indicator paid" /> Paid / Booked</div>
           </div>
         </div>
 

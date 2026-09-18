@@ -1,6 +1,7 @@
 import { db } from '../config/db.js';
 import { mpesaService } from '../services/mpesaService.js';
 import { paypalService } from '../services/paypalService.js';
+import { payheroService } from '../services/payheroService.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
 
@@ -236,5 +237,157 @@ export const capturePaypalPayment = async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+};
+
+// ─── PAYHERO: STK Push Callback (PayHero server-to-server webhook) ──────────
+
+export const payheroCallback = async (req, res) => {
+  try {
+    console.log('[PAYHERO WEBHOOK]: Received callback payload', JSON.stringify(req.body));
+
+    // PayHero callback fields — extract what's available
+    const {
+      external_reference,        // Our booking reference (first 8 chars of booking ID)
+      status,                    // e.g. 'SUCCESS', 'FAILED', 'CANCELLED'
+      payment_status,            // alternate field name
+      provider_reference,        // M-Pesa receipt number
+      MpesaReceiptNumber,        // alternate field name
+      MPESA_Reference,           // alternate field name
+      reference,                 // PayHero transaction reference
+      amount,
+      phone_number
+    } = req.body;
+
+    const payHeroStatus = (status || payment_status || '').toUpperCase();
+    const mpesaReceipt = provider_reference || MpesaReceiptNumber || MPESA_Reference || null;
+    const payHeroRef = reference || external_reference || null;
+
+    if (!payHeroRef && !external_reference) {
+      console.warn('[PAYHERO WEBHOOK]: Missing reference fields in payload.');
+      return res.status(200).json({ status: 'received' });
+    }
+
+    // ── Find the payment record by transaction_ref OR by matching external_reference ──
+    let payment = null;
+
+    // Try finding by PayHero reference (stored as transaction_ref during initiation)
+    if (payHeroRef) {
+      payment = await db.payments.findByRef(payHeroRef);
+    }
+
+    // Fallback: search by external_reference (our booking ref prefix)
+    if (!payment && external_reference) {
+      payment = await db.payments.findByRef(external_reference);
+    }
+
+    if (!payment) {
+      console.warn(`[PAYHERO WEBHOOK]: No payment found for ref: ${payHeroRef || external_reference}`);
+      return res.status(200).json({ status: 'received' });
+    }
+
+    if (payHeroStatus === 'SUCCESS' || payHeroStatus === 'COMPLETED') {
+      // ── Payment successful ────────────────────────────────────────────
+      await db.payments.updateStatus(payment.transaction_ref, 'COMPLETED');
+      await db.bookings.updateStatus(payment.booking_id, 'PAID');
+
+      const booking = await db.bookings.findById(payment.booking_id);
+      if (booking) {
+        emailService.sendFulfillmentCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
+        whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+      }
+
+      console.log(`[PAYHERO WEBHOOK]: ✅ Payment verified. Booking ${payment.booking_id} activated! M-Pesa Receipt: ${mpesaReceipt || 'N/A'}`);
+    } else if (payHeroStatus === 'FAILED' || payHeroStatus === 'CANCELLED' || payHeroStatus === 'DECLINED') {
+      // ── Payment failed/cancelled ──────────────────────────────────────
+      console.log(`[PAYHERO WEBHOOK]: ❌ Payment ${payHeroStatus} for ref ${payHeroRef} — ${req.body.description || ''}`);
+      await db.payments.updateStatus(payment.transaction_ref, 'FAILED');
+
+      // Revert booking to PENDING so guest can retry
+      const booking = await db.bookings.findById(payment.booking_id);
+      if (booking && booking.status === 'AUTHORIZING') {
+        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      }
+    } else {
+      console.log(`[PAYHERO WEBHOOK]: ⏳ Unhandled status "${payHeroStatus}" for ref ${payHeroRef}. Ignoring.`);
+    }
+
+    // Always acknowledge receipt to PayHero
+    return res.status(200).json({ status: 'received' });
+  } catch (error) {
+    console.error('[PAYHERO WEBHOOK ERROR]:', error.message);
+    // Always return 200 to prevent PayHero retry loops
+    return res.status(200).json({ status: 'received' });
+  }
+};
+
+
+// ─── PAYHERO: Poll Payment Status (frontend polling endpoint) ───────────────
+
+/**
+ * Poll the status of a PayHero STK Push payment.
+ * Checks local DB first (callback may have already resolved it),
+ * then falls back to querying PayHero's transaction status API.
+ */
+export const queryPayheroStatus = async (req, res) => {
+  try {
+    const { checkoutRequestId } = req.body;
+
+    if (!checkoutRequestId) {
+      return res.status(400).json({ success: false, error: 'Missing checkoutRequestId.' });
+    }
+
+    // 1. Check local DB first — the callback may have already handled it
+    const payment = await db.payments.findByRef(checkoutRequestId);
+
+    if (payment && payment.status === 'COMPLETED') {
+      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
+    }
+
+    if (payment && payment.status === 'FAILED') {
+      return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment was cancelled or failed.' });
+    }
+
+    // 2. Query PayHero directly for transaction status
+    const queryResult = await payheroService.queryTransactionStatus(checkoutRequestId);
+
+    if (queryResult.status === 'COMPLETED') {
+      // Payment successful — update records (idempotent if callback already did this)
+      if (payment) {
+        await db.payments.updateStatus(checkoutRequestId, 'COMPLETED');
+        await db.bookings.updateStatus(payment.booking_id, 'PAID');
+
+        const booking = await db.bookings.findById(payment.booking_id);
+        if (booking) {
+          emailService.sendFulfillmentCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
+          whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+        }
+      }
+      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
+    }
+
+    if (queryResult.status === 'CANCELLED') {
+      if (payment) {
+        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      }
+      return res.status(200).json({ success: true, status: 'CANCELLED', message: 'Payment cancelled by user.' });
+    }
+
+    if (queryResult.status === 'FAILED') {
+      if (payment) {
+        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      }
+      return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment failed. Please try again.' });
+    }
+
+    // Still pending
+    return res.status(200).json({ success: true, status: 'PENDING', message: 'Payment is still being processed.' });
+
+  } catch (error) {
+    console.error('[PAYHERO QUERY ERROR]:', error.message);
+    // Return PENDING rather than error so frontend keeps polling
+    return res.status(200).json({ success: true, status: 'PENDING', message: 'Unable to verify status yet.' });
   }
 };
