@@ -182,41 +182,56 @@
 }
 
 /* ── Already-booked dates ── crossed out, on-brand ───────────── */
-/*
-   Uses a CSS background-image diagonal cross drawn in the brand's
-   warm gold-terracotta (#C05E2E → earthy, pairs with #BB8525 gold).
-   The date number stays visible so guests can read it.
-*/
 .day-cell.booked {
   cursor: not-allowed;
-  /* Allow pointer-events so :hover tooltip shows — clicks rejected in handleDateClick */
   pointer-events: auto;
-  color: #9B4B22;              /* deep terracotta — readable on cream */
-  background-color: rgba(192, 94, 46, 0.07);
+  color: #b91c1c;
+  background-color: rgba(239, 68, 68, 0.08);
   border-radius: 4px;
   position: relative;
-  background-image:
-    linear-gradient(
-      to bottom right,
-      transparent calc(50% - 0.6px),
-      rgba(192, 94, 46, 0.55) calc(50% - 0.6px),
-      rgba(192, 94, 46, 0.55) calc(50% + 0.6px),
-      transparent calc(50% + 0.6px)
-    ),
-    linear-gradient(
-      to bottom left,
-      transparent calc(50% - 0.6px),
-      rgba(192, 94, 46, 0.55) calc(50% - 0.6px),
-      rgba(192, 94, 46, 0.55) calc(50% + 0.6px),
-      transparent calc(50% + 0.6px)
-    );
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  font-weight: 600;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+}
+
+.day-cell.booked:hover {
+  background-color: rgba(239, 68, 68, 0.14) !important;
+}
+
+/* Crisp diagonal cross lines across the booked cell */
+.calendar-cross-x {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.calendar-cross-x::before,
+.calendar-cross-x::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1.8px;
+  background: #dc2626;
+  border-radius: 1px;
+}
+
+.calendar-cross-x::before {
+  transform: rotate(45deg);
+}
+
+.calendar-cross-x::after {
+  transform: rotate(-45deg);
 }
 
 /* Tooltip on hover so user knows why they can't select */
 .day-cell.booked::after {
-  content: 'Booked';
+  content: 'Reserved / Paid';
   position: absolute;
   bottom: calc(100% + 6px);
   left: 50%;
@@ -224,21 +239,19 @@
   background: #1D1912;
   color: #F3F3E6;
   font-family: var(--font-sans);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   white-space: nowrap;
-  padding: 3px 7px;
+  padding: 4px 8px;
   border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s ease;
-  z-index: 10;
+  z-index: 20;
 }
 
-/* Show tooltip on parent hover (use :hover on a wrapper — since pointer-events
-   is none on .booked itself, we rely on the parent .days-grid hover trick
-   by re-enabling pointer-events only for tooltip display): */
 .day-cell.booked:hover::after {
   opacity: 1;
 }

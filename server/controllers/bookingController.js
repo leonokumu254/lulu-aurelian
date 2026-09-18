@@ -3,7 +3,7 @@ import { db } from '../config/db.js';
 import { env } from '../config/env.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
-import { mpesaService } from '../services/mpesaService.js';
+import { payheroService } from '../services/payheroService.js';
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
@@ -114,12 +114,17 @@ export const requestBooking = async (req, res, next) => {
 
     // ── Overlap / double-booking check ───────────────────────────────────
     const allBookings = await db.bookings.getAll();
-    const conflicting = allBookings.find(b =>
-      b.unit_id === unit_id &&
-      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status) &&
-      new Date(b.check_in)  < checkOutDate &&
-      new Date(b.check_out) > checkInDate
-    );
+    const activeStatuses = ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
+    const conflicting = allBookings.find(b => {
+      const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
+      const bStatus = (b.status || '').toUpperCase();
+      if (bUnit !== (unit_id || '').toLowerCase()) return false;
+      if (!activeStatuses.includes(bStatus)) return false;
+
+      const bIn = new Date(b.check_in || b.checkIn);
+      const bOut = new Date(b.check_out || b.checkOut);
+      return bIn < checkOutDate && bOut > checkInDate;
+    });
 
     if (conflicting) {
       const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
@@ -257,12 +262,12 @@ export const initiatePayment = async (req, res, next) => {
     const surcharge     = booking.has_peak_surcharge ? PEAK_GUEST_SURCHARGE : 0;
     const totalAmount   = Math.max(0, baseCost - lengthDiscountValue) + surcharge;
 
-    // Trigger Daraja STK Push
-    console.log(`[DARAJA STK PUSH]: Initiating checkout for booking ${booking.id} | Phone: ${targetPhone} | Amount: ${totalAmount}`);
-    const stkResponse = await mpesaService.initiateSTKPush(targetPhone, totalAmount, booking.id.substring(0, 8).toUpperCase());
+    // Trigger PayHero STK Push
+    console.log(`[PAYHERO STK PUSH]: Initiating checkout for booking ${booking.id} | Phone: ${targetPhone} | Amount: ${totalAmount}`);
+    const stkResponse = await payheroService.initiateSTKPush(targetPhone, totalAmount, booking.id.substring(0, 8).toUpperCase());
 
     if (!stkResponse || !stkResponse.success) {
-      return res.status(500).json({ success: false, error: 'Failed to initiate M-Pesa STK Push. Please verify your phone number and try again.' });
+      return res.status(500).json({ success: false, error: 'Failed to initiate PayHero STK Push. Please verify your phone number and try again.' });
     }
 
     // ── Persist payment attempt with CheckoutRequestID as transaction_ref ──────────────────
@@ -282,12 +287,13 @@ export const initiatePayment = async (req, res, next) => {
       success:       true,
       message:       'STK Push sent successfully! Please authorize on your phone.',
       checkoutRequestId: stkResponse.checkoutRequestId,
+      transactionReference: stkResponse.transactionReference,
       amount:        totalAmount
     });
 
   } catch (error) {
-    console.error('[STK PUSH ERROR]:', error.message);
-    return res.status(500).json({ success: false, error: error.message || 'M-Pesa service communication error.' });
+    console.error('[PAYHERO STK PUSH ERROR]:', error.message);
+    return res.status(500).json({ success: false, error: error.message || 'PayHero service communication error.' });
   }
 };
 
@@ -548,17 +554,30 @@ export const getBlockedDates = async (req, res, next) => {
   try {
     const { unitId } = req.params;
     const allBookings = await db.bookings.getAll();
+    const activeStatuses = ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
 
-    const activeBookings = allBookings.filter(b =>
-      b.unit_id === unitId &&
-      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status)
-    );
+    const formatCleanDate = (d) => {
+      if (!d) return '';
+      if (d instanceof Date) return d.toISOString().split('T')[0];
+      return String(d).split('T')[0];
+    };
 
-    const blocked = activeBookings.map(b => ({
-      checkIn:  b.check_in,
-      checkOut: b.check_out,
-      isPending: b.status === 'PENDING' || b.status === 'AUTHORIZING'
-    }));
+    const activeBookings = allBookings.filter(b => {
+      const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
+      const bStatus = (b.status || '').toUpperCase();
+      return bUnit === (unitId || '').toLowerCase() && activeStatuses.includes(bStatus);
+    });
+
+    const blocked = activeBookings.map(b => {
+      const statusUpper = (b.status || '').toUpperCase();
+      return {
+        checkIn:   formatCleanDate(b.check_in || b.checkIn),
+        checkOut:  formatCleanDate(b.check_out || b.checkOut),
+        status:    statusUpper,
+        isPending: statusUpper === 'PENDING' || statusUpper === 'AUTHORIZING',
+        isPaid:    statusUpper === 'PAID' || statusUpper === 'CONFIRMED' || statusUpper === 'BLOCKED'
+      };
+    });
 
     return res.status(200).json({ success: true, blockedDates: blocked });
   } catch (error) {

@@ -9,6 +9,24 @@ export default function StaffApp() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
+  const [portalTab, setPortalTab] = useState('dashboard');
+  const [formData, setFormData] = useState({
+    suite: 'skyview',
+    checkIn: '',
+    checkOut: '',
+    adults: 1,
+    children: 0,
+    hasChildren: false,
+    firstName: '',
+    lastName: '',
+    email: '',
+    confirmEmail: '',
+    phoneCountryCode: '+254',
+    phone: '',
+    specialRequests: '',
+    offerId: null
+  });
+
   // Check for existing session on mount using HttpOnly cookies
   useEffect(() => {
     const checkSession = async () => {
@@ -79,6 +97,14 @@ export default function StaffApp() {
     }
   };
 
+  const handleNavigatePage = (targetPage) => {
+    if (targetPage === 'home' || !targetPage) {
+      window.location.href = 'https://www.luluaurelian.co.ke';
+    } else {
+      window.location.href = `https://www.luluaurelian.co.ke/#/${targetPage}`;
+    }
+  };
+
   if (loading) {
     return (
       <div className="staff-loading-screen">
@@ -99,22 +125,24 @@ export default function StaffApp() {
         <PortalDashboard 
           user={authUser}
           setUser={setAuthUser}
-          formData={{}}
-          setFormData={() => {}}
+          formData={formData}
+          setFormData={setFormData}
           onBookingSubmit={() => {}}
-          portalTab="dashboard"
-          setPortalTab={() => {}}
+          portalTab={portalTab}
+          setPortalTab={setPortalTab}
           onLogout={handleExplicitLogout}
-          setPage={() => {}}
+          setPage={handleNavigatePage}
         />
       ) : (
-        <div className="staff-app-auth-wrapper">
-          {errorMsg && (
-            <div className="staff-error-banner">
-              <p>{errorMsg}</p>
-            </div>
-          )}
-          <AuthPage onLoginSuccess={handleLoginSuccess} isStaffPortal={true} />
+        <div className="auth-page-wrapper staff-app-auth-wrapper">
+          <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {errorMsg && (
+              <div className="staff-error-banner">
+                <p>{errorMsg}</p>
+              </div>
+            )}
+            <AuthPage onLoginSuccess={handleLoginSuccess} isStaffPortal={true} />
+          </div>
         </div>
       )}
     </div>

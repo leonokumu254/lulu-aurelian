@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.luluaurelian.co.ke/sitemap.xml
+LLMs: https://www.luluaurelian.co.ke/llms.txt

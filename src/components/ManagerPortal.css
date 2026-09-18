@@ -1723,16 +1723,32 @@
   background: rgba(239, 68, 68, 0.12) !important;
   color: #b91c1c !important;
   border-color: rgba(239, 68, 68, 0.35) !important;
+  cursor: not-allowed !important;
+}
+
+.unit-day-cell.paid-crossed {
+  background: rgba(220, 38, 38, 0.14) !important;
+  color: #991b1b !important;
+  border-color: rgba(220, 38, 38, 0.5) !important;
+  font-weight: 700;
+  cursor: not-allowed !important;
+}
+
+.unit-day-cell.pending-hold {
+  background: rgba(245, 158, 11, 0.14) !important;
+  color: #b45309 !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
 }
 
 .red-cross-line {
   position: absolute;
   top: 50%;
-  left: 10%;
-  right: 10%;
+  left: 8%;
+  right: 8%;
   height: 2px;
-  background: #ef4444;
+  background: #dc2626;
   transform: rotate(-35deg);
+  border-radius: 1px;
 }
 
 .unit-day-cell.booked-guest {
@@ -1759,6 +1775,7 @@
 }
 .dot-indicator.avail { background: #22c55e; }
 .dot-indicator.blocked { background: #ef4444; }
+.dot-indicator.paid { background: #dc2626; }
 .dot-indicator.booked { background: #3b82f6; }
 
 /* Right Panel Controls */

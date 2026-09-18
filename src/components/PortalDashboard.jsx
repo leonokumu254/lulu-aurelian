@@ -271,7 +271,18 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
             </div>
 
             <div className="header-right-actions">
-              <button className="btn-home" onClick={() => { window.location.hash = '#/'; }}>
+              <button 
+                className="btn-home" 
+                onClick={() => { 
+                  if (typeof setPage === 'function') {
+                    setPage('home');
+                  } else if (window.location.hostname.includes('staff.')) {
+                    window.location.href = 'https://www.luluaurelian.co.ke';
+                  } else {
+                    window.location.hash = '#/';
+                  }
+                }}
+              >
                 <Home size={16} />
                 <span>Website</span>
               </button>

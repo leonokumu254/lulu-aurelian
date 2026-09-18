@@ -230,7 +230,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
       pollCount++;
 
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/payments/mpesa/query`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/payments/payhero/query`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

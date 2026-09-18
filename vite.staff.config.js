@@ -26,7 +26,7 @@ export default defineConfig({
         short_name: 'Staff Console',
         description: 'Lulu Aurelian Estate Operations Desk',
         theme_color: '#BB8525',
-        background_color: '#12100C',
+        background_color: '#F3F3E6',
         display: 'standalone',
         scope: '/',
         start_url: '/',
