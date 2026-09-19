@@ -239,11 +239,6 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
         <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.45rem' }}>
           Lulu <span id="login-text">Aurelian </span>
         </span>
-        {isStaffPortal && (
-          <div className="staff-portal-badge-wrap">
-            <span className="staff-portal-badge">STAFF OPERATIONS CONSOLE</span>
-          </div>
-        )}
       </div>
 
       {mode === 'login' ? (
@@ -320,12 +315,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
               <span>Continue with Google Workspace</span>
             </button>
 
-            {isStaffPortal ? (
-              <div className="staff-auth-notice">
-                <ShieldCheck size={15} className="staff-notice-icon" />
-                <span>Authorized personnel only. Staff credentials are maintained by Estate Management.</span>
-              </div>
-            ) : (
+            {!isStaffPortal && (
               <p className="auth-switch">
                 Don't have an account? <button type="button" onClick={() => setMode('register')}>Sign up</button>
               </p>
