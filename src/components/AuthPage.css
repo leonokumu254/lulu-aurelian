@@ -316,16 +316,12 @@
   text-transform: uppercase;
 }
 
-.staff-portal-title-block {
-  text-align: center;
-  margin-bottom: 1.75rem;
-}
-
-.staff-portal-title-block h2 {
+.auth-card-staff .auth-view h2 {
   color: #1D1912 !important;
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 6px 0;
+  text-align: center;
+  margin-bottom: 1.75rem;
   font-family: var(--font-sans, 'Poppins', sans-serif);
 }
 
