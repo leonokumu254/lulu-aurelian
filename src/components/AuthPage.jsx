@@ -244,10 +244,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
       {mode === 'login' ? (
         <div className="auth-view animate-fade-in">
           {isStaffPortal ? (
-            <div className="staff-portal-title-block">
-              <h2>Staff Authentication</h2>
-              <p className="staff-portal-sub">Access concierge desk, reservations triage, and administration</p>
-            </div>
+            <h2>Sign in to console</h2>
           ) : new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
             <>
               <h2>Sign in to finalize your booking</h2>
@@ -299,7 +296,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
               </div>
 
               <button type="submit" className="btn-auth-primary" disabled={loading}>
-                {loading ? <Loader2 size={18} className="spinner" /> : "Sign In to Console"}
+                {loading ? <Loader2 size={18} className="spinner" /> : "Sign In"}
               </button>
             </form>
 
