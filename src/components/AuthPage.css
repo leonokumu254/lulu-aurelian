@@ -273,47 +273,23 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.staff-brand-crest {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.staff-crest-icon {
-  width: 46px;
-  height: 46px;
-  filter: drop-shadow(0 4px 10px rgba(187, 133, 37, 0.25));
-}
-
 .auth-card-staff .auth-brand {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
+  text-align: center;
 }
 
 .auth-card-staff .auth-brand-logo {
   color: #1D1912 !important;
-  font-family: var(--font-serif, 'Playfair Display', serif);
-  font-size: 1.6rem !important;
-  font-weight: 700;
-  letter-spacing: 2px !important;
-}
-
-.staff-portal-badge-wrap {
-  margin-top: 8px;
-  display: flex;
-  justify-content: center;
-}
-
-.staff-portal-badge {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif) !important;
+  font-size: 2.2rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
   display: inline-block;
-  font-size: 0.72rem;
-  letter-spacing: 1.8px;
-  font-weight: 700;
-  color: #9E6C15;
-  background: rgba(187, 133, 37, 0.1);
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(187, 133, 37, 0.25);
-  text-transform: uppercase;
+}
+
+.auth-card-staff #login-text {
+  color: var(--color-gold-deep, #9E6C15) !important;
+  font-family: inherit !important;
 }
 
 .auth-card-staff .auth-view h2 {

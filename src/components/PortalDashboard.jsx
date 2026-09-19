@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, LayoutGrid, Sliders, Home, User, Menu, Calendar, BookOpen, Key, FileText, Star, DollarSign, Users, X } from 'lucide-react';
+import { LogOut, LayoutGrid, Sliders, Home, User, Menu, Calendar, BookOpen, Key, FileText, Star, DollarSign, Users, X, Wifi } from 'lucide-react';
 import AuthPage from './AuthPage';
 import AgentPortal from './AgentPortal';
 import ManagerPortal from './ManagerPortal';
@@ -187,6 +187,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 <span>Key Suites</span>
               </button>
               <button 
+                className={`nav-item ${viewMode === 'wifi' ? 'active' : ''}`}
+                onClick={() => { setViewMode('wifi'); setMobileMenuOpen(false); }}
+              >
+                <Wifi size={20} />
+                <span>Wi-Fi Details</span>
+              </button>
+              <button 
                 className={`nav-item ${viewMode === 'cms' ? 'active' : ''}`}
                 onClick={() => { setViewMode('cms'); setMobileMenuOpen(false); }}
               >
@@ -211,6 +218,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               >
                 <Key size={20} />
                 <span>Key Suites</span>
+              </button>
+              <button 
+                className={`nav-item ${viewMode === 'wifi' ? 'active' : ''}`}
+                onClick={() => { setViewMode('wifi'); setMobileMenuOpen(false); }}
+              >
+                <Wifi size={20} />
+                <span>Wi-Fi Details</span>
               </button>
               <button 
                 className={`nav-item ${viewMode === 'cms' ? 'active' : ''}`}
@@ -280,7 +294,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               </button>
               <div>
                 <h1>
-                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
+                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'wifi' ? 'Wi-Fi Details' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
                 </h1>
               </div>
             </div>
@@ -343,7 +357,9 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
             ) : viewMode === 'operational' ? (
               <AgentPortal user={user} />
             ) : viewMode === 'passcodes' ? (
-              <SuitePasscodes />
+              <SuitePasscodes section="keys" />
+            ) : viewMode === 'wifi' ? (
+              <SuitePasscodes section="wifi" />
             ) : viewMode === 'cms' ? (
               <ContentStudio user={user} />
             ) : (

@@ -231,13 +231,8 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
   const cardContent = (
     <div className={`auth-card ${isStaffPortal ? 'auth-card-staff' : ''}`}>
       <div className="auth-brand">
-        {isStaffPortal && (
-          <div className="staff-brand-crest">
-            <img src="/lulu_aurelian_favicon.svg" alt="Lulu Aurelian Crest" className="staff-crest-icon" />
-          </div>
-        )}
-        <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.45rem' }}>
-          Lulu <span id="login-text">Aurelian </span>
+        <span className="auth-brand-logo">
+          LuLu <span id="login-text">Aurelian</span>
         </span>
       </div>
 

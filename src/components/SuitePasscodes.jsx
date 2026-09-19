@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Key, RefreshCw, Save, CheckCircle, AlertCircle, Shield, Eye, EyeOff, Copy, Building2, Filter } from 'lucide-react';
+import { Key, RefreshCw, Save, CheckCircle, AlertCircle, Shield, Eye, EyeOff, Copy, Building2, Wifi } from 'lucide-react';
 import './SuitePasscodes.css';
 
-export default function SuitePasscodes() {
+export default function SuitePasscodes({ section = 'keys' }) {
+  const isWifi = section === 'wifi';
   const [settings, setSettings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,7 +22,7 @@ export default function SuitePasscodes() {
 
   const [showSaved, setShowSaved] = useState({ skyview: false, cocoa: false, neema: false });
 
-  // Fetch current passcode settings
+  // Fetch current passcode & wifi settings
   const fetchSettings = async () => {
     setLoading(true);
     try {
@@ -90,7 +91,7 @@ export default function SuitePasscodes() {
 
   const handleSave = async (unitId) => {
     const pin = passcodes[unitId];
-    if (pin && (pin.length !== 4 || isNaN(pin))) {
+    if (!isWifi && pin && (pin.length !== 4 || isNaN(pin))) {
       triggerToast('Error: PIN must be exactly 4 digits.');
       return;
     }
@@ -128,7 +129,7 @@ export default function SuitePasscodes() {
           ...prev,
           [unitId]: wifiPasswords[unitId]
         }));
-        triggerToast(`Successfully saved settings for ${getUnitName(unitId)}!`);
+        triggerToast(`Successfully saved ${isWifi ? 'Wi-Fi credentials' : 'key settings'} for ${getUnitName(unitId)}!`);
       } else {
         triggerToast(data.error || 'Failed to update settings.');
       }
@@ -140,13 +141,33 @@ export default function SuitePasscodes() {
     }
   };
 
-  const handleCopy = (unitId) => {
+  const handleCopyPin = (unitId) => {
     const pin = savedPasscodes[unitId];
     if (pin) {
       navigator.clipboard.writeText(pin);
       triggerToast(`Copied ${getUnitName(unitId)} PIN to clipboard!`);
     } else {
       triggerToast('No PIN saved to copy.');
+    }
+  };
+
+  const handleCopyWifiPassword = (unitId) => {
+    const pw = savedWifiPasswords[unitId];
+    if (pw) {
+      navigator.clipboard.writeText(pw);
+      triggerToast(`Copied ${getUnitName(unitId)} Wi-Fi password!`);
+    } else {
+      triggerToast('No Wi-Fi password saved to copy.');
+    }
+  };
+
+  const handleCopySSID = (unitId) => {
+    const ssid = savedWifiSSIDs[unitId];
+    if (ssid) {
+      navigator.clipboard.writeText(ssid);
+      triggerToast(`Copied ${getUnitName(unitId)} Wi-Fi network name!`);
+    } else {
+      triggerToast('No Wi-Fi network name saved to copy.');
     }
   };
 
@@ -172,11 +193,19 @@ export default function SuitePasscodes() {
 
       <div className="passcodes-header">
         <div className="header-title-row">
-          <Key className="header-icon" size={28} />
+          {isWifi ? (
+            <Wifi className="header-icon" size={28} />
+          ) : (
+            <Key className="header-icon" size={28} />
+          )}
           <div>
-            <h1 className="portal-title">Key Suites Access & PIN Vault</h1>
+            <h1 className="portal-title">
+              {isWifi ? 'Suite Wi-Fi & Network Credentials' : 'Key Suites Access & PIN Vault'}
+            </h1>
             <p className="portal-subtitle">
-              Manage and access the 4-digit security codes used by guests to access the room keys. Select a unit from the dropdown below to view or update its key code.
+              {isWifi
+                ? 'Manage Wi-Fi network names (SSID) and guest access passwords for all suites. Guests receive these details dynamically upon check-in.'
+                : 'Manage and access the 4-digit security codes used by guests to access the room keys. Select a unit from the dropdown below to view or update its key code.'}
             </p>
           </div>
         </div>
@@ -186,11 +215,17 @@ export default function SuitePasscodes() {
       <div className="suite-unit-filter-wrapper glass-panel">
         <div className="filter-label-group">
           <div className="filter-icon-box">
-            <Building2 className="filter-icon" size={20} />
+            {isWifi ? <Wifi className="filter-icon" size={20} /> : <Building2 className="filter-icon" size={20} />}
           </div>
           <div>
-            <span className="filter-heading">Unit to Access Code:</span>
-            <p className="filter-subtext">Select which suite unit's key box PIN and credentials to display</p>
+            <span className="filter-heading">
+              {isWifi ? 'Unit Wi-Fi Network:' : 'Unit to Access Code:'}
+            </span>
+            <p className="filter-subtext">
+              {isWifi 
+                ? "Select which suite unit's Wi-Fi network and password to display"
+                : "Select which suite unit's key box PIN and credentials to display"}
+            </p>
           </div>
         </div>
         <div className="filter-select-container">
@@ -199,12 +234,18 @@ export default function SuitePasscodes() {
             className="unit-dropdown-select"
             value={selectedUnit}
             onChange={(e) => setSelectedUnit(e.target.value)}
-            aria-label="Select suite unit to access code"
+            aria-label={isWifi ? "Select suite unit Wi-Fi" : "Select suite unit to access code"}
           >
             <option value="all">All Suites (Skyview, Cocoa, Neema)</option>
-            <option value="skyview">Skyview Hideaway — Key & Access Code</option>
-            <option value="cocoa">Cocoa Retreat — Key & Access Code</option>
-            <option value="neema">Neema — Key & Access Code</option>
+            <option value="skyview">
+              {isWifi ? 'Skyview Hideaway — Wi-Fi Network' : 'Skyview Hideaway — Key & Access Code'}
+            </option>
+            <option value="cocoa">
+              {isWifi ? 'Cocoa Retreat — Wi-Fi Network' : 'Cocoa Retreat — Key & Access Code'}
+            </option>
+            <option value="neema">
+              {isWifi ? 'Neema — Wi-Fi Network' : 'Neema — Key & Access Code'}
+            </option>
           </select>
         </div>
       </div>
@@ -212,8 +253,11 @@ export default function SuitePasscodes() {
       {selectedUnit !== 'all' && (
         <div className="single-unit-indicator animate-fade-in">
           <div className="indicator-left">
-            <Key size={16} />
-            <span>Currently Viewing Key Code For: <strong>{getUnitName(selectedUnit)}</strong></span>
+            {isWifi ? <Wifi size={16} /> : <Key size={16} />}
+            <span>
+              Currently Viewing {isWifi ? 'Wi-Fi For:' : 'Key Code For:'}{' '}
+              <strong>{getUnitName(selectedUnit)}</strong>
+            </span>
           </div>
           <button 
             type="button" 
@@ -241,13 +285,13 @@ export default function SuitePasscodes() {
           {['skyview', 'cocoa', 'neema']
             .filter(unitId => selectedUnit === 'all' || unitId === selectedUnit)
             .map(unitId => {
-            const currentVal = passcodes[unitId] || '';
+            const currentPinVal = passcodes[unitId] || '';
             const isSaving = savingUnit === unitId;
             return (
               <div key={unitId} className="unit-passcode-card glass-panel">
                 <div className="unit-card-header">
                   <div className="unit-icon-wrapper">
-                    <Shield className="unit-shield-icon" size={24} />
+                    {isWifi ? <Wifi className="unit-shield-icon" size={24} /> : <Shield className="unit-shield-icon" size={24} />}
                   </div>
                   <div>
                     <h3 className="unit-title">{getUnitName(unitId)}</h3>
@@ -256,98 +300,154 @@ export default function SuitePasscodes() {
                 </div>
 
                 <div className="unit-card-body">
-                  {/* Option to see the currently saved 4-digit key */}
-                  <div className="saved-pin-container">
-                    <span className="saved-pin-label">Currently Active PIN:</span>
-                    <span className="saved-pin-value">
-                      {showSaved[unitId] ? (savedPasscodes[unitId] || 'None') : '••••'}
-                    </span>
-                    <button
-                      type="button"
-                      className="btn-toggle-saved"
-                      onClick={() => setShowSaved(prev => ({ ...prev, [unitId]: !prev[unitId] }))}
-                      title={showSaved[unitId] ? "Hide PIN" : "Show PIN"}
-                      style={{ marginRight: '0.25rem' }}
-                    >
-                      {showSaved[unitId] ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-toggle-saved"
-                      onClick={() => handleCopy(unitId)}
-                      title="Copy PIN"
-                    >
-                      <Copy size={16} />
-                    </button>
-                  </div>
+                  {isWifi ? (
+                    <>
+                      {/* Wi-Fi Active Saved Overview */}
+                      <div className="saved-pin-container" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '0.65rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                          <span className="saved-pin-label">Network (SSID):</span>
+                          <span className="saved-pin-value" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '0.92rem', letterSpacing: 'normal', color: '#1D1912' }}>
+                            {savedWifiSSIDs[unitId] || 'Not set'}
+                          </span>
+                          {savedWifiSSIDs[unitId] && (
+                            <button
+                              type="button"
+                              className="btn-toggle-saved"
+                              onClick={() => handleCopySSID(unitId)}
+                              title="Copy Wi-Fi Network Name"
+                            >
+                              <Copy size={16} />
+                            </button>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', borderTop: '1px dashed rgba(187, 133, 37, 0.2)', paddingTop: '0.5rem' }}>
+                          <span className="saved-pin-label">Password:</span>
+                          <span className="saved-pin-value" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '0.92rem', letterSpacing: showSaved[unitId] ? 'normal' : '2px', color: '#8c6014', fontWeight: '600' }}>
+                            {showSaved[unitId] ? (savedWifiPasswords[unitId] || 'None') : '••••••••'}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginLeft: 'auto' }}>
+                            <button
+                              type="button"
+                              className="btn-toggle-saved"
+                              onClick={() => setShowSaved(prev => ({ ...prev, [unitId]: !prev[unitId] }))}
+                              title={showSaved[unitId] ? "Hide Password" : "Show Password"}
+                            >
+                              {showSaved[unitId] ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-toggle-saved"
+                              onClick={() => handleCopyWifiPassword(unitId)}
+                              title="Copy Wi-Fi Password"
+                            >
+                              <Copy size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="pin-input-group">
-                    <label className="pin-input-label">Update Key Box PIN</label>
-                    <div className="pin-input-row">
-                      <input
-                        type="text"
-                        className="pin-code-input"
-                        placeholder="----"
-                        value={currentVal}
-                        onChange={(e) => handleInputChange(unitId, e.target.value)}
-                        maxLength={4}
-                      />
-                      <button
-                        type="button"
-                        className="btn-recommend"
-                        onClick={() => handleGenerateRecommend(unitId)}
-                        title="Recommend a random 4-digit PIN"
-                      >
-                        <RefreshCw size={14} />
-                        <span>Recommend</span>
-                      </button>
-                    </div>
-                  </div>
+                      <div className="pin-input-group">
+                        <label className="pin-input-label">Wi-Fi Name (SSID)</label>
+                        <input
+                          type="text"
+                          className="suite-text-input"
+                          placeholder="e.g. LuluAurelian_Skyview"
+                          value={wifiSSIDs[unitId] || ''}
+                          onChange={(e) => setWifiSSIDs(prev => ({ ...prev, [unitId]: e.target.value }))}
+                        />
+                      </div>
 
-                  <div className="pin-input-group">
-                    <label className="pin-input-label">House / Room Number</label>
-                    <input
-                      type="text"
-                      className="suite-text-input"
-                      placeholder="e.g. Penthouse 601"
-                      value={houseNumbers[unitId] || ''}
-                      onChange={(e) => setHouseNumbers(prev => ({ ...prev, [unitId]: e.target.value }))}
-                    />
-                  </div>
+                      <div className="pin-input-group">
+                        <label className="pin-input-label">Wi-Fi Password</label>
+                        <input
+                          type="text"
+                          className="suite-text-input"
+                          placeholder="Enter Wi-Fi Password"
+                          value={wifiPasswords[unitId] || ''}
+                          onChange={(e) => setWifiPasswords(prev => ({ ...prev, [unitId]: e.target.value }))}
+                        />
+                      </div>
 
-                  <div className="pin-input-group">
-                    <label className="pin-input-label">Wi-Fi Name (SSID)</label>
-                    <input
-                      type="text"
-                      className="suite-text-input"
-                      placeholder="e.g. LuluAurelian_Skyview"
-                      value={wifiSSIDs[unitId] || ''}
-                      onChange={(e) => setWifiSSIDs(prev => ({ ...prev, [unitId]: e.target.value }))}
-                    />
-                  </div>
+                      <div className="security-notice" style={{ marginTop: '1.2rem' }}>
+                        <p>
+                          Guests receive these Wi-Fi credentials in their automated booking confirmation & check-in portal.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Option to see the currently saved 4-digit key */}
+                      <div className="saved-pin-container">
+                        <span className="saved-pin-label">Currently Active PIN:</span>
+                        <span className="saved-pin-value">
+                          {showSaved[unitId] ? (savedPasscodes[unitId] || 'None') : '••••'}
+                        </span>
+                        <button
+                          type="button"
+                          className="btn-toggle-saved"
+                          onClick={() => setShowSaved(prev => ({ ...prev, [unitId]: !prev[unitId] }))}
+                          title={showSaved[unitId] ? "Hide PIN" : "Show PIN"}
+                          style={{ marginRight: '0.25rem' }}
+                        >
+                          {showSaved[unitId] ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-toggle-saved"
+                          onClick={() => handleCopyPin(unitId)}
+                          title="Copy PIN"
+                        >
+                          <Copy size={16} />
+                        </button>
+                      </div>
 
-                  <div className="pin-input-group">
-                    <label className="pin-input-label">Wi-Fi Password</label>
-                    <input
-                      type="text"
-                      className="suite-text-input"
-                      placeholder="Wi-Fi Password"
-                      value={wifiPasswords[unitId] || ''}
-                      onChange={(e) => setWifiPasswords(prev => ({ ...prev, [unitId]: e.target.value }))}
-                    />
-                  </div>
+                      <div className="pin-input-group">
+                        <label className="pin-input-label">Update Key Box PIN</label>
+                        <div className="pin-input-row">
+                          <input
+                            type="text"
+                            className="pin-code-input"
+                            placeholder="----"
+                            value={currentPinVal}
+                            onChange={(e) => handleInputChange(unitId, e.target.value)}
+                            maxLength={4}
+                          />
+                          <button
+                            type="button"
+                            className="btn-recommend"
+                            onClick={() => handleGenerateRecommend(unitId)}
+                            title="Recommend a random 4-digit PIN"
+                          >
+                            <RefreshCw size={14} />
+                            <span>Recommend</span>
+                          </button>
+                        </div>
+                      </div>
 
-                  <div className="security-notice" style={{ marginTop: '1.2rem' }}>
-                    <p>
-                      Guests will receive these credentials dynamically in their email and WhatsApp check-in instructions.
-                    </p>
-                  </div>
+                      <div className="pin-input-group">
+                        <label className="pin-input-label">House / Room Number</label>
+                        <input
+                          type="text"
+                          className="suite-text-input"
+                          placeholder="e.g. Penthouse 601"
+                          value={houseNumbers[unitId] || ''}
+                          onChange={(e) => setHouseNumbers(prev => ({ ...prev, [unitId]: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="security-notice" style={{ marginTop: '1.2rem' }}>
+                        <p>
+                          Guests will receive these credentials dynamically in their email and WhatsApp check-in instructions.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="unit-card-footer">
                   <button
                     onClick={() => handleSave(unitId)}
-                    disabled={isSaving || (currentVal && (currentVal.length !== 4 || isNaN(currentVal)))}
+                    disabled={isSaving || (!isWifi && currentPinVal && (currentPinVal.length !== 4 || isNaN(currentPinVal)))}
                     className="btn-primary btn-save-pin"
                   >
                     {isSaving ? (
@@ -358,7 +458,7 @@ export default function SuitePasscodes() {
                     ) : (
                       <>
                         <Save size={16} />
-                        <span>Save Suite Settings</span>
+                        <span>{isWifi ? 'Save Wi-Fi Settings' : 'Save Key Settings'}</span>
                       </>
                     )}
                   </button>
@@ -371,3 +471,4 @@ export default function SuitePasscodes() {
     </div>
   );
 }
+
