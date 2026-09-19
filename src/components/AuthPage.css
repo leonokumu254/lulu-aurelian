@@ -259,7 +259,7 @@
    Light glass aesthetic: frosted glass card, backdrop-blur, luminous edge
    ========================================================================== */
 .auth-card-staff {
-  background-color: rgba(255, 255, 255, 0.78) !important;
+  background-color: rgba(255, 255, 255, 0.96) !important;
   -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
   backdrop-filter: blur(28px) saturate(190%) !important;
   border: 1px solid rgba(255, 255, 255, 0.95) !important;
@@ -269,6 +269,7 @@
   border-radius: 28px !important;
   padding: 2.75rem 2.25rem !important;
   position: relative;
+  z-index: 10;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

@@ -8,17 +8,12 @@ import './StaffApp.css';
 export default function StaffApp() {
   const [authUser, setAuthUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  // ── Preloader: show on initial load and on browser refresh
+  // ── Preloader: show once per session for seamless staff operations
   const [showPreloader, setShowPreloader] = useState(() => {
     try {
-      const navEntries = performance.getEntriesByType('navigation');
-      const isReload = (navEntries && navEntries[0] && navEntries[0].type === 'reload') ||
-                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
-      if (isReload) return true;
-
       return sessionStorage.getItem('lulu_staff_preloader_seen') !== 'true';
     } catch {
-      return true;
+      return false;
     }
   });
   const [errorMsg, setErrorMsg] = useState('');
