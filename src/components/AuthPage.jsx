@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, ShieldCheck, Lock } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import './AuthPage.css';
 
@@ -231,19 +231,29 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
   const cardContent = (
     <div className={`auth-card ${isStaffPortal ? 'auth-card-staff' : ''}`}>
       <div className="auth-brand">
-        <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem' }}>
+        {isStaffPortal && (
+          <div className="staff-brand-crest">
+            <img src="/lulu_aurelian_favicon.svg" alt="Lulu Aurelian Crest" className="staff-crest-icon" />
+          </div>
+        )}
+        <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.45rem' }}>
           Lulu <span id="login-text">Aurelian </span>
         </span>
         {isStaffPortal && (
-          <p style={{ color: 'var(--color-gold-deep)', fontSize: '0.8rem', marginTop: '6px', letterSpacing: '1px', fontWeight: 600 }}>
-            STAFF OPERATIONS
-          </p>
+          <div className="staff-portal-badge-wrap">
+            <span className="staff-portal-badge">STAFF OPERATIONS CONSOLE</span>
+          </div>
         )}
       </div>
 
       {mode === 'login' ? (
         <div className="auth-view animate-fade-in">
-          {new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
+          {isStaffPortal ? (
+            <div className="staff-portal-title-block">
+              <h2>Staff Authentication</h2>
+              <p className="staff-portal-sub">Access concierge desk, reservations triage, and administration</p>
+            </div>
+          ) : new URLSearchParams(window.location.search).get('redirect') === 'checkout' ? (
             <>
               <h2>Sign in to finalize your booking</h2>
               <p className="auth-checkout-tip">
@@ -251,7 +261,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
               </p>
             </>
           ) : (
-            <h2>{isStaffPortal ? 'Sign In to Staff Operations' : 'Welcome back, glad to see you'}</h2>
+            <h2>Welcome back, glad to see you</h2>
           )}
             
             {error && <div className="auth-error">{error}</div>}
@@ -272,7 +282,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
                 <label id='label'>Password *</label>
                 <div className="password-wrapper">
                   <input 
-                    type={showPassword ? "text" : "password"} 
+                  type={showPassword ? "text" : "password"} 
                     value={password} 
                     onChange={e => setPassword(e.target.value)} 
                     placeholder="••••••••" 
@@ -294,7 +304,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
               </div>
 
               <button type="submit" className="btn-auth-primary" disabled={loading}>
-                {loading ? <Loader2 size={18} className="spinner" /> : "Log In"}
+                {loading ? <Loader2 size={18} className="spinner" /> : "Sign In to Console"}
               </button>
             </form>
 
@@ -307,12 +317,19 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
-              <span>Continue with Google</span>
+              <span>Continue with Google Workspace</span>
             </button>
 
-            <p className="auth-switch">
-              Don't have an account? <button type="button" onClick={() => setMode('register')}>Sign up</button>
-            </p>
+            {isStaffPortal ? (
+              <div className="staff-auth-notice">
+                <ShieldCheck size={15} className="staff-notice-icon" />
+                <span>Authorized personnel only. Staff credentials are maintained by Estate Management.</span>
+              </div>
+            ) : (
+              <p className="auth-switch">
+                Don't have an account? <button type="button" onClick={() => setMode('register')}>Sign up</button>
+              </p>
+            )}
           </div>
         ) : mode === 'forgot' ? (
           <div className="auth-view animate-fade-in">

@@ -62,27 +62,43 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #F3F3E6;
+  background-color: #F5F3EB;
   background-image: 
-    radial-gradient(circle at 18% 22%, rgba(222, 185, 95, 0.25) 0%, transparent 42%),
-    radial-gradient(circle at 82% 78%, rgba(187, 133, 37, 0.18) 0%, transparent 46%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 0%, transparent 60%);
-  padding: 2.5rem 1.25rem;
+    radial-gradient(circle at 50% 0%, rgba(222, 185, 95, 0.22) 0%, transparent 50%),
+    radial-gradient(circle at 15% 50%, rgba(187, 133, 37, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 60%, rgba(187, 133, 37, 0.1) 0%, transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(29, 25, 18, 0.03) 0%, transparent 40%);
+  padding: 3rem 1.25rem 2.5rem;
   box-sizing: border-box;
   position: relative;
+  overflow: hidden;
+}
+
+.staff-app-auth-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(238, 205, 92, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: 50%;
 }
 
 /* Error Banner */
 .staff-error-banner {
   max-width: 440px;
   width: 100%;
-  background-color: #FEF2F2;
+  background-color: rgba(254, 242, 242, 0.95);
   border: 1px solid #FCA5A5;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px 18px;
   margin-bottom: 16px;
   box-sizing: border-box;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08);
 }
 
 .staff-error-banner p {
@@ -95,11 +111,12 @@
 
 /* Footer styling */
 .staff-login-footer {
-  margin-top: 24px;
+  margin-top: 28px;
   text-align: center;
   font-size: 0.85rem;
   color: rgba(29, 25, 18, 0.65);
   text-shadow: none;
+  z-index: 2;
 }
 
 .staff-login-footer p {
@@ -107,31 +124,34 @@
 }
 
 .back-to-site {
-  color: var(--color-gold-deep);
+  color: #8C5E10;
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.84rem;
   letter-spacing: 0.3px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(187, 133, 37, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .back-to-site:hover {
-  color: var(--color-dark);
-  text-shadow: none;
-  text-decoration: underline;
+  color: #1D1912;
+  background: #FFFFFF;
+  border-color: rgba(187, 133, 37, 0.35);
+  box-shadow: 0 4px 12px rgba(29, 25, 18, 0.06);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 480px) {
-  .staff-login-header h1 {
-    font-size: 1.8rem;
-  }
-  .staff-login-header h2 {
-    font-size: 0.8rem;
-  }
-  .staff-auth-card {
-    padding: 24px 18px;
-    border-radius: 16px;
+  .staff-app-auth-wrapper {
+    padding: 2rem 1rem;
   }
 }
+
