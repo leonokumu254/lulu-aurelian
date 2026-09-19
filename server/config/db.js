@@ -380,7 +380,7 @@ export const db = {
               booking.children || 0,
               booking.has_peak_surcharge ? 1 : 0,
               booking.status || 'PENDING',
-              booking.secure_token,
+              booking.secure_token || ('sec_' + crypto.randomBytes(16).toString('hex')),
               booking.approved_by || null,
               booking.approved_at || null,
               booking.hold_expires_at || null,
@@ -410,7 +410,7 @@ export const db = {
               booking.children || 0,
               booking.has_peak_surcharge ? 1 : 0,
               booking.status || 'PENDING',
-              booking.secure_token,
+              booking.secure_token || ('sec_' + crypto.randomBytes(16).toString('hex')),
               booking.approved_by || null,
               booking.approved_at || null,
               booking.hold_expires_at || null,
@@ -550,6 +550,16 @@ export const db = {
         return rows;
       }
       return inMemory.bookings.filter(b => b.status === 'PAID');
+    },
+
+    delete: async (id) => {
+      if (useMySQL) {
+        const [result] = await pool.query('DELETE FROM bookings WHERE id = ?', [id]);
+        return result.affectedRows > 0;
+      }
+      const initialLength = inMemory.bookings.length;
+      inMemory.bookings = inMemory.bookings.filter(b => b.id !== id);
+      return inMemory.bookings.length < initialLength;
     }
   },
 

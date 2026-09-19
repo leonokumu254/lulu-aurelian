@@ -1,33 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from './components/Header';
 import './App.css';
+
+// ── Eagerly loaded: lightweight, always visible above-the-fold components
+import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
-import WhyChooseUs from './components/WhyChooseUs';
-import OffersSection from './components/OffersSection';
-import OffersPage from './components/OffersPage';
-import Reviews from './components/Reviews';
 import Listings from './components/Listings';
-import Newsletter from './components/Newsletter';
-import ContactSection from './components/ContactSection';
-import Location from './components/Location';
-import Footer from './components/Footer';
 import WhatsAppIcon from './components/WhatsAppIcon';
-import BookingForm from './components/BookingForm';
-import BookingSummary from './components/BookingSummary';
-import SuccessModal from './components/SuccessModal';
-import PortalDashboard from './components/PortalDashboard';
-import AuthPage from './components/AuthPage';
-import GuestAuthModal from './components/GuestAuthModal';
-import BookingStatusWidget from './components/BookingStatusWidget';
-import CheckoutPage from './components/CheckoutPage';
+import Preloader from './components/Preloader';
 import { fetchLivePricing } from './utils/pricing';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
+// ── Lazily loaded: heavy components that are NOT needed on first paint
+const WhyChooseUs      = lazy(() => import('./components/WhyChooseUs'));
+const OffersSection    = lazy(() => import('./components/OffersSection'));
+const OffersPage       = lazy(() => import('./components/OffersPage'));
+const Reviews          = lazy(() => import('./components/Reviews'));
+const Newsletter       = lazy(() => import('./components/Newsletter'));
+const ContactSection   = lazy(() => import('./components/ContactSection'));
+const Location         = lazy(() => import('./components/Location'));
+const Footer           = lazy(() => import('./components/Footer'));
+const BookingForm      = lazy(() => import('./components/BookingForm'));
+const BookingSummary   = lazy(() => import('./components/BookingSummary'));
+const SuccessModal     = lazy(() => import('./components/SuccessModal'));
+const PortalDashboard  = lazy(() => import('./components/PortalDashboard'));
+const AuthPage         = lazy(() => import('./components/AuthPage'));
+const GuestAuthModal   = lazy(() => import('./components/GuestAuthModal'));
+const BookingStatusWidget = lazy(() => import('./components/BookingStatusWidget'));
+const CheckoutPage     = lazy(() => import('./components/CheckoutPage'));
+
+// Minimal inline fallback — seamless cream transition
+const PageFallback = () => (
+  <div style={{ minHeight: '60vh', backgroundColor: '#F3F3E6', width: '100%' }} />
+);
+
 export default function App() {
+  // ── Preloader: show on initial site load and on browser refresh
+  const [showPreloader, setShowPreloader] = useState(() => {
+    try {
+      // 1. Always show on page refresh
+      const navEntries = performance.getEntriesByType('navigation');
+      const isReload = (navEntries && navEntries[0] && navEntries[0].type === 'reload') ||
+                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+      if (isReload) return true;
+
+      // 2. Show on initial site load (first visit of the session)
+      return sessionStorage.getItem('lulu_preloader_seen') !== 'true';
+    } catch {
+      return true;
+    }
+  });
   const [page, setPage] = useState('home');
   const [formData, setFormData] = useState({
     suite: 'skyview',
@@ -339,6 +364,15 @@ export default function App() {
 
   return (
     <div className="app-root">
+      {/* Luxury Preloader — renders only on initial site visit */}
+      {showPreloader && (
+        <Preloader onComplete={() => {
+          try {
+            sessionStorage.setItem('lulu_preloader_seen', 'true');
+          } catch {}
+          setShowPreloader(false);
+        }} />
+      )}
       <Helmet>
         <title>{page === 'home' ? 'Lulu Aurelian Estate | Luxury Escapes' : page === 'booking' ? 'Book Your Stay | Lulu Aurelian' : page === 'portal' ? 'Guest Portal | Lulu Aurelian' : 'Lulu Aurelian Estate'}</title>
         <meta name="description" content="Lulu Aurelian Estate is the epitome of luxury penthouse living and refined hospitality in East Africa. Our estate offers an unparalleled blend of modern elegance and bespoke services, featuring meticulously designed suites like the Cocoa Suite and Skyview Suite, both offering breathtaking panoramic views. Guests experience a world-class stay with dedicated concierge assistance, gourmet dining options, premium amenities, and immaculate housekeeping services. Whether you are seeking a peaceful retreat, a romantic getaway, or an executive stay, our property ensures an unforgettable experience tailored to your exact desires. From seamless direct bookings and integrated payment gateways to secure user portals for both guests and management, Lulu Aurelian Estate is committed to providing seamless convenience and sophisticated comfort. Discover opulence, tranquility, and exclusivity at Lulu Aurelian Estate, where every detail is crafted to exceed your highest expectations in modern hospitality." />
@@ -351,43 +385,51 @@ export default function App() {
 
       {page === 'portal' ? (
         <div className="no-reveal">
-          <PortalDashboard 
-            formData={formData}
-            setFormData={setFormData}
-            onBookingSubmit={handleBookingSubmit}
-            portalTab={portalTab}
-            setPortalTab={setPortalTab}
-            user={authUser}
-            setUser={setAuthUser}
-            onLogout={handleLogout}
-            setPage={setPage}
-          />
+          <Suspense fallback={<PageFallback />}>
+            <PortalDashboard 
+              formData={formData}
+              setFormData={setFormData}
+              onBookingSubmit={handleBookingSubmit}
+              portalTab={portalTab}
+              setPortalTab={setPortalTab}
+              user={authUser}
+              setUser={setAuthUser}
+              onLogout={handleLogout}
+              setPage={setPage}
+            />
+          </Suspense>
         </div>
       ) : page === 'home' ? (
         <main className="home-view">
-          <Hero onSearch={handleHeroSearch} />
+          <Hero onSearch={handleHeroSearch} isPreloaderDone={!showPreloader} />
           <About />
           <Listings onBookSelect={handleBookSelect} />
-          <WhyChooseUs />
-          <OffersSection setPage={(p, params) => navigateToPage(p, params)} />
-          <BookingStatusWidget user={authUser} />
-          {!authUser && (
-            <AuthPage 
-              onLoginSuccess={(profile) => {
-                setAuthUser(profile);
-                setPage('portal');
-                navigateToPage('portal');
-              }} 
-            />
-          )}
-          <Reviews />
-          <ContactSection />
-          <Newsletter />
+          <Suspense fallback={<PageFallback />}>
+            <WhyChooseUs />
+            <OffersSection setPage={(p, params) => navigateToPage(p, params)} />
+            <BookingStatusWidget user={authUser} />
+            {!authUser && (
+              <AuthPage 
+                onLoginSuccess={(profile) => {
+                  setAuthUser(profile);
+                  setPage('portal');
+                  navigateToPage('portal');
+                }} 
+              />
+            )}
+            <Reviews />
+            <ContactSection />
+            <Newsletter />
+          </Suspense>
         </main>
       ) : page === 'offers' ? (
-        <OffersPage setPage={(p, params) => navigateToPage(p, params)} />
+        <Suspense fallback={<PageFallback />}>
+          <OffersPage setPage={(p, params) => navigateToPage(p, params)} />
+        </Suspense>
       ) : page === 'checkout' ? (
-        <CheckoutPage user={authUser} setUser={setAuthUser} onLogout={handleLogout} />
+        <Suspense fallback={<PageFallback />}>
+          <CheckoutPage user={authUser} setUser={setAuthUser} onLogout={handleLogout} />
+        </Suspense>
       ) : (
         <main className="booking-view-container container">
           <div className="booking-header-offset" />
@@ -435,25 +477,28 @@ export default function App() {
 
       {/* Shared Persistent Footer & Location */}
       {page !== 'portal' && page !== 'checkout' && (
-        <>
+        <Suspense fallback={null}>
           <Location />
           <Footer setPage={(p, params) => navigateToPage(p, params)} />
-        </>
+        </Suspense>
       )}
 
       {/* Shared WhatsApp floating bubble */}
       {page !== 'portal' && page !== 'checkout' && <WhatsAppIcon />}
 
-      {/* Success Modal */}
+      {/* Success Modal — lazy, only mounts when a booking is placed */}
       {successDetails && (
-        <SuccessModal
-          bookingDetails={successDetails}
-          onClose={handleCloseModal}
-          onPayLater={handlePayLater}
-        />
+        <Suspense fallback={null}>
+          <SuccessModal
+            bookingDetails={successDetails}
+            onClose={handleCloseModal}
+            onPayLater={handlePayLater}
+          />
+        </Suspense>
       )}
 
-      {/* Guest Auth Modal */}
+      {/* Guest Auth Modal — lazy */}
+      <Suspense fallback={null}>
       <GuestAuthModal
         isOpen={showGuestAuth}
         onClose={() => setShowGuestAuth(false)}
@@ -489,6 +534,7 @@ export default function App() {
           setGuestAuthDismissed(true);
         }}
       />
+      </Suspense>
     </div>
   );
 }

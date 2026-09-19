@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, LayoutGrid, Sliders, Home, User, Menu, Calendar, BookOpen, Key, FileText, Star, DollarSign, Users } from 'lucide-react';
+import { LogOut, LayoutGrid, Sliders, Home, User, Menu, Calendar, BookOpen, Key, FileText, Star, DollarSign, Users, X } from 'lucide-react';
 import AuthPage from './AuthPage';
 import AgentPortal from './AgentPortal';
 import ManagerPortal from './ManagerPortal';
@@ -120,6 +120,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
         {/* Left Sidebar */}
         <aside className={`dashboard-sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="sidebar-profile">
+            <button
+              className="sidebar-mobile-close"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={20} />
+            </button>
             <div className="profile-avatar-container">
               <img src={user.avatar || '/user-icon.svg'} alt="Avatar" />
             </div>
@@ -254,6 +261,14 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
             <span>Sign Out</span>
           </button>
         </aside>
+
+        {mobileMenuOpen && (
+          <div 
+            className="sidebar-backdrop" 
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close navigation overlay"
+          />
+        )}
 
         {/* Main Content Area */}
         <main className="dashboard-main-content">

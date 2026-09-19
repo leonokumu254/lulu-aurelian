@@ -1941,6 +1941,117 @@
 @media (max-width: 992px) {
   .unit-cal-grid-split {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .dashboard-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .manager-sub-tabs-bar {
+    padding: 6px 8px;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .calendar-suite-selector {
+    gap: 8px;
+  }
+  .suite-select-btn {
+    flex: 1 1 calc(50% - 8px);
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  .single-unit-calendar-box {
+    padding: 14px 12px;
+    border-radius: 12px;
+  }
+  .unit-visual-cal-card {
+    padding: 12px 8px;
+  }
+  .cal-days-grid-7col {
+    gap: 3px;
+  }
+  .unit-day-cell {
+    min-height: 36px;
+    font-size: 0.8rem;
+  }
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .suite-pricing-card {
+    padding: 1.15rem 1rem;
+  }
+  .cohost-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .unit-cal-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .unit-hold-count {
+    align-self: flex-start;
+  }
+  .inputs-flex-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .ical-export-row, .ical-import-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .btn-copy-mini, .btn-sync-mini {
+    width: 100%;
+    justify-content: center;
+    padding: 8px;
+  }
+  .unit-cal-legend {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    font-size: 0.72rem;
+  }
+  .cohost-grid {
+    grid-template-columns: 1fr;
+  }
+  .cohost-card, .cohost-invite-card {
+    padding: 14px;
+    min-height: auto;
+  }
+  .cohost-avatar {
+    margin-bottom: 12px;
+  }
+  .review-card {
+    padding: 12px;
+  }
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .review-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .review-actions button {
+    flex: 1;
+    text-align: center;
+  }
+  .portal-modal-card {
+    padding: 1.75rem 1.25rem;
+    width: 92vw;
+    max-width: 92vw;
   }
 }
 

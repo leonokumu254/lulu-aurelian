@@ -54,6 +54,11 @@ const allowedOrigins = [
   'https://agent.luluaurelian.co.ke',
   'http://agent.luluaurelian.co.ke',
   'https://lulu-aurelian.vercel.app',
+  'https://payhero.co.ke',
+  'https://www.payhero.co.ke',
+  'https://backend.payhero.co.ke',
+  'https://app.payhero.co.ke',
+  'https://api.payhero.co.ke',
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000' 
@@ -65,6 +70,7 @@ app.use(cors({
     if (
       allowedOrigins.includes(origin) ||
       /^https?:\/\/(.+\.)?luluaurelian\.co\.ke$/.test(origin) ||
+      /^https?:\/\/(.+\.)?payhero\.co\.ke$/.test(origin) ||
       /^https?:\/\/lulu-aurelian.*\.vercel\.app$/.test(origin)
     ) {
       return callback(null, true);
@@ -73,7 +79,15 @@ app.use(cors({
     return callback(new Error(`The CORS policy for this site does not allow access from the specified Origin: ${origin}`), false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-mpesa-secret'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'x-mpesa-secret',
+    'x-payhero-signature',
+    'x-api-key',
+    'X-Requested-With',
+    'Accept'
+  ],
   credentials: true
 }));
 
@@ -143,15 +157,24 @@ app.get('*', (req, res, next) => {
     return next(); // Pass missing /api routes to notFoundHandler
   }
 
+  const host = (req.hostname || req.headers.host || '').toLowerCase();
+  const isStaffDomain = host.startsWith('staff.') || req.query.portal === 'staff';
+
   const staffHtml = path.join(staffDistDir, 'staff.html');
   const staffIndexHtml = path.join(staffDistDir, 'index.html');
   const mainIndexHtml = path.join(mainDistDir, 'index.html');
 
-  if (fs.existsSync(staffHtml)) {
-    return res.sendFile(staffHtml);
-  } else if (fs.existsSync(staffIndexHtml)) {
-    return res.sendFile(staffIndexHtml);
-  } else if (fs.existsSync(mainIndexHtml)) {
+  // Serve staff console for staff.luluaurelian.co.ke
+  if (isStaffDomain) {
+    if (fs.existsSync(staffHtml)) {
+      return res.sendFile(staffHtml);
+    } else if (fs.existsSync(staffIndexHtml)) {
+      return res.sendFile(staffIndexHtml);
+    }
+  }
+
+  // Serve primary luxury website for main domain
+  if (fs.existsSync(mainIndexHtml)) {
     return res.sendFile(mainIndexHtml);
   }
 

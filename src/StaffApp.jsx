@@ -2,11 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import PortalDashboard from './components/PortalDashboard';
 import AuthPage from './components/AuthPage';
+import Preloader from './components/Preloader';
 import './StaffApp.css';
 
 export default function StaffApp() {
   const [authUser, setAuthUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // ── Preloader: show on initial load and on browser refresh
+  const [showPreloader, setShowPreloader] = useState(() => {
+    try {
+      const navEntries = performance.getEntriesByType('navigation');
+      const isReload = (navEntries && navEntries[0] && navEntries[0].type === 'reload') ||
+                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+      if (isReload) return true;
+
+      return sessionStorage.getItem('lulu_staff_preloader_seen') !== 'true';
+    } catch {
+      return true;
+    }
+  });
   const [errorMsg, setErrorMsg] = useState('');
 
   const [portalTab, setPortalTab] = useState('dashboard');
@@ -105,23 +119,29 @@ export default function StaffApp() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="staff-loading-screen">
-        <div className="staff-spinner"></div>
-        <p>Loading Lulu Aurelian Staff Console...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="staff-app-root">
+      {/* Unified Luxury Preloader for staff.luluaurelian.co.ke */}
+      {showPreloader && (
+        <Preloader onComplete={() => {
+          try {
+            sessionStorage.setItem('lulu_staff_preloader_seen', 'true');
+          } catch {}
+          setShowPreloader(false);
+        }} />
+      )}
+
       <Helmet>
         <title>Staff Console | Lulu Aurelian Estate</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {authUser ? (
+      {loading && !showPreloader ? (
+        <div className="staff-loading-screen">
+          <div className="staff-spinner"></div>
+          <p>Connecting to secure workspace...</p>
+        </div>
+      ) : authUser ? (
         <PortalDashboard 
           user={authUser}
           setUser={setAuthUser}
@@ -134,7 +154,7 @@ export default function StaffApp() {
           setPage={handleNavigatePage}
         />
       ) : (
-        <div className="auth-page-wrapper staff-app-auth-wrapper">
+        <div className="staff-app-auth-wrapper">
           <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {errorMsg && (
               <div className="staff-error-banner">
@@ -142,6 +162,9 @@ export default function StaffApp() {
               </div>
             )}
             <AuthPage onLoginSuccess={handleLoginSuccess} isStaffPortal={true} />
+            <div className="staff-login-footer">
+              <a href="https://www.luluaurelian.co.ke" className="back-to-site">← Return to Lulu Aurelian Main Estate</a>
+            </div>
           </div>
         </div>
       )}

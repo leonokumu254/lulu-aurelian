@@ -117,45 +117,56 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
       return;
     }
 
-    const newBlock = {
-      id: 'block_' + Date.now(),
-      guest_name: `BLOCKED: ${blockReason || 'Manager Hold'}`,
-      guest_email: 'blocked@luluaurelian.co.ke',
-      guest_phone: 'N/A',
-      unit_id: unit.id,
-      check_in: blockStartDate,
-      check_out: blockEndDate,
-      adults: 1,
-      children: 0,
-      status: 'BLOCKED',
-      created_at: new Date().toISOString()
-    };
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/block`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(newBlock)
+        body: JSON.stringify({
+          unit_id: unit.id,
+          check_in: blockStartDate,
+          check_out: blockEndDate,
+          guest_name: blockReason || 'Indirect Booking'
+        })
       });
-      if (response.ok) {
-        const data = await response.json();
-        setBookings(prev => [data.booking || newBlock, ...prev]);
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setBookings(prev => [data.booking, ...prev]);
+        triggerToast(`Dates successfully crossed out & blocked for ${unit.name}!`);
+        setBlockStartDate('');
+        setBlockEndDate('');
+        return;
       } else {
-        setBookings(prev => [newBlock, ...prev]);
+        triggerToast(data.error || 'Failed to block dates on server.');
+        return;
       }
     } catch (err) {
-      setBookings(prev => [newBlock, ...prev]);
+      console.error('Manual block error:', err);
+      triggerToast('Network error while saving block. Please try again.');
     }
-
-    triggerToast(`Dates crossed out & blocked for ${unit.name}!`);
-    setBlockStartDate('');
-    setBlockEndDate('');
   };
 
-  const handleUnblock = (id) => {
-    setBookings(prev => prev.filter(b => b.id !== id));
-    triggerToast(`Hold removed for ${unit.name}.`);
+  const handleUnblock = async (id) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/block/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setBookings(prev => prev.filter(b => b.id !== id));
+        triggerToast(`Date block removed for ${unit.name}.`);
+        return;
+      } else {
+        triggerToast(data.error || 'Failed to remove date block.');
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to remove block on server:', err);
+      triggerToast('Network error while removing date block.');
+    }
   };
 
   const copyICal = () => {
@@ -187,20 +198,26 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
         body: JSON.stringify({ unitId: unit.id, icalUrl: icalImportUrl })
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         if (data.blocks && data.blocks.length > 0) {
           setBookings(prev => [...data.blocks, ...prev]);
           triggerToast(`Synced ${data.blocks.length} period(s) and crossed out dates for ${unit.name}!`);
-          setIcalImportUrl('');
-          return;
+        } else {
+          triggerToast(data.message || `iCal feed synced: all dates for ${unit.name} are already up to date.`);
         }
+        setIcalImportUrl('');
+        return;
+      } else {
+        triggerToast(data.error || 'Failed to download or parse iCal feed.');
+        return;
       }
     } catch (err) {
       console.warn('Backend sync failed, attempting client-side sync:', err);
     }
 
-    // 2. Client-side Fetch & Parse Fallback
+    // 2. Client-side Fetch & Parse Fallback (if backend unreachable)
     try {
       const fetchRes = await fetch(icalImportUrl);
       if (fetchRes.ok) {
@@ -230,28 +247,7 @@ function UnitCalendarCard({ unit, bookings, setBookings, triggerToast }) {
       console.warn('Client fetch failed:', e);
     }
 
-    // 3. Robust Fallback: If URL provided, create hold block so dates are crossed out immediately
-    const today = new Date();
-    const startStr = today.toISOString().split('T')[0];
-    const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 4);
-    const endStr = nextWeek.toISOString().split('T')[0];
-
-    const fallbackBlock = {
-      id: 'ical_sync_' + Date.now(),
-      guest_name: `BLOCKED: iCal Feed Sync (External Airbnb/Vrbo)`,
-      guest_email: 'ical-sync@luluaurelian.co.ke',
-      guest_phone: 'N/A',
-      unit_id: unit.id,
-      check_in: startStr,
-      check_out: endStr,
-      adults: 1,
-      children: 0,
-      status: 'BLOCKED',
-      created_at: new Date().toISOString()
-    };
-    setBookings(prev => [fallbackBlock, ...prev]);
-    triggerToast(`iCal synced! Dates ${startStr} to ${endStr} crossed out for ${unit.name}.`);
-    setIcalImportUrl('');
+    triggerToast('Unable to fetch iCal feed. Please check the URL and network connection.');
   };
 
   const monthInfo = getMonthInfo(monthOffset);
