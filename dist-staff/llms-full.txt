@@ -1,0 +1,140 @@
+# Lulu Aurelian Estate — Comprehensive LLM Knowledge Base
+
+## Overview & Identity
+Lulu Aurelian Estate is a premier collection of luxury serviced apartments and boutique vacation rentals situated at Skyline Lifestyle Apartments in Nyeri Town, Kenya. The property provides modern, fully furnished residences combining architectural elegance, tranquility, and panoramic views of Mount Kenya with hotel-grade cleanliness and residential privacy.
+
+- **Brand Motto**: "Refined Elegance, Uncompromised Comfort"
+- **Primary Domain**: https://www.luluaurelian.co.ke
+- **Geographic Location**: Skyline Lifestyle Apartments, Nyeri Town, Nyeri County, Kenya (Mount Kenya / Central Highlands region)
+- **Local Attractions**: Easy proximity to Mount Kenya National Park, Aberdare National Park, Chaka Ranch, Baden-Powell Historical Gardens, and Zaina Falls.
+- **Target Audience**: Corporate executives, remote workers, diaspora returnees, medical personnel, tourists visiting Mt. Kenya and Aberdares, couples, and traveling families.
+
+---
+
+## Detailed Suite Profiles
+
+### 1. Skyview Hideaway
+- **Slug / Route**: `/skyview`
+- **Internal Unit ID**: `skyview`
+- **Floor**: Top Penthouse Level (6th Floor), Skyline Lifestyle Apartments, Nyeri
+- **View**: Elevated 270-degree panoramic view of Mount Kenya and highland landscapes.
+- **Size & Layout**: 140 m², 2 King Bedrooms, 1 Bathroom, spacious living room, dining area, and private balcony.
+- **Capacity**: Standard capacity up to 4 guests (can accommodate 5 adults with peak surcharge; 1-bedroom executive option accommodates up to 3 guests).
+- **Bedrooms & Bedding**:
+  - Primary Bedroom: King-size bed with scenic panoramic mountain view windows, premium linens.
+  - Second Bedroom: Queen-size bed with serene lighting and luxury linens.
+- **Key Features & Amenities**:
+  - Private balcony with comfortable outdoor lounge seating
+  - Dedicated workspace with ergonomic desk setup for remote work
+  - High-speed 40 Mbps Wi-Fi
+  - Fully equipped modern kitchen (refrigerator, microwave, cookware, dinnerware)
+  - Keyless contactless self-check-in via exterior lockbox
+  - Free secure covered parking on premises
+- **Rates (Direct Booking)**:
+  - Entire Suite: KES 5,500 / night (~USD 42)
+  - 1-Bedroom Executive Rate: KES 4,000 / night (~USD 31) (ideal for solo executives or couples)
+- **Direct OTA Links**:
+  - Airbnb: https://www.airbnb.com/h/pearlapartmentsnyeri
+  - Booking.com: https://www.booking.com/Share-F7S7E5V
+
+### 2. Cocoa Retreat
+- **Slug / Route**: `/cocoa`
+- **Internal Unit ID**: `cocoa`
+- **Floor**: 4th Floor (Suite 4B), Skyline Lifestyle Apartments, Nyeri
+- **Aesthetic**: Rich earthy cocoa and warm brown tones, cozy ambient lighting, and artisanal modern decor.
+- **Size & Layout**: 85 m², 2 Queen Bedrooms, 1 Bathroom, comfortable lounge, dining area, and kitchen.
+- **Capacity**: Standard capacity up to 4 guests (up to 5 adults with surcharge; 1-bedroom option for up to 3 guests).
+- **Bedrooms & Bedding**:
+  - 2 plush queen-size beds fitted with crisp luxury linens and quality pillows.
+- **Key Features & Amenities**:
+  - High-speed 40 Mbps Wi-Fi
+  - Fully equipped kitchen with breakfast bar and modern appliances
+  - Quiet residential neighborhood setting with pine forest views
+  - Spotless modern bathroom with hot shower
+  - Secure contactless self-check-in via lockbox
+  - Free secure parking
+- **Rates (Direct Booking)**:
+  - Entire Suite: KES 5,000 / night (~USD 38)
+  - 1-Bedroom Rate: KES 4,000 / night (~USD 31)
+- **Direct OTA Links**:
+  - Airbnb: https://www.airbnb.com/h/cocoapearlapartment
+  - Booking.com: https://www.booking.com/Share-KWW4dvn
+
+### 3. Neema Haven
+- **Slug / Route**: `/neema`
+- **Internal Unit ID**: `neema`
+- **Floor**: 2nd Floor (Suite 2A), Skyline Lifestyle Apartments, Nyeri
+- **Aesthetic**: Serene, airy minimalism designed for tranquility and sunset lovers, flooded with natural sunlight.
+- **Size & Layout**: 2 Bedrooms, 1 Bathroom, comfortable lounge, kitchen, and dining area.
+- **Capacity**: Standard capacity up to 4 guests (up to 5 adults with surcharge; 1-bedroom option for up to 3 guests).
+- **Key Features & Amenities**:
+  - High-speed 40 Mbps Wi-Fi
+  - Fully equipped modern kitchen for self-catering
+  - Premium bedding, quality linens, and restful acoustic insulation
+  - Sparkling clean bathroom with pressurized hot water
+  - Free secure parking and self-check-in lockbox
+- **Rates (Direct Booking)**:
+  - Entire Suite: KES 5,000 / night (~USD 38)
+  - 1-Bedroom Rate: KES 4,000 / night (~USD 31)
+
+---
+
+## Policies, Check-in & Stay Guidelines
+
+- **Check-in Time**: From 14:00 (2:00 PM) East Africa Time (EAT). Keyless contactless self-check-in via private lockbox.
+- **Check-out Time**: By 11:00 AM East Africa Time (EAT).
+- **Self-Check-In Procedure**: Confirmed guests receive a private lockbox PIN code, apartment number, and clear floor navigation directions automatically upon payment.
+- **Length-of-Stay Discounts**:
+  - 3+ nights: 5% discount automatically applied
+  - 7+ nights (Weekly): 10% discount automatically applied
+  - 30+ nights (Monthly): 20% discount automatically applied
+- **Peak Guest Surcharge**: An additional KES 1,500 / night surcharge applies when booking an entire apartment at maximum adult capacity (5 adults).
+- **Smoking Policy**: Strictly non-smoking inside all suites; designated outdoor balcony smoking areas are provided.
+- **Quiet Hours**: 10:00 PM to 7:00 AM to preserve tranquility for all residents.
+- **Children**: Welcome; cribs/high chairs accommodated upon advance request.
+
+---
+
+## Direct Booking Advantages vs OTAs (Airbnb / Booking.com)
+
+1. **Guaranteed Lowest Rates**: Direct web bookings eliminate third-party guest service fees (typically 14–18% on Airbnb and Booking.com).
+2. **Instant 60-Minute Calendar Hold**: When starting checkout, selected dates are immediately placed on hold for 60 minutes while completing payment.
+3. **Automated M-Pesa Buy Goods Integration**: Guests can pay seamlessly via Safaricom M-Pesa Till Number 174379 with automated STK push or manual Till payment.
+4. **Flexible Direct Concierge Support**: Instant host communication via WhatsApp (+254 112 299 384) for local guidance, date adjustments, or special requests.
+5. **Real-time Two-Way Synchronization**: iCal calendar feeds ensure dates booked directly or on external OTAs never result in double bookings.
+
+---
+
+## Payment Infrastructure & Checkout Details
+
+- **Official M-Pesa Till**:
+  - Method: M-Pesa Buy Goods (Till Number)
+  - Till Number: **174379**
+  - Processing: Safaricom STK push initiated to customer phone with automated PayHero status polling and verification.
+- **Alternative Payment Arrangements**:
+  - Guests wishing to settle via Direct Bank Transfer (EFT / RTGS), Card, or Corporate Invoicing can contact host support directly on WhatsApp (+254 112 299 384) while the 60-minute reservation hold is active.
+- **Reservation Hold Duration**: 60 minutes from initial booking submission.
+
+---
+
+## Technical Endpoints & Integration
+
+- **Blocked Dates Availability**: `GET /api/bookings/blocked-dates/:unitId`
+- **Create Direct Booking Request**: `POST /api/bookings/request`
+- **PayHero Payment Query**: `POST /api/payments/payhero/query`
+- **PayHero Webhook Callback**: `POST /api/payments/payhero/callback`
+- **M-Pesa Webhook Callback**: `POST /api/payments/mpesa/callback`
+- **iCal Calendar Export Feed**: `GET /api/ical/export/:unitId` (RFC 5545 format synchronized with Airbnb and Booking.com calendars).
+- **Live Dynamic Pricing**: `GET /api/pricing`
+
+---
+
+## Contact & Location Summary
+
+- **Location**: Skyline Lifestyle Apartments, Nyeri Town, Nyeri County, Kenya
+- **Coordinates**: Latitude: -0.4331103, Longitude: 36.9686580
+- **Phone / WhatsApp**: +254 112 299 384
+- **WhatsApp Concierge**: https://wa.me/254112299384
+- **Email**: pearlisprime@gmail.com / info@luluaurelian.co.ke
+- **Official Website**: https://www.luluaurelian.co.ke
+- **Quick LLM Summary**: https://www.luluaurelian.co.ke/llms.txt

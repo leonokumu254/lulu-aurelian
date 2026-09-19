@@ -253,3 +253,129 @@
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   font-family: var(--font-sans);
 }
+
+/* ==========================================================================
+   Staff Portal Luxury Glassmorphism Theme (auth-card-staff)
+   Light glass aesthetic: frosted glass card, backdrop-blur, luminous edge
+   ========================================================================== */
+.auth-card-staff {
+  background-color: rgba(255, 255, 255, 0.72) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 24px 60px rgba(29, 25, 18, 0.07),
+              0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+              0 0 0 1px rgba(187, 133, 37, 0.16) !important;
+  border-radius: 24px !important;
+}
+
+.auth-card-staff .auth-brand-logo {
+  color: #1D1912 !important;
+}
+
+.auth-card-staff .auth-view h2 {
+  color: #1D1912 !important;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.auth-card-staff .auth-view p {
+  color: rgba(29, 25, 18, 0.68) !important;
+}
+
+.auth-card-staff .form-group label,
+.auth-card-staff #label {
+  color: #1D1912 !important;
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+
+.auth-card-staff .form-group input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #1D1912 !important;
+  border: 1px solid rgba(29, 25, 18, 0.14) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 1px 3px rgba(29, 25, 18, 0.03) inset !important;
+}
+
+.auth-card-staff .form-group input:focus {
+  background: #FFFFFF !important;
+  border-color: var(--color-gold-deep) !important;
+  box-shadow: 0 0 0 3px rgba(158, 108, 21, 0.14), 0 1px 3px rgba(29, 25, 18, 0.03) inset !important;
+}
+
+.auth-card-staff .form-group input::placeholder {
+  color: rgba(29, 25, 18, 0.42) !important;
+}
+
+.auth-card-staff .remember-me,
+.auth-card-staff .remember-me span {
+  color: rgba(29, 25, 18, 0.72) !important;
+}
+
+.auth-card-staff .forgot-pw {
+  color: var(--color-gold-deep) !important;
+  text-shadow: none !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  text-decoration: none !important;
+}
+
+.auth-card-staff .forgot-pw:hover {
+  text-decoration: underline !important;
+}
+
+.auth-card-staff .btn-auth-primary {
+  background-color: var(--color-gold-deep) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgba(158, 108, 21, 0.28) !important;
+}
+
+.auth-card-staff .btn-auth-primary:hover:not(:disabled) {
+  background-color: #B8892A !important;
+  transform: translateY(-1px);
+}
+
+.auth-card-staff .auth-divider {
+  color: rgba(29, 25, 18, 0.45) !important;
+}
+
+.auth-card-staff .auth-divider::before,
+.auth-card-staff .auth-divider::after {
+  border-bottom: 1px solid rgba(29, 25, 18, 0.12) !important;
+}
+
+.auth-card-staff .btn-auth-google {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(29, 25, 18, 0.14) !important;
+  color: #1D1912 !important;
+  box-shadow: 0 2px 8px rgba(29, 25, 18, 0.04) !important;
+}
+
+.auth-card-staff .btn-auth-google:hover {
+  background-color: #FFFFFF !important;
+  border-color: rgba(29, 25, 18, 0.25) !important;
+}
+
+.auth-card-staff .auth-switch {
+  color: rgba(29, 25, 18, 0.72) !important;
+  text-shadow: none !important;
+}
+
+.auth-card-staff .auth-switch button {
+  color: var(--color-gold-deep) !important;
+  text-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+.auth-card-staff .auth-error {
+  background: rgba(254, 242, 242, 0.85) !important;
+  color: #DC2626 !important;
+  border: 1px solid #FCA5A5 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+

@@ -11,7 +11,9 @@ import {
   cancelBooking,
   getBlockedDates,
   approveBooking,
-  declineBooking
+  declineBooking,
+  createManualBlock,
+  deleteManualBlock
 } from '../controllers/bookingController.js';
 import { authMiddleware, requireRole, optionalAuth } from '../middleware/auth.js';
 
@@ -55,5 +57,11 @@ router.put('/:id/decline', authMiddleware, requireRole('MANAGER', 'AGENT'), decl
 // Unit settings
 router.get('/unit-settings', authMiddleware, requireRole('MANAGER', 'AGENT'), getUnitSettings);
 router.put('/unit-settings/:unitId', authMiddleware, requireRole('MANAGER', 'AGENT'), updateUnitSettings);
+
+// Manager Manual Date Blocking (Indirect bookings, walk-ins, phone reservations, maintenance holds)
+router.post('/block', authMiddleware, requireRole('MANAGER', 'AGENT'), createManualBlock);
+router.post('/', authMiddleware, requireRole('MANAGER', 'AGENT'), createManualBlock);
+router.delete('/block/:id', authMiddleware, requireRole('MANAGER', 'AGENT'), deleteManualBlock);
+router.delete('/:id', authMiddleware, requireRole('MANAGER', 'AGENT'), deleteManualBlock);
 
 export default router;

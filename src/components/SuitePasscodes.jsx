@@ -201,10 +201,10 @@ export default function SuitePasscodes() {
             onChange={(e) => setSelectedUnit(e.target.value)}
             aria-label="Select suite unit to access code"
           >
-            <option value="all">🏢 All Suites (Skyview, Cocoa, Neema)</option>
-            <option value="skyview">✨ Skyview Hideaway — Key & Access Code</option>
-            <option value="cocoa">🌿 Cocoa Retreat — Key & Access Code</option>
-            <option value="neema">🕊️ Neema — Key & Access Code</option>
+            <option value="all">All Suites (Skyview, Cocoa, Neema)</option>
+            <option value="skyview">Skyview Hideaway — Key & Access Code</option>
+            <option value="cocoa">Cocoa Retreat — Key & Access Code</option>
+            <option value="neema">Neema — Key & Access Code</option>
           </select>
         </div>
       </div>
@@ -286,7 +286,7 @@ export default function SuitePasscodes() {
                     <div className="pin-input-row">
                       <input
                         type="text"
-                        className="pin-input-field"
+                        className="pin-code-input"
                         placeholder="----"
                         value={currentVal}
                         onChange={(e) => handleInputChange(unitId, e.target.value)}
@@ -298,42 +298,39 @@ export default function SuitePasscodes() {
                         onClick={() => handleGenerateRecommend(unitId)}
                         title="Recommend a random 4-digit PIN"
                       >
-                        <RefreshCw size={16} />
+                        <RefreshCw size={14} />
                         <span>Recommend</span>
                       </button>
                     </div>
                   </div>
 
-                  <div className="pin-input-group" style={{ marginTop: '1.2rem' }}>
+                  <div className="pin-input-group">
                     <label className="pin-input-label">House / Room Number</label>
                     <input
                       type="text"
-                      className="pin-input-field"
-                      style={{ width: '100%', boxSizing: 'border-box' }}
+                      className="suite-text-input"
                       placeholder="e.g. Penthouse 601"
                       value={houseNumbers[unitId] || ''}
                       onChange={(e) => setHouseNumbers(prev => ({ ...prev, [unitId]: e.target.value }))}
                     />
                   </div>
 
-                  <div className="pin-input-group" style={{ marginTop: '1.2rem' }}>
+                  <div className="pin-input-group">
                     <label className="pin-input-label">Wi-Fi Name (SSID)</label>
                     <input
                       type="text"
-                      className="pin-input-field"
-                      style={{ width: '100%', boxSizing: 'border-box' }}
+                      className="suite-text-input"
                       placeholder="e.g. LuluAurelian_Skyview"
                       value={wifiSSIDs[unitId] || ''}
                       onChange={(e) => setWifiSSIDs(prev => ({ ...prev, [unitId]: e.target.value }))}
                     />
                   </div>
 
-                  <div className="pin-input-group" style={{ marginTop: '1.2rem' }}>
+                  <div className="pin-input-group">
                     <label className="pin-input-label">Wi-Fi Password</label>
                     <input
                       type="text"
-                      className="pin-input-field"
-                      style={{ width: '100%', boxSizing: 'border-box' }}
+                      className="suite-text-input"
                       placeholder="Wi-Fi Password"
                       value={wifiPasswords[unitId] || ''}
                       onChange={(e) => setWifiPasswords(prev => ({ ...prev, [unitId]: e.target.value }))}

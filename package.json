@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "dev:staff": "vite --config vite.staff.config.js",
+    "build": "vite build && vite build --config vite.staff.config.js",
+    "build:main": "vite build",
     "build:staff": "vite build --config vite.staff.config.js",
+    "build:all": "vite build && vite build --config vite.staff.config.js",
+    "dev:staff": "vite --config vite.staff.config.js",
     "preview:staff": "vite preview --config vite.staff.config.js",
     "lint": "eslint .",
     "preview": "vite preview"

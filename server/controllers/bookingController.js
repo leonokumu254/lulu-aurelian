@@ -641,6 +641,71 @@ export const updateUnitSettings = async (req, res, next) => {
   }
 };
 
-// NOTE: The old approveBooking / declineBooking / verifyPaymentWebhook endpoints
-// have been removed. The new direct-booking flow is:
-// PENDING → AUTHORIZING (on STK initiation) → PAID (on Stanbic webhook) → CANCELLED / EXPIRED
+// ─── MANUAL DATE BLOCKING (Manager Personal Date Crossing / Indirect Bookings) ───
+
+export const createManualBlock = async (req, res, next) => {
+  try {
+    const { unit_id, check_in, check_out, guest_name, reason, notes } = req.body;
+
+    if (!unit_id || !check_in || !check_out) {
+      return res.status(400).json({ success: false, error: 'Suite ID, check-in, and check-out dates are required.' });
+    }
+
+    const checkInDate = new Date(check_in);
+    const checkOutDate = new Date(check_out);
+
+    if (checkOutDate <= checkInDate) {
+      return res.status(400).json({ success: false, error: 'Check-out date must be strictly after check-in date.' });
+    }
+
+    const title = guest_name || reason || 'Manager Hold';
+    const blockId = 'block_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+
+    const newBlock = {
+      id: blockId,
+      guest_name: `BLOCKED: ${title}`,
+      guest_email: 'blocked@luluaurelian.co.ke',
+      guest_phone: 'N/A',
+      unit_id: unit_id.toLowerCase(),
+      booking_type: 'entire',
+      check_in,
+      check_out,
+      adults: 1,
+      children: 0,
+      has_peak_surcharge: 0,
+      status: 'BLOCKED',
+      secure_token: 'sec_block_' + crypto.randomUUID(),
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+
+    await db.bookings.create(newBlock);
+
+    return res.status(201).json({
+      success: true,
+      message: `Dates successfully blocked for ${unit_id.toUpperCase()}!`,
+      booking: newBlock
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteManualBlock = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await db.bookings.findById(id);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking or block record not found.' });
+    }
+
+    await db.bookings.delete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Date block removed successfully.'
+    });
+  } catch (error) {
+    next(error);
+  }
+};

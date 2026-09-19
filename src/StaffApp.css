@@ -62,14 +62,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: #F3F3E6;
+  background-image: 
+    radial-gradient(circle at 18% 22%, rgba(222, 185, 95, 0.25) 0%, transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(187, 133, 37, 0.18) 0%, transparent 46%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 0%, transparent 60%);
+  padding: 2.5rem 1.25rem;
+  box-sizing: border-box;
+  position: relative;
 }
 
 /* Error Banner */
 .staff-error-banner {
-  max-width: 410px;
+  max-width: 440px;
   width: 100%;
-  background-color: rgba(220, 38, 38, 0.15);
-  border: 1px solid rgba(220, 38, 38, 0.4);
+  background-color: #FEF2F2;
+  border: 1px solid #FCA5A5;
   border-radius: 12px;
   padding: 12px 18px;
   margin-bottom: 16px;
@@ -78,19 +86,20 @@
 }
 
 .staff-error-banner p {
-  color: #fca5a5;
+  color: #DC2626;
   margin: 0;
   font-size: 0.88rem;
   line-height: 1.4;
+  font-weight: 500;
 }
 
 /* Footer styling */
 .staff-login-footer {
-  margin-top: 32px;
+  margin-top: 24px;
   text-align: center;
   font-size: 0.85rem;
-  color: rgba(232, 213, 181, 0.75);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  color: rgba(29, 25, 18, 0.65);
+  text-shadow: none;
 }
 
 .staff-login-footer p {
@@ -98,16 +107,19 @@
 }
 
 .back-to-site {
-  color: #D4AF37;
+  color: var(--color-gold-deep);
   text-decoration: none;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .back-to-site:hover {
-  color: #FFFFFF;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+  color: var(--color-dark);
+  text-shadow: none;
   text-decoration: underline;
 }
 

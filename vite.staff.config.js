@@ -3,6 +3,23 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import autoprefixer from 'autoprefixer'
 import { resolve } from 'path'
+import fs from 'fs'
+
+// Plugin to ensure dist-staff/index.html is always kept in synch with dist-staff/staff.html
+function syncStaffIndexPlugin() {
+  return {
+    name: 'sync-staff-index-plugin',
+    closeBundle() {
+      const outDir = resolve(__dirname, 'dist-staff');
+      const staffHtml = resolve(outDir, 'staff.html');
+      const indexHtml = resolve(outDir, 'index.html');
+      if (fs.existsSync(staffHtml)) {
+        fs.copyFileSync(staffHtml, indexHtml);
+        console.log('\n[SYNC]: Successfully synchronized dist-staff/staff.html -> dist-staff/index.html');
+      }
+    }
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,6 +34,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    syncStaffIndexPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: null,

@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
 
-    <!-- Preload Hero Image for faster Largest Contentful Paint (LCP) -->
-    <link rel="preload" as="image" href="/assets/skyview/skyview_13.jpg" />
+    <!-- Preload Hero LCP image with HIGH fetch priority (Baseline since 2024) -->
+    <link rel="preload" as="image" href="/assets/skyview/skyview_13.jpg" fetchpriority="high" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/lulu_aurelian_favicon.svg" />
@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="theme-color" content="#F3F3E6" />
     <meta name="google-site-verification" content="Dn2yUm4PzyscM8oEwPJ74D9RQmDlB83s1Kqm3z3rS3U" />
 
     <!-- Primary meta -->
@@ -60,63 +60,379 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "LodgingBusiness",
-      "name": "Lulu Aurelian Estate",
-      "image": "https://www.luluaurelian.co.ke/og-image.jpg",
-      "description": "Premium Airbnbs & Luxury Escapes in Nyeri, Kenya. Seamless check-ins, breathtaking views, and world-class hospitality. The best Airbnb to book in Nyeri Town.",
-      "url": "https://www.luluaurelian.co.ke",
-      "telephone": "+254112299384",
-      "priceRange": "$$$",
-      "checkinTime": "14:00",
-      "checkoutTime": "10:00",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Nyeri",
-        "addressRegion": "Nyeri County",
-        "addressCountry": "KE"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -0.4331103430878262,
-        "longitude": 36.96865796751362
-      },
-      "sameAs": [
-        "https://www.instagram.com/luluaurelian",
-        "https://www.facebook.com/share/1EY74Cxf23/",
-        "https://www.tiktok.com/@luluaurelian",
-        "https://www.airbnb.com/h/pearlapartmentsnyeri",
-        "https://www.booking.com/Share-F7S7E5V"
+      "@graph": [
+
+        {
+          "@type": "LodgingBusiness",
+          "@id": "https://www.luluaurelian.co.ke/#lodging",
+          "name": "Lulu Aurelian Estate",
+          "alternateName": ["Lulu Aurelian", "Pearl Apartments Nyeri", "Lulu Aurelian Apartments"],
+          "description": "Premium luxury Airbnbs and serviced vacation apartments in Nyeri, Kenya. Located at Skyline Lifestyle Apartments in Nyeri Town, offering breathtaking Mt. Kenya views, seamless self-check-in, high-speed 40 Mbps Wi-Fi, fully equipped kitchens, and secure parking. The best Airbnb to book in Nyeri Town.",
+          "url": "https://www.luluaurelian.co.ke",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.luluaurelian.co.ke/lulu_aurelian_logo.svg",
+            "width": 200,
+            "height": 60
+          },
+          "image": [
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/og-image.jpg",
+              "caption": "Lulu Aurelian Estate — Luxury Airbnb suites in Nyeri, Kenya"
+            },
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg",
+              "caption": "Skyview Hideaway living room with panoramic windows in Nyeri, Kenya"
+            },
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/cocoa/cocoa_1.jpg",
+              "caption": "Cocoa Retreat warm luxury living area in Nyeri, Kenya"
+            },
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/Neema/neema_1.jpeg",
+              "caption": "Neema Haven tranquil living room in Nyeri, Kenya"
+            }
+          ],
+          "telephone": "+254112299384",
+          "email": "pearlisprime@gmail.com",
+          "priceRange": "KES 4,000–5,500 per night",
+          "currenciesAccepted": "KES",
+          "paymentAccepted": "M-Pesa, Cash",
+          "checkinTime": "14:00",
+          "checkoutTime": "10:00",
+          "numberOfRooms": 3,
+          "availableLanguage": [
+            { "@type": "Language", "name": "English" },
+            { "@type": "Language", "name": "Swahili" }
+          ],
+          "amenityFeature": [
+            { "@type": "LocationFeatureSpecification", "name": "Free Wi-Fi (40 Mbps)", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Free Parking", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Fully Equipped Kitchen", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Self Check-In (Keyless)", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Premium Linens", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Mt. Kenya View", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Air Conditioning", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Smart TV", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Hot Water", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Dedicated Workspace", "value": true }
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Skyline Lifestyle Apartments, Nyeri Town",
+            "addressLocality": "Nyeri",
+            "addressRegion": "Nyeri County",
+            "postalCode": "10100",
+            "addressCountry": "KE"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -0.4331103430878262,
+            "longitude": 36.96865796751362
+          },
+          "hasMap": "https://maps.app.goo.gl/Nyeri",
+          "starRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+          },
+          "containsPlace": [
+            { "@id": "https://www.luluaurelian.co.ke/suites/skyview#accommodation" },
+            { "@id": "https://www.luluaurelian.co.ke/suites/cocoa#accommodation" },
+            { "@id": "https://www.luluaurelian.co.ke/suites/neema#accommodation" }
+          ],
+          "sameAs": [
+            "https://www.instagram.com/luluaurelian",
+            "https://www.facebook.com/share/1EY74Cxf23/",
+            "https://www.tiktok.com/@luluaurelian",
+            "https://www.airbnb.com/h/pearlapartmentsnyeri",
+            "https://www.airbnb.com/h/cocoapearlapartment",
+            "https://www.booking.com/Share-F7S7E5V",
+            "https://www.booking.com/Share-KWW4dvn"
+          ]
+        },
+
+        {
+          "@type": "Accommodation",
+          "@id": "https://www.luluaurelian.co.ke/suites/skyview#accommodation",
+          "name": "Skyview Hideaway",
+          "description": "Located on the top floor of Skyline Lifestyle Apartments, this elegant 2-bedroom luxury apartment offers a quiet, private retreat with a balcony and stunning panoramic Mt. Kenya views. Includes a dedicated workspace, 40 Mbps Wi-Fi, fully equipped modern kitchen, secure keyless self-check-in, and free covered parking.",
+          "url": "https://www.luluaurelian.co.ke/#/suites/skyview",
+          "image": [
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg",
+              "caption": "Skyview Hideaway living room with panoramic Mt. Kenya views in Nyeri"
+            },
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/skyview/skyview_13.jpg",
+              "caption": "Skyview Hideaway primary bedroom with king-size bed and scenic views"
+            }
+          ],
+          "numberOfRooms": 2,
+          "floorSize": { "@type": "QuantitativeValue", "value": 2, "unitText": "bedrooms" },
+          "occupancy": {
+            "@type": "QuantitativeValue",
+            "minValue": 1,
+            "maxValue": 5,
+            "unitText": "guests"
+          },
+          "bed": [
+            { "@type": "BedDetails", "typeOfBed": "King-size bed", "numberOfBeds": 2 }
+          ],
+          "amenityFeature": [
+            { "@type": "LocationFeatureSpecification", "name": "Mt. Kenya Panoramic View", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Private Balcony", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "40 Mbps Wi-Fi", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Fully Equipped Kitchen", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Keyless Self Check-In", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Dedicated Workspace", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Free Covered Parking", "value": true }
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Entire Apartment — Skyview Hideaway",
+              "description": "Full 2-bedroom luxury suite with Mt. Kenya views, up to 5 guests",
+              "price": "5500",
+              "priceCurrency": "KES",
+              "unitCode": "DAY",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "5500",
+                "priceCurrency": "KES",
+                "unitText": "per night"
+              },
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.luluaurelian.co.ke/#/suites/skyview"
+            },
+            {
+              "@type": "Offer",
+              "name": "1 Bedroom Option — Skyview Hideaway",
+              "description": "Single master bedroom in Skyview Hideaway, up to 3 guests",
+              "price": "4000",
+              "priceCurrency": "KES",
+              "unitCode": "DAY",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "4000",
+                "priceCurrency": "KES",
+                "unitText": "per night"
+              },
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.luluaurelian.co.ke/#/suites/skyview"
+            }
+          ],
+          "containedInPlace": { "@id": "https://www.luluaurelian.co.ke/#lodging" }
+        },
+
+        {
+          "@type": "Accommodation",
+          "@id": "https://www.luluaurelian.co.ke/suites/cocoa#accommodation",
+          "name": "Cocoa Retreat",
+          "description": "Experience warm, sophisticated luxury at Cocoa Retreat. Styled in rich earthy tones, this fully-equipped 2-bedroom sanctuary features premium queen-size beds, luxury linens, a modern kitchen, and 40 Mbps Wi-Fi — the perfect serene escape for families, couples, and executives. Free secure parking included.",
+          "url": "https://www.luluaurelian.co.ke/#/suites/cocoa",
+          "image": [
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/cocoa/cocoa_1.jpg",
+              "caption": "Cocoa Retreat premium living area with warm earthy tones in Nyeri, Kenya"
+            },
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/cocoa/cocoa_13.avif",
+              "caption": "Cocoa Retreat primary bedroom with plush queen-size bed and luxury linens"
+            }
+          ],
+          "numberOfRooms": 2,
+          "floorSize": { "@type": "QuantitativeValue", "value": 2, "unitText": "bedrooms" },
+          "occupancy": {
+            "@type": "QuantitativeValue",
+            "minValue": 1,
+            "maxValue": 5,
+            "unitText": "guests"
+          },
+          "bed": [
+            { "@type": "BedDetails", "typeOfBed": "Queen-size bed", "numberOfBeds": 2 }
+          ],
+          "amenityFeature": [
+            { "@type": "LocationFeatureSpecification", "name": "40 Mbps Wi-Fi", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Fully Equipped Kitchen", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Premium Queen Beds", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Keyless Self Check-In", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Free Secure Parking", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Pine Forest Views", "value": true }
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Entire Apartment — Cocoa Retreat",
+              "description": "Full 2-bedroom luxury suite, up to 5 guests",
+              "price": "5000",
+              "priceCurrency": "KES",
+              "unitCode": "DAY",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "5000",
+                "priceCurrency": "KES",
+                "unitText": "per night"
+              },
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.luluaurelian.co.ke/#/suites/cocoa"
+            },
+            {
+              "@type": "Offer",
+              "name": "1 Bedroom Option — Cocoa Retreat",
+              "description": "Single master bedroom in Cocoa Retreat, up to 3 guests",
+              "price": "4000",
+              "priceCurrency": "KES",
+              "unitCode": "DAY",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "4000",
+                "priceCurrency": "KES",
+                "unitText": "per night"
+              },
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.luluaurelian.co.ke/#/suites/cocoa"
+            }
+          ],
+          "containedInPlace": { "@id": "https://www.luluaurelian.co.ke/#lodging" }
+        },
+
+        {
+          "@type": "Accommodation",
+          "@id": "https://www.luluaurelian.co.ke/suites/neema#accommodation",
+          "name": "Neema Haven",
+          "description": "Experience a peaceful and luxurious retreat at Neema Haven. This fully-equipped 2-bedroom sanctuary at Skyline Lifestyle Apartments in Nyeri offers premium linens, a modern kitchen, 40 Mbps Wi-Fi, and free secure parking — perfect for families, couples, and executives.",
+          "url": "https://www.luluaurelian.co.ke/#/suites/neema",
+          "image": [
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/Neema/neema_1.jpeg",
+              "caption": "Neema Haven tranquil living room with modern seating in Nyeri, Kenya"
+            },
+            {
+              "@type": "ImageObject",
+              "url": "https://www.luluaurelian.co.ke/assets/Neema/neema_kitchen.jpeg",
+              "caption": "Neema Haven fully equipped kitchen with premium appliances"
+            }
+          ],
+          "numberOfRooms": 2,
+          "floorSize": { "@type": "QuantitativeValue", "value": 2, "unitText": "bedrooms" },
+          "occupancy": {
+            "@type": "QuantitativeValue",
+            "minValue": 1,
+            "maxValue": 5,
+            "unitText": "guests"
+          },
+          "bed": [
+            { "@type": "BedDetails", "typeOfBed": "Double bed", "numberOfBeds": 2 }
+          ],
+          "amenityFeature": [
+            { "@type": "LocationFeatureSpecification", "name": "40 Mbps Wi-Fi", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Fully Equipped Kitchen", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Premium Beds & Linens", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Keyless Self Check-In", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Free Secure Parking", "value": true }
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Entire Apartment — Neema Haven",
+              "description": "Full 2-bedroom luxury suite at Neema Haven, up to 5 guests",
+              "price": "5000",
+              "priceCurrency": "KES",
+              "unitCode": "DAY",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "5000",
+                "priceCurrency": "KES",
+                "unitText": "per night"
+              },
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.luluaurelian.co.ke/#/suites/neema"
+            },
+            {
+              "@type": "Offer",
+              "name": "1 Bedroom Option — Neema Haven",
+              "description": "Single master bedroom in Neema Haven, up to 3 guests",
+              "price": "4000",
+              "priceCurrency": "KES",
+              "unitCode": "DAY",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "4000",
+                "priceCurrency": "KES",
+                "unitText": "per night"
+              },
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.luluaurelian.co.ke/#/suites/neema"
+            }
+          ],
+          "containedInPlace": { "@id": "https://www.luluaurelian.co.ke/#lodging" }
+        },
+
+        {
+          "@type": "WebSite",
+          "@id": "https://www.luluaurelian.co.ke/#website",
+          "url": "https://www.luluaurelian.co.ke",
+          "name": "Lulu Aurelian Estate",
+          "description": "Book luxury Airbnbs and furnished apartments directly in Nyeri, Kenya — no agent fees, best-rate guaranteed.",
+          "publisher": { "@id": "https://www.luluaurelian.co.ke/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://www.luluaurelian.co.ke/#/book?unit={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+
+        {
+          "@type": "Organization",
+          "@id": "https://www.luluaurelian.co.ke/#organization",
+          "name": "Lulu Aurelian Estate",
+          "url": "https://www.luluaurelian.co.ke",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.luluaurelian.co.ke/lulu_aurelian_logo.svg"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+254112299384",
+            "email": "pearlisprime@gmail.com",
+            "contactType": "reservations",
+            "areaServed": "KE",
+            "availableLanguage": ["English", "Swahili"],
+            "contactOption": "TollFree"
+          },
+          "sameAs": [
+            "https://www.instagram.com/luluaurelian",
+            "https://www.facebook.com/share/1EY74Cxf23/",
+            "https://www.tiktok.com/@luluaurelian",
+            "https://www.airbnb.com/h/pearlapartmentsnyeri",
+            "https://www.airbnb.com/h/cocoapearlapartment",
+            "https://www.booking.com/Share-F7S7E5V",
+            "https://www.booking.com/Share-KWW4dvn"
+          ]
+        }
+
       ]
     }
-    </script>   
+    </script>
+    <style>
+      html, body { margin: 0; padding: 0; background-color: #F3F3E6; color: #1D1912; }
+    </style>
   </head>
   <body>
-    <div id="root">
-        
-      <div style="font-family: 'Cormorant Garamond', serif; padding: 10vh 20px; text-align: center; background-color: #1D1912; color: #BB8525; min-height: 100vh; box-sizing: border-box;">
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Lulu Aurelian Estate</h1>
-        <h2 style="font-size: 1.2rem; color: #E8D5B5; font-family: sans-serif; font-weight: 300;">Premium Airbnbs & Vacation Rentals in Nyeri, Kenya</h2>
-        <h3 style="font-size: 1.1rem; color: #BB8525; font-family: sans-serif; font-weight: 500; margin-top: 5px;">The best Airbnb to book in Nyeri Town</h3>
-        
-        <p style="max-width: 600px; margin: 20px auto; color: #f9fafb; font-family: sans-serif; line-height: 1.6;">
-          We believe that travel should never mean leaving comfort behind. We provide a premium accommodation experience where guests enjoy the warmth of home alongside the luxury of a boutique stay. Located in the heart of Nyeri Town, we combine exceptional hospitality, pristine hygiene standards, personalized service, and seamless guest experiences to create memorable stays.
-          <br><br>
-          Every suite at Lulu Aurelian is thoughtfully curated to deliver the perfect balance of luxury, functionality, and relaxation. Featuring elegant interiors, premium furnishings, high-speed Wi-Fi, spotless living spaces, and modern amenities, our luxury Airbnb apartments in Nyeri are designed for guests who value comfort, cleanliness, and convenience.
-        </p>
-
-        <div style="margin-top: 40px; font-family: sans-serif; font-size: 0.9rem; color: #BB8525; animation: pulse 1.5s infinite;">
-          Loading your luxury experience...
-        </div>
-      </div>
-      <style>
-        body { margin: 0; padding: 0; background-color: #1D1912; }
-        @keyframes pulse {
-          0% { opacity: 0.6; }
-          50% { opacity: 1; }
-          100% { opacity: 0.6; }
-        }
-      </style>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

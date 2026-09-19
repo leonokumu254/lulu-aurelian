@@ -1,7 +1,24 @@
+import crypto from 'crypto';
 import { db } from '../config/db.js';
 
 function formatICalDate(date) {
   return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function formatCleanDate(d) {
+  if (!d) return '';
+  if (d instanceof Date) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+  const clean = String(d).trim();
+  const match = clean.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    return `${match[1]}-${match[2]}-${match[3]}`;
+  }
+  return clean.split('T')[0];
 }
 
 function parseICalDateString(str) {
@@ -15,8 +32,11 @@ function parseICalDateString(str) {
 }
 
 function parseICalData(icsText) {
+  if (!icsText) return [];
+  // Unfold multi-line folded attributes according to RFC 5545 standard
+  const unfoldedText = icsText.replace(/\r?\n[ \t]/g, '');
   const events = [];
-  const vevents = icsText.split('BEGIN:VEVENT');
+  const vevents = unfoldedText.split('BEGIN:VEVENT');
 
   for (let i = 1; i < vevents.length; i++) {
     const block = vevents[i].split('END:VEVENT')[0];
@@ -78,17 +98,17 @@ export const exportICal = async (req, res, next) => {
     ];
 
     activeBookings.forEach(booking => {
-      const start = new Date(booking.check_in || booking.checkIn);
-      const end = new Date(booking.check_out || booking.checkOut);
+      const cleanStart = formatCleanDate(booking.check_in || booking.checkIn);
+      const cleanEnd = formatCleanDate(booking.check_out || booking.checkOut);
       const created = booking.created_at ? new Date(booking.created_at) : new Date();
 
-      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+      if (cleanStart && cleanEnd) {
         ical.push(
           'BEGIN:VEVENT',
           `UID:${booking.id}@luluaurelian.co.ke`,
           `DTSTAMP:${formatICalDate(created)}`,
-          `DTSTART;VALUE=DATE:${start.toISOString().split('T')[0].replace(/-/g, '')}`,
-          `DTEND;VALUE=DATE:${end.toISOString().split('T')[0].replace(/-/g, '')}`,
+          `DTSTART;VALUE=DATE:${cleanStart.replace(/-/g, '')}`,
+          `DTEND;VALUE=DATE:${cleanEnd.replace(/-/g, '')}`,
           `SUMMARY:Reserved - Lulu Aurelian Estate`,
           'DESCRIPTION:Reserved stay at Lulu Aurelian Estate',
           'STATUS:CONFIRMED',
@@ -137,18 +157,21 @@ export const importICalSync = async (req, res, next) => {
       return res.status(400).json({ error: 'No valid events or dates found in iCal feed.' });
     }
 
-    // Fetch existing bookings to deduplicate
+    // Fetch existing active bookings to deduplicate
     const allBookings = await db.bookings.getAll();
-    const existingUnitBookings = allBookings.filter(b =>
-      (b.unit_id || b.suite || b.unit || '').toLowerCase() === unitId.toLowerCase()
-    );
+    const activeStatuses = ['confirmed', 'paid', 'booked', 'approved', 'blocked', 'pending'];
+    const existingUnitBookings = allBookings.filter(b => {
+      const u = (b.unit_id || b.suite || b.unit || '').toLowerCase();
+      const s = (b.status || '').toLowerCase();
+      return u === unitId.toLowerCase() && activeStatuses.includes(s);
+    });
 
     const createdBlocks = [];
     for (const evt of events) {
       // Check if this date range is already blocked/booked
       const alreadyExists = existingUnitBookings.some(b => {
-        const bIn = String(b.check_in || b.checkIn || '').split('T')[0];
-        const bOut = String(b.check_out || b.checkOut || '').split('T')[0];
+        const bIn = formatCleanDate(b.check_in || b.checkIn);
+        const bOut = formatCleanDate(b.check_out || b.checkOut);
         return bIn === evt.check_in && bOut === evt.check_out;
       });
 
@@ -163,12 +186,16 @@ export const importICalSync = async (req, res, next) => {
         guest_email: 'ical-sync@luluaurelian.co.ke',
         guest_phone: 'N/A',
         unit_id: unitId.toLowerCase(),
+        booking_type: 'entire',
         check_in: evt.check_in,
         check_out: evt.check_out,
         adults: 1,
         children: 0,
+        has_peak_surcharge: 0,
         status: 'BLOCKED',
-        created_at: new Date().toISOString()
+        secure_token: 'sec_ical_' + crypto.randomUUID(),
+        created_at: new Date(),
+        updated_at: new Date()
       };
 
       try {

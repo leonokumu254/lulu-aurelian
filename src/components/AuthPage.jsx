@@ -229,7 +229,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
   };
 
   const cardContent = (
-    <div className="auth-card">
+    <div className={`auth-card ${isStaffPortal ? 'auth-card-staff' : ''}`}>
       <div className="auth-brand">
         <span className="auth-brand-logo" style={{ letterSpacing: '2px', fontSize: '1.4rem' }}>
           Lulu <span id="login-text">Aurelian </span>

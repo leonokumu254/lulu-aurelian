@@ -44,6 +44,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   width: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-dark);
 }
 
 .app-root {

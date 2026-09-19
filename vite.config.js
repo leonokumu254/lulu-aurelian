@@ -31,6 +31,7 @@ export default defineConfig({
       ],
     },
   },
+
   plugins: [
     unitPageRoutes(),
     react(),
@@ -43,7 +44,7 @@ export default defineConfig({
         short_name: 'Lulu Aurelian',
         description: 'Luxury Living & Escapes',
         theme_color: '#BB8525',
-        background_color: '#1D1912',
+        background_color: '#F3F3E6',
         display: 'standalone',
         icons: [
           {
@@ -58,13 +59,68 @@ export default defineConfig({
   ],
 
   build: {
+    // Target modern browsers for smaller output
+    target: 'es2020',
+    // Raise chunk warning threshold (portals are intentionally large)
+    chunkSizeWarningLimit: 600,
+
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main:    resolve(__dirname, 'index.html'),
         skyview: resolve(__dirname, 'skyview.html'),
-        cocoa: resolve(__dirname, 'cocoa.html'),
-        neema: resolve(__dirname, 'neema.html'),
+        cocoa:   resolve(__dirname, 'cocoa.html'),
+        neema:   resolve(__dirname, 'neema.html'),
       },
+
+      output: {
+        // Manual chunk splitting — keeps initial bundle small
+        manualChunks(id) {
+          // React core + router
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'vendor-react';
+          }
+          // Google OAuth
+          if (id.includes('@react-oauth') || id.includes('oauth2')) {
+            return 'vendor-oauth';
+          }
+          // AOS animations (defer load)
+          if (id.includes('node_modules/aos')) {
+            return 'vendor-aos';
+          }
+          // Helmet
+          if (id.includes('react-helmet')) {
+            return 'vendor-helmet';
+          }
+          // Lucide icons
+          if (id.includes('lucide-react')) {
+            return 'vendor-icons';
+          }
+          // All other node_modules into a general vendor chunk
+          if (id.includes('node_modules')) {
+            return 'vendor-misc';
+          }
+          // Staff/Manager portals — lazy loaded, split into their own chunk
+          if (id.includes('ManagerPortal') || id.includes('AgentPortal') || id.includes('SuitePasscodes')) {
+            return 'chunk-portals';
+          }
+          // Guest portal
+          if (id.includes('GuestPortal') || id.includes('PortalDashboard')) {
+            return 'chunk-dashboard';
+          }
+          // Checkout + payment
+          if (id.includes('CheckoutPage') || id.includes('SuccessModal')) {
+            return 'chunk-checkout';
+          }
+          // Booking forms
+          if (id.includes('BookingForm') || id.includes('BookingSummary') || id.includes('CustomCalendar')) {
+            return 'chunk-booking';
+          }
+          // Content Studio + CMS
+          if (id.includes('ContentStudio')) {
+            return 'chunk-cms';
+          }
+        }
+      }
     },
   },
 
@@ -78,3 +134,4 @@ export default defineConfig({
     }
   }
 })
+
