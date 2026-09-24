@@ -6,7 +6,7 @@ class MpesaService {
     this.consumerKey = env.MPESA_CONSUMER_KEY || 'YOUR_APP_CONSUMER_KEY';
     this.consumerSecret = env.MPESA_CONSUMER_SECRET || 'YOUR_APP_CONSUMER_SECRET';
     this.passkey = env.MPESA_PASSKEY || 'YOUR_PASSKEY';
-    this.shortcode = env.MPESA_SHORTCODE || '174379'; // Test shortcode
+    this.shortcode = env.MPESA_SHORTCODE || '4364845'; // Test shortcode
     this.environment = env.NODE_ENV === 'production' ? 'api' : 'sandbox'; // sandbox vs api (live)
     this.baseUrl = `https://${this.environment}.safaricom.co.ke`;
   }

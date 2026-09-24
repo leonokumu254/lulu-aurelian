@@ -76,6 +76,13 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
   const [phoneError, setPhoneError] = useState('');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
+  const [priceTick, setPriceTick] = useState(0);
+
+  useEffect(() => {
+    const handlePricingUpdate = () => setPriceTick(t => t + 1);
+    window.addEventListener('pricingUpdated', handlePricingUpdate);
+    return () => window.removeEventListener('pricingUpdated', handlePricingUpdate);
+  }, []);
 
   useEffect(() => {
     if (formData.suite) {
@@ -219,7 +226,7 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
             <span className="preview-badge">Selected Residence</span>
             <h3 className="preview-name">{currentSuite.name}</h3>
             <span className="preview-price-tag">
-              {currentSuite.price} <span className="preview-price-unit">/ night</span>
+              KES {getSuitePrice(formData.suite, formData.bookingType || 'entire').toLocaleString('en-KE')} <span className="preview-price-unit">/ night</span>
             </span>
           </div>
         </div>
