@@ -293,7 +293,7 @@ export const initiatePayment = async (req, res, next) => {
 
   } catch (error) {
     console.error('[PAYHERO STK PUSH ERROR]:', error.message);
-    return res.status(500).json({ success: false, error: error.message || 'PayHero service communication error.' });
+    return res.status(500).json({ success: false, error: 'Payment failed! Please try again.' });
   }
 };
 
