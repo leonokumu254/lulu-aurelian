@@ -71,7 +71,10 @@ app.use(cors({
       allowedOrigins.includes(origin) ||
       /^https?:\/\/(.+\.)?luluaurelian\.co\.ke$/.test(origin) ||
       /^https?:\/\/(.+\.)?payhero\.co\.ke$/.test(origin) ||
-      /^https?:\/\/lulu-aurelian.*\.vercel\.app$/.test(origin)
+      /^https?:\/\/lulu-aurelian.*\.vercel\.app$/.test(origin) ||
+      /^https?:\/\/(.+\.)?ngrok-free\.app$/.test(origin) ||
+      /^https?:\/\/(.+\.)?ngrok\.app$/.test(origin) ||
+      /^https?:\/\/(.+\.)?ngrok\.io$/.test(origin)
     ) {
       return callback(null, true);
     }

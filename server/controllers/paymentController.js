@@ -27,8 +27,8 @@ export const initiateMpesaPayment = async (req, res, next) => {
       amount = baseRate * nights;
     }
 
-    // Call Daraja API
-    const response = await mpesaService.initiateSTKPush(phone_number, amount, booking.id.substring(0, 8).toUpperCase());
+    // Call PayHero API
+    const response = await payheroService.initiateSTKPush(phone_number, amount, booking.id.substring(0, 8).toUpperCase());
 
     // Save PENDING transaction in DB with CheckoutRequestID as the transaction ref temporarily to link the webhook later
     await db.payments.create({

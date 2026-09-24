@@ -240,7 +240,7 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
                 </div>
                 <div className="sm-option-info">
                   <strong>Buy Goods (Till Number)</strong>
-                  <span>Till No: 174379 • STK Push & Manual</span>
+                  <span>Till No: 4364845 • STK Push & Manual</span>
                 </div>
               </label>
 
@@ -252,14 +252,14 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
                       <strong style={{ fontSize: '0.82rem', color: '#0f172a', letterSpacing: '0.5px' }}>OFFICIAL TILL DETAILS</strong>
                       <span style={{ fontSize: '0.7rem', background: '#10b981', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <div style={{ background: '#ffffff', padding: '0.5rem 0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
                         <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>TILL NUMBER</span>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                          <strong style={{ fontSize: '1rem', color: '#0f172a', letterSpacing: '1px' }}>174379</strong>
+                          <strong style={{ fontSize: '1rem', color: '#0f172a', letterSpacing: '1px' }}>4364845</strong>
                           <button
                             type="button"
-                            onClick={() => handleCopyText('174379', 'till')}
+                            onClick={() => handleCopyText('4364845', 'till')}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#10b981' : '#64748b' }}
                             title="Copy Till Number"
                           >
@@ -267,23 +267,9 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
                           </button>
                         </div>
                       </div>
-                      <div style={{ background: '#ffffff', padding: '0.5rem 0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                        <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>BOOKING REF</span>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                          <strong style={{ fontSize: '0.88rem', color: '#0f172a', wordBreak: 'break-all' }}>{bookingDetails?.bookingId}</strong>
-                          <button
-                            type="button"
-                            onClick={() => handleCopyText(bookingDetails?.bookingId, 'ref')}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'ref' ? '#10b981' : '#64748b' }}
-                            title="Copy Booking Reference"
-                          >
-                            {copiedField === 'ref' ? <CheckCircle size={14} /> : <Copy size={14} />}
-                          </button>
-                        </div>
-                      </div>
                     </div>
                     <p style={{ margin: 0, fontSize: '0.74rem', color: '#475569', lineHeight: '1.4' }}>
-                      Enter your phone below for an automated prompt, or manually open <strong>M-Pesa &gt; Lipa na M-Pesa &gt; Buy Goods and Services</strong> and enter Till No <strong>174379</strong>.
+                      Enter your phone below for an automated prompt, or manually open <strong>M-Pesa &gt; Lipa na M-Pesa &gt; Buy Goods and Services</strong> and enter Till No <strong>4364845</strong>.
                     </p>
                   </div>
 

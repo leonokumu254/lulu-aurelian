@@ -275,7 +275,7 @@ export default function GuestPortal({ user, onBookNew }) {
                             <input type="radio" name="payment" value="mpesa" checked={paymentMethod === 'mpesa'} onChange={() => setPaymentMethod('mpesa')} />
                             <div className="pay-option-content">
                               <strong>Buy Goods (Till Number)</strong>
-                              <span>Till No: 174379 • STK Push & Manual</span>
+                              <span>Till No: 4364845 • STK Push & Manual</span>
                             </div>
                           </label>
                           <label className={`pay-option ${paymentMethod === 'contact_staff' ? 'selected' : ''}`}>
@@ -293,14 +293,14 @@ export default function GuestPortal({ user, onBookNew }) {
                               <span style={{ fontSize: '0.7rem', background: '#10b981', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
                             </div>
                             
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
                               <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                                 <span style={{ display: 'block', fontSize: '0.68rem', color: 'rgba(232, 213, 181, 0.65)', fontWeight: 600 }}>TILL NUMBER</span>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                                  <strong style={{ fontSize: '1.05rem', color: '#E8D5B5', letterSpacing: '1px' }}>174379</strong>
+                                  <strong style={{ fontSize: '1.05rem', color: '#E8D5B5', letterSpacing: '1px' }}>4364845</strong>
                                   <button
                                     type="button"
-                                    onClick={() => handleCopyText('174379', 'till')}
+                                    onClick={() => handleCopyText('4364845', 'till')}
                                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
                                     title="Copy Till Number"
                                   >
@@ -308,24 +308,10 @@ export default function GuestPortal({ user, onBookNew }) {
                                   </button>
                                 </div>
                               </div>
-                              <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                <span style={{ display: 'block', fontSize: '0.68rem', color: 'rgba(232, 213, 181, 0.65)', fontWeight: 600 }}>BOOKING REF</span>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                                  <strong style={{ fontSize: '0.9rem', color: '#E8D5B5', wordBreak: 'break-all' }}>{activeBooking.id}</strong>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleCopyText(activeBooking.id, 'ref')}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'ref' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
-                                    title="Copy Booking Reference"
-                                  >
-                                    {copiedField === 'ref' ? <CheckCircle size={14} /> : <Copy size={14} />}
-                                  </button>
-                                </div>
-                              </div>
                             </div>
 
                             <p style={{ fontSize: '0.78rem', color: 'rgba(232, 213, 181, 0.85)', margin: '0 0 0.75rem', lineHeight: '1.5' }}>
-                              Enter your phone number below for an instant prompt, or pay manually via your M-Pesa menu using Till Number <strong>174379</strong>.
+                              Enter your phone number below for an instant prompt, or pay manually via your M-Pesa menu using Till Number <strong>4364845</strong>.
                             </p>
                             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'rgba(232, 213, 181, 0.9)', marginBottom: '0.4rem' }}>M-Pesa Phone Number</label>
                             <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center' }}>

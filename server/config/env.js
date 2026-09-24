@@ -17,7 +17,7 @@ export const env = {
   MPESA_CONSUMER_KEY:    process.env.MPESA_CONSUMER_KEY    || '',
   MPESA_CONSUMER_SECRET: process.env.MPESA_CONSUMER_SECRET || '',
   MPESA_PASSKEY:         process.env.MPESA_PASSKEY         || '',
-  MPESA_SHORTCODE:       process.env.MPESA_SHORTCODE       || '174379',
+  MPESA_SHORTCODE:       process.env.MPESA_SHORTCODE       || '4364845',
   MPESA_CALLBACK_URL:    process.env.MPESA_CALLBACK_URL    || 'https://www.luluaurelian.co.ke/api/payments/mpesa/callback',
   // Stanbic Kilele API (register at https://kilele.stanbicbank.co.ke)
   STANBIC_CLIENT_KEY:    process.env.STANBIC_CLIENT_KEY    || '',

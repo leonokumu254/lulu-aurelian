@@ -951,7 +951,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                           </div>
                           <div className="method-text">
                             <strong>Buy Goods (Till Number)</strong>
-                            <span>Till No: 174379 • STK Push & Manual</span>
+                            <span>Till No: 4364845 • STK Push & Manual</span>
                           </div>
                         </label>
 
@@ -985,14 +985,14 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                               <span style={{ fontSize: '0.72rem', background: '#1a9e35', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                               <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                                 <span style={{ display: 'block', fontSize: '0.7rem', color: 'rgba(232, 213, 181, 0.7)', fontWeight: 600 }}>TILL NUMBER</span>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                                  <strong style={{ fontSize: '1.15rem', color: '#E8D5B5', letterSpacing: '1px' }}>174379</strong>
+                                  <strong style={{ fontSize: '1.15rem', color: '#E8D5B5', letterSpacing: '1px' }}>4364845</strong>
                                   <button
                                     type="button"
-                                    onClick={() => handleCopyText('174379', 'till')}
+                                    onClick={() => handleCopyText('4364845', 'till')}
                                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
                                     title="Copy Till Number"
                                   >
@@ -1000,25 +1000,10 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                                   </button>
                                 </div>
                               </div>
-
-                              <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                <span style={{ display: 'block', fontSize: '0.7rem', color: 'rgba(232, 213, 181, 0.7)', fontWeight: 600 }}>BOOKING REF</span>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                                  <strong style={{ fontSize: '0.95rem', color: '#E8D5B5', wordBreak: 'break-all' }}>{createdBooking?.bookingId || 'PENDING'}</strong>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleCopyText(createdBooking?.bookingId, 'ref')}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'ref' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
-                                    title="Copy Booking Reference"
-                                  >
-                                    {copiedField === 'ref' ? <CheckCircle size={15} /> : <Copy size={15} />}
-                                  </button>
-                                </div>
-                              </div>
                             </div>
 
                             <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.5' }}>
-                              Enter your Safaricom phone below to receive an automated Buy Goods STK prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>, or pay manually via your M-Pesa menu using Till No <strong>174379</strong>.
+                              Enter your Safaricom phone below to receive an automated Buy Goods STK prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>, or pay manually via your M-Pesa menu using Till No <strong>4364845</strong>.
                             </p>
                           </div>
 
