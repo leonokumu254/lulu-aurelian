@@ -554,7 +554,7 @@ export const getBlockedDates = async (req, res, next) => {
   try {
     const { unitId } = req.params;
     const allBookings = await db.bookings.getAll();
-    const activeStatuses = ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
+    const activeStatuses = ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED'];
 
     const formatCleanDate = (d) => {
       if (!d) return '';
@@ -574,8 +574,8 @@ export const getBlockedDates = async (req, res, next) => {
         checkIn:   formatCleanDate(b.check_in || b.checkIn),
         checkOut:  formatCleanDate(b.check_out || b.checkOut),
         status:    statusUpper,
-        isPending: statusUpper === 'PENDING' || statusUpper === 'AUTHORIZING',
-        isPaid:    statusUpper === 'PAID' || statusUpper === 'CONFIRMED' || statusUpper === 'BLOCKED'
+        isPending: false,
+        isPaid:    true
       };
     });
 
