@@ -264,7 +264,7 @@ export const initiatePayment = async (req, res, next) => {
 
     // Trigger PayHero STK Push
     console.log(`[PAYHERO STK PUSH]: Initiating checkout for booking ${booking.id} | Phone: ${targetPhone} | Amount: ${totalAmount}`);
-    const stkResponse = await payheroService.initiateSTKPush(targetPhone, totalAmount, booking.id.substring(0, 8).toUpperCase());
+    const stkResponse = await payheroService.initiateSTKPush(targetPhone, totalAmount, booking.id.substring(0, 8).toUpperCase(), booking.guest_name || '');
 
     if (!stkResponse || !stkResponse.success) {
       return res.status(500).json({ success: false, error: 'Failed to initiate PayHero STK Push. Please verify your phone number and try again.' });

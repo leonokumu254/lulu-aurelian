@@ -494,11 +494,14 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
       if (response.ok && data.success) {
         localStorage.setItem('lulu_pricing', JSON.stringify(data.pricing));
         window.dispatchEvent(new Event('pricingUpdated'));
+        const ratesSummary = (data.pricing || suites).map(s =>
+          `${s.name}: Entire KES ${(s.entirePrice ?? s.basePrice ?? 0).toLocaleString('en-KE')}, 1 Bed KES ${(s.oneBedroomPrice ?? 0).toLocaleString('en-KE')}`
+        ).join(' · ');
         setPricingModal({
           open: true,
           type: 'success',
           title: 'Pricing Published to Database!',
-          message: 'The new rates for 1 Bedroom (KES 4,000) and Entire Apartment have been saved to the database and are now live across all pages, booking forms, and client payment processing.',
+          message: `The new rates have been saved and are now live across all pages, booking forms, and payment processing. ${ratesSummary}`,
           details: data.pricing
         });
       } else {

@@ -1,5 +1,4 @@
 import { db } from '../config/db.js';
-import { mpesaService } from '../services/mpesaService.js';
 import { paypalService } from '../services/paypalService.js';
 import { payheroService } from '../services/payheroService.js';
 import { emailService } from '../services/emailService.js';
@@ -27,8 +26,13 @@ export const initiateMpesaPayment = async (req, res, next) => {
       amount = baseRate * nights;
     }
 
-    // Call PayHero API
-    const response = await payheroService.initiateSTKPush(phone_number, amount, booking.id.substring(0, 8).toUpperCase());
+    // Call PayHero API with guest name for dashboard tracking
+    const response = await payheroService.initiateSTKPush(
+      phone_number,
+      amount,
+      booking.id.substring(0, 8).toUpperCase(),
+      booking.guest_name || ''
+    );
 
     // Save PENDING transaction in DB with CheckoutRequestID as the transaction ref temporarily to link the webhook later
     await db.payments.create({
@@ -46,130 +50,6 @@ export const initiateMpesaPayment = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
-  }
-};
-
-export const mpesaCallback = async (req, res, next) => {
-  try {
-    console.log('[MPESA WEBHOOK]: Received callback payload', JSON.stringify(req.body));
-    const callbackData = req.body.Body.stkCallback;
-    const checkoutRequestId = callbackData.CheckoutRequestID;
-    const resultCode = callbackData.ResultCode;
-
-    if (resultCode === 0) {
-      // Payment Successful
-      const mpesaReceiptNumber = callbackData.CallbackMetadata.Item.find(item => item.Name === 'MpesaReceiptNumber').Value;
-      
-      // Find the payment by checkoutRequestId
-      const payment = await db.payments.findByRef(checkoutRequestId);
-      if (payment) {
-        // Update payment to COMPLETED and update the transaction ref to the actual Receipt Number
-        await db.payments.updateStatus(checkoutRequestId, 'COMPLETED');
-        // A direct SQL query could update the ref, but updating status is enough for tracking.
-        
-        // Mark booking as PAID
-        await db.bookings.updateStatus(payment.booking_id, 'PAID');
-        
-        // Dispatch fulfillment credentials email!
-        const booking = await db.bookings.findById(payment.booking_id);
-        emailService.sendFulfillmentCredentials(booking).catch(e => console.error(e));
-        whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error(e));
-        console.log(`[MPESA WEBHOOK]: Payment ${mpesaReceiptNumber} verified and booking ${booking.id} activated!`);
-      }
-    } else {
-      // Payment failed/cancelled by user
-      console.log(`[MPESA WEBHOOK]: Payment failed for Request ID ${checkoutRequestId} - ${callbackData.ResultDesc}`);
-      await db.payments.updateStatus(checkoutRequestId, 'FAILED');
-    }
-
-    // Acknowledge receipt to Safaricom
-    res.status(200).json({ ResultCode: 0, ResultDesc: "Success" });
-  } catch (error) {
-    console.error('[MPESA WEBHOOK ERROR]:', error.message);
-    res.status(500).json({ ResultCode: 1, ResultDesc: "Internal Server Error" });
-  }
-};
-
-/**
- * Poll the status of an M-Pesa STK Push payment.
- * Checks local DB first (callback may have already resolved it),
- * then falls back to querying Safaricom's STK Push Query API.
- */
-export const queryMpesaStatus = async (req, res) => {
-  try {
-    const { checkoutRequestId } = req.body;
-
-    if (!checkoutRequestId) {
-      return res.status(400).json({ success: false, error: 'Missing checkoutRequestId.' });
-    }
-
-    // 1. Check local DB first — the callback may have already handled it
-    const payment = await db.payments.findByRef(checkoutRequestId);
-
-    if (payment && payment.status === 'COMPLETED') {
-      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
-    }
-
-    if (payment && payment.status === 'FAILED') {
-      return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment was cancelled or failed.' });
-    }
-
-    // 2. Query Safaricom directly
-    const queryResult = await mpesaService.querySTKPushStatus(checkoutRequestId);
-    const resultCode = String(queryResult.ResultCode);
-
-    if (resultCode === '0') {
-      // Payment successful — update records (idempotent if callback already did this)
-      if (payment) {
-        await db.payments.updateStatus(checkoutRequestId, 'COMPLETED');
-        await db.bookings.updateStatus(payment.booking_id, 'PAID');
-
-        const booking = await db.bookings.findById(payment.booking_id);
-        if (booking) {
-          emailService.sendFulfillmentCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
-          whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
-        }
-      }
-      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
-    }
-
-    if (resultCode === '1032') {
-      // Cancelled by user — revert booking to PENDING so they can retry
-      if (payment) {
-        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
-        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
-      }
-      return res.status(200).json({ success: true, status: 'CANCELLED', message: 'Payment cancelled by user.' });
-    }
-
-    if (resultCode === '1037') {
-      // Timeout — user didn't respond
-      if (payment) {
-        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
-        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
-      }
-      return res.status(200).json({ success: true, status: 'TIMEOUT', message: 'STK Push timed out. Please try again.' });
-    }
-
-    if (resultCode === 'PENDING') {
-      return res.status(200).json({ success: true, status: 'PENDING', message: 'Payment is still being processed.' });
-    }
-
-    // Any other result code = failure
-    if (payment) {
-      await db.payments.updateStatus(checkoutRequestId, 'FAILED');
-      await db.bookings.updateStatus(payment.booking_id, 'PENDING');
-    }
-    return res.status(200).json({
-      success: true,
-      status: 'FAILED',
-      message: queryResult.ResultDesc || 'Payment failed.'
-    });
-
-  } catch (error) {
-    console.error('[MPESA QUERY ERROR]:', error.message);
-    // Return PENDING rather than error so frontend keeps polling
-    return res.status(200).json({ success: true, status: 'PENDING', message: 'Unable to verify status yet.' });
   }
 };
 
