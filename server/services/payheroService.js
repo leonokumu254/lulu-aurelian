@@ -20,12 +20,13 @@ class PayHeroService {
   /**
    * Initiate an M-Pesa STK Push via PayHero.
    *
-   * @param {string} phoneNumber - Customer phone (e.g. '0712345678' or '254712345678')
-   * @param {number} amount      - Payment amount in KES
-   * @param {string} reference   - Unique external reference (e.g. booking ID)
+   * @param {string} phoneNumber  - Customer phone (e.g. '0712345678' or '254712345678')
+   * @param {number} amount       - Payment amount in KES
+   * @param {string} reference    - Unique external reference (e.g. booking ID)
+   * @param {string} customerName - Customer name (optional, for PayHero dashboard tracking)
    * @returns {{ success: boolean, transactionReference: string, data: object }}
    */
-  async initiateSTKPush(phoneNumber, amount, reference) {
+  async initiateSTKPush(phoneNumber, amount, reference, customerName = '') {
     const formattedPhone = this.formatPhone(phoneNumber);
 
     const payload = {
@@ -35,7 +36,7 @@ class PayHeroService {
       provider: 'm-pesa',
       external_reference: reference,
       callback_url: this.callbackUrl,
-      customer_name: ''
+      customer_name: customerName || ''
     };
 
     try {
