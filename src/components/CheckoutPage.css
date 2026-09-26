@@ -156,7 +156,7 @@
 .card-summary-row {
   font-family: var(--font-sans);
   font-size: 0.9rem;
-  color: var(--color-muted);
+  color: #475569 !important;
   background-color: rgba(0, 0, 0, 0.02);
   padding: 0.85rem 1.25rem;
   border-radius: 8px;
@@ -204,7 +204,7 @@
 .detail-label {
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--color-muted);
+  color: #475569 !important;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -212,12 +212,12 @@
 .detail-val {
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--color-dark);
+  color: #1D1912 !important;
 }
 
 .profile-verified-note {
   font-size: 0.8rem;
-  color: var(--color-muted);
+  color: #475569 !important;
   line-height: 1.4;
 }
 
@@ -241,15 +241,15 @@
   font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-muted);
+  color: #475569 !important;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: var(--transition-fast);
 }
 
 .tab-btn.active {
-  color: var(--color-dark);
-  border-bottom-color: var(--color-dark);
+  color: #1D1912 !important;
+  border-bottom-color: #1D1912 !important;
 }
 
 .guest-form,
@@ -275,7 +275,7 @@
   font-family: var(--font-sans);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-dark);
+  color: #1D1912 !important;
 }
 
 .input-with-icon {
@@ -290,7 +290,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-muted);
+  color: #64748b !important;
   pointer-events: none;
   z-index: 2;
 }
@@ -304,10 +304,16 @@
   background-color: var(--color-white);
   font-family: var(--font-sans);
   font-size: 0.95rem;
-  color: var(--color-dark);
+  color: #1D1912 !important;
   transition: var(--transition-fast);
   outline: none;
   box-sizing: border-box;
+}
+
+.input-with-icon input::placeholder,
+.phone-input-group input::placeholder,
+.checkout-textarea::placeholder {
+  color: #94a3b8 !important;
 }
 
 .input-with-icon.no-left-padding input {
@@ -349,7 +355,7 @@
   outline: none;
   font-family: var(--font-sans);
   font-size: 0.95rem;
-  color: var(--color-dark);
+  color: #1D1912 !important;
   background: none;
 }
 
@@ -366,6 +372,7 @@
   border-radius: 8px;
   font-family: var(--font-sans);
   font-size: 0.95rem;
+  color: #1D1912 !important;
   outline: none;
   resize: vertical;
 }
@@ -796,13 +803,13 @@
   font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 400;
-  color: var(--color-dark);
+  color: #1D1912 !important;
   margin-bottom: 0.5rem;
 }
 
 .welcome-guest-text {
   font-size: 0.85rem;
-  color: var(--color-muted);
+  color: #475569 !important;
   line-height: 1.5;
 }
 

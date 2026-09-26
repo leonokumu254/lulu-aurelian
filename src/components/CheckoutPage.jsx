@@ -977,8 +977,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       {paymentMethod === 'mpesa' && (
                         <div className="payment-input-group animate-slide-down">
                           {/* Official Buy Goods Details Card */}
-                          <div style={{ background: 'rgba(232, 213, 181, 0.06)', border: '1.5px solid rgba(187, 133, 37, 0.35)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(232, 213, 181, 0.15)', paddingBottom: '0.4rem' }}>
+                          <div style={{ background: 'rgba(163, 114, 29, 0.04)', border: '1.5px solid rgba(163, 114, 29, 0.3)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.4rem' }}>
                               <h4 style={{ margin: 0, color: '#1a9e35', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                 OFFICIAL TILL DETAILS
                               </h4>
@@ -986,14 +986,14 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                             </div>
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                              <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                <span style={{ display: 'block', fontSize: '0.7rem', color: 'rgba(232, 213, 181, 0.7)', fontWeight: 600 }}>TILL NUMBER</span>
+                              <div style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.08)' }}>
+                                <span style={{ display: 'block', fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>TILL NUMBER</span>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                                  <strong style={{ fontSize: '1.15rem', color: '#E8D5B5', letterSpacing: '1px' }}>4364845</strong>
+                                  <strong style={{ fontSize: '1.15rem', color: '#1D1912', letterSpacing: '1px' }}>4364845</strong>
                                   <button
                                     type="button"
                                     onClick={() => handleCopyText('4364845', 'till')}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : '#64748b' }}
                                     title="Copy Till Number"
                                   >
                                     {copiedField === 'till' ? <CheckCircle size={15} /> : <Copy size={15} />}
@@ -1002,16 +1002,16 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                               </div>
                             </div>
 
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.5' }}>
+                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', lineHeight: '1.5' }}>
                               Enter your Safaricom phone below to receive an automated Buy Goods STK prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>, or pay manually via your M-Pesa menu using Till No <strong>4364845</strong>.
                             </p>
                           </div>
 
                           <label className="checkout-label">M-Pesa Phone Number</label>
                           <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-                            <span className="phone-prefix" style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.75rem 1rem', border: '1px solid rgba(255, 255, 255, 0.1)', borderRight: 'none', borderRadius: '8px 0 0 8px', color: '#E8D5B5', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center' }}>+254</span>
+                            <span className="phone-prefix" style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.75rem 1rem', border: '1px solid var(--color-border)', borderRight: 'none', borderRadius: '8px 0 0 8px', color: '#1D1912', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center' }}>+254</span>
                             <div className="input-with-icon no-left-padding" style={{ flex: 1, position: 'relative' }}>
-                              <Phone size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(232, 213, 181, 0.4)' }} />
+                              <Phone size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                               <input 
                                 type="tel"
                                 value={mpesaPhone}
