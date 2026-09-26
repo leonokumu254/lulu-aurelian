@@ -259,8 +259,8 @@ export default function GuestPortal({ user, onBookNew }) {
                         <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(26, 158, 53, 0.1)', color: '#1a9e35', marginBottom: '0.75rem' }}>
                           <Check size={24} />
                         </div>
-                        <h4 style={{ margin: '0 0 0.5rem', color: '#E8D5B5' }}>STK Push Initiated!</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'rgba(232, 213, 181, 0.8)', margin: 0, lineHeight: '1.5' }}>
+                        <h4 style={{ margin: '0 0 0.5rem', color: '#1D1912' }}>STK Push Initiated!</h4>
+                        <p style={{ fontSize: '0.85rem', color: '#475569', margin: 0, lineHeight: '1.5' }}>
                           A direct payment request has been sent to your M-Pesa phone. Please enter your M-Pesa PIN on your phone handset to authorize the transaction. Once completed, your booking status will update to Confirmed automatically.
                         </p>
                       </div>
@@ -287,21 +287,21 @@ export default function GuestPortal({ user, onBookNew }) {
                           </label>
                         </div>
                         {paymentMethod === 'mpesa' && (
-                          <div style={{ background: 'rgba(232, 213, 181, 0.05)', border: '1.5px solid rgba(187, 133, 37, 0.3)', borderRadius: '10px', padding: '1rem', color: '#E8D5B5', marginTop: '1rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', borderBottom: '1px solid rgba(232, 213, 181, 0.15)', paddingBottom: '0.35rem' }}>
+                          <div style={{ background: 'rgba(0, 0, 0, 0.02)', border: '1.5px solid rgba(0, 0, 0, 0.08)', borderRadius: '10px', padding: '1rem', color: '#1D1912', marginTop: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', borderBottom: '1px solid rgba(0, 0, 0, 0.08)', paddingBottom: '0.35rem' }}>
                               <strong style={{ fontSize: '0.85rem', color: '#1a9e35', letterSpacing: '0.5px' }}>OFFICIAL TILL DETAILS</strong>
                               <span style={{ fontSize: '0.7rem', background: '#10b981', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
                             </div>
                             
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                              <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                <span style={{ display: 'block', fontSize: '0.68rem', color: 'rgba(232, 213, 181, 0.65)', fontWeight: 600 }}>TILL NUMBER</span>
+                              <div style={{ background: 'rgba(255, 255, 255, 0.5)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(0, 0, 0, 0.05)' }}>
+                                <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>TILL NUMBER</span>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                                  <strong style={{ fontSize: '1.05rem', color: '#E8D5B5', letterSpacing: '1px' }}>4364845</strong>
+                                  <strong style={{ fontSize: '1.05rem', color: '#1D1912', letterSpacing: '1px' }}>4364845</strong>
                                   <button
                                     type="button"
                                     onClick={() => handleCopyText('4364845', 'till')}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : 'rgba(232, 213, 181, 0.6)' }}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'till' ? '#1a9e35' : '#64748b' }}
                                     title="Copy Till Number"
                                   >
                                     {copiedField === 'till' ? <CheckCircle size={14} /> : <Copy size={14} />}
@@ -310,27 +310,27 @@ export default function GuestPortal({ user, onBookNew }) {
                               </div>
                             </div>
 
-                            <p style={{ fontSize: '0.78rem', color: 'rgba(232, 213, 181, 0.85)', margin: '0 0 0.75rem', lineHeight: '1.5' }}>
+                            <p style={{ fontSize: '0.78rem', color: '#475569', margin: '0 0 0.75rem', lineHeight: '1.5' }}>
                               Enter your phone number below for an instant prompt, or pay manually via your M-Pesa menu using Till Number <strong>4364845</strong>.
                             </p>
-                            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'rgba(232, 213, 181, 0.9)', marginBottom: '0.4rem' }}>M-Pesa Phone Number</label>
+                            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1D1912', marginBottom: '0.4rem' }}>M-Pesa Phone Number</label>
                             <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center' }}>
-                              <span className="phone-prefix" style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.55rem 0.75rem', border: '1px solid rgba(255, 255, 255, 0.1)', borderRight: 'none', borderRadius: '6px 0 0 6px', color: '#E8D5B5', fontSize: '0.9rem' }}>+254</span>
+                              <span className="phone-prefix" style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.55rem 0.75rem', border: '1px solid rgba(0, 0, 0, 0.1)', borderRight: 'none', borderRadius: '6px 0 0 6px', color: '#1D1912', fontSize: '0.9rem' }}>+254</span>
                               <input
                                 type="tel"
                                 value={mpesaPhone}
                                 onChange={(e) => setMpesaPhone(e.target.value.replace(/[^0-9]/g, ''))}
                                 placeholder="712345678"
-                                style={{ flex: 1, padding: '0.55rem 0.75rem', borderRadius: '0 6px 6px 0', border: '1.5px solid rgba(255, 255, 255, 0.1)', borderLeft: 'none', background: 'rgba(29, 25, 18, 0.8)', color: '#E8D5B5', fontSize: '0.95rem', boxSizing: 'border-box', outline: 'none' }}
+                                style={{ flex: 1, padding: '0.55rem 0.75rem', borderRadius: '0 6px 6px 0', border: '1.5px solid rgba(0, 0, 0, 0.1)', borderLeft: 'none', background: '#fff', color: '#1D1912', fontSize: '0.95rem', boxSizing: 'border-box', outline: 'none' }}
                               />
                             </div>
-                            <p style={{ fontSize: '0.74rem', color: 'rgba(232, 213, 181, 0.5)', margin: '0.3rem 0 0' }}>Enter your Safaricom phone number without country code.</p>
+                            <p style={{ fontSize: '0.74rem', color: '#94a3b8', margin: '0.3rem 0 0' }}>Enter your Safaricom phone number without country code.</p>
                           </div>
                         )}
                         {paymentMethod === 'contact_staff' && (
-                          <div style={{ background: 'rgba(232, 213, 181, 0.05)', border: '1px solid rgba(232, 213, 181, 0.2)', borderRadius: '8px', padding: '1rem', color: '#E8D5B5', marginTop: '1rem' }}>
-                            <strong style={{ display: 'block', fontSize: '0.85rem', color: '#E8D5B5', marginBottom: '0.5rem' }}>SUPPORT & ALTERNATIVE PAYMENTS</strong>
-                            <p style={{ fontSize: '0.8rem', color: 'rgba(232, 213, 181, 0.85)', margin: '0 0 0.75rem', lineHeight: '1.5' }}>
+                          <div style={{ background: 'rgba(0, 0, 0, 0.02)', border: '1px solid rgba(0, 0, 0, 0.08)', borderRadius: '8px', padding: '1rem', color: '#1D1912', marginTop: '1rem' }}>
+                            <strong style={{ display: 'block', fontSize: '0.85rem', color: '#1D1912', marginBottom: '0.5rem' }}>SUPPORT & ALTERNATIVE PAYMENTS</strong>
+                            <p style={{ fontSize: '0.8rem', color: '#475569', margin: '0 0 0.75rem', lineHeight: '1.5' }}>
                               Online checkout is processed via <strong>M-Pesa Buy Goods only</strong>. If you have a different payment method (such as <strong>Bank Transfer (EFT/RTGS)</strong>, <strong>Card</strong>, or <strong>Corporate Invoice</strong>), please contact our support desk directly with Booking Ref: <strong>{activeBooking.id}</strong>:
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
@@ -358,8 +358,8 @@ export default function GuestPortal({ user, onBookNew }) {
                                 <a 
                                   href="tel:+254112299384"
                                   style={{
-                                    border: '1px solid rgba(232, 213, 181, 0.3)',
-                                    color: '#E8D5B5',
+                                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                                    color: '#1D1912',
                                     textDecoration: 'none',
                                     padding: '0.5rem',
                                     borderRadius: '6px',
@@ -372,8 +372,8 @@ export default function GuestPortal({ user, onBookNew }) {
                                 <a 
                                   href={`mailto:pearlisprime@gmail.com?subject=${encodeURIComponent(`Payment Inquiry - Booking ${activeBooking.id}`)}`}
                                   style={{
-                                    border: '1px solid rgba(232, 213, 181, 0.3)',
-                                    color: '#E8D5B5',
+                                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                                    color: '#1D1912',
                                     textDecoration: 'none',
                                     padding: '0.5rem',
                                     borderRadius: '6px',

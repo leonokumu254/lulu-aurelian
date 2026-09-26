@@ -1030,21 +1030,21 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       {paymentMethod === 'contact_staff' && (
                         <div className="payment-input-group animate-slide-down">
                           <div style={{
-                            background: 'rgba(232, 213, 181, 0.06)',
-                            border: '1px solid rgba(232, 213, 181, 0.2)',
+                            background: 'rgba(0, 0, 0, 0.02)',
+                            border: '1px solid rgba(0, 0, 0, 0.08)',
                             borderRadius: '12px',
                             padding: '1.25rem',
                             marginBottom: '1rem'
                           }}>
-                            <h4 style={{ margin: '0 0 0.5rem', color: '#E8D5B5', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px' }}>
+                            <h4 style={{ margin: '0 0 0.5rem', color: '#1D1912', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px' }}>
                               ALTERNATIVE PAYMENT METHODS — CONTACT SUPPORT
                             </h4>
-                            <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(232, 213, 181, 0.85)', lineHeight: '1.6' }}>
+                            <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: '#475569', lineHeight: '1.6' }}>
                               Direct checkout is processed via <strong>M-Pesa Buy Goods only</strong>. If you have a different payment method (such as <strong>Direct Bank Transfer (EFT/RTGS)</strong>, <strong>Credit/Debit Card</strong>, <strong>Corporate Cheque</strong>, or <strong>Invoice</strong>), our support concierge is ready to assist:
                             </p>
-                            <ul style={{ margin: '0 0 1rem 1.25rem', padding: 0, fontSize: '0.82rem', color: 'rgba(232, 213, 181, 0.75)', lineHeight: '1.6' }}>
+                            <ul style={{ margin: '0 0 1rem 1.25rem', padding: 0, fontSize: '0.82rem', color: '#475569', lineHeight: '1.6' }}>
                               <li>Your 60-minute reservation hold remains active while you contact support.</li>
-                              <li>Have your Booking Reference ready: <strong style={{ color: '#E8D5B5' }}>{createdBooking?.bookingId || 'PENDING'}</strong></li>
+                              <li>Have your Booking Reference ready: <strong style={{ color: '#1D1912' }}>{createdBooking?.bookingId || 'PENDING'}</strong></li>
                               <li>Suite credentials will be issued immediately once payment is verified.</li>
                             </ul>
 
@@ -1088,9 +1088,9 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                                     gap: '6px',
                                     textDecoration: 'none',
                                     padding: '0.65rem',
-                                    border: '1px solid rgba(232, 213, 181, 0.25)',
+                                    border: '1px solid rgba(0, 0, 0, 0.1)',
                                     borderRadius: '8px',
-                                    color: '#E8D5B5',
+                                    color: '#1D1912',
                                     fontSize: '0.8rem'
                                   }}
                                 >
@@ -1106,9 +1106,9 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                                     gap: '6px',
                                     textDecoration: 'none',
                                     padding: '0.65rem',
-                                    border: '1px solid rgba(232, 213, 181, 0.25)',
+                                    border: '1px solid rgba(0, 0, 0, 0.1)',
                                     borderRadius: '8px',
-                                    color: '#E8D5B5',
+                                    color: '#1D1912',
                                     fontSize: '0.8rem'
                                   }}
                                 >
