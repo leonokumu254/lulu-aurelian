@@ -30,9 +30,9 @@ app.set('trust proxy', true); // Required for express-rate-limit when hosted on 
 
 // --- SECURITY MIDDLEWARES ---
 app.use(helmet({
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginOpenerPolicy: { policy: "unsafe-none" }, // Allows Google OAuth popup window.closed checks without browser warnings
   crossOriginResourcePolicy: { policy: "cross-origin" }
-})); // Protect HTTP headers with Google OAuth popup support
+}));
 
 // Rate limiting (max 100 requests per 15 mins per IP)
 const limiter = rateLimit({

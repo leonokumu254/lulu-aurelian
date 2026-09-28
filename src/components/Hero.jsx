@@ -134,7 +134,13 @@ const getUnitIdFromImage = (imgPath) => {
         {IMAGES.map((img, idx) => (
           <div
             key={idx}
-            className={`hero-slide ${idx === currentIdx ? 'active' : ''}`} onClick={() => { const unitId = getUnitIdFromImage(img); if (unitId) { window.location.href = `/unit/${unitId}`; }}
+            className={`hero-slide ${idx === currentIdx ? 'active' : ''}`}
+            onClick={() => {
+              const unitId = getUnitIdFromImage(img);
+              if (unitId) {
+                window.location.href = `/unit/${unitId}`;
+              }
+            }}
             style={{ 
               backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url(${img})`,
               cursor: 'pointer'
