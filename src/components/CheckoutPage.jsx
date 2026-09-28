@@ -896,32 +896,74 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                   ) : stkPushSent ? (
                     <div className="payment-success-card animate-slide-down">
                       <div style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem',
-                        padding: '2rem 1rem', textAlign: 'center'
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem',
+                        padding: '1.5rem 1rem', textAlign: 'center', maxWidth: '520px', margin: '0 auto'
                       }}>
                         {/* Pulsing phone animation */}
                         <div style={{
-                          width: '80px', height: '80px', borderRadius: '50%',
-                          background: 'rgba(26, 158, 53, 0.1)', border: '2px solid rgba(26, 158, 53, 0.4)',
+                          width: '84px', height: '84px', borderRadius: '50%',
+                          background: 'rgba(26, 158, 53, 0.12)', border: '2px solid rgba(26, 158, 53, 0.4)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           animation: 'pulse 2s ease-in-out infinite'
                         }}>
-                          <Phone size={36} style={{ color: '#1a9e35' }} />
+                          <Phone size={38} style={{ color: '#1a9e35' }} />
                         </div>
-                        <h3 className="payment-status-title" style={{ color: '#1a9e35' }}>Check Your Phone</h3>
-                        <p className="payment-status-desc">
-                          An M-Pesa payment prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
-                          Enter your M-Pesa PIN to complete the transaction.
-                        </p>
+                        <div>
+                          <h3 className="payment-status-title" style={{ color: '#1a9e35', margin: '0 0 0.5rem', fontWeight: 600 }}>
+                            Check Your Phone
+                          </h3>
+                          <p className="payment-status-desc" style={{ color: '#334155', margin: '0 0 1rem', fontSize: '0.95rem' }}>
+                            An M-Pesa payment prompt for <strong style={{ color: '#1D1912' }}>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
+                            Enter your M-Pesa PIN on your phone handset to complete the transaction.
+                          </p>
+                        </div>
                         <div style={{
-                          display: 'flex', alignItems: 'center', gap: '0.5rem',
-                          color: 'rgba(232, 213, 181, 0.6)', fontSize: '0.85rem'
+                          display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+                          background: 'rgba(26, 158, 53, 0.08)', border: '1px solid rgba(26, 158, 53, 0.25)',
+                          padding: '0.5rem 1.25rem', borderRadius: '30px',
+                          color: '#166534', fontSize: '0.88rem', fontWeight: 600
                         }}>
                           <div style={{
                             width: '8px', height: '8px', borderRadius: '50%',
                             background: '#1a9e35', animation: 'pulse 1.5s ease-in-out infinite'
                           }} />
                           Verifying payment status...
+                        </div>
+                        <div style={{
+                          marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border)', width: '100%'
+                        }}>
+                          <p style={{ margin: '0 0 0.5rem', fontSize: '0.82rem', color: '#64748b' }}>
+                            Didn't receive the prompt? You can pay manually using Buy Goods Till:
+                          </p>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.03)', padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
+                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>TILL NO:</span>
+                            <strong style={{ fontSize: '0.95rem', color: '#1D1912' }}>4364845</strong>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyText('4364845', 'stk_till')}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'stk_till' ? '#1a9e35' : '#64748b' }}
+                              title="Copy Till"
+                            >
+                              {copiedField === 'stk_till' ? <CheckCircle size={14} /> : <Copy size={14} />}
+                            </button>
+                          </div>
+                          <div style={{ marginTop: '0.75rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => setStkPushSent(false)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#a3721d',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                fontSize: '0.82rem',
+                                fontWeight: 600
+                              }}
+                            >
+                              Back to Payment Options / Retry STK
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
