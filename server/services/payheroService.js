@@ -60,7 +60,12 @@ class PayHeroService {
       }
 
       if (!response.ok) {
-        const errMsg = data.message || data.error || data.detail || `PayHero STK Push failed (HTTP ${response.status})`;
+        let errMsg = data.message || data.error || data.detail;
+        if (response.status === 401) {
+          errMsg = `PayHero authentication failed (HTTP 401): ${errMsg || 'Unable to perform request'}. Please verify your PayHero API credentials and account status.`;
+        } else if (!errMsg) {
+          errMsg = `PayHero STK Push failed (HTTP ${response.status})`;
+        }
         throw new Error(errMsg);
       }
 
@@ -143,13 +148,16 @@ class PayHeroService {
   }
 
   /**
-   * Format phone number to local Kenyan format (07xxxxxxxx) as PayHero expects.
+   * Format phone number to international Kenyan format (254XXXXXXXXX) as PayHero expects.
    * Accepts: '0712345678', '+254712345678', '254712345678', '712345678'
    */
   formatPhone(phone) {
     let p = (phone || '').replace(/[^0-9]/g, '');
-    if (p.startsWith('254')) p = '0' + p.slice(3);
-    if (!p.startsWith('0')) p = '0' + p;
+    if (p.startsWith('0')) {
+      p = '254' + p.slice(1);
+    } else if (!p.startsWith('254') && (p.startsWith('7') || p.startsWith('1'))) {
+      p = '254' + p;
+    }
     return p;
   }
 }

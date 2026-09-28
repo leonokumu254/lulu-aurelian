@@ -275,7 +275,7 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
 
                   <label className="sm-label">M-Pesa Phone Number</label>
                   <div className="phone-input-group" style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <span className="phone-prefix" style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.65rem 0.85rem', border: '1.5px solid rgba(255, 255, 255, 0.1)', borderRight: 'none', borderRadius: '6px 0 0 6px', color: '#E8D5B5', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center' }}>+254</span>
+                    <span className="phone-prefix" style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.65rem 0.85rem', border: '1.5px solid rgba(0, 0, 0, 0.08)', borderRight: 'none', borderRadius: '6px 0 0 6px', color: '#1D1912', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center' }}>+254</span>
                     <div className="input-with-icon no-left-padding" style={{ flex: 1, position: 'relative' }}>
                       <input
                         type="tel"
