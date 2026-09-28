@@ -236,6 +236,11 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Booking not found.' });
     }
 
+    // Prevent duplicate verification on already-paid bookings
+    if (booking.status === 'PAID' || booking.status === 'COMPLETED') {
+      return res.status(400).json({ success: false, error: 'This booking has already been paid and confirmed.' });
+    }
+
     // Determine amount dynamically
     let amount = booking.total_price;
     if (!amount) {
