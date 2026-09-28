@@ -115,11 +115,27 @@ export const requestBooking = async (req, res, next) => {
     // ── Overlap / double-booking check ───────────────────────────────────
     const allBookings = await db.bookings.getAll();
     const activeStatuses = ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
+    const now = new Date();
+
     const conflicting = allBookings.find(b => {
       const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
       const bStatus = (b.status || '').toUpperCase();
       if (bUnit !== (unit_id || '').toLowerCase()) return false;
       if (!activeStatuses.includes(bStatus)) return false;
+
+      // Ignore expired pending holds
+      if ((bStatus === 'PENDING' || bStatus === 'AUTHORIZING') && b.hold_expires_at && new Date(b.hold_expires_at) < now) {
+        return false;
+      }
+
+      // If this is the exact same guest retrying an unpaid pending reservation, allow it to supersede
+      const isSameGuest = (
+        (b.guest_email && b.guest_email.toLowerCase() === guest_email.trim().toLowerCase()) ||
+        (b.guest_phone && b.guest_phone.replace(/\D/g, '') === guest_phone.trim().replace(/\D/g, ''))
+      );
+      if (isSameGuest && (bStatus === 'PENDING' || bStatus === 'AUTHORIZING')) {
+        return false;
+      }
 
       const bIn = new Date(b.check_in || b.checkIn);
       const bOut = new Date(b.check_out || b.checkOut);
@@ -136,6 +152,25 @@ export const requestBooking = async (req, res, next) => {
         conflict_period:     { check_in, check_out },
         next_available_windows: suggestions
       });
+    }
+
+    // Cancel any previous unpaid pending holds for this same guest on this unit
+    const previousGuestHolds = allBookings.filter(b => {
+      const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
+      const bStatus = (b.status || '').toUpperCase();
+      const isPending = bStatus === 'PENDING' || bStatus === 'AUTHORIZING';
+      const isSameGuest = (
+        (b.guest_email && b.guest_email.toLowerCase() === guest_email.trim().toLowerCase()) ||
+        (b.guest_phone && b.guest_phone.replace(/\D/g, '') === guest_phone.trim().replace(/\D/g, ''))
+      );
+      return bUnit === (unit_id || '').toLowerCase() && isPending && isSameGuest;
+    });
+    for (const hold of previousGuestHolds) {
+      try {
+        await db.bookings.updateStatus(hold.id, 'CANCELLED');
+      } catch (err) {
+        console.warn(`[BOOKING]: Failed to cancel prior hold ${hold.id}:`, err.message);
+      }
     }
 
     // ── Create booking row (PENDING → awaits payment) ─────────────────────
