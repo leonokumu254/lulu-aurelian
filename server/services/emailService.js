@@ -271,6 +271,42 @@ class EmailService {
     `;
   }
 
+  _renderContactCards() {
+    return `
+      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 14px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">📞 Guest Support & Host Assistance</h4>
+        <p style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.5;">
+          Should you need any assistance during your stay, feel free to reach out to our team:
+        </p>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="padding: 6px 0;">
+              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Safaricom:</span>
+              <a href="tel:0112299384" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0112299384</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0;">
+              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Airtel:</span>
+              <a href="tel:0756958531" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0756958531</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+  }
+
+  _renderChecklist(checklist) {
+    if (!checklist || !checklist.length) return '';
+    const itemsHtml = checklist.map(item => `
+      <div style="background-color: #FAF9F6; border-left: 3px solid #cfa873; padding: 14px 18px; margin-bottom: 12px; border-radius: 8px;">
+        <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1a1a1a; font-weight: 600;">${item.title}</h4>
+        <p style="margin: 0; font-size: 14px; color: #555555; line-height: 1.5;">${item.desc}</p>
+      </div>
+    `).join('');
+    return `<div style="margin-bottom: 25px;">${itemsHtml}</div>`;
+  }
+
   // ==========================================
   // SERVICE METHODS
   // ==========================================
@@ -319,6 +355,7 @@ class EmailService {
       this._renderParagraphs(data.paragraphs) +
       this._renderAlertBox(data.alertText) +
       this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
       this._renderBookingRef(data.bookingRef) +
       this._renderButton(data.button);
 
@@ -331,6 +368,32 @@ class EmailService {
       text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps: ${unitDetails.mapUrl}`,
       html
     });
+  }
+
+  async sendPaymentSuccess(booking) {
+    const data = EMAIL_TEMPLATES.PAYMENT_SUCCESS_CONFIRMATION(booking);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderAlertBox(data.alertText) +
+      this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
+      this._renderBookingRef(data.bookingRef) +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: data.text,
+      html
+    });
+  }
+
+  async sendCheckInCredentials(booking) {
+    return this.sendFulfillmentCredentials(booking);
   }
 
   async sendFulfillmentCredentials(booking) {
@@ -349,7 +412,29 @@ class EmailService {
       this._renderParagraphs(data.paragraphs) +
       this._renderCredentialsBox(data.credentials) +
       this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
       this._renderRulesList(data.rules) +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: data.text,
+      html
+    });
+  }
+
+  async sendCheckoutMorningReminder(booking) {
+    const data = EMAIL_TEMPLATES.CHECKOUT_MORNING_REMINDER(booking);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderChecklist(data.checklist) +
+      `<p style="margin: 20px 0; font-size: 15px; color: #4a4a4a; line-height: 1.6;">${data.closing}</p>` +
+      this._renderContactCards() +
       this._renderButton(data.button);
 
     const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);

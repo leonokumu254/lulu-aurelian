@@ -94,6 +94,26 @@ export const initiatePaypalPayment = async (req, res, next) => {
   }
 };
 
+export const dispatchPostPaymentNotifications = async (booking) => {
+  if (!booking) return;
+
+  // 1. Immediate payment success confirmation
+  emailService.sendPaymentSuccess(booking).catch(e => console.error('[EMAIL ERROR]:', e));
+  whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+
+  // 2. Check if check-in is today and current time in Nairobi is >= 13:00 (1:00 PM)
+  const todayEAT = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi' }).format(new Date());
+  const hourEAT = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: 'numeric', hour12: false }).format(new Date()));
+
+  if (booking.check_in === todayEAT && hourEAT >= 13) {
+    console.log(`[POST-PAYMENT DISPATCH]: Booking ${booking.id} check-in is today (${booking.check_in}) and payment completed at/after 1:00 PM. Sending check-in credentials immediately.`);
+    emailService.sendCheckInCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
+    whatsappService.sendCheckInCredentials(booking).catch(e => console.error('[WHATSAPP ERROR]:', e));
+  } else {
+    console.log(`[POST-PAYMENT DISPATCH]: Booking ${booking.id} confirmed. Check-in details will be sent from 1:00 PM on ${booking.check_in}.`);
+  }
+};
+
 export const capturePaypalPayment = async (req, res, next) => {
   try {
     const { orderId } = req.body;
@@ -107,8 +127,7 @@ export const capturePaypalPayment = async (req, res, next) => {
         await db.bookings.updateStatus(payment.booking_id, 'PAID');
         
         const booking = await db.bookings.findById(payment.booking_id);
-        emailService.sendFulfillmentCredentials(booking).catch(e => console.error(e));
-        whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error(e));
+        dispatchPostPaymentNotifications(booking);
       }
 
       res.status(200).json({ success: true, message: 'Payment successfully captured.' });
@@ -173,8 +192,7 @@ export const payheroCallback = async (req, res) => {
 
       const booking = await db.bookings.findById(payment.booking_id);
       if (booking) {
-        emailService.sendFulfillmentCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
-        whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+        dispatchPostPaymentNotifications(booking);
       }
 
       console.log(`[PAYHERO WEBHOOK]: ✅ Payment verified. Booking ${payment.booking_id} activated! M-Pesa Receipt: ${mpesaReceipt || 'N/A'}`);
@@ -239,8 +257,7 @@ export const queryPayheroStatus = async (req, res) => {
 
         const booking = await db.bookings.findById(payment.booking_id);
         if (booking) {
-          emailService.sendFulfillmentCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
-          whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+          dispatchPostPaymentNotifications(booking);
         }
       }
       return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });

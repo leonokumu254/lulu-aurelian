@@ -4,6 +4,7 @@ import { env } from '../config/env.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
 import { payheroService } from '../services/payheroService.js';
+import { dispatchPostPaymentNotifications } from './paymentController.js';
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
@@ -355,9 +356,8 @@ export const approveBooking = async (req, res, next) => {
 
     console.log(`[STAFF APPROVAL]: ✅ Booking ${id} approved by ${approvedBy}. Payment Ref: ${transactionRef}`);
 
-    // Send credentials and alert
-    emailService.sendFulfillmentCredentials(confirmedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
-    whatsappService.sendBookingStatusAlert(confirmedBooking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+    // Dispatch post-payment confirmation and credentials if eligible
+    dispatchPostPaymentNotifications(confirmedBooking);
 
     return res.status(200).json({
       success: true,
@@ -473,9 +473,8 @@ export const stanbicCallback = async (req, res, next) => {
 
     console.log(`[STANBIC CALLBACK]: ✅ Booking ${booking.id} PAID. TransID: ${TransID}, M-Pesa Receipt: ${ThirdPartyTransID}, Amount: ${TransAmount}`);
 
-    // ── Send fulfillment credentials ──────────────────────────────────────
-    emailService.sendFulfillmentCredentials(confirmedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
-    whatsappService.sendBookingStatusAlert(confirmedBooking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+    // ── Send payment confirmation & credentials if eligible ──────────────
+    dispatchPostPaymentNotifications(confirmedBooking);
 
     // ── MUST respond with this exact format ──────────────────────────────
     return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });

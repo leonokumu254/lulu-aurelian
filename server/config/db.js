@@ -93,9 +93,9 @@ const inMemory = {
   ],
 
   unit_settings: [
-    { unit_id: 'skyview', passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
-    { unit_id: 'cocoa', passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
-    { unit_id: 'neema', passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+    { unit_id: 'skyview', passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
+    { unit_id: 'cocoa', passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
+    { unit_id: 'neema', passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
   ],
 
   unit_pricing: [
@@ -835,9 +835,9 @@ export const db = {
           return rows[0];
         }
         const defaults = {
-          skyview: { passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
-          cocoa: { passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
-          neema: { passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+          skyview: { passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
+          cocoa: { passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
+          neema: { passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
         };
         const def = defaults[cleanId] || defaults.skyview;
         await pool.query(
@@ -850,9 +850,9 @@ export const db = {
       if (found) return found;
 
       const defaults = {
-        skyview: { passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
-        cocoa: { passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
-        neema: { passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+        skyview: { passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
+        cocoa: { passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
+        neema: { passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
       };
       const def = { unit_id: cleanId, ...(defaults[cleanId] || defaults.skyview) };
       inMemory.unit_settings.push(def);

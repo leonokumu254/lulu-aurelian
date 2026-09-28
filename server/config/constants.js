@@ -9,45 +9,101 @@
 // ==========================================
 export const UNIT_WELCOME_DETAILS = {
   skyview: {
-    name: 'Skyview Hideaway',
-    floor: 'Penthouse Level (6th Floor)',
-    directions: 'Take the elevator to the 5th floor, and walk up the final flight of stairs to the private penthouse entrance. You will find the lockbox on the right side of the main door.',
-    wifiSSID: 'LuluAurelian_Skyview_5G',
-    wifiPass: 'SkyviewLuxury2026!',
-    location: 'Skyline Lifestyle Apartments, Penthouse Floor, Nyeri',
+    unitId: 'skyview',
+    name: 'SkyView',
+    fullName: 'Lulu Aurelian Furnished Apartments- SkyView',
+    greeting: 'Welcome to Lulu Aurelian Furnished Apartments- SkyView!',
+    welcomeNote: 'We’re delighted to host you and hope you enjoy your stay.🤗',
+    apartmentNo: '16 (Top floor)',
+    floor: 'Top floor (Apartment 16)',
+    house_number: '16',
+    keyAccess: 'The key is in the lock box located just outside the door.',
+    lockboxCode: '9010',
+    passcode: '9010',
+    wifiSSID: 'Pearl_16',
+    wifiPass: 'PearlSL_16',
+    wifiUsername: 'Pearl_16',
+    wifiPassword: 'PearlSL_16',
+    location: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri.',
     mapUrl: 'https://maps.google.com/?q=-0.433276973199735,36.96868842933756',
+    checkInTime: 'After 2:00 PM',
+    checkOutTime: 'Before 10:00 AM',
+    specialNote: 'All items in the units are at your disposal to use except the washing machine in the second balcony that the guest needs express permission from the host to use.',
+    contacts: {
+      safaricom: '0112299384',
+      airtel: '0756958531'
+    },
+    directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: 16 (Top floor).',
     rules: [
-      'Strict No-Smoking policy inside the penthouse or on the stairs.',
-      'Terrace doors should remain locked when not in use.',
-      'Check-out time is strictly 11:00 AM.'
+      'Check-in is after 2:00 PM (early access available from 1:00 PM).',
+      'Check-out is strictly before 10:00 AM.',
+      'All items in the units are at your disposal to use except the washing machine in the second balcony (requires express permission from host).',
+      'Strict No-Smoking policy inside the apartment.'
     ]
   },
   cocoa: {
-    name: 'Cocoa Retreat',
-    floor: '4th Floor (Suite 4B)',
-    directions: 'Take the elevator directly to the 4th floor. Cocoa Retreat is the second door on your right, marked with a gold plaque. The lockbox is mounted beside the door frame.',
-    wifiSSID: 'LuluAurelian_Cocoa_5G',
-    wifiPass: 'CocoaLuxury2026!',
-    location: 'Skyline Lifestyle Apartments, 4th Floor, Nyeri',
+    unitId: 'cocoa',
+    name: 'Cocoa Home',
+    fullName: 'Lulu Aurelian Furnished Apartments- Cocoa Home',
+    greeting: 'Welcome to Lulu Aurelian Furnished Apartments- Cocoa Home!',
+    welcomeNote: 'We’re delighted to host you and hope you enjoy your stay.',
+    apartmentNo: '19 (First floor)',
+    floor: 'First floor (Apartment 19)',
+    house_number: '19',
+    keyAccess: 'The key is in the lock box located just outside the door.',
+    lockboxCode: '2050',
+    passcode: '2050',
+    wifiSSID: 'MK_Ny-0',
+    wifiPass: 'CMutwiri',
+    wifiUsername: 'MK_Ny-0',
+    wifiPassword: 'CMutwiri',
+    wifiExtension: { username: 'Bedroom', password: 'CMutwiri' },
+    location: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri.',
     mapUrl: 'https://maps.google.com/?q=-0.433276973199735,36.96868842933756',
+    checkInTime: 'After 2:00 PM',
+    checkOutTime: 'Before 10:00 AM',
+    contacts: {
+      safaricom: '0112299384',
+      airtel: '0756958531'
+    },
+    directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: 19 (First floor).',
     rules: [
+      'Check-in is after 2:00 PM (early access available from 1:00 PM).',
+      'Check-out is strictly before 10:00 AM.',
       'Strict No-Smoking policy inside the suite.',
-      'Quiet hours are between 10:00 PM and 7:00 AM.',
-      'Check-out time is strictly 11:00 AM.'
+      'Quiet hours are between 10:00 PM and 7:00 AM.'
     ]
   },
   neema: {
-    name: 'Neema Haven',
-    floor: '2nd Floor (Suite 2A)',
-    directions: 'Take the elevator directly to the 2nd floor. Neema Haven is located directly opposite the elevator exit. The lockbox is mounted underneath the unit door handle.',
-    wifiSSID: 'LuluAurelian_Neema_5G',
-    wifiPass: 'NeemaLuxury2026!',
-    location: 'Skyline Lifestyle Apartments, 2nd Floor, Nyeri',
+    unitId: 'neema',
+    name: 'Neema home',
+    fullName: 'Lulu Aurelian Furnished Apartments- Neema home',
+    greeting: 'Welcome to Lulu Aurelian Furnished Apartments- Neema home!',
+    welcomeNote: 'We’re delighted to host you and hope you enjoy your stay.',
+    apartmentNo: 'SL- 2 (First floor)',
+    floor: 'First floor (Apartment SL- 2)',
+    house_number: 'SL- 2',
+    keyAccess: 'The key is in the lock box located just outside the door.',
+    lockboxCode: '2428',
+    passcode: '2428',
+    wifiSSID: 'AURELIAN',
+    wifiPass: 'Lulu_26#',
+    wifiUsername: 'AURELIAN',
+    wifiPassword: 'Lulu_26#',
+    location: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri.',
     mapUrl: 'https://maps.google.com/?q=-0.433276973199735,36.96868842933756',
+    checkInTime: 'After 2:00 PM',
+    checkOutTime: 'Before 10:00 AM',
+    contacts: {
+      safaricom: '0112299384',
+      airtel: '0756958531'
+    },
+    directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: SL- 2 (First floor).',
     rules: [
+      'Check-in is after 2:00 PM (early access available from 1:00 PM).',
+      'Check-out is strictly before 10:00 AM.',
       'Strict No-Smoking policy inside the suite.',
-      'Please leave the balcony door locked during high winds.',
-      'Check-out time is strictly 11:00 AM.'
+      'Please leave the balcony door locked during high winds.'
     ]
   }
 };
@@ -91,50 +147,165 @@ export const EMAIL_TEMPLATES = {
   },
 
   /**
-   * Content for fulfillment credentials email.
-   * Sent from: server/services/emailService.js -> sendFulfillmentCredentials(booking)
-   * Triggered by: successful payments (server/controllers/bookingController.js -> verifyPaymentWebhook, or server/controllers/paymentController.js -> mpesaCallback/capturePaypalPayment)
+   * Content for payment success confirmation email.
+   * Sent immediately after successful payment.
+   * Informs the client that payment succeeded and that complete check-in details
+   * will be sent as from 1:00 PM on their check-in day.
    */
-  FULFILLMENT_CREDENTIALS: (booking) => {
+  PAYMENT_SUCCESS_CONFIRMATION: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Dear ${booking.guest_name}, Thank you for completing your deposit payment! Your stay at ${details.name} is fully SECURED.`,
-      title: 'Your Stay Credentials',
-      subject: `Your Stay Credentials - ${details.name.toUpperCase()}`,
-      preheader: `Your digital lock passcode and check-in instructions for ${details.name}.`,
+      text: `Dear ${booking.guest_name}, thank you for your payment! Your reservation for ${details.fullName || details.name} is fully confirmed. Full check-in details (lock box code, apartment number, Wi-Fi credentials) will be sent as from 1:00 PM on your check-in day (${booking.check_in}). Location: ${details.location}. Check-in: After 2:00 PM. Check-out: Before 10:00 AM.`,
+      title: 'Payment Successful - Booking Confirmed',
+      subject: `Payment Confirmed: Your Stay at ${details.name} is Secured! (Ref #${booking.id.substring(0, 8).toUpperCase()})`,
+      preheader: `Payment received successfully! Check-in details will be sent from 1:00 PM on your arrival day.`,
       heroImage: unitId === 'cocoa' 
         ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
         : unitId === 'neema'
         ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
         : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
-      badge: 'Stay Secured',
-      headingLine1: "You're almost",
-      headingLine2: 'There.',
+      badge: 'Payment Received & Secured',
+      headingLine1: 'Payment',
+      headingLine2: 'Successful!',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `Thank you for completing your payment. Your stay at <strong>${details.name}</strong> is fully secured. Below is your check-in access credentials bundle for your convenience:`
+        `Thank you for choosing <strong>${details.fullName || details.name}</strong>. We are delighted to confirm that your payment has been received successfully and your booking is fully secured!`,
+        `<strong>Check-In Date:</strong> ${booking.check_in}<br/><strong>Check-Out Date:</strong> ${booking.check_out}<br/><strong>Check-in Time:</strong> After 2:00 PM<br/><strong>Check-out Time:</strong> Before 10:00 AM`
+      ],
+      alertText: `🕒 <strong>Check-In Details Timing:</strong><br/>
+Check-in is officially as from <strong>2:00 PM</strong>, but guests can access the unit earlier than planned. <strong>Your full check-in details (lock box code, apartment number, and Wi-Fi credentials) will be sent to you as from 1:00 PM</strong> on your arrival day (${booking.check_in}).`,
+      bookingRef: booking.id.substring(0, 8).toUpperCase(),
+      button: {
+        label: 'View Booking Itinerary',
+        url: `https://www.luluaurelian.co.ke/#/portal?token=${booking.secure_token}`
+      }
+    };
+  },
+
+  /**
+   * Content for fulfillment credentials and check-in access email.
+   * Sent as from 1:00 PM on check-in day.
+   */
+  FULFILLMENT_CREDENTIALS: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const lockboxCode = booking.passcode || details.lockboxCode || '9010';
+    const aptNumber = booking.house_number || details.apartmentNo || '16 (Top floor)';
+    const wifiSSID = booking.wifi_ssid || details.wifiUsername || details.wifiSSID;
+    const wifiPass = booking.wifi_password || details.wifiPassword || details.wifiPass;
+
+    let textMessage = '';
+    let credentialItems = [];
+
+    if (unitId === 'skyview') {
+      textMessage = `Welcome to Lulu Aurenian Furnished Apartments- SkyView!\n\n` +
+        `We’re delighted to host you and hope you enjoy your stay.🤗\n\n` +
+        `📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri.\n\n` +
+        `Apartment No: 16 (Top floor)\n` +
+        `🔑 Key Access:\nThe key is in the lock box located just outside the door.\n\n` +
+        `🔐 Lock box code: ${lockboxCode}\n\n` +
+        `📶 Wi-Fi Details:\nUsername: ${wifiSSID}\nPassword: ${wifiPass}\n\n` +
+        `🕒 Check-in: After 2:00 PM\n` +
+        `🕘 Check-out: Before 10:00 AM\n\n` +
+        `🔊 All items in the units are at your disposal to use except the washing machine in the second balcony that the guest needs express permission from the host to use.\n\n` +
+        `Should you need any assistance during your stay, feel free to reach out.\n\n` +
+        `Thank you!\n\n` +
+        `Warm Regards,\nLuluAurelian team\n\n` +
+        `Safaricom: 0112299384\n` +
+        `Airtel: 0756958531`;
+
+      credentialItems = [
+        { label: 'Apartment No', value: '16 (Top floor)' },
+        { label: '🔑 Key Access', value: 'Key is in the lock box located just outside the door.' },
+        { label: '🔐 Lock Box Code', value: lockboxCode },
+        { label: '📶 Wi-Fi Username', value: wifiSSID },
+        { label: '📶 Wi-Fi Password', value: wifiPass },
+        { label: '🕒 Check-in', value: 'After 2:00 PM' },
+        { label: '🕘 Check-out', value: 'Before 10:00 AM' },
+        { label: '🔊 Balcony Appliance Policy', value: 'All items in the units are at your disposal to use except the washing machine in the second balcony (requires express permission from host).' }
+      ];
+    } else if (unitId === 'cocoa') {
+      textMessage = `Welcome to Lulu Aurelian Furnished Apartments- Cocoa Home!\n\n` +
+        `We’re delighted to host you and hope you enjoy your stay.\n\n` +
+        `Apartment No: 19 (First floor)\n` +
+        `🔑 Key Access:\nThe key is in the lock box located just outside the door.\n\n` +
+        `Lock box code: ${lockboxCode}\n\n` +
+        `📶 Wi-Fi Details:\nUser name: ${wifiSSID}\npassword: ${wifiPass}\n\n` +
+        `Extension in the bedroom:\nUser name: Bedroom\nPassword: CMutwiri\n\n` +
+        `🕒 Check-in: After 2:00 PM\n` +
+        `🕘 Check-out: Before 10:00 AM.\n\n` +
+        `Should you need any assistance during your stay, feel free to reach out.\n\n` +
+        `Thank you!\nLuluaurelian\n\n` +
+        `Safaricom: 0112299384\n` +
+        `Airtel: 0756958531`;
+
+      credentialItems = [
+        { label: 'Apartment No', value: '19 (First floor)' },
+        { label: '🔑 Key Access', value: 'Key is in the lock box located just outside the door.' },
+        { label: '🔐 Lock Box Code', value: lockboxCode },
+        { label: '📶 Wi-Fi User Name', value: wifiSSID },
+        { label: '📶 Wi-Fi Password', value: wifiPass },
+        { label: '📶 Bedroom Extender', value: 'User: Bedroom | Pass: CMutwiri' },
+        { label: '🕒 Check-in', value: 'After 2:00 PM' },
+        { label: '🕘 Check-out', value: 'Before 10:00 AM' }
+      ];
+    } else {
+      // Neema
+      textMessage = `Welcome to Lulu Aurelian Furnished Apartments- Neema home!\n\n` +
+        `We’re delighted to host you and hope you enjoy your stay.\n\n` +
+        `Apartment No: SL- 2 (First floor)\n` +
+        `🔑 Key Access:\nThe key is in the lock box located just outside the door.\n\n` +
+        `Lock box code: ${lockboxCode}\n\n` +
+        `📶 Wi-Fi Details:\nUser name: ${wifiSSID}\npassword: ${wifiPass}\n\n` +
+        `🕒 Check-in: After 2:00 PM\n` +
+        `🕘 Check-out: Before 10:00 AM.\n\n` +
+        `Should you need any assistance during your stay, feel free to reach out.\n\n` +
+        `Thank you!\nLuluAurelian team\n\n` +
+        `Safaricom: 0112299384\n` +
+        `Airtel: 0756958531`;
+
+      credentialItems = [
+        { label: 'Apartment No', value: 'SL- 2 (First floor)' },
+        { label: '🔑 Key Access', value: 'Key is in the lock box located just outside the door.' },
+        { label: '🔐 Lock Box Code', value: lockboxCode },
+        { label: '📶 Wi-Fi User Name', value: wifiSSID },
+        { label: '📶 Wi-Fi Password', value: wifiPass },
+        { label: '🕒 Check-in', value: 'After 2:00 PM' },
+        { label: '🕘 Check-out', value: 'Before 10:00 AM' }
+      ];
+    }
+
+    return {
+      text: textMessage,
+      title: `${details.greeting || details.fullName}`,
+      subject: `${details.fullName} - Your Check-In Access Details`,
+      preheader: `Your door lockbox code and arrival instructions for ${details.name}.`,
+      heroImage: unitId === 'cocoa' 
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
+        : unitId === 'neema'
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
+        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      badge: 'Check-In Access Pass',
+      headingLine1: 'Welcome to',
+      headingLine2: `${details.name}!`,
+      paragraphs: [
+        `Dear ${booking.guest_name},`,
+        `<strong>${details.greeting || details.fullName}</strong>`,
+        `${details.welcomeNote || 'We’re delighted to host you and hope you enjoy your stay.'}`
       ],
       credentials: {
-        title: 'Credentials Bundle',
-        items: [
-          { label: 'Check-In Date & Time', value: `${booking.check_in} from 14:00 PM (2:00 PM)` },
-          { label: 'Check-Out Date & Time', value: `${booking.check_out} at 11:00 AM (11:00 AM)` },
-          { label: 'Suite Name', value: details.name },
-          { label: 'House/Room Number', value: booking.house_number || 'N/A' },
-          { label: 'Floor Level', value: details.floor },
-          { label: 'Key Box PIN', value: booking.passcode || '9841', extra: '(To retrieve the room key from the lock box)' },
-          { label: 'Wi-Fi SSID', value: booking.wifi_ssid || details.wifiSSID },
-          { label: 'Wi-Fi Password', value: booking.wifi_password || details.wifiPass },
-          { label: 'Check-In Directions', value: details.directions }
-        ]
+        title: '🔑 Unit Access & Credentials',
+        items: credentialItems
       },
       rules: {
-        title: 'Stay Rules & Guidelines',
+        title: 'Stay Guidelines',
         items: details.rules
       },
+      contacts: details.contacts,
+      bookingRef: booking.id.substring(0, 8).toUpperCase(),
       button: {
-        label: 'View Itinerary',
+        label: 'View Itinerary & Coordinates',
         url: `https://www.luluaurelian.co.ke/#/portal?token=${booking.secure_token}`
       }
     };
@@ -308,6 +479,57 @@ export const EMAIL_TEMPLATES = {
   },
 
   /**
+   * Content for morning check-out reminder email.
+   * Sent before 10:00 AM on check-out day (e.g., at 8:00 AM EAT).
+   */
+  CHECKOUT_MORNING_REMINDER: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    return {
+      text: `Good morning,\n\nThank you so much for booking with us!\nWe hope you had a good stay.\n\nAs you prepare to check out, please take a moment to review the following:\n\n🕙 Check-out Time:\nBefore 10:00 AM. Our housekeeper will be there at 10:10 AM to reset the house.\n\n✨ Lights & Windows:\nPlease ensure all lights are turned off, windows are closed, and the door is locked behind you when you leave.\n\n✨ Towels & Linen:\nKindly leave used towels and linens in the laundry basket provided in each room before you check out.\n\n🔑 Keys:\nPlease return the key to the lockbox and scramble the code afterward. Use the same code you used to open the lockbox.\n\nWe hope to welcome you again.\n\nRegards,\nLuluAurelian team`,
+      title: 'Check-out Guidelines - Lulu Aurelian',
+      subject: `Check-out Guidelines for ${details.name} (Check-out Before 10:00 AM)`,
+      preheader: `Thank you for staying with us! Please review the check-out guidelines before 10:00 AM.`,
+      heroImage: unitId === 'cocoa' 
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
+        : unitId === 'neema'
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
+        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      badge: 'Check-out Notice',
+      headingLine1: 'Check-out',
+      headingLine2: 'Guidelines',
+      paragraphs: [
+        'Good morning,',
+        'Thank you so much for booking with us! We hope you had a good stay.',
+        'As you prepare to check out, please take a moment to review the following:'
+      ],
+      checklist: [
+        {
+          title: '🕙 Check-out Time:',
+          desc: 'Before <strong>10:00 AM</strong>. Our housekeeper will be there at 10:10 AM to reset the house.'
+        },
+        {
+          title: '✨ Lights & Windows:',
+          desc: 'Please ensure all lights are turned off, windows are closed, and the door is locked behind you when you leave.'
+        },
+        {
+          title: '✨ Towels & Linen:',
+          desc: 'Kindly leave used towels and linens in the laundry basket provided in each room before you check out.'
+        },
+        {
+          title: '🔑 Keys:',
+          desc: 'Please return the key to the lockbox and scramble the code afterward. Use the same code you used to open the lockbox.'
+        }
+      ],
+      closing: 'We hope to welcome you again.<br/><br/>Regards,<br/><strong>LuluAurelian team</strong>',
+      button: {
+        label: 'Leave a Review',
+        url: `https://www.luluaurelian.co.ke/#/review?token=${booking.secure_token}`
+      }
+    };
+  },
+
+  /**
    * Content for holiday marketing campaign emails.
    * Sent from: server/services/emailService.js -> sendHolidayMarketing(email, holidayName)
    * Triggered by: Daily holiday retention cron (server/services/cronService.js -> runHolidayRetentionAlerts)
@@ -421,9 +643,7 @@ export const EMAIL_TEMPLATES = {
 // ==========================================
 export const WHATSAPP_TEMPLATES = {
   /**
-   * WhatsApp text alert sent to notify guests of status updates (APPROVED, DECLINED, PAID, etc.)
-   * Sent from: server/services/whatsappService.js -> sendBookingStatusAlert(booking, status)
-   * Triggered by: booking updates or request creation (server/controllers/bookingController.js)
+   * WhatsApp text alert sent to notify guests of status updates (APPROVED, DECLINED, etc.)
    */
   BOOKING_STATUS_ALERT: (booking, status) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
@@ -437,76 +657,168 @@ Status updates and receipt coordinates will be dispatched to your email at ${boo
   },
 
   /**
-   * WhatsApp text alert sent after successful payment with occupancy details, credentials, and house rules.
-   * Sent from: server/services/whatsappService.js -> sendBookingStatusAlert(booking, 'PAID')
-   * Triggered by: successful payments (server/controllers/bookingController.js)
+   * WhatsApp text alert sent immediately after successful payment.
+   * Informs the client that payment was successful and that check-in details
+   * will be sent as from 1:00 PM on their check-in day.
    */
-  BOOKING_PAID_FULFILLMENT: (booking) => {
+  BOOKING_PAID_CONFIRMATION: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    return `Dear *${booking.guest_name}*, thank you for your payment! Your reservation for *${details.name}* is fully confirmed.
+    return `Hello *${booking.guest_name}*, thank you for your payment! Your reservation for *${details.fullName || details.name}* is fully confirmed.
 
-*Stay Details & Occupancy Dates:*
-• Check-In: ${booking.check_in} from 14:00 PM (2:00 PM)
-• Check-Out: ${booking.check_out} at 11:00 AM (11:00 AM)
+📅 *Stay Dates:* ${booking.check_in} to ${booking.check_out}
+🕒 *Check-In Time:* After 2:00 PM
+🕘 *Check-Out Time:* Before 10:00 AM
 
-*Location & Suite:*
-• Suite Name: ${details.name}
-• House/Room Number: ${booking.house_number || 'N/A'}
-• Floor Level: ${details.floor}
-• Address: ${details.location}
-• Google Maps Location: ${details.mapUrl}
+📍 *Location:* ${details.location}
+🗺️ *Google Maps Pin:* ${details.mapUrl}
 
-*Credentials:*
-• Key Box PIN: *${booking.passcode || '9841'}* (To retrieve room key from the lock box)
-• Wi-Fi SSID: ${booking.wifi_ssid || details.wifiSSID}
-• Wi-Fi Password: ${booking.wifi_password || details.wifiPass}
+🔑 *Check-in Access Details:*
+Your complete check-in access details (apartment number, door lock box code, and Wi-Fi credentials) will be sent to you as from *1:00 PM* on your check-in day (${booking.check_in}), allowing you early access to the unit.
 
-*Check-In Directions:*
-${details.directions}
+Should you need any assistance, feel free to reach out:
+Safaricom: 0112299384
+Airtel: 0756958531
 
-*House Rules:*
-${details.rules.map((rule, idx) => `${idx + 1}. ${rule}`).join('\n')}
+Warm Regards,
+LuluAurelian team`;
+  },
 
-We look forward to hosting you!`;
+  /**
+   * WhatsApp check-in credentials sent as from 1:00 PM on check-in day.
+   */
+  CHECK_IN_CREDENTIALS: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const lockboxCode = booking.passcode || details.lockboxCode || '9010';
+    const wifiSSID = booking.wifi_ssid || details.wifiUsername || details.wifiSSID;
+    const wifiPass = booking.wifi_password || details.wifiPassword || details.wifiPass;
+
+    if (unitId === 'skyview') {
+      return `Welcome to Lulu Aurenian Furnished Apartments- SkyView!
+
+We’re delighted to host you  and hope you enjoy your stay.🤗
+
+📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to  former Rubis Petrol Station. Skuta, Nyeri.
+🗺️ Google Maps Pin: https://maps.google.com/?q=-0.433276973199735,36.96868842933756
+
+Apartment No: 16 (Top floor)
+🔑 Key Access:
+The key is in the lock box located just outside the door.
+
+🔐 Lock box code:${lockboxCode}
+
+📶 Wi-Fi Details:
+
+Username: ${wifiSSID}
+Password:  ${wifiPass}
+
+🕒 Check-in: After  2:00 PM
+🕘 Check-out: Before 10:00 AM
+
+🔊 All items in the units are at your disposal to use except the washing machine  in the second balcony that the guest needs express permission from the host  to use.
+
+Should you need any assistance during your stay, feel free to reach out.
+
+Thank you!
+
+Warm Regards,
+
+LuluAurelian team
+
+Safaricom-0112299384
+Airtel-0756958531`;
+    }
+
+    if (unitId === 'cocoa') {
+      return `Welcome to Lulu Aurelian Furnished Apartments- Cocoa Home!
+
+We’re delighted to host you  and hope you enjoy your stay.
+
+📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to  former Rubis Petrol Station. Skuta, Nyeri.
+🗺️ Google Maps Pin: https://maps.google.com/?q=-0.433276973199735,36.96868842933756
+
+Apartment No: 19 (First floor)
+🔑 Key Access:
+
+The key is in the lock box located just outside the door.
+
+Lock box code: ${lockboxCode}
+
+📶 Wi-Fi Details:
+User name: ${wifiSSID}
+password: ${wifiPass}
+
+Extension in the bedroom:
+User name: Bedroom 
+Password: CMutwiri 
+
+🕒 Check-in: After 2:00 PM
+🕘 Check-out: Before 10:00 AM.
+
+Should you need any assistance during your stay, feel free to reach out.
+
+Thank you!
+Luluaurelian
+
+Safaricom- 112 299384 
+*Airtel-0756 958531*`;
+    }
+
+    // Neema
+    return `Welcome to Lulu Aurelian Furnished Apartments- Neema home!
+
+We’re delighted to host you  and hope you enjoy your stay.
+
+📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to  former Rubis Petrol Station. Skuta, Nyeri.
+🗺️ Google Maps Pin: https://maps.google.com/?q=-0.433276973199735,36.96868842933756
+
+Apartment No: SL- 2  (First floor)
+🔑 Key Access:
+
+The key is in the lock box located just outside the door.
+
+Lock box code: ${lockboxCode}
+
+📶 Wi-Fi Details:
+User name: ${wifiSSID}
+password: ${wifiPass}
+
+🕒 Check-in: After 2:00 PM
+🕘 Check-out: Before 10:00 AM.
+
+Should you need any assistance during your stay, feel free to reach out.
+
+Thank you!
+LuluAurelian team
+
+Safaricom- 112 299384 
+*Airtel-0756 958531*`;
+  },
+
+  /**
+   * Alias for backward compatibility
+   */
+  BOOKING_PAID_FULFILLMENT: (booking) => {
+    return WHATSAPP_TEMPLATES.CHECK_IN_CREDENTIALS(booking);
+  },
+
+  /**
+   * Alias for check-in day arrival
+   */
+  CHECK_IN_DAY_ARRIVAL: (booking) => {
+    return WHATSAPP_TEMPLATES.CHECK_IN_CREDENTIALS(booking);
   },
 
   /**
    * WhatsApp text alert sent when an approved reservation expires due to unpaid TTL (3 hours)
-   * Sent from: server/services/cronService.js -> cancelExpiredApprovedBookings()
-   * Triggered by: Expiration check cron (runs every 15 minutes)
    */
   BOOKING_CANCELED_EXPIRED: (booking) => {
     return `Dear ${booking.guest_name}, your approved reservation ${booking.id.substring(0, 8)} has been canceled because the strict 3-hour payment window expired.`;
   },
 
   /**
-   * WhatsApp morning check-in reminder sent on the day of check-in
-   * Sent from: server/services/cronService.js -> runLifecycleMessagingHooks()
-   * Triggered by: Daily lifecycle messaging cron at 9:00 AM on check_in day
-   */
-  CHECK_IN_DAY_ARRIVAL: (booking) => {
-    const unitId = (booking.unit_id || 'skyview').toLowerCase();
-    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    return `Good morning *${booking.guest_name}*! Today is your check-in day at *${details.name}*.
-
-🕒 *Check-In Time:* From 14:00 PM (2:00 PM)
-📍 *Location:* ${details.location}
-🗺️ *Google Maps Pin:* ${details.mapUrl}
-
-*Arrival Directions:*
-${details.directions}
-
-🔑 *Key Box PIN:* *${booking.passcode || '9841'}*
-📶 *Wi-Fi:* ${booking.wifi_ssid || details.wifiSSID} (Password: ${booking.wifi_password || details.wifiPass})
-
-We look forward to hosting you! Reply to this message if you need any assistance upon arrival.`;
-  },
-
-  /**
    * WhatsApp morning comfort follow-up ping the morning after check-in
-   * Sent from: server/services/cronService.js -> runLifecycleMessagingHooks()
-   * Triggered by: Daily lifecycle messaging cron at 9:00 AM
    */
   CHECK_IN_FOLLOW_UP: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
@@ -520,9 +832,44 @@ If there is anything we can do to improve your experience, please let us know!`;
   },
 
   /**
-   * WhatsApp feedback request ping sent on the day of checkou
-   * Sent from: server/services/cronService.js -> runLifecycleMessagingHooks()
-   * Triggered by: Daily lifecycle messaging cron at 9:00 AM
+   * WhatsApp morning check-out reminder sent before 10:00 AM on check-out day
+   */
+  CHECKOUT_MORNING_REMINDER: (booking) => {
+    return `Good morning ,
+
+Thank you so much for booking with us!
+
+We hope you had a good stay.  
+
+As you prepare to check out, please take a moment to review the following:
+
+🕙 Check-out Time:
+
+Before  10:00 AM. Our house keeper will be there at 10:10 Am to reset the house. 
+
+✨ Lights & Windows.
+
+Please ensure all lights are turned off, windows are closed, and the door is locked behind you when you leave.
+
+✨ Towels & Linen.
+
+Kindly leave used towels and linens in the laundry basket provided in each room before you check out.
+
+🔑 Keys.
+
+Please return the key to the lockbox and scramble the code afterward.
+Use the same code you used to open the lockbox.
+
+We hope to welcome you again. 
+
+Regards,
+
+
+LuluAurelian team`;
+  },
+
+  /**
+   * WhatsApp feedback request ping sent on the day of checkout
    */
   CHECKOUT_REVIEW_REQUEST: (booking) => {
     return `Hello *${booking.guest_name}*, we trust your stay was flawless. To help us maintain our standards, please review us: https://www.luluaurelian.co.ke/#/review?token=${booking.secure_token}`;
