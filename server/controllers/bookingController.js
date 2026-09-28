@@ -266,16 +266,19 @@ export const initiatePayment = async (req, res, next) => {
       });
     }
 
-    // ── 1-hour hold expiry check ─────────────────────────────────────────
-    const expiresAt = booking.hold_expires_at
+    // ── 1-hour hold expiry check (with 15-min grace if already authorizing on phone) ──
+    const baseExpiresAt = booking.hold_expires_at
       ? new Date(booking.hold_expires_at)
       : new Date(new Date(booking.created_at).getTime() + PAYMENT_TTL_MS);
+    const expiresAt = booking.status === 'AUTHORIZING'
+      ? new Date(baseExpiresAt.getTime() + 15 * 60 * 1000)
+      : baseExpiresAt;
 
     if (new Date() > expiresAt) {
       await db.bookings.updateStatus(booking.id, 'EXPIRED');
       return res.status(400).json({
         success: false,
-        error: 'Your 1-hour payment hold has expired. Please create a new booking.'
+        error: 'Your payment hold has expired. Please create a new booking.'
       });
     }
 

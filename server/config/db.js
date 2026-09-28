@@ -113,7 +113,8 @@ const inMemory = {
 
   ical_links: [],
 
-  processed_webhook_events: [] // idempotency store for webhook event IDs
+  processed_webhook_events: [], // idempotency store for webhook event IDs
+  payments: []
 };
 
 // Check database provider configurations
@@ -787,17 +788,39 @@ export const db = {
       const now = new Date();
       if (useMySQL) {
         await pool.query(
-          'INSERT INTO payments (id, booking_id, amount, currency, gateway, transaction_ref, idempotency_key, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          `INSERT INTO payments (id, booking_id, amount, currency, gateway, transaction_ref, idempotency_key, status, created_at, updated_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE 
+             status = VALUES(status),
+             amount = VALUES(amount),
+             updated_at = VALUES(updated_at)`,
           [id, paymentData.booking_id, paymentData.amount, paymentData.currency || 'KES', paymentData.gateway, paymentData.transaction_ref || null, paymentData.idempotency_key || null, paymentData.status || 'PENDING', now, now]
         );
         return { id, ...paymentData, status: paymentData.status || 'PENDING' };
       }
-      return null;
+      const existing = inMemory.payments.find(p => p.transaction_ref && p.transaction_ref === paymentData.transaction_ref);
+      if (existing) {
+        existing.status = paymentData.status || 'PENDING';
+        existing.amount = paymentData.amount;
+        existing.updated_at = now;
+        return existing;
+      }
+      const newPayment = { id, ...paymentData, status: paymentData.status || 'PENDING', created_at: now, updated_at: now };
+      inMemory.payments.push(newPayment);
+      return newPayment;
     },
 
     updateStatus: async (transaction_ref, status) => {
+      if (!transaction_ref) return false;
+      const cleanRef = String(transaction_ref).trim();
       if (useMySQL) {
-        await pool.query('UPDATE payments SET status = ?, updated_at = ? WHERE transaction_ref = ?', [status, new Date(), transaction_ref]);
+        await pool.query('UPDATE payments SET status = ?, updated_at = ? WHERE UPPER(transaction_ref) = UPPER(?)', [status, new Date(), cleanRef]);
+        return true;
+      }
+      const p = inMemory.payments.find(item => item.transaction_ref && item.transaction_ref.toUpperCase() === cleanRef.toUpperCase());
+      if (p) {
+        p.status = status;
+        p.updated_at = new Date();
         return true;
       }
       return false;
@@ -808,7 +831,7 @@ export const db = {
         const [rows] = await pool.query('SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC', [booking_id]);
         return rows;
       }
-      return [];
+      return inMemory.payments.filter(p => p.booking_id === booking_id);
     },
 
     updateStatusByBookingId: async (booking_id, status) => {
@@ -816,15 +839,19 @@ export const db = {
         await pool.query('UPDATE payments SET status = ?, updated_at = ? WHERE booking_id = ?', [status, new Date(), booking_id]);
         return true;
       }
-      return false;
+      const matched = inMemory.payments.filter(p => p.booking_id === booking_id);
+      matched.forEach(p => { p.status = status; p.updated_at = new Date(); });
+      return true;
     },
 
     findByRef: async (transaction_ref) => {
+      if (!transaction_ref) return null;
+      const cleanRef = String(transaction_ref).trim();
       if (useMySQL) {
-        const [rows] = await pool.query('SELECT * FROM payments WHERE transaction_ref = ?', [transaction_ref]);
+        const [rows] = await pool.query('SELECT * FROM payments WHERE UPPER(transaction_ref) = UPPER(?)', [cleanRef]);
         return rows[0] || null;
       }
-      return null;
+      return inMemory.payments.find(p => p.transaction_ref && p.transaction_ref.toUpperCase() === cleanRef.toUpperCase()) || null;
     },
 
     // Idempotency: find an existing payment attempt for this booking+key

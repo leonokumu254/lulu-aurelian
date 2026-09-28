@@ -270,7 +270,10 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ checkoutRequestId })
+          body: JSON.stringify({ 
+            checkoutRequestId,
+            bookingId: createdBooking?.bookingId || createdBooking?.id 
+          })
         });
 
         const data = await res.json();

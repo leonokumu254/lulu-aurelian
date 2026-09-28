@@ -156,11 +156,6 @@ export const payheroCallback = async (req, res) => {
     const payHeroStatus = String(rawStatus || '').toUpperCase();
     const payHeroRef = reference || external_reference;
 
-    if (!payHeroRef && !external_reference) {
-      console.warn('[PAYHERO WEBHOOK]: Missing reference fields in payload.', payload);
-      return res.status(200).json({ status: 'received' });
-    }
-
     // ── Find payment record by reference ──
     let payment = null;
     if (payHeroRef) {
@@ -170,7 +165,7 @@ export const payheroCallback = async (req, res) => {
       payment = await db.payments.findByRef(external_reference);
     }
 
-    // Fallback: search booking by external_reference prefix
+    // Fallback 1: search booking by external_reference prefix
     if (!payment && external_reference) {
       const allBookings = await db.bookings.getAll();
       const matchedBooking = allBookings.find(b => b.id.toUpperCase().startsWith(String(external_reference).toUpperCase()));
@@ -179,8 +174,27 @@ export const payheroCallback = async (req, res) => {
       }
     }
 
+    // Fallback 2: search booking by phone number & recent pending/authorizing status
     if (!payment) {
-      console.warn(`[PAYHERO WEBHOOK]: No payment found for ref: ${payHeroRef || external_reference}`);
+      const rawPhone = payload.phone_number || payload.phone || resObj.phone_number || resObj.phone || '';
+      if (rawPhone) {
+        const cleanPhone = String(rawPhone).replace(/[^0-9]/g, '');
+        const allBookings = await db.bookings.getAll();
+        const matched = allBookings.find(b => {
+          const bPhone = String(b.guest_phone || '').replace(/[^0-9]/g, '');
+          const phoneMatch = bPhone && (bPhone.endsWith(cleanPhone.slice(-9)) || cleanPhone.endsWith(bPhone.slice(-9)));
+          const isPending = ['AUTHORIZING', 'PENDING'].includes(b.status);
+          return phoneMatch && isPending;
+        });
+        if (matched) {
+          console.log(`[PAYHERO WEBHOOK]: Matched booking ${matched.id} via customer phone ${rawPhone}`);
+          payment = { booking_id: matched.id, transaction_ref: payHeroRef || external_reference || mpesaReceipt || matched.id };
+        }
+      }
+    }
+
+    if (!payment) {
+      console.warn(`[PAYHERO WEBHOOK]: No payment or booking found for ref: ${payHeroRef || external_reference}`);
       return res.status(200).json({ status: 'received' });
     }
 
@@ -189,12 +203,24 @@ export const payheroCallback = async (req, res) => {
       await db.payments.updateStatus(payment.transaction_ref, 'COMPLETED');
       await db.bookings.updateStatus(payment.booking_id, 'PAID');
 
+      // Also record the receipt in payments table if provided
+      if (mpesaReceipt) {
+        const booking = await db.bookings.findById(payment.booking_id);
+        await db.payments.create({
+          booking_id: payment.booking_id,
+          amount: booking?.total_price || 0,
+          gateway: 'MPESA',
+          transaction_ref: mpesaReceipt,
+          status: 'COMPLETED'
+        }).catch(() => {});
+      }
+
       const booking = await db.bookings.findById(payment.booking_id);
       if (booking) {
         dispatchPostPaymentNotifications(booking);
       }
 
-      console.log(`[PAYHERO WEBHOOK]: ✅ Payment verified. Booking ${payment.booking_id} activated! M-Pesa Receipt: ${mpesaReceipt || 'N/A'}`);
+      console.log(`[PAYHERO WEBHOOK]: ✅ Payment verified. Booking ${payment.booking_id} activated to PAID! M-Pesa Receipt: ${mpesaReceipt || 'N/A'}`);
     } else if (['FAILED', 'CANCELLED', 'DECLINED', 'TIMEOUT'].includes(payHeroStatus)) {
       console.log(`[PAYHERO WEBHOOK]: ❌ Payment ${payHeroStatus} for ref ${payHeroRef}`);
       await db.payments.updateStatus(payment.transaction_ref, 'FAILED');
@@ -204,7 +230,7 @@ export const payheroCallback = async (req, res) => {
         await db.bookings.updateStatus(payment.booking_id, 'PENDING');
       }
     } else {
-      console.log(`[PAYHERO WEBHOOK]: ⏳ Unhandled status "${payHeroStatus}" for ref ${payHeroRef}.`);
+      console.log(`[PAYHERO WEBHOOK]: ⏳ Status "${payHeroStatus}" for ref ${payHeroRef}.`);
     }
 
     return res.status(200).json({ status: 'received' });
@@ -236,9 +262,13 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Booking not found.' });
     }
 
-    // Prevent duplicate verification on already-paid bookings
+    // Idempotent: If already paid, return immediate success
     if (booking.status === 'PAID' || booking.status === 'COMPLETED') {
-      return res.status(400).json({ success: false, error: 'This booking has already been paid and confirmed.' });
+      return res.status(200).json({
+        success: true,
+        message: 'This booking has already been paid and confirmed!',
+        booking
+      });
     }
 
     // Determine amount dynamically
@@ -251,16 +281,20 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
       amount = baseRate * nights;
     }
 
-    // Record completed transaction
-    await db.payments.create({
-      booking_id: booking.id,
-      amount: amount,
-      gateway: 'MPESA',
-      transaction_ref: cleanCode,
-      status: 'COMPLETED'
-    });
+    // Record completed transaction (safe against duplicates)
+    try {
+      await db.payments.create({
+        booking_id: booking.id,
+        amount: amount,
+        gateway: 'MPESA',
+        transaction_ref: cleanCode,
+        status: 'COMPLETED'
+      });
+    } catch (e) {
+      await db.payments.updateStatus(cleanCode, 'COMPLETED').catch(() => {});
+    }
 
-    // Mark booking as PAID
+    // Mark booking as PAID (even if it was EXPIRED due to hold timeout while guest paid)
     const confirmedBooking = await db.bookings.updateStatus(booking.id, 'PAID');
 
     // Trigger instant email & WhatsApp credentials dispatch
@@ -283,21 +317,50 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
 
 /**
  * Poll the status of a PayHero STK Push payment.
- * Checks local DB first (callback may have already resolved it),
- * then falls back to querying PayHero's transaction status API.
+ * Checks local DB first (callback or manual verify may have already resolved it),
+ * checks booking status directly, then falls back to querying PayHero's API.
  */
 export const queryPayheroStatus = async (req, res) => {
   try {
-    const { checkoutRequestId } = req.body;
+    const { checkoutRequestId, booking_id, bookingId } = req.body;
+    const bId = booking_id || bookingId;
 
-    if (!checkoutRequestId) {
-      return res.status(400).json({ success: false, error: 'Missing checkoutRequestId.' });
+    // 1. Check if the booking itself is ALREADY marked PAID
+    if (bId) {
+      const booking = await db.bookings.findById(bId);
+      if (booking && (booking.status === 'PAID' || booking.status === 'COMPLETED')) {
+        return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
+      }
+
+      // Check if any payment for this booking has completed
+      const bookingPayments = await db.payments.findByBookingId(bId);
+      const completedPayment = (bookingPayments || []).find(p => p.status === 'COMPLETED');
+      if (completedPayment) {
+        await db.bookings.updateStatus(bId, 'PAID');
+        const updatedBooking = await db.bookings.findById(bId);
+        if (updatedBooking) {
+          dispatchPostPaymentNotifications(updatedBooking);
+        }
+        return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
+      }
     }
 
-    // 1. Check local DB first — the callback may have already handled it
-    const payment = await db.payments.findByRef(checkoutRequestId);
+    if (!checkoutRequestId && !bId) {
+      return res.status(400).json({ success: false, error: 'Missing checkoutRequestId or booking_id.' });
+    }
+
+    // 2. Check local payments table by checkoutRequestId
+    let payment = null;
+    if (checkoutRequestId) {
+      payment = await db.payments.findByRef(checkoutRequestId);
+    }
 
     if (payment && payment.status === 'COMPLETED') {
+      if (payment.booking_id) {
+        await db.bookings.updateStatus(payment.booking_id, 'PAID');
+        const b = await db.bookings.findById(payment.booking_id);
+        if (b) dispatchPostPaymentNotifications(b);
+      }
       return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
     }
 
@@ -305,37 +368,38 @@ export const queryPayheroStatus = async (req, res) => {
       return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment was cancelled or failed.' });
     }
 
-    // 2. Query PayHero directly for transaction status
-    const queryResult = await payheroService.queryTransactionStatus(checkoutRequestId);
+    // 3. Query PayHero directly for transaction status
+    if (checkoutRequestId) {
+      const queryResult = await payheroService.queryTransactionStatus(checkoutRequestId);
 
-    if (queryResult.status === 'COMPLETED') {
-      // Payment successful — update records (idempotent if callback already did this)
-      if (payment) {
+      if (queryResult.status === 'COMPLETED') {
+        const targetBookingId = (payment && payment.booking_id) || bId;
         await db.payments.updateStatus(checkoutRequestId, 'COMPLETED');
-        await db.bookings.updateStatus(payment.booking_id, 'PAID');
-
-        const booking = await db.bookings.findById(payment.booking_id);
-        if (booking) {
-          dispatchPostPaymentNotifications(booking);
+        if (targetBookingId) {
+          await db.bookings.updateStatus(targetBookingId, 'PAID');
+          const booking = await db.bookings.findById(targetBookingId);
+          if (booking) {
+            dispatchPostPaymentNotifications(booking);
+          }
         }
+        return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
       }
-      return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
-    }
 
-    if (queryResult.status === 'CANCELLED') {
-      if (payment) {
-        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
-        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      if (queryResult.status === 'CANCELLED') {
+        if (payment) {
+          await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+          await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+        }
+        return res.status(200).json({ success: true, status: 'CANCELLED', message: 'Payment cancelled by user.' });
       }
-      return res.status(200).json({ success: true, status: 'CANCELLED', message: 'Payment cancelled by user.' });
-    }
 
-    if (queryResult.status === 'FAILED') {
-      if (payment) {
-        await db.payments.updateStatus(checkoutRequestId, 'FAILED');
-        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      if (queryResult.status === 'FAILED') {
+        if (payment) {
+          await db.payments.updateStatus(checkoutRequestId, 'FAILED');
+          await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+        }
+        return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment failed. Please try again.' });
       }
-      return res.status(200).json({ success: true, status: 'FAILED', message: 'Payment failed. Please try again.' });
     }
 
     // Still pending
@@ -343,7 +407,6 @@ export const queryPayheroStatus = async (req, res) => {
 
   } catch (error) {
     console.error('[PAYHERO QUERY ERROR]:', error.message);
-    // Return PENDING rather than error so frontend keeps polling
     return res.status(200).json({ success: true, status: 'PENDING', message: 'Unable to verify status yet.' });
   }
 };
