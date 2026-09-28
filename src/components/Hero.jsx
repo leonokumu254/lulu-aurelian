@@ -28,7 +28,15 @@ export default function Hero({ onSearch, isPreloaderDone = true }) {
   const [typingPhase, setTypingPhase] = useState(() => isPreloaderDone ? 'done' : 'waiting');
   const [cursorVisible, setCursorVisible] = useState(() => !isPreloaderDone);
 
-  // Background Carousel rotation
+  // Helper to derive unitId from image path
+const getUnitIdFromImage = (imgPath) => {
+  // Expect path like '/assets/skyview/skyview_1.jpg'
+  const parts = imgPath.split('/');
+  const knownUnits = ['skyview', 'cocoa', 'neema'];
+  const unit = parts.find(p => knownUnits.includes(p));
+  return unit || '';
+};
+// Background Carousel rotation
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIdx((prev) => (prev + 1) % IMAGES.length);
@@ -126,9 +134,10 @@ export default function Hero({ onSearch, isPreloaderDone = true }) {
         {IMAGES.map((img, idx) => (
           <div
             key={idx}
-            className={`hero-slide ${idx === currentIdx ? 'active' : ''}`}
+            className={`hero-slide ${idx === currentIdx ? 'active' : ''}`} onClick={() => { const unitId = getUnitIdFromImage(img); if (unitId) { window.location.href = `/unit/${unitId}`; }}
             style={{ 
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url(${img})` 
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url(${img})`,
+              cursor: 'pointer'
             }}
           />
         ))}
