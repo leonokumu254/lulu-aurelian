@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Shield, Sparkles, Loader2 } from 'lucide-react';
+import { Calendar, Shield, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import './BookingSummary.css';
 import { OFFERS } from '../data/OffersData';
 import { getSuitePrice } from '../utils/pricing';
@@ -92,7 +92,27 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [conflictData, setConflictData] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  React.useEffect(() => {
+    setSubmitError('');
+    setConflictData(null);
+  }, [formData.checkIn, formData.checkOut, formData.suite]);
+
+  const handleOpenCalendar = () => {
+    setSubmitError('');
+    setConflictData(null);
+    window.dispatchEvent(new CustomEvent('openBookingCalendar'));
+  };
+
+  const handleSelectSuggestedWindow = (win) => {
+    setSubmitError('');
+    setConflictData(null);
+    window.dispatchEvent(new CustomEvent('selectBookingDates', {
+      detail: { checkIn: win.check_in, checkOut: win.check_out }
+    }));
+  };
 
   const handleSubmitClick = async () => {
     if (!isFormValid || submitting) return;
@@ -147,6 +167,9 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
         }, 1500);
       } else {
         setSubmitError(data.error || 'Failed to submit booking. Please try again.');
+        if (response.status === 409 || data.next_available_windows) {
+          setConflictData(data);
+        }
         setSubmitting(false);
       }
     } catch (err) {
@@ -292,11 +315,80 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
           <span className="total-price">KES {totalCost.toLocaleString('en-KE')}</span>
         </div>
 
-        {/* Error message */}
+        {/* Error message / Conflict Card */}
         {submitError && (
-          <p style={{ color: '#ff6b6b', fontSize: '0.8rem', marginTop: '0.5rem', textAlign: 'center' }}>
-            {submitError}
-          </p>
+          <div className="summary-conflict-card" style={{
+            margin: '0.85rem 0',
+            padding: '0.85rem',
+            backgroundColor: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            borderRadius: '6px',
+            textAlign: 'left'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <AlertCircle size={18} style={{ color: '#dc2626', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: 0, color: '#b91c1c', fontSize: '0.85rem', fontWeight: 600 }}>
+                  Dates Unavailable
+                </p>
+                <p style={{ margin: '0.25rem 0 0 0', color: '#7f1d1d', fontSize: '0.78rem', lineHeight: 1.4 }}>
+                  {submitError}
+                </p>
+              </div>
+            </div>
+
+            {/* Next available suggestions if provided */}
+            {conflictData?.next_available_windows?.length > 0 && (
+              <div style={{ marginTop: '0.65rem', borderTop: '1px dashed rgba(239, 68, 68, 0.2)', paddingTop: '0.5rem' }}>
+                <span style={{ fontSize: '0.74rem', color: '#991b1b', fontWeight: 600 }}>Suggested Available Dates:</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.35rem' }}>
+                  {conflictData.next_available_windows.map((win, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSelectSuggestedWindow(win)}
+                      style={{
+                        padding: '0.3rem 0.55rem',
+                        fontSize: '0.74rem',
+                        background: '#fff',
+                        border: '1px solid #f87171',
+                        borderRadius: '4px',
+                        color: '#991b1b',
+                        cursor: 'pointer',
+                        fontWeight: 500
+                      }}
+                    >
+                      {formatDate(win.check_in)} – {formatDate(win.check_out)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleOpenCalendar}
+              style={{
+                marginTop: '0.65rem',
+                width: '100%',
+                padding: '0.45rem',
+                background: '#dc2626',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <Calendar size={15} />
+              Select New Dates
+            </button>
+          </div>
         )}
 
         <button

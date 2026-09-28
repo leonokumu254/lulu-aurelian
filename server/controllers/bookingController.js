@@ -21,7 +21,7 @@ async function getNextAvailableWindows(unitId, requestedNights, limit = 3) {
   const activeForUnit = allBookings
     .filter(b =>
       b.unit_id === unitId &&
-      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status)
+      ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'].includes((b.status || '').toUpperCase())
     )
     .map(b => ({
       in:  new Date(b.check_in),
@@ -113,29 +113,15 @@ export const requestBooking = async (req, res, next) => {
     const hasPeakSurcharge = totalAdults === MAX_ADULT_GUESTS;
 
     // ── Overlap / double-booking check ───────────────────────────────────
+    // Dates remain available until payment has been confirmed ('PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED').
     const allBookings = await db.bookings.getAll();
-    const activeStatuses = ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
-    const now = new Date();
+    const activeStatuses = ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
 
     const conflicting = allBookings.find(b => {
       const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
       const bStatus = (b.status || '').toUpperCase();
       if (bUnit !== (unit_id || '').toLowerCase()) return false;
       if (!activeStatuses.includes(bStatus)) return false;
-
-      // Ignore expired pending holds
-      if ((bStatus === 'PENDING' || bStatus === 'AUTHORIZING') && b.hold_expires_at && new Date(b.hold_expires_at) < now) {
-        return false;
-      }
-
-      // If this is the exact same guest retrying an unpaid pending reservation, allow it to supersede
-      const isSameGuest = (
-        (b.guest_email && b.guest_email.toLowerCase() === guest_email.trim().toLowerCase()) ||
-        (b.guest_phone && b.guest_phone.replace(/\D/g, '') === guest_phone.trim().replace(/\D/g, ''))
-      );
-      if (isSameGuest && (bStatus === 'PENDING' || bStatus === 'AUTHORIZING')) {
-        return false;
-      }
 
       const bIn = new Date(b.check_in || b.checkIn);
       const bOut = new Date(b.check_out || b.checkOut);

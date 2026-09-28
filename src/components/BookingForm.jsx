@@ -85,15 +85,41 @@ export default function BookingForm({ formData, setFormData, onSubmit, user }) {
   }, []);
 
   useEffect(() => {
-    if (formData.suite) {
-      fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/blocked-dates/${formData.suite}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) setBlockedDates(data.blockedDates);
-        })
-        .catch(err => console.error('Failed to fetch blocked dates:', err));
-    }
-  }, [formData.suite]);
+    const fetchBlocked = () => {
+      if (formData.suite) {
+        fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/blocked-dates/${formData.suite}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setBlockedDates(data.blockedDates);
+          })
+          .catch(err => console.error('Failed to fetch blocked dates:', err));
+      }
+    };
+
+    fetchBlocked();
+
+    const handleOpenCal = () => {
+      fetchBlocked();
+      setIsCalendarOpen(true);
+    };
+
+    const handleSelectDates = (e) => {
+      if (e.detail?.checkIn && e.detail?.checkOut) {
+        setFormData(prev => ({
+          ...prev,
+          checkIn: e.detail.checkIn,
+          checkOut: e.detail.checkOut
+        }));
+      }
+    };
+
+    window.addEventListener('openBookingCalendar', handleOpenCal);
+    window.addEventListener('selectBookingDates', handleSelectDates);
+    return () => {
+      window.removeEventListener('openBookingCalendar', handleOpenCal);
+      window.removeEventListener('selectBookingDates', handleSelectDates);
+    };
+  }, [formData.suite, setFormData]);
 
   const dropdownRef = useRef(null);
   const phoneDropdownRef = useRef(null);
