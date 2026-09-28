@@ -318,15 +318,17 @@ class EmailService {
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
       this._renderAlertBox(data.alertText) +
+      this._renderLocationBlock(booking.unit_id) +
       this._renderBookingRef(data.bookingRef) +
       this._renderButton(data.button);
 
     const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
 
+    const unitDetails = UNIT_WELCOME_DETAILS[(booking.unit_id || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
     return this.sendEmail({
       to: booking.guest_email,
       subject: data.subject,
-      text: data.text,
+      text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps: ${unitDetails.mapUrl}`,
       html
     });
   }
@@ -402,14 +404,16 @@ class EmailService {
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
+      this._renderLocationBlock(booking.unit_id) +
       this._renderButton(data.button);
 
     const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
 
+    const unitDetails = UNIT_WELCOME_DETAILS[(booking.unit_id || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
     return this.sendEmail({
       to: booking.guest_email,
       subject: data.subject,
-      text: data.text,
+      text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps: ${unitDetails.mapUrl}`,
       html
     });
   }

@@ -394,7 +394,12 @@ export const WHATSAPP_TEMPLATES = {
   BOOKING_STATUS_ALERT: (booking, status) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    return `Hello *${booking.guest_name}*, this is Lulu Aurelian Estate. Your booking for *${details.name}* is currently *${status}*. Status updates and receipt coordinates will be dispatched to your email at ${booking.guest_email}. Reference ID: ${booking.id.substring(0, 8)}`;
+    return `Hello *${booking.guest_name}*, this is Lulu Aurelian Estate. Your booking for *${details.name}* is currently *${status}*.
+
+📍 *Location:* ${details.location}
+🗺️ *Google Maps Pin:* ${details.mapUrl}
+
+Status updates and receipt coordinates will be dispatched to your email at ${booking.guest_email}. Reference ID: ${booking.id.substring(0, 8).toUpperCase()}`;
   },
 
   /**
@@ -416,6 +421,7 @@ export const WHATSAPP_TEMPLATES = {
 • House/Room Number: ${booking.house_number || 'N/A'}
 • Floor Level: ${details.floor}
 • Address: ${details.location}
+• Google Maps Location: ${details.mapUrl}
 
 *Credentials:*
 • Key Box PIN: *${booking.passcode || '9841'}* (To retrieve room key from the lock box)
