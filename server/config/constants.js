@@ -18,8 +18,6 @@ export const UNIT_WELCOME_DETAILS = {
     floor: 'Top floor (Apartment 16)',
     house_number: '16',
     keyAccess: 'The key is in the lock box located just outside the door.',
-    lockboxCode: '9010',
-    passcode: '9010',
     wifiSSID: 'Pearl_16',
     wifiPass: 'PearlSL_16',
     wifiUsername: 'Pearl_16',
@@ -51,8 +49,6 @@ export const UNIT_WELCOME_DETAILS = {
     floor: 'First floor (Apartment 19)',
     house_number: '19',
     keyAccess: 'The key is in the lock box located just outside the door.',
-    lockboxCode: '2050',
-    passcode: '2050',
     wifiSSID: 'MK_Ny-0',
     wifiPass: 'CMutwiri',
     wifiUsername: 'MK_Ny-0',
@@ -84,8 +80,6 @@ export const UNIT_WELCOME_DETAILS = {
     floor: 'First floor (Apartment SL- 2)',
     house_number: 'SL- 2',
     keyAccess: 'The key is in the lock box located just outside the door.',
-    lockboxCode: '2428',
-    passcode: '2428',
     wifiSSID: 'AURELIAN',
     wifiPass: 'Lulu_26#',
     wifiUsername: 'AURELIAN',
@@ -190,8 +184,8 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
   FULFILLMENT_CREDENTIALS: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    const lockboxCode = booking.passcode || details.lockboxCode || '9010';
-    const aptNumber = booking.house_number || details.apartmentNo || '16 (Top floor)';
+    const lockboxCode = booking.passcode || '';
+    const aptNumber = booking.house_number || details.apartmentNo || '';
     const wifiSSID = booking.wifi_ssid || details.wifiUsername || details.wifiSSID;
     const wifiPass = booking.wifi_password || details.wifiPassword || details.wifiPass;
 
@@ -690,7 +684,8 @@ LuluAurelian team`;
   CHECK_IN_CREDENTIALS: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    const lockboxCode = booking.passcode || details.lockboxCode || '9010';
+    const lockboxCode = booking.passcode || '';
+    const aptNumber = booking.house_number || details.apartmentNo || '';
     const wifiSSID = booking.wifi_ssid || details.wifiUsername || details.wifiSSID;
     const wifiPass = booking.wifi_password || details.wifiPassword || details.wifiPass;
 
@@ -702,11 +697,11 @@ We’re delighted to host you  and hope you enjoy your stay.🤗
 📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to  former Rubis Petrol Station. Skuta, Nyeri.
 🗺️ Google Maps Pin: https://maps.google.com/?q=-0.433276973199735,36.96868842933756
 
-Apartment No: 16 (Top floor)
+Apartment No: ${aptNumber || '16 (Top floor)'}
 🔑 Key Access:
 The key is in the lock box located just outside the door.
 
-🔐 Lock box code:${lockboxCode}
+🔐 Lock box code: ${lockboxCode}
 
 📶 Wi-Fi Details:
 
@@ -738,7 +733,7 @@ We’re delighted to host you  and hope you enjoy your stay.
 📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to  former Rubis Petrol Station. Skuta, Nyeri.
 🗺️ Google Maps Pin: https://maps.google.com/?q=-0.433276973199735,36.96868842933756
 
-Apartment No: 19 (First floor)
+Apartment No: ${aptNumber || '19 (First floor)'}
 🔑 Key Access:
 
 The key is in the lock box located just outside the door.
@@ -773,7 +768,7 @@ We’re delighted to host you  and hope you enjoy your stay.
 📍 Location: Skyline Apartments, off Nyeri - Nairobi Road next to  former Rubis Petrol Station. Skuta, Nyeri.
 🗺️ Google Maps Pin: https://maps.google.com/?q=-0.433276973199735,36.96868842933756
 
-Apartment No: SL- 2  (First floor)
+Apartment No: ${aptNumber || 'SL- 2  (First floor)'}
 🔑 Key Access:
 
 The key is in the lock box located just outside the door.

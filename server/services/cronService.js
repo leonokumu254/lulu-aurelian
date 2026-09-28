@@ -33,8 +33,8 @@ class CronService {
       timezone: 'Africa/Nairobi'
     });
 
-    // 4. MORNING COMFORT CHECK-IN & RETENTION (Runs daily at 09:00 AM EAT)
-    cron.schedule('0 9 * * *', () => {
+    // 4. MORNING COMFORT CHECK-IN & FOLLOW-UP (Runs daily at 06:00 AM EAT)
+    cron.schedule('0 6 * * *', () => {
       this.runMorningComfortAndRetention();
     }, {
       timezone: 'Africa/Nairobi'
@@ -55,7 +55,7 @@ class CronService {
       timezone: 'Africa/Nairobi'
     });
 
-    console.log('[CRON SERVICE]: 8:00 AM Check-out, 9:00 AM Comfort, 1:00 PM Check-in credentials, and 12:00 PM Review crons initialized in Africa/Nairobi timezone.');
+    console.log('[CRON SERVICE]: 6:00 AM Morning Follow-up, 8:00 AM Check-out, 1:00 PM Check-in credentials, and 12:00 PM Review crons initialized in Africa/Nairobi timezone.');
   }
 
   // Task 1: Expire PENDING bookings whose 1-hour hold has elapsed
@@ -124,9 +124,9 @@ class CronService {
     }
   }
 
-  // Task 4: 9:00 AM Morning comfort check-in & holiday retention
+  // Task 4: 6:00 AM Morning comfort follow-up & holiday retention
   async runMorningComfortAndRetention() {
-    console.log('[CRON WORKER]: Triggering next-morning comfort check-in hooks...');
+    console.log('[CRON WORKER]: Triggering 6:00 AM morning comfort follow-up hooks...');
     const yesterdayStr = getEATDate(-1);
 
     try {
