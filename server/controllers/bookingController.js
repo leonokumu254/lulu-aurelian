@@ -161,6 +161,21 @@ export const requestBooking = async (req, res, next) => {
       }
     }
 
+    // ── Determine amount (dynamically fetched from DB rates)
+    const unitPricing   = await db.pricing.getUnitPricing(unit_id);
+    const isOneBed      = normalizedBookingType === 'one_bedroom';
+    const BASE_PRICE    = isOneBed ? unitPricing.one_bedroom_price : unitPricing.entire_price;
+    const nights        = Math.max(1, Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+    const baseCost      = BASE_PRICE * nights;
+    let discountPercent = 0;
+    if (nights >= 30) discountPercent = 20;
+    else if (nights >= 7) discountPercent = 10;
+    else if (nights >= 3) discountPercent = 5;
+    const lengthDiscountValue = baseCost * (discountPercent / 100);
+
+    const surcharge     = hasPeakSurcharge ? PEAK_GUEST_SURCHARGE : 0;
+    const totalAmount   = Math.round(Math.max(1, baseCost - lengthDiscountValue + surcharge));
+
     // ── Create booking row (PENDING → awaits payment) ─────────────────────
     const secureToken = 'sec_' + crypto.randomBytes(24).toString('hex');
 
@@ -183,7 +198,8 @@ export const requestBooking = async (req, res, next) => {
       hold_expires_at: new Date(Date.now() + PAYMENT_TTL_MS),
       created_at:      new Date(),
       updated_at:      new Date(),
-      cleaning_dates:  cleaning_dates || null
+      cleaning_dates:  cleaning_dates || null,
+      total_price:     totalAmount
     };
 
     await db.bookings.create(newBooking);
@@ -213,7 +229,8 @@ export const requestBooking = async (req, res, next) => {
         children:        newBooking.children,
         has_peak_surcharge: newBooking.has_peak_surcharge,
         hold_expires_at: newBooking.hold_expires_at,
-        secure_token:    newBooking.secure_token
+        secure_token:    newBooking.secure_token,
+        total_price:     newBooking.total_price
       }
     });
 
@@ -495,6 +512,25 @@ export const getBookings = async (req, res, next) => {
   try {
     const { status } = req.query;
     const list = await db.bookings.getAll(status);
+    for (const b of list) {
+      if (!b.total_price || isNaN(b.total_price)) {
+        try {
+          const p = await db.pricing.getUnitPricing(b.unit_id);
+          const isOneBed = b.booking_type === 'one_bedroom';
+          const rate = isOneBed ? p.one_bedroom_price : p.entire_price;
+          const nights = Math.max(1, Math.round((new Date(b.check_out) - new Date(b.check_in)) / (1000 * 60 * 60 * 24)));
+          const base = rate * nights;
+          let disc = 0;
+          if (nights >= 30) disc = 0.20;
+          else if (nights >= 7) disc = 0.10;
+          else if (nights >= 3) disc = 0.05;
+          const sur = b.has_peak_surcharge ? 1500 : 0;
+          b.total_price = Math.round(Math.max(1, base - (base * disc) + sur));
+        } catch (e) {
+          b.total_price = 5000;
+        }
+      }
+    }
     return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
     next(error);
@@ -505,6 +541,25 @@ export const getMyBookings = async (req, res, next) => {
   try {
     const userEmail = req.user.email;
     const list = await db.bookings.findByGuestEmail(userEmail);
+    for (const b of list) {
+      if (!b.total_price || isNaN(b.total_price)) {
+        try {
+          const p = await db.pricing.getUnitPricing(b.unit_id);
+          const isOneBed = b.booking_type === 'one_bedroom';
+          const rate = isOneBed ? p.one_bedroom_price : p.entire_price;
+          const nights = Math.max(1, Math.round((new Date(b.check_out) - new Date(b.check_in)) / (1000 * 60 * 60 * 24)));
+          const base = rate * nights;
+          let disc = 0;
+          if (nights >= 30) disc = 0.20;
+          else if (nights >= 7) disc = 0.10;
+          else if (nights >= 3) disc = 0.05;
+          const sur = b.has_peak_surcharge ? 1500 : 0;
+          b.total_price = Math.round(Math.max(1, base - (base * disc) + sur));
+        } catch (e) {
+          b.total_price = 5000;
+        }
+      }
+    }
     return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
     next(error);
@@ -523,6 +578,25 @@ export const checkBookingStatus = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Unauthorized token reference.' });
     }
 
+    let price = booking.total_price;
+    if (!price || isNaN(price)) {
+      try {
+        const p = await db.pricing.getUnitPricing(booking.unit_id);
+        const isOneBed = booking.booking_type === 'one_bedroom';
+        const rate = isOneBed ? p.one_bedroom_price : p.entire_price;
+        const nights = Math.max(1, Math.round((new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)));
+        const base = rate * nights;
+        let disc = 0;
+        if (nights >= 30) disc = 0.20;
+        else if (nights >= 7) disc = 0.10;
+        else if (nights >= 3) disc = 0.05;
+        const sur = booking.has_peak_surcharge ? 1500 : 0;
+        price = Math.round(Math.max(1, base - (base * disc) + sur));
+      } catch (e) {
+        price = 5000;
+      }
+    }
+
     return res.status(200).json({
       success: true,
       booking: {
@@ -535,7 +609,8 @@ export const checkBookingStatus = async (req, res, next) => {
         children:     booking.children,
         status:       booking.status,
         created_at:   booking.created_at,
-        hold_expires_at: booking.hold_expires_at
+        hold_expires_at: booking.hold_expires_at,
+        total_price:  price
       }
     });
   } catch (error) {

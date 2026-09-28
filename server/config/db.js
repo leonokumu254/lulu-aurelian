@@ -200,6 +200,10 @@ if (useMySQL) {
           await pool.query("ALTER TABLE bookings ADD COLUMN booking_type VARCHAR(30) NOT NULL DEFAULT 'entire' AFTER unit_id");
           console.log('[DB MIGRATE]: Added booking_type column to bookings table.');
         }
+        if (!bookingColNames.includes('total_price')) {
+          await pool.query("ALTER TABLE bookings ADD COLUMN total_price DECIMAL(10,2) NULL");
+          console.log('[DB MIGRATE]: Added total_price column to bookings table.');
+        }
       } catch (bErr) {
         console.warn('[DB MIGRATE]: Could not alter bookings table:', bErr.message);
       }
@@ -369,6 +373,38 @@ export const db = {
               id, guest_name, guest_email, guest_phone, unit_id, booking_type, check_in, check_out,
               adults, children, has_peak_surcharge,
               status, secure_token, approved_by, approved_at,
+              hold_expires_at, created_at, updated_at, cleaning_dates, total_price
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              booking.id,
+              booking.guest_name,
+              booking.guest_email,
+              booking.guest_phone,
+              booking.unit_id,
+              bType,
+              booking.check_in,
+              booking.check_out,
+              booking.adults  || 1,
+              booking.children || 0,
+              booking.has_peak_surcharge ? 1 : 0,
+              booking.status || 'PENDING',
+              booking.secure_token || ('sec_' + crypto.randomBytes(16).toString('hex')),
+              booking.approved_by || null,
+              booking.approved_at || null,
+              booking.hold_expires_at || null,
+              booking.created_at || new Date(),
+              booking.updated_at || new Date(),
+              booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null,
+              booking.total_price || null
+            ]
+          );
+        } catch (insertErr) {
+          // Fallback if total_price or booking_type column hasn't migrated yet
+          await pool.query(
+            `INSERT INTO bookings (
+              id, guest_name, guest_email, guest_phone, unit_id, booking_type, check_in, check_out,
+              adults, children, has_peak_surcharge,
+              status, secure_token, approved_by, approved_at,
               hold_expires_at, created_at, updated_at, cleaning_dates
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
@@ -393,8 +429,6 @@ export const db = {
               booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null
             ]
           );
-        } catch (insertErr) {
-          // Fallback if booking_type column hasn't migrated yet
           await pool.query(
             `INSERT INTO bookings (
               id, guest_name, guest_email, guest_phone, unit_id, check_in, check_out,
