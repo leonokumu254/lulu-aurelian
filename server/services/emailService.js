@@ -398,6 +398,43 @@ class EmailService {
     });
   }
 
+  async sendCheckInDayReminder(booking) {
+    const settings = await db.unit_settings.getSettings(booking.unit_id);
+    const bookingWithSettings = {
+      ...booking,
+      passcode: settings.passcode,
+      house_number: settings.house_number,
+      wifi_ssid: settings.wifi_ssid,
+      wifi_password: settings.wifi_password
+    };
+    const data = EMAIL_TEMPLATES.CHECK_IN_DAY_REMINDER(bookingWithSettings);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderLocationBlock(booking.unit_id) +
+      (bookingWithSettings.passcode ? this._renderCredentialsBox({
+        title: 'Check-In Access Credentials',
+        items: [
+          { label: 'Check-In Time', value: 'From 14:00 PM (2:00 PM)' },
+          { label: 'Key Box PIN', value: bookingWithSettings.passcode },
+          { label: 'Wi-Fi SSID', value: bookingWithSettings.wifi_ssid || 'LuluAurelian_5G' },
+          { label: 'Wi-Fi Password', value: bookingWithSettings.wifi_password || 'Luxury2026!' }
+        ]
+      }) : '') +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    const unitDetails = UNIT_WELCOME_DETAILS[(booking.unit_id || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps Pin: ${unitDetails.mapUrl}`,
+      html
+    });
+  }
+
   async sendCheckInFollowUp(booking) {
     const data = EMAIL_TEMPLATES.CHECK_IN_FOLLOW_UP(booking);
     const bodyContent =

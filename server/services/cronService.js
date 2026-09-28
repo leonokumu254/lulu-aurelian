@@ -87,7 +87,17 @@ class CronService {
       const paidBookings = await db.bookings.findPaidBookings();
 
       for (const b of paidBookings) {
-        // A. Next-Morning Comfort Check-in (Check-in was yesterday)
+        // A. Morning of Check-In Day (Check-in is today) — Send Directions, Pin & Credentials
+        if (b.check_in === todayStr) {
+          console.log(`[LIFECYCLE WORKER]: Dispatching check-in day reminder & Google pin to ${b.guest_name} (Arriving today).`);
+          emailService.sendCheckInDayReminder(b);
+          whatsappService.sendLifecyclePing(
+            b.guest_phone, 
+            WHATSAPP_TEMPLATES.CHECK_IN_DAY_ARRIVAL(b)
+          );
+        }
+
+        // B. Next-Morning Comfort Check-in (Check-in was yesterday)
         if (b.check_in === yesterdayStr) {
           console.log(`[LIFECYCLE WORKER]: Dispatching comfort check-in to ${b.guest_name} (Checked in yesterday).`);
           emailService.sendCheckInFollowUp(b);

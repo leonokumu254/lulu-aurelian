@@ -216,7 +216,41 @@ export const EMAIL_TEMPLATES = {
   },
 
   /**
-   * Content for morning comfort check-in email.
+   * Content for morning check-in arrival reminder (Day of Check-in).
+   * Sent from: server/services/emailService.js -> sendCheckInDayReminder(booking)
+   * Triggered by: Daily stay lifecycle cron at 9:00 AM on check_in day
+   */
+  CHECK_IN_DAY_REMINDER: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    return {
+      text: `Good morning ${booking.guest_name}, today is your check-in day at ${details.name}! Location: ${details.location}. Google Maps Pin: ${details.mapUrl}`,
+      title: 'Today is Your Check-in Day',
+      subject: `Today is Your Check-in Day - ${details.name.toUpperCase()}`,
+      preheader: `Welcome to Lulu Aurelian! Your check-in location and directions for ${details.name}.`,
+      heroImage: unitId === 'cocoa' 
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
+        : unitId === 'neema'
+        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
+        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      badge: 'Welcome to Lulu Aurelian',
+      headingLine1: 'Today is Your',
+      headingLine2: 'Check-in Day.',
+      paragraphs: [
+        `Dear ${booking.guest_name},`,
+        `We are delighted to welcome you to <strong>${details.name}</strong> today!`,
+        `Your suite is prepared and your check-in window opens at <strong>14:00 PM (2:00 PM)</strong>.`,
+        `Please use the Google Maps location pin below to navigate directly to the property entrance. If you need any assistance upon arrival, our team is on standby to assist you.`
+      ],
+      button: {
+        label: 'View Stay Credentials',
+        url: `https://www.luluaurelian.co.ke/#/portal?token=${booking.secure_token}`
+      }
+    };
+  },
+
+  /**
+   * Content for morning comfort check-in email (Morning after check-in).
    * Sent from: server/services/emailService.js -> sendCheckInFollowUp(booking)
    * Triggered by: Daily stay lifecycle cron (server/services/cronService.js -> runLifecycleMessagingHooks)
    */
@@ -224,7 +258,7 @@ export const EMAIL_TEMPLATES = {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
     return {
-      text: `Good morning ${booking.guest_name}, We hope you had a restful night in the ${details.name} suite.`,
+      text: `Good morning ${booking.guest_name}, We hope you had a restful night in the ${details.name} suite. Google Maps Pin: ${details.mapUrl}`,
       title: 'Morning Comfort Check-in',
       subject: `Morning Comfort Check-in - ${details.name}`,
       preheader: `Checking in on your stay at ${details.name}`,
@@ -235,7 +269,7 @@ export const EMAIL_TEMPLATES = {
       paragraphs: [
         `Dear ${booking.guest_name},`,
         `We hope you had a restful night in the <strong>${details.name}</strong> suite.`,
-        'This is our morning comfort check-in. If you need any assistance, breakfast additions, private tours, or custom housekeeping schedules, please respond directly to this email and your concierge will assist you immediately.'
+        'This is our morning comfort check-in. Below is your property location pin on Google Maps for your convenience during day trips or taxi pickups. If you need any assistance, breakfast additions, private tours, or custom housekeeping schedules, please respond directly to this email.'
       ],
       button: {
         label: 'Contact Concierge',
@@ -447,12 +481,42 @@ We look forward to hosting you!`;
   },
 
   /**
+   * WhatsApp morning check-in reminder sent on the day of check-in
+   * Sent from: server/services/cronService.js -> runLifecycleMessagingHooks()
+   * Triggered by: Daily lifecycle messaging cron at 9:00 AM on check_in day
+   */
+  CHECK_IN_DAY_ARRIVAL: (booking) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    return `Good morning *${booking.guest_name}*! Today is your check-in day at *${details.name}*.
+
+🕒 *Check-In Time:* From 14:00 PM (2:00 PM)
+📍 *Location:* ${details.location}
+🗺️ *Google Maps Pin:* ${details.mapUrl}
+
+*Arrival Directions:*
+${details.directions}
+
+🔑 *Key Box PIN:* *${booking.passcode || '9841'}*
+📶 *Wi-Fi:* ${booking.wifi_ssid || details.wifiSSID} (Password: ${booking.wifi_password || details.wifiPass})
+
+We look forward to hosting you! Reply to this message if you need any assistance upon arrival.`;
+  },
+
+  /**
    * WhatsApp morning comfort follow-up ping the morning after check-in
    * Sent from: server/services/cronService.js -> runLifecycleMessagingHooks()
    * Triggered by: Daily lifecycle messaging cron at 9:00 AM
    */
   CHECK_IN_FOLLOW_UP: (booking) => {
-    return `Good morning *${booking.guest_name}*, we hope you had a comfortable night in your suite. If there is anything we  can do to improve your experience, please let us know!`;
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    return `Good morning *${booking.guest_name}*, we hope you had a comfortable night in your suite at *${details.name}*.
+
+📍 *Estate Location:* ${details.location}
+🗺️ *Google Maps Pin:* ${details.mapUrl}
+
+If there is anything we can do to improve your experience, please let us know!`;
   },
 
   /**
