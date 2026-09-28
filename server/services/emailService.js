@@ -333,39 +333,65 @@ class EmailService {
   // ==========================================
 
   async sendEmail({ to, subject, html, text }) {
-    if (!env.RESEND_API_KEY) {
-      console.warn(`[EMAIL DISPATCHER] Cannot send email. RESEND_API_KEY is not configured in environment.`);
-      return { success: false, error: 'RESEND_API_KEY missing' };
-    }
+    // 1. Try Resend API first (HTTP Port 443)
+    if (env.RESEND_API_KEY) {
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: env.EMAIL_FROM,
+            to: typeof to === 'string' ? to.split(',').map(e => e.trim()) : to,
+            subject: subject,
+            html: html || text
+          })
+        });
 
-    try {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: env.EMAIL_FROM,
-          to: typeof to === 'string' ? to.split(',').map(e => e.trim()) : to,
-          subject: subject,
-          html: html || text
-        })
-      });
+        const data = await response.json();
 
-      const data = await response.json();
-
-      if (response.ok && data.id) {
-        console.log(`[EMAIL DISPATCHER] Successfully sent to ${to}. Resend ID: ${data.id}`);
-        return { success: true, messageId: data.id };
-      } else {
-        console.error(`[EMAIL DISPATCHER] Resend API Error:`, data);
-        return { success: false, error: data.message || 'Resend API Error' };
+        if (response.ok && data.id) {
+          console.log(`[EMAIL DISPATCHER] Successfully sent via Resend to ${to}. Resend ID: ${data.id}`);
+          return { success: true, messageId: data.id };
+        } else {
+          console.error(`[EMAIL DISPATCHER] Resend API Error:`, data);
+        }
+      } catch (error) {
+        console.error(`[EMAIL DISPATCHER] Resend fetch failed:`, error);
       }
-    } catch (error) {
-      console.error(`[EMAIL DISPATCHER] Failed to send email to ${to}:`, error);
-      return { success: false, error: error.message };
     }
+
+    // 2. Nodemailer / SMTP Fallback
+    if (env.SMTP_USER && env.SMTP_PASS) {
+      try {
+        const nodemailer = (await import('nodemailer')).default;
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: env.SMTP_USER,
+            pass: env.SMTP_PASS
+          }
+        });
+
+        const info = await transporter.sendMail({
+          from: env.EMAIL_FROM,
+          to: to,
+          subject: subject,
+          text: text,
+          html: html
+        });
+
+        console.log(`[EMAIL DISPATCHER - SMTP] Successfully sent to ${to}. MessageId: ${info.messageId}`);
+        return { success: true, messageId: info.messageId };
+      } catch (smtpErr) {
+        console.error(`[EMAIL DISPATCHER - SMTP ERROR]:`, smtpErr);
+      }
+    }
+
+    console.warn(`[EMAIL DISPATCHER] No email transport succeeded for ${to}.`);
+    return { success: false, error: 'No working email configuration' };
   }
 
   async sendBookingConfirmation(booking) {

@@ -113,23 +113,28 @@ class PayHeroService {
       }
 
       if (!response.ok) {
-        // If the transaction is not found or still processing, treat as PENDING
         if (response.status === 404) {
           return { status: 'PENDING', data };
         }
         throw new Error(data.message || data.error || `PayHero Status Query failed (HTTP ${response.status})`);
       }
 
-      // Normalize PayHero status to our internal statuses
-      // PayHero typically returns: SUCCESS, FAILED, PENDING, CANCELLED
-      const payHeroStatus = (data.status || data.payment_status || '').toUpperCase();
+      // Check all possible status locations (objects, nested response, arrays, data)
+      const resObj = Array.isArray(data.response) 
+        ? data.response[0] 
+        : (data.response || (Array.isArray(data.data) ? data.data[0] : (data.data || data)));
+
+      const rawStatus = (resObj && (resObj.status || resObj.Status || resObj.payment_status || resObj.PaymentStatus || resObj.state || resObj.State)) 
+        || data.status || data.Status || data.payment_status || '';
+
+      const payHeroStatus = String(rawStatus || '').toUpperCase();
 
       let normalizedStatus;
-      if (payHeroStatus === 'SUCCESS' || payHeroStatus === 'COMPLETED') {
+      if (['SUCCESS', 'COMPLETED', 'PAID', 'TRUE'].includes(payHeroStatus) || data.success === true || (resObj && (resObj.success === true || resObj.status === true))) {
         normalizedStatus = 'COMPLETED';
-      } else if (payHeroStatus === 'FAILED' || payHeroStatus === 'DECLINED') {
+      } else if (['FAILED', 'DECLINED'].includes(payHeroStatus)) {
         normalizedStatus = 'FAILED';
-      } else if (payHeroStatus === 'CANCELLED') {
+      } else if (['CANCELLED', 'TIMEOUT', 'EXPIRED'].includes(payHeroStatus)) {
         normalizedStatus = 'CANCELLED';
       } else {
         normalizedStatus = 'PENDING';
@@ -137,12 +142,11 @@ class PayHeroService {
 
       return {
         status: normalizedStatus,
-        mpesaReceiptNumber: data.provider_reference || data.mpesa_reference || data.MpesaReceiptNumber || null,
+        mpesaReceiptNumber: (resObj && (resObj.provider_reference || resObj.MpesaReceiptNumber || resObj.mpesa_reference || resObj.Receipt)) || null,
         data
       };
     } catch (err) {
       console.error('[PAYHERO]: Status Query Error:', err.message);
-      // Return PENDING on errors so the frontend keeps polling
       return { status: 'PENDING', data: { error: err.message } };
     }
   }

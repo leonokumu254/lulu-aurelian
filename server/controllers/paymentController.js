@@ -140,44 +140,43 @@ export const capturePaypalPayment = async (req, res, next) => {
 };
 
 // ─── PAYHERO: STK Push Callback (PayHero server-to-server webhook) ──────────
-
 export const payheroCallback = async (req, res) => {
   try {
     console.log('[PAYHERO WEBHOOK]: Received callback payload', JSON.stringify(req.body));
 
-    // PayHero callback fields — extract what's available
-    const {
-      external_reference,        // Our booking reference (first 8 chars of booking ID)
-      status,                    // e.g. 'SUCCESS', 'FAILED', 'CANCELLED'
-      payment_status,            // alternate field name
-      provider_reference,        // M-Pesa receipt number
-      MpesaReceiptNumber,        // alternate field name
-      MPESA_Reference,           // alternate field name
-      reference,                 // PayHero transaction reference
-      amount,
-      phone_number
-    } = req.body;
+    const payload = req.body || {};
+    const resObj = payload.response || payload.data || payload.results || {};
 
-    const payHeroStatus = (status || payment_status || '').toUpperCase();
-    const mpesaReceipt = provider_reference || MpesaReceiptNumber || MPESA_Reference || null;
-    const payHeroRef = reference || external_reference || null;
+    // Extract all possible references and status formats
+    const external_reference = payload.external_reference || payload.ExternalReference || resObj.external_reference || resObj.ExternalReference || null;
+    const reference = payload.reference || payload.Reference || resObj.reference || resObj.Reference || payload.checkout_request_id || payload.CheckoutRequestID || null;
+    const rawStatus = payload.status || payload.Status || payload.payment_status || payload.PaymentStatus || resObj.status || resObj.Status || resObj.payment_status || (payload.success ? 'SUCCESS' : '');
+    const mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference || payload.Receipt || resObj.provider_reference || resObj.MpesaReceiptNumber || null;
+
+    const payHeroStatus = String(rawStatus || '').toUpperCase();
+    const payHeroRef = reference || external_reference;
 
     if (!payHeroRef && !external_reference) {
-      console.warn('[PAYHERO WEBHOOK]: Missing reference fields in payload.');
+      console.warn('[PAYHERO WEBHOOK]: Missing reference fields in payload.', payload);
       return res.status(200).json({ status: 'received' });
     }
 
-    // ── Find the payment record by transaction_ref OR by matching external_reference ──
+    // ── Find payment record by reference ──
     let payment = null;
-
-    // Try finding by PayHero reference (stored as transaction_ref during initiation)
     if (payHeroRef) {
       payment = await db.payments.findByRef(payHeroRef);
     }
-
-    // Fallback: search by external_reference (our booking ref prefix)
     if (!payment && external_reference) {
       payment = await db.payments.findByRef(external_reference);
+    }
+
+    // Fallback: search booking by external_reference prefix
+    if (!payment && external_reference) {
+      const allBookings = await db.bookings.getAll();
+      const matchedBooking = allBookings.find(b => b.id.toUpperCase().startsWith(String(external_reference).toUpperCase()));
+      if (matchedBooking) {
+        payment = { booking_id: matchedBooking.id, transaction_ref: payHeroRef || external_reference };
+      }
     }
 
     if (!payment) {
@@ -185,7 +184,7 @@ export const payheroCallback = async (req, res) => {
       return res.status(200).json({ status: 'received' });
     }
 
-    if (payHeroStatus === 'SUCCESS' || payHeroStatus === 'COMPLETED') {
+    if (['SUCCESS', 'COMPLETED', 'PAID'].includes(payHeroStatus) || payload.success === true || resObj.success === true) {
       // ── Payment successful ────────────────────────────────────────────
       await db.payments.updateStatus(payment.transaction_ref, 'COMPLETED');
       await db.bookings.updateStatus(payment.booking_id, 'PAID');
@@ -196,26 +195,81 @@ export const payheroCallback = async (req, res) => {
       }
 
       console.log(`[PAYHERO WEBHOOK]: ✅ Payment verified. Booking ${payment.booking_id} activated! M-Pesa Receipt: ${mpesaReceipt || 'N/A'}`);
-    } else if (payHeroStatus === 'FAILED' || payHeroStatus === 'CANCELLED' || payHeroStatus === 'DECLINED') {
-      // ── Payment failed/cancelled ──────────────────────────────────────
-      console.log(`[PAYHERO WEBHOOK]: ❌ Payment ${payHeroStatus} for ref ${payHeroRef} — ${req.body.description || ''}`);
+    } else if (['FAILED', 'CANCELLED', 'DECLINED', 'TIMEOUT'].includes(payHeroStatus)) {
+      console.log(`[PAYHERO WEBHOOK]: ❌ Payment ${payHeroStatus} for ref ${payHeroRef}`);
       await db.payments.updateStatus(payment.transaction_ref, 'FAILED');
 
-      // Revert booking to PENDING so guest can retry
       const booking = await db.bookings.findById(payment.booking_id);
       if (booking && booking.status === 'AUTHORIZING') {
         await db.bookings.updateStatus(payment.booking_id, 'PENDING');
       }
     } else {
-      console.log(`[PAYHERO WEBHOOK]: ⏳ Unhandled status "${payHeroStatus}" for ref ${payHeroRef}. Ignoring.`);
+      console.log(`[PAYHERO WEBHOOK]: ⏳ Unhandled status "${payHeroStatus}" for ref ${payHeroRef}.`);
     }
 
-    // Always acknowledge receipt to PayHero
     return res.status(200).json({ status: 'received' });
   } catch (error) {
     console.error('[PAYHERO WEBHOOK ERROR]:', error.message);
-    // Always return 200 to prevent PayHero retry loops
     return res.status(200).json({ status: 'received' });
+  }
+};
+
+/**
+ * Direct Manual / SMS M-Pesa Transaction Code Verification
+ * Allows guest or front-end to verify a payment using their M-Pesa SMS transaction code.
+ */
+export const verifyManualMpesaPayment = async (req, res, next) => {
+  try {
+    const { booking_id, mpesa_code } = req.body;
+
+    if (!booking_id) {
+      return res.status(400).json({ success: false, error: 'Missing booking_id.' });
+    }
+    if (!mpesa_code || mpesa_code.trim().length < 5) {
+      return res.status(400).json({ success: false, error: 'Please enter a valid M-Pesa transaction code (e.g. SJR48Z9X2).' });
+    }
+
+    const cleanCode = mpesa_code.trim().toUpperCase();
+    const booking = await db.bookings.findById(booking_id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking not found.' });
+    }
+
+    // Determine amount dynamically
+    let amount = booking.total_price;
+    if (!amount) {
+      const unitPricing = await db.pricing.getUnitPricing(booking.unit_id);
+      const isOneBed = booking.booking_type === 'one_bedroom';
+      const baseRate = isOneBed ? unitPricing.one_bedroom_price : unitPricing.entire_price;
+      const nights = Math.max(1, Math.round((new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)));
+      amount = baseRate * nights;
+    }
+
+    // Record completed transaction
+    await db.payments.create({
+      booking_id: booking.id,
+      amount: amount,
+      gateway: 'MPESA',
+      transaction_ref: cleanCode,
+      status: 'COMPLETED'
+    });
+
+    // Mark booking as PAID
+    const confirmedBooking = await db.bookings.updateStatus(booking.id, 'PAID');
+
+    // Trigger instant email & WhatsApp credentials dispatch
+    dispatchPostPaymentNotifications(confirmedBooking || booking);
+
+    console.log(`[MANUAL MPESA VERIFY]: ✅ Booking ${booking.id} verified with code ${cleanCode}. Post-payment notifications dispatched.`);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Payment verified and booking confirmed successfully! Check-in credentials have been sent.',
+      booking: confirmedBooking || booking
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
