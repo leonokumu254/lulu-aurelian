@@ -259,7 +259,7 @@ export const initiatePayment = async (req, res, next) => {
       return res.status(403).json({ success: false, error: 'Not authorized to pay for this booking.' });
     }
 
-    if (booking.status !== 'PENDING') {
+    if (!['PENDING', 'AUTHORIZING'].includes(booking.status)) {
       return res.status(400).json({
         success: false,
         error: `Booking cannot be paid — current status: ${booking.status}`

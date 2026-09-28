@@ -190,6 +190,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   const [stkPushSent, setStkPushSent] = useState(false);
   const [checkoutRequestId, setCheckoutRequestId] = useState(null);
   const [copiedField, setCopiedField] = useState('');
+  const [manualCodeSubmitting, setManualCodeSubmitting] = useState(false);
+  const [manualCodeError, setManualCodeError] = useState('');
   
   const idempotencyKey = useRef(null);
 
@@ -198,6 +200,40 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
     setTimeout(() => setCopiedField(''), 2500);
+  };
+
+  const handleVerifyManualCode = async (e) => {
+    if (e) e.preventDefault();
+    if (!mpesaCode || mpesaCode.trim().length < 5) {
+      setManualCodeError('Please enter a valid M-Pesa transaction code (e.g. SJR48Z9X2).');
+      return;
+    }
+    setManualCodeSubmitting(true);
+    setManualCodeError('');
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/payments/mpesa/verify-manual`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          booking_id: createdBooking?.bookingId || createdBooking?.id,
+          mpesa_code: mpesaCode.trim()
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStkPushSent(false);
+        setPaymentError(null);
+        setPaymentComplete(true);
+      } else {
+        setManualCodeError(data.error || 'Could not verify M-Pesa code. Please check and try again.');
+      }
+    } catch (err) {
+      console.error('Manual code verification failed:', err);
+      setManualCodeError('Network error while verifying code. Please try again.');
+    } finally {
+      setManualCodeSubmitting(false);
+    }
   };
 
   // Timer loop for booking hold window
@@ -896,32 +932,108 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                   ) : stkPushSent ? (
                     <div className="payment-success-card animate-slide-down">
                       <div style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem',
-                        padding: '2rem 1rem', textAlign: 'center'
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem',
+                        padding: '1.5rem 1rem', textAlign: 'center', maxWidth: '520px', margin: '0 auto'
                       }}>
                         {/* Pulsing phone animation */}
                         <div style={{
-                          width: '80px', height: '80px', borderRadius: '50%',
-                          background: 'rgba(26, 158, 53, 0.1)', border: '2px solid rgba(26, 158, 53, 0.4)',
+                          width: '84px', height: '84px', borderRadius: '50%',
+                          background: 'rgba(26, 158, 53, 0.12)', border: '2px solid rgba(26, 158, 53, 0.4)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           animation: 'pulse 2s ease-in-out infinite'
                         }}>
-                          <Phone size={36} style={{ color: '#1a9e35' }} />
+                          <Phone size={38} style={{ color: '#1a9e35' }} />
                         </div>
-                        <h3 className="payment-status-title" style={{ color: '#1a9e35' }}>Check Your Phone</h3>
-                        <p className="payment-status-desc">
-                          An M-Pesa payment prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
-                          Enter your M-Pesa PIN to complete the transaction.
-                        </p>
+                        <div>
+                          <h3 className="payment-status-title" style={{ color: '#1a9e35', margin: '0 0 0.5rem', fontWeight: 600 }}>
+                            Check Your Phone
+                          </h3>
+                          <p className="payment-status-desc" style={{ color: '#334155', margin: '0 0 1rem', fontSize: '0.95rem' }}>
+                            An M-Pesa payment prompt for <strong style={{ color: '#1D1912' }}>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
+                            Enter your M-Pesa PIN on your phone handset to complete the transaction.
+                          </p>
+                        </div>
                         <div style={{
-                          display: 'flex', alignItems: 'center', gap: '0.5rem',
-                          color: 'rgba(232, 213, 181, 0.6)', fontSize: '0.85rem'
+                          display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+                          background: 'rgba(26, 158, 53, 0.08)', border: '1px solid rgba(26, 158, 53, 0.25)',
+                          padding: '0.5rem 1.25rem', borderRadius: '30px',
+                          color: '#166534', fontSize: '0.88rem', fontWeight: 600
                         }}>
                           <div style={{
                             width: '8px', height: '8px', borderRadius: '50%',
                             background: '#1a9e35', animation: 'pulse 1.5s ease-in-out infinite'
                           }} />
                           Verifying payment status...
+                        </div>
+
+                        {/* Manual Transaction Code Verification Form */}
+                        <form onSubmit={handleVerifyManualCode} style={{ width: '100%', marginTop: '0.5rem', background: 'rgba(0,0,0,0.02)', border: '1.5px solid rgba(207, 168, 115, 0.4)', borderRadius: '10px', padding: '1rem', textAlign: 'left' }}>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#1D1912', marginBottom: '0.25rem' }}>
+                            Already entered your M-Pesa PIN?
+                          </label>
+                          <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', color: '#64748b', lineHeight: '1.4' }}>
+                            Paste the M-Pesa Transaction Code from your Safaricom SMS to verify instantly:
+                          </p>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <input
+                              type="text"
+                              value={mpesaCode}
+                              onChange={(e) => setMpesaCode(e.target.value.toUpperCase())}
+                              placeholder="e.g. SJR48Z9X2"
+                              className="checkout-input"
+                              style={{ flex: 1, padding: '0.6rem 0.75rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, fontSize: '0.88rem' }}
+                            />
+                            <button
+                              type="submit"
+                              disabled={manualCodeSubmitting}
+                              className="btn-primary"
+                              style={{ padding: '0.6rem 1rem', whiteSpace: 'nowrap', fontSize: '0.82rem', fontWeight: 600, backgroundColor: '#1a9e35', borderColor: '#1a9e35' }}
+                            >
+                              {manualCodeSubmitting ? 'Verifying...' : 'Verify Code'}
+                            </button>
+                          </div>
+                          {manualCodeError && (
+                            <p style={{ margin: '0.4rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}>
+                              {manualCodeError}
+                            </p>
+                          )}
+                        </form>
+
+                        <div style={{
+                          marginTop: '0.25rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', width: '100%'
+                        }}>
+                          <p style={{ margin: '0 0 0.5rem', fontSize: '0.82rem', color: '#64748b' }}>
+                            Didn't receive the prompt? You can pay manually using Buy Goods Till:
+                          </p>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.03)', padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
+                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>TILL NO:</span>
+                            <strong style={{ fontSize: '0.95rem', color: '#1D1912' }}>4364845</strong>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyText('4364845', 'stk_till')}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: copiedField === 'stk_till' ? '#1a9e35' : '#64748b' }}
+                              title="Copy Till"
+                            >
+                              {copiedField === 'stk_till' ? <CheckCircle size={14} /> : <Copy size={14} />}
+                            </button>
+                          </div>
+                          <div style={{ marginTop: '0.75rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => setStkPushSent(false)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#a3721d',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                fontSize: '0.82rem',
+                                fontWeight: 600
+                              }}
+                            >
+                              Back to Payment Options / Retry STK
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1121,9 +1233,43 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       )}
 
                       {paymentError && (
-                        <div className="checkout-payment-error">
-                          <AlertTriangle size={16} />
-                          <span>{paymentError}</span>
+                        <div style={{ marginBottom: '1.25rem' }}>
+                          <div className="checkout-payment-error" style={{ marginBottom: '0.75rem' }}>
+                            <AlertTriangle size={16} />
+                            <span>{paymentError}</span>
+                          </div>
+
+                          <form onSubmit={handleVerifyManualCode} style={{ background: 'rgba(0,0,0,0.02)', border: '1.5px solid rgba(207, 168, 115, 0.4)', borderRadius: '10px', padding: '1rem', textAlign: 'left' }}>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#1D1912', marginBottom: '0.25rem' }}>
+                              Did you already enter your PIN or send payment?
+                            </label>
+                            <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', color: '#64748b', lineHeight: '1.4' }}>
+                              Enter your M-Pesa Transaction Code (from your Safaricom confirmation SMS) to confirm your booking immediately:
+                            </p>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <input
+                                type="text"
+                                value={mpesaCode}
+                                onChange={(e) => setMpesaCode(e.target.value.toUpperCase())}
+                                placeholder="e.g. SJR48Z9X2"
+                                className="checkout-input"
+                                style={{ flex: 1, padding: '0.6rem 0.75rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, fontSize: '0.88rem' }}
+                              />
+                              <button
+                                type="submit"
+                                disabled={manualCodeSubmitting}
+                                className="btn-primary"
+                                style={{ padding: '0.6rem 1rem', whiteSpace: 'nowrap', fontSize: '0.82rem', fontWeight: 600, backgroundColor: '#1a9e35', borderColor: '#1a9e35' }}
+                              >
+                                {manualCodeSubmitting ? 'Verifying...' : 'Verify Code'}
+                              </button>
+                            </div>
+                            {manualCodeError && (
+                              <p style={{ margin: '0.4rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}>
+                                {manualCodeError}
+                              </p>
+                            )}
+                          </form>
                         </div>
                       )}
 

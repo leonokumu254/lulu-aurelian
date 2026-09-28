@@ -584,15 +584,16 @@
 .payment-status-title {
   font-family: var(--font-serif);
   font-size: 1.8rem;
-  font-weight: 400;
+  font-weight: 600;
+  color: #1D1912;
   margin-bottom: 0.75rem;
 }
 
 .payment-status-desc {
   font-size: 0.95rem;
-  color: var(--color-muted);
-  line-height: 1.5;
-  margin-bottom: 2rem;
+  color: #334155;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
   max-width: 480px;
 }
 

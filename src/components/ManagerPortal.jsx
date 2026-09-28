@@ -494,6 +494,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
       if (response.ok && data.success) {
         localStorage.setItem('lulu_pricing', JSON.stringify(data.pricing));
         window.dispatchEvent(new Event('pricingUpdated'));
+        triggerToast('Pricing updated and published live across all views!');
         const ratesSummary = (data.pricing || suites).map(s =>
           `${s.name}: Entire KES ${(s.entirePrice ?? s.basePrice ?? 0).toLocaleString('en-KE')}, 1 Bed KES ${(s.oneBedroomPrice ?? 0).toLocaleString('en-KE')}`
         ).join(' · ');
@@ -512,6 +513,7 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
       // Fallback save to local storage
       localStorage.setItem('lulu_pricing', JSON.stringify(suites));
       window.dispatchEvent(new Event('pricingUpdated'));
+      triggerToast('Price rates saved locally.');
       setPricingModal({
         open: true,
         type: 'error',
@@ -1226,6 +1228,30 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Floating Toast Notification */}
+        {toastMessage && (
+          <div className="passcode-toast animate-fade-in" style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 9999,
+            background: '#1D1912',
+            color: '#FAF9F6',
+            padding: '12px 20px',
+            borderRadius: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            border: '1px solid rgba(207, 168, 115, 0.4)',
+            fontSize: '0.9rem',
+            fontWeight: 500
+          }}>
+            <CheckCircle size={18} style={{ color: '#1a9e35', flexShrink: 0 }} />
+            <span>{toastMessage}</span>
           </div>
         )}
       </div>
