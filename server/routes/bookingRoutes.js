@@ -13,7 +13,8 @@ import {
   approveBooking,
   declineBooking,
   createManualBlock,
-  deleteManualBlock
+  deleteManualBlock,
+  getHouseRules
 } from '../controllers/bookingController.js';
 import { authMiddleware, requireRole, optionalAuth } from '../middleware/auth.js';
 
@@ -29,6 +30,10 @@ router.get('/status', checkBookingStatus);
 
 // Calendar blocked-dates feed (includes PENDING holds)
 router.get('/blocked-dates/:unitId', getBlockedDates);
+
+// House rules and guest guidelines (public for guests and website visitors)
+router.get('/house-rules', getHouseRules);
+router.get('/house-rules/:unitId', getHouseRules);
 
 // Stanbic Paybill callback webhook (public — verified by signature)
 router.post('/webhook/stanbic', stanbicCallback);

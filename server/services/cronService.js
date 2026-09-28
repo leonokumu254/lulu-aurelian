@@ -4,6 +4,14 @@ import { emailService } from './emailService.js';
 import { whatsappService } from './whatsappService.js';
 import { WHATSAPP_TEMPLATES } from '../config/constants.js';
 
+const getEATDate = (offsetDays = 0) => {
+  const d = new Date();
+  if (offsetDays !== 0) {
+    d.setDate(d.getDate() + offsetDays);
+  }
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi' }).format(d);
+};
+
 class CronService {
   initializeScheduledTasks() {
     console.log('[CRON SERVICE]: Registering automated systems...');
@@ -18,12 +26,36 @@ class CronService {
       this.expireStuckAuthorizingBookings();
     });
 
-    // 3. STAY LIFECYCLE MONITOR & MESSAGING ENGINE (Runs daily at 09:00 AM)
-    cron.schedule('0 9 * * *', () => {
-      this.runLifecycleMessagingHooks();
+    // 3. MORNING CHECK-OUT REMINDER (Runs daily at 08:00 AM EAT — Before 10:00 AM check-out)
+    cron.schedule('0 8 * * *', () => {
+      this.runCheckoutMorningReminders();
+    }, {
+      timezone: 'Africa/Nairobi'
     });
 
-    console.log('[CRON SERVICE]: Expiry Engine (5-min), Authorizing Sweeper (30-min), and Lifecycle messaging (Daily) configured.');
+    // 4. MORNING COMFORT CHECK-IN & FOLLOW-UP (Runs daily at 06:00 AM EAT)
+    cron.schedule('0 6 * * *', () => {
+      this.runMorningComfortAndRetention();
+    }, {
+      timezone: 'Africa/Nairobi'
+    });
+
+    // 5. CHECK-IN ACCESS & CREDENTIALS DISPATCHER (Runs daily at 1:00 PM / 13:00 EAT)
+    // Guests can access the unit early from 1:00 PM ahead of official 2:00 PM check-in
+    cron.schedule('0 13 * * *', () => {
+      this.dispatchCheckInCredentials();
+    }, {
+      timezone: 'Africa/Nairobi'
+    });
+
+    // 6. POST-CHECKOUT REVIEW REQUEST (Runs daily at 12:00 PM EAT after departure)
+    cron.schedule('0 12 * * *', () => {
+      this.runPostCheckoutReviewRequests();
+    }, {
+      timezone: 'Africa/Nairobi'
+    });
+
+    console.log('[CRON SERVICE]: 6:00 AM Morning Follow-up, 8:00 AM Check-out, 1:00 PM Check-in credentials, and 12:00 PM Review crons initialized in Africa/Nairobi timezone.');
   }
 
   // Task 1: Expire PENDING bookings whose 1-hour hold has elapsed
@@ -73,46 +105,90 @@ class CronService {
     }
   }
 
-  // Task: Scan stay calendars and dispatch relevant messaging alerts
-  async runLifecycleMessagingHooks() {
-    console.log('[CRON WORKER]: Triggering stay lifecycle messaging hooks...');
-    const todayStr = new Date().toISOString().split('T')[0];
-    
-    // Calculate yesterday's date string
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+  // Task 3: 8:00 AM Check-out reminder before 10:00 AM departure
+  async runCheckoutMorningReminders() {
+    console.log('[CRON WORKER]: Triggering morning check-out guidelines (Departure today before 10:00 AM)...');
+    const todayStr = getEATDate();
 
     try {
       const paidBookings = await db.bookings.findPaidBookings();
-
       for (const b of paidBookings) {
-        // A. Next-Morning Comfort Check-in (Check-in was yesterday)
-        if (b.check_in === yesterdayStr) {
-          console.log(`[LIFECYCLE WORKER]: Dispatching comfort check-in to ${b.guest_name} (Checked in yesterday).`);
-          emailService.sendCheckInFollowUp(b);
-          whatsappService.sendLifecyclePing(
-            b.guest_phone, 
-            WHATSAPP_TEMPLATES.CHECK_IN_FOLLOW_UP(b)
-          );
-        }
-
-        // B. Post-Checkout Review Request (Check-out is today)
         if (b.check_out === todayStr) {
-          console.log(`[LIFECYCLE WORKER]: Dispatching review feedback link to ${b.guest_name} (Checking out today).`);
-          emailService.sendCheckoutReviewRequest(b);
-          whatsappService.sendLifecyclePing(
-            b.guest_phone,
-            WHATSAPP_TEMPLATES.CHECKOUT_REVIEW_REQUEST(b)
-          );
+          console.log(`[CHECKOUT REMINDER]: Dispatching 10:00 AM check-out checklist to ${b.guest_name}.`);
+          emailService.sendCheckoutMorningReminder(b).catch(e => console.error(e));
+          whatsappService.sendCheckoutReminder(b).catch(e => console.error(e));
         }
       }
     } catch (err) {
-      console.error('[CRON SERVICE ERROR]: Lifecycle messaging scanner failed:', err.message);
+      console.error('[CRON SERVICE ERROR]: Checkout reminder scan failed:', err.message);
+    }
+  }
+
+  // Task 4: 6:00 AM Morning comfort follow-up & holiday retention
+  async runMorningComfortAndRetention() {
+    console.log('[CRON WORKER]: Triggering 6:00 AM morning comfort follow-up hooks...');
+    const yesterdayStr = getEATDate(-1);
+
+    try {
+      const paidBookings = await db.bookings.findPaidBookings();
+      for (const b of paidBookings) {
+        if (b.check_in === yesterdayStr) {
+          console.log(`[COMFORT CHECK-IN]: Dispatching morning check-in follow-up to ${b.guest_name}.`);
+          emailService.sendCheckInFollowUp(b).catch(e => console.error(e));
+          whatsappService.sendLifecyclePing(b.guest_phone, WHATSAPP_TEMPLATES.CHECK_IN_FOLLOW_UP(b)).catch(e => console.error(e));
+        }
+      }
+    } catch (err) {
+      console.error('[CRON SERVICE ERROR]: Morning comfort check-in scan failed:', err.message);
     }
 
-    // C. 90-Day Retention & Holiday Pings (Opted-in newsletter subscribers)
     await this.runHolidayRetentionAlerts();
+  }
+
+  // Task 5: 1:00 PM Check-In Access Details Dispatcher
+  // Sent as from 1:00 PM on arrival day (check-in is after 2:00 PM, early access from 1:00 PM)
+  async dispatchCheckInCredentials() {
+    console.log('[CRON WORKER]: Triggering 1:00 PM check-in credentials dispatch (Early access from 1:00 PM)...');
+    const todayStr = getEATDate();
+
+    try {
+      const paidBookings = await db.bookings.findPaidBookings();
+      for (const b of paidBookings) {
+        if (b.check_in === todayStr) {
+          console.log(`[CHECK-IN DISPATCH]: Dispatching lockbox codes and Wi-Fi credentials to arriving guest ${b.guest_name} at 1:00 PM.`);
+          emailService.sendCheckInCredentials(b).catch(e => console.error('[EMAIL ERROR]:', e));
+          whatsappService.sendCheckInCredentials(b).catch(e => console.error('[WHATSAPP ERROR]:', e));
+        }
+      }
+    } catch (err) {
+      console.error('[CRON SERVICE ERROR]: 1:00 PM check-in credentials dispatch failed:', err.message);
+    }
+  }
+
+  // Task 6: 12:00 PM Review Request (Post-checkout review)
+  async runPostCheckoutReviewRequests() {
+    console.log('[CRON WORKER]: Triggering post-checkout review requests...');
+    const todayStr = getEATDate();
+
+    try {
+      const paidBookings = await db.bookings.findPaidBookings();
+      for (const b of paidBookings) {
+        if (b.check_out === todayStr) {
+          console.log(`[REVIEW REQUEST]: Sending review feedback link to departed guest ${b.guest_name}.`);
+          emailService.sendCheckoutReviewRequest(b).catch(e => console.error(e));
+          whatsappService.sendLifecyclePing(b.guest_phone, WHATSAPP_TEMPLATES.CHECKOUT_REVIEW_REQUEST(b)).catch(e => console.error(e));
+        }
+      }
+    } catch (err) {
+      console.error('[CRON SERVICE ERROR]: Post-checkout review scan failed:', err.message);
+    }
+  }
+
+  // Backward compatibility wrapper for old method name
+  async runLifecycleMessagingHooks() {
+    await this.runCheckoutMorningReminders();
+    await this.runMorningComfortAndRetention();
+    await this.dispatchCheckInCredentials();
   }
 
   // Marketing retention campaigns

@@ -219,14 +219,35 @@ class EmailService {
   }
 
   _renderRulesList(rules) {
-    if (!rules) return '';
-    const titleHtml = rules.title ? `<h4 style="margin: 0 0 15px 0; font-size: 16px; color: #1a1a1a;">${rules.title}</h4>` : '';
-    const itemsHtml = rules.items.map(item => `<li>${item}</li>`).join('');
+    if (!rules || !rules.items || !rules.items.length) return '';
+    const title = rules.title || '🏡 House Rules & Stay Guidelines';
+    const itemsHtml = rules.items.map(item => `
+      <tr style="border-bottom: 1px solid #f0ece3;">
+        <td style="padding: 10px 0; font-size: 13px; color: #4a4a4a; line-height: 1.6; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+          ${item}
+        </td>
+      </tr>
+    `).join('');
+
     return `
-      ${titleHtml}
-      <ul style="margin: 0 0 30px 0; padding-left: 20px; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
-        ${itemsHtml}
-      </ul>
+      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; border-radius: 16px; padding: 22px; margin-bottom: 25px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="padding-bottom: 12px; border-bottom: 2px solid #cfa873;">
+              <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;">${title}</h4>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #777777;">To ensure a comfortable, safe, and enjoyable stay, please observe these guidelines during your time with us:</p>
+            </td>
+          </tr>
+          ${itemsHtml}
+          <tr>
+            <td style="padding-top: 14px; text-align: center;">
+              <a href="https://www.luluaurelian.co.ke/#/portal" target="_blank" style="color: #cfa873; font-weight: 600; font-size: 12px; text-decoration: underline;">
+                📖 View Complete Digital House Rules in Guest Portal &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
     `;
   }
 
@@ -269,6 +290,42 @@ class EmailService {
         </table>
       </div>
     `;
+  }
+
+  _renderContactCards() {
+    return `
+      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 14px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">📞 Guest Support & Host Assistance</h4>
+        <p style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.5;">
+          Should you need any assistance during your stay, feel free to reach out to our team:
+        </p>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="padding: 6px 0;">
+              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Safaricom:</span>
+              <a href="tel:0112299384" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0112299384</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0;">
+              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Airtel:</span>
+              <a href="tel:0756958531" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0756958531</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+  }
+
+  _renderChecklist(checklist) {
+    if (!checklist || !checklist.length) return '';
+    const itemsHtml = checklist.map(item => `
+      <div style="background-color: #FAF9F6; border-left: 3px solid #cfa873; padding: 14px 18px; margin-bottom: 12px; border-radius: 8px;">
+        <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1a1a1a; font-weight: 600;">${item.title}</h4>
+        <p style="margin: 0; font-size: 14px; color: #555555; line-height: 1.5;">${item.desc}</p>
+      </div>
+    `).join('');
+    return `<div style="margin-bottom: 25px;">${itemsHtml}</div>`;
   }
 
   // ==========================================
@@ -318,6 +375,31 @@ class EmailService {
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
       this._renderAlertBox(data.alertText) +
+      this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
+      this._renderBookingRef(data.bookingRef) +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    const unitDetails = UNIT_WELCOME_DETAILS[(booking.unit_id || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps: ${unitDetails.mapUrl}`,
+      html
+    });
+  }
+
+  async sendPaymentSuccess(booking) {
+    const data = EMAIL_TEMPLATES.PAYMENT_SUCCESS_CONFIRMATION(booking);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderAlertBox(data.alertText) +
+      this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
       this._renderBookingRef(data.bookingRef) +
       this._renderButton(data.button);
 
@@ -329,6 +411,10 @@ class EmailService {
       text: data.text,
       html
     });
+  }
+
+  async sendCheckInCredentials(booking) {
+    return this.sendFulfillmentCredentials(booking);
   }
 
   async sendFulfillmentCredentials(booking) {
@@ -347,7 +433,29 @@ class EmailService {
       this._renderParagraphs(data.paragraphs) +
       this._renderCredentialsBox(data.credentials) +
       this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
       this._renderRulesList(data.rules) +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: data.text,
+      html
+    });
+  }
+
+  async sendCheckoutMorningReminder(booking) {
+    const data = EMAIL_TEMPLATES.CHECKOUT_MORNING_REMINDER(booking);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderChecklist(data.checklist) +
+      `<p style="margin: 20px 0; font-size: 15px; color: #4a4a4a; line-height: 1.6;">${data.closing}</p>` +
+      this._renderContactCards() +
       this._renderButton(data.button);
 
     const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
@@ -396,20 +504,59 @@ class EmailService {
     });
   }
 
+  async sendCheckInDayReminder(booking) {
+    const settings = await db.unit_settings.getSettings(booking.unit_id);
+    const bookingWithSettings = {
+      ...booking,
+      passcode: settings.passcode,
+      house_number: settings.house_number,
+      wifi_ssid: settings.wifi_ssid,
+      wifi_password: settings.wifi_password
+    };
+    const data = EMAIL_TEMPLATES.CHECK_IN_DAY_REMINDER(bookingWithSettings);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderLocationBlock(booking.unit_id) +
+      (bookingWithSettings.passcode ? this._renderCredentialsBox({
+        title: 'Check-In Access Credentials',
+        items: [
+          { label: 'Check-In Time', value: 'From 14:00 PM (2:00 PM)' },
+          { label: 'Key Box PIN', value: bookingWithSettings.passcode },
+          { label: 'Wi-Fi SSID', value: bookingWithSettings.wifi_ssid || 'LuluAurelian_5G' },
+          { label: 'Wi-Fi Password', value: bookingWithSettings.wifi_password || 'Luxury2026!' }
+        ]
+      }) : '') +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    const unitDetails = UNIT_WELCOME_DETAILS[(booking.unit_id || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps Pin: ${unitDetails.mapUrl}`,
+      html
+    });
+  }
+
   async sendCheckInFollowUp(booking) {
     const data = EMAIL_TEMPLATES.CHECK_IN_FOLLOW_UP(booking);
     const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
+      this._renderLocationBlock(booking.unit_id) +
       this._renderButton(data.button);
 
     const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
 
+    const unitDetails = UNIT_WELCOME_DETAILS[(booking.unit_id || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
     return this.sendEmail({
       to: booking.guest_email,
       subject: data.subject,
-      text: data.text,
+      text: `${data.text}\nLocation: ${unitDetails.location}\nGoogle Maps: ${unitDetails.mapUrl}`,
       html
     });
   }

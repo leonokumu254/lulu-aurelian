@@ -12,11 +12,12 @@ export const DEFAULT_SUITES_PRICING = [
  */
 export const getSuitePrice = (suiteId, bookingType = 'entire') => {
   const isOneBed = bookingType === 'one_bedroom';
+  const cleanId = String(suiteId || 'skyview').trim().toLowerCase();
   try {
     const saved = localStorage.getItem('lulu_pricing');
     if (saved) {
       const suites = JSON.parse(saved);
-      const suite = suites.find(s => s.id === suiteId);
+      const suite = suites.find(s => String(s.id || '').trim().toLowerCase() === cleanId);
       if (suite) {
         if (isOneBed) {
           const val = suite.oneBedroomPrice ?? suite.one_bedroom_price;
@@ -33,9 +34,9 @@ export const getSuitePrice = (suiteId, bookingType = 'entire') => {
   
   // High-reliability defaults
   if (isOneBed) return 4000;
-  if (suiteId === 'skyview') return 5500;
-  if (suiteId === 'cocoa') return 5000;
-  if (suiteId === 'neema') return 5000;
+  if (cleanId === 'skyview') return 5500;
+  if (cleanId === 'cocoa') return 5000;
+  if (cleanId === 'neema') return 5000;
   return 5000;
 };
 
@@ -49,7 +50,7 @@ export const fetchLivePricing = async () => {
       const data = await res.json();
       if (data.success && Array.isArray(data.pricing)) {
         const normalized = data.pricing.map(p => ({
-          id: p.id,
+          id: String(p.id || '').toLowerCase(),
           name: p.name,
           entirePrice: parseFloat(p.entirePrice || p.entire_price || 5000),
           oneBedroomPrice: parseFloat(p.oneBedroomPrice || p.one_bedroom_price || 4000),
@@ -66,7 +67,12 @@ export const fetchLivePricing = async () => {
   return null;
 };
 
-// Initial background sync on load in browser environment
+// Initial background sync on load in browser environment & cross-tab sync
 if (typeof window !== 'undefined') {
   fetchLivePricing().catch(() => {});
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'lulu_pricing') {
+      window.dispatchEvent(new Event('pricingUpdated'));
+    }
+  });
 }

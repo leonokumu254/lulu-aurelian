@@ -93,9 +93,9 @@ const inMemory = {
   ],
 
   unit_settings: [
-    { unit_id: 'skyview', passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
-    { unit_id: 'cocoa', passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
-    { unit_id: 'neema', passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+    { unit_id: 'skyview', passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
+    { unit_id: 'cocoa', passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
+    { unit_id: 'neema', passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
   ],
 
   unit_pricing: [
@@ -169,6 +169,10 @@ if (useMySQL) {
         await pool.query("ALTER TABLE unit_settings ADD COLUMN wifi_password VARCHAR(100) NOT NULL DEFAULT ''");
         console.log('[DB MIGRATE]: Added wifi_password column to unit_settings table.');
       }
+      if (!columnNames.includes('house_rules')) {
+        await pool.query("ALTER TABLE unit_settings ADD COLUMN house_rules TEXT NULL");
+        console.log('[DB MIGRATE]: Added house_rules column to unit_settings table.');
+      }
 
       // Check/create unit_pricing table for live dynamic rates
       await pool.query(`
@@ -195,6 +199,10 @@ if (useMySQL) {
         if (!bookingColNames.includes('booking_type')) {
           await pool.query("ALTER TABLE bookings ADD COLUMN booking_type VARCHAR(30) NOT NULL DEFAULT 'entire' AFTER unit_id");
           console.log('[DB MIGRATE]: Added booking_type column to bookings table.');
+        }
+        if (!bookingColNames.includes('total_price')) {
+          await pool.query("ALTER TABLE bookings ADD COLUMN total_price DECIMAL(10,2) NULL");
+          console.log('[DB MIGRATE]: Added total_price column to bookings table.');
         }
       } catch (bErr) {
         console.warn('[DB MIGRATE]: Could not alter bookings table:', bErr.message);
@@ -365,6 +373,38 @@ export const db = {
               id, guest_name, guest_email, guest_phone, unit_id, booking_type, check_in, check_out,
               adults, children, has_peak_surcharge,
               status, secure_token, approved_by, approved_at,
+              hold_expires_at, created_at, updated_at, cleaning_dates, total_price
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              booking.id,
+              booking.guest_name,
+              booking.guest_email,
+              booking.guest_phone,
+              booking.unit_id,
+              bType,
+              booking.check_in,
+              booking.check_out,
+              booking.adults  || 1,
+              booking.children || 0,
+              booking.has_peak_surcharge ? 1 : 0,
+              booking.status || 'PENDING',
+              booking.secure_token || ('sec_' + crypto.randomBytes(16).toString('hex')),
+              booking.approved_by || null,
+              booking.approved_at || null,
+              booking.hold_expires_at || null,
+              booking.created_at || new Date(),
+              booking.updated_at || new Date(),
+              booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null,
+              booking.total_price || null
+            ]
+          );
+        } catch (insertErr) {
+          // Fallback if total_price or booking_type column hasn't migrated yet
+          await pool.query(
+            `INSERT INTO bookings (
+              id, guest_name, guest_email, guest_phone, unit_id, booking_type, check_in, check_out,
+              adults, children, has_peak_surcharge,
+              status, secure_token, approved_by, approved_at,
               hold_expires_at, created_at, updated_at, cleaning_dates
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
@@ -389,8 +429,6 @@ export const db = {
               booking.cleaning_dates ? JSON.stringify(booking.cleaning_dates) : null
             ]
           );
-        } catch (insertErr) {
-          // Fallback if booking_type column hasn't migrated yet
           await pool.query(
             `INSERT INTO bookings (
               id, guest_name, guest_email, guest_phone, unit_id, check_in, check_out,
@@ -835,9 +873,9 @@ export const db = {
           return rows[0];
         }
         const defaults = {
-          skyview: { passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
-          cocoa: { passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
-          neema: { passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+          skyview: { passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
+          cocoa: { passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
+          neema: { passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
         };
         const def = defaults[cleanId] || defaults.skyview;
         await pool.query(
@@ -850,9 +888,9 @@ export const db = {
       if (found) return found;
 
       const defaults = {
-        skyview: { passcode: '9841', house_number: '601', wifi_ssid: 'LuluAurelian_Skyview_5G', wifi_password: 'SkyviewLuxury2026!' },
-        cocoa: { passcode: '1234', house_number: '402', wifi_ssid: 'LuluAurelian_Cocoa_5G', wifi_password: 'CocoaLuxury2026!' },
-        neema: { passcode: '9841', house_number: '201', wifi_ssid: 'LuluAurelian_Neema_5G', wifi_password: 'NeemaLuxury2026!' }
+        skyview: { passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
+        cocoa: { passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
+        neema: { passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
       };
       const def = { unit_id: cleanId, ...(defaults[cleanId] || defaults.skyview) };
       inMemory.unit_settings.push(def);
@@ -874,14 +912,15 @@ export const db = {
         const existing = await db.unit_settings.getSettings(cleanId);
         const merged = { ...existing, ...fields };
         await pool.query(
-          `INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password)
-           VALUES (?, ?, ?, ?, ?)
+          `INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password, house_rules)
+           VALUES (?, ?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE
              passcode = VALUES(passcode),
              house_number = VALUES(house_number),
              wifi_ssid = VALUES(wifi_ssid),
-             wifi_password = VALUES(wifi_password)`,
-          [cleanId, merged.passcode, merged.house_number, merged.wifi_ssid, merged.wifi_password]
+             wifi_password = VALUES(wifi_password),
+             house_rules = VALUES(house_rules)`,
+          [cleanId, merged.passcode, merged.house_number, merged.wifi_ssid, merged.wifi_password, merged.house_rules !== undefined ? (typeof merged.house_rules === 'string' ? merged.house_rules : JSON.stringify(merged.house_rules)) : null]
         );
         return true;
       }

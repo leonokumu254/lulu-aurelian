@@ -4,6 +4,8 @@ import { env } from '../config/env.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
 import { payheroService } from '../services/payheroService.js';
+import { dispatchPostPaymentNotifications } from './paymentController.js';
+import { DEFAULT_HOUSE_RULES } from '../config/constants.js';
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
@@ -21,7 +23,7 @@ async function getNextAvailableWindows(unitId, requestedNights, limit = 3) {
   const activeForUnit = allBookings
     .filter(b =>
       b.unit_id === unitId &&
-      ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED'].includes(b.status)
+      ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'].includes((b.status || '').toUpperCase())
     )
     .map(b => ({
       in:  new Date(b.check_in),
@@ -113,8 +115,10 @@ export const requestBooking = async (req, res, next) => {
     const hasPeakSurcharge = totalAdults === MAX_ADULT_GUESTS;
 
     // ── Overlap / double-booking check ───────────────────────────────────
+    // Dates remain available until payment has been confirmed ('PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED').
     const allBookings = await db.bookings.getAll();
-    const activeStatuses = ['PENDING', 'AUTHORIZING', 'PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
+    const activeStatuses = ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'APPROVED'];
+
     const conflicting = allBookings.find(b => {
       const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
       const bStatus = (b.status || '').toUpperCase();
@@ -138,6 +142,40 @@ export const requestBooking = async (req, res, next) => {
       });
     }
 
+    // Cancel any previous unpaid pending holds for this same guest on this unit
+    const previousGuestHolds = allBookings.filter(b => {
+      const bUnit = (b.unit_id || b.suite || b.unit || '').toLowerCase();
+      const bStatus = (b.status || '').toUpperCase();
+      const isPending = bStatus === 'PENDING' || bStatus === 'AUTHORIZING';
+      const isSameGuest = (
+        (b.guest_email && b.guest_email.toLowerCase() === guest_email.trim().toLowerCase()) ||
+        (b.guest_phone && b.guest_phone.replace(/\D/g, '') === guest_phone.trim().replace(/\D/g, ''))
+      );
+      return bUnit === (unit_id || '').toLowerCase() && isPending && isSameGuest;
+    });
+    for (const hold of previousGuestHolds) {
+      try {
+        await db.bookings.updateStatus(hold.id, 'CANCELLED');
+      } catch (err) {
+        console.warn(`[BOOKING]: Failed to cancel prior hold ${hold.id}:`, err.message);
+      }
+    }
+
+    // ── Determine amount (dynamically fetched from DB rates)
+    const unitPricing   = await db.pricing.getUnitPricing(unit_id);
+    const isOneBed      = normalizedBookingType === 'one_bedroom';
+    const BASE_PRICE    = isOneBed ? unitPricing.one_bedroom_price : unitPricing.entire_price;
+    const nights        = Math.max(1, Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+    const baseCost      = BASE_PRICE * nights;
+    let discountPercent = 0;
+    if (nights >= 30) discountPercent = 20;
+    else if (nights >= 7) discountPercent = 10;
+    else if (nights >= 3) discountPercent = 5;
+    const lengthDiscountValue = baseCost * (discountPercent / 100);
+
+    const surcharge     = hasPeakSurcharge ? PEAK_GUEST_SURCHARGE : 0;
+    const totalAmount   = Math.round(Math.max(1, baseCost - lengthDiscountValue + surcharge));
+
     // ── Create booking row (PENDING → awaits payment) ─────────────────────
     const secureToken = 'sec_' + crypto.randomBytes(24).toString('hex');
 
@@ -160,7 +198,8 @@ export const requestBooking = async (req, res, next) => {
       hold_expires_at: new Date(Date.now() + PAYMENT_TTL_MS),
       created_at:      new Date(),
       updated_at:      new Date(),
-      cleaning_dates:  cleaning_dates || null
+      cleaning_dates:  cleaning_dates || null,
+      total_price:     totalAmount
     };
 
     await db.bookings.create(newBooking);
@@ -190,7 +229,8 @@ export const requestBooking = async (req, res, next) => {
         children:        newBooking.children,
         has_peak_surcharge: newBooking.has_peak_surcharge,
         hold_expires_at: newBooking.hold_expires_at,
-        secure_token:    newBooking.secure_token
+        secure_token:    newBooking.secure_token,
+        total_price:     newBooking.total_price
       }
     });
 
@@ -334,9 +374,8 @@ export const approveBooking = async (req, res, next) => {
 
     console.log(`[STAFF APPROVAL]: ✅ Booking ${id} approved by ${approvedBy}. Payment Ref: ${transactionRef}`);
 
-    // Send credentials and alert
-    emailService.sendFulfillmentCredentials(confirmedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
-    whatsappService.sendBookingStatusAlert(confirmedBooking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+    // Dispatch post-payment confirmation and credentials if eligible
+    dispatchPostPaymentNotifications(confirmedBooking);
 
     return res.status(200).json({
       success: true,
@@ -452,9 +491,8 @@ export const stanbicCallback = async (req, res, next) => {
 
     console.log(`[STANBIC CALLBACK]: ✅ Booking ${booking.id} PAID. TransID: ${TransID}, M-Pesa Receipt: ${ThirdPartyTransID}, Amount: ${TransAmount}`);
 
-    // ── Send fulfillment credentials ──────────────────────────────────────
-    emailService.sendFulfillmentCredentials(confirmedBooking).catch(e => console.error('[EMAIL ERROR]:', e));
-    whatsappService.sendBookingStatusAlert(confirmedBooking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
+    // ── Send payment confirmation & credentials if eligible ──────────────
+    dispatchPostPaymentNotifications(confirmedBooking);
 
     // ── MUST respond with this exact format ──────────────────────────────
     return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
@@ -474,6 +512,25 @@ export const getBookings = async (req, res, next) => {
   try {
     const { status } = req.query;
     const list = await db.bookings.getAll(status);
+    for (const b of list) {
+      if (!b.total_price || isNaN(b.total_price)) {
+        try {
+          const p = await db.pricing.getUnitPricing(b.unit_id);
+          const isOneBed = b.booking_type === 'one_bedroom';
+          const rate = isOneBed ? p.one_bedroom_price : p.entire_price;
+          const nights = Math.max(1, Math.round((new Date(b.check_out) - new Date(b.check_in)) / (1000 * 60 * 60 * 24)));
+          const base = rate * nights;
+          let disc = 0;
+          if (nights >= 30) disc = 0.20;
+          else if (nights >= 7) disc = 0.10;
+          else if (nights >= 3) disc = 0.05;
+          const sur = b.has_peak_surcharge ? 1500 : 0;
+          b.total_price = Math.round(Math.max(1, base - (base * disc) + sur));
+        } catch (e) {
+          b.total_price = 5000;
+        }
+      }
+    }
     return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
     next(error);
@@ -484,6 +541,25 @@ export const getMyBookings = async (req, res, next) => {
   try {
     const userEmail = req.user.email;
     const list = await db.bookings.findByGuestEmail(userEmail);
+    for (const b of list) {
+      if (!b.total_price || isNaN(b.total_price)) {
+        try {
+          const p = await db.pricing.getUnitPricing(b.unit_id);
+          const isOneBed = b.booking_type === 'one_bedroom';
+          const rate = isOneBed ? p.one_bedroom_price : p.entire_price;
+          const nights = Math.max(1, Math.round((new Date(b.check_out) - new Date(b.check_in)) / (1000 * 60 * 60 * 24)));
+          const base = rate * nights;
+          let disc = 0;
+          if (nights >= 30) disc = 0.20;
+          else if (nights >= 7) disc = 0.10;
+          else if (nights >= 3) disc = 0.05;
+          const sur = b.has_peak_surcharge ? 1500 : 0;
+          b.total_price = Math.round(Math.max(1, base - (base * disc) + sur));
+        } catch (e) {
+          b.total_price = 5000;
+        }
+      }
+    }
     return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
     next(error);
@@ -502,6 +578,25 @@ export const checkBookingStatus = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Unauthorized token reference.' });
     }
 
+    let price = booking.total_price;
+    if (!price || isNaN(price)) {
+      try {
+        const p = await db.pricing.getUnitPricing(booking.unit_id);
+        const isOneBed = booking.booking_type === 'one_bedroom';
+        const rate = isOneBed ? p.one_bedroom_price : p.entire_price;
+        const nights = Math.max(1, Math.round((new Date(booking.check_out) - new Date(booking.check_in)) / (1000 * 60 * 60 * 24)));
+        const base = rate * nights;
+        let disc = 0;
+        if (nights >= 30) disc = 0.20;
+        else if (nights >= 7) disc = 0.10;
+        else if (nights >= 3) disc = 0.05;
+        const sur = booking.has_peak_surcharge ? 1500 : 0;
+        price = Math.round(Math.max(1, base - (base * disc) + sur));
+      } catch (e) {
+        price = 5000;
+      }
+    }
+
     return res.status(200).json({
       success: true,
       booking: {
@@ -514,7 +609,8 @@ export const checkBookingStatus = async (req, res, next) => {
         children:     booking.children,
         status:       booking.status,
         created_at:   booking.created_at,
-        hold_expires_at: booking.hold_expires_at
+        hold_expires_at: booking.hold_expires_at,
+        total_price:  price
       }
     });
   } catch (error) {
@@ -599,7 +695,7 @@ export const getUnitSettings = async (req, res, next) => {
 export const updateUnitSettings = async (req, res, next) => {
   try {
     const { unitId } = req.params;
-    const { passcode, house_number, wifi_ssid, wifi_password } = req.body;
+    const { passcode, house_number, wifi_ssid, wifi_password, house_rules } = req.body;
 
     const fieldsToUpdate = {};
 
@@ -622,6 +718,10 @@ export const updateUnitSettings = async (req, res, next) => {
       fieldsToUpdate.wifi_password = wifi_password.trim();
     }
 
+    if (house_rules !== undefined) {
+      fieldsToUpdate.house_rules = typeof house_rules === 'string' ? house_rules : JSON.stringify(house_rules);
+    }
+
     if (Object.keys(fieldsToUpdate).length === 0) {
       return res.status(400).json({ success: false, error: 'No fields provided for update.' });
     }
@@ -635,6 +735,32 @@ export const updateUnitSettings = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: `Settings for ${displayName} updated successfully!`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getHouseRules = async (req, res, next) => {
+  try {
+    const unitId = (req.params.unitId || req.query.unitId || 'skyview').toLowerCase();
+    const settings = await db.unit_settings.getSettings(unitId);
+    let rules = null;
+    if (settings && settings.house_rules) {
+      try {
+        rules = typeof settings.house_rules === 'string' ? JSON.parse(settings.house_rules) : settings.house_rules;
+      } catch (e) {
+        rules = settings.house_rules;
+      }
+    }
+    if (!rules) {
+      rules = DEFAULT_HOUSE_RULES[unitId] || DEFAULT_HOUSE_RULES.skyview;
+    }
+    return res.status(200).json({
+      success: true,
+      unit_id: unitId,
+      rules,
+      is_custom: !!(settings && settings.house_rules)
     });
   } catch (error) {
     next(error);

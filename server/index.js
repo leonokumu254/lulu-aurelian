@@ -59,6 +59,8 @@ const allowedOrigins = [
   'https://backend.payhero.co.ke',
   'https://app.payhero.co.ke',
   'https://api.payhero.co.ke',
+  'https://102.203.116.227',
+  'http://102.203.116.227',
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000' 
@@ -72,6 +74,7 @@ app.use(cors({
       /^https?:\/\/(.+\.)?luluaurelian\.co\.ke$/.test(origin) ||
       /^https?:\/\/(.+\.)?payhero\.co\.ke$/.test(origin) ||
       /^https?:\/\/lulu-aurelian.*\.vercel\.app$/.test(origin) ||
+      /^https?:\/\/102\.203\.116\.227(:\d+)?$/.test(origin) ||
       /^https?:\/\/(.+\.)?ngrok-free\.app$/.test(origin) ||
       /^https?:\/\/(.+\.)?ngrok\.app$/.test(origin) ||
       /^https?:\/\/(.+\.)?ngrok\.io$/.test(origin)
