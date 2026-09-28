@@ -219,14 +219,35 @@ class EmailService {
   }
 
   _renderRulesList(rules) {
-    if (!rules) return '';
-    const titleHtml = rules.title ? `<h4 style="margin: 0 0 15px 0; font-size: 16px; color: #1a1a1a;">${rules.title}</h4>` : '';
-    const itemsHtml = rules.items.map(item => `<li>${item}</li>`).join('');
+    if (!rules || !rules.items || !rules.items.length) return '';
+    const title = rules.title || '🏡 House Rules & Stay Guidelines';
+    const itemsHtml = rules.items.map(item => `
+      <tr style="border-bottom: 1px solid #f0ece3;">
+        <td style="padding: 10px 0; font-size: 13px; color: #4a4a4a; line-height: 1.6; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+          ${item}
+        </td>
+      </tr>
+    `).join('');
+
     return `
-      ${titleHtml}
-      <ul style="margin: 0 0 30px 0; padding-left: 20px; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
-        ${itemsHtml}
-      </ul>
+      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; border-radius: 16px; padding: 22px; margin-bottom: 25px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="padding-bottom: 12px; border-bottom: 2px solid #cfa873;">
+              <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;">${title}</h4>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #777777;">To ensure a comfortable, safe, and enjoyable stay, please observe these guidelines during your time with us:</p>
+            </td>
+          </tr>
+          ${itemsHtml}
+          <tr>
+            <td style="padding-top: 14px; text-align: center;">
+              <a href="https://www.luluaurelian.co.ke/#/portal" target="_blank" style="color: #cfa873; font-weight: 600; font-size: 12px; text-decoration: underline;">
+                📖 View Complete Digital House Rules in Guest Portal &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
     `;
   }
 

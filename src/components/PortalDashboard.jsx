@@ -10,6 +10,9 @@ import SuitePasscodes from './SuitePasscodes';
 import ContentStudio from './ContentStudio';
 import RateUs from './RateUs';
 import ChangePassword from './ChangePassword';
+import GuestHouseRules from './GuestHouseRules';
+import HouseRulesManager from './HouseRulesManager';
+import { ShieldCheck } from 'lucide-react';
 import './PortalDashboard.css';
 
 export default function PortalDashboard({ user, setUser, formData, setFormData, onBookingSubmit, portalTab, setPortalTab, onLogout, setPage }) {
@@ -194,6 +197,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 <span>Wi-Fi Details</span>
               </button>
               <button 
+                className={`nav-item ${viewMode === 'rules' ? 'active' : ''}`}
+                onClick={() => { setViewMode('rules'); setMobileMenuOpen(false); }}
+              >
+                <ShieldCheck size={20} />
+                <span>House Rules</span>
+              </button>
+              <button 
                 className={`nav-item ${viewMode === 'cms' ? 'active' : ''}`}
                 onClick={() => { setViewMode('cms'); setMobileMenuOpen(false); }}
               >
@@ -227,6 +237,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 <span>Wi-Fi Details</span>
               </button>
               <button 
+                className={`nav-item ${viewMode === 'rules' ? 'active' : ''}`}
+                onClick={() => { setViewMode('rules'); setMobileMenuOpen(false); }}
+              >
+                <ShieldCheck size={20} />
+                <span>House Rules</span>
+              </button>
+              <button 
                 className={`nav-item ${viewMode === 'cms' ? 'active' : ''}`}
                 onClick={() => { setViewMode('cms'); setMobileMenuOpen(false); }}
               >
@@ -244,6 +261,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               >
                 <BookOpen size={20} />
                 <span>My Bookings</span>
+              </button>
+              <button 
+                className={`nav-item ${portalTab === 'rules' ? 'active' : ''}`}
+                onClick={() => { setPortalTab('rules'); setMobileMenuOpen(false); }}
+              >
+                <ShieldCheck size={20} />
+                <span>House Rules</span>
               </button>
               <button 
                 className={`nav-item ${portalTab === 'booking' ? 'active' : ''}`}
@@ -294,7 +318,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               </button>
               <div>
                 <h1>
-                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'wifi' ? 'Wi-Fi Details' : viewMode === 'cms' ? 'Content Studio' : 'Guest Portal'}
+                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'wifi' ? 'Wi-Fi Details' : viewMode === 'rules' ? 'House Rules & Guidelines' : viewMode === 'cms' ? 'Content Studio' : portalTab === 'rules' ? 'House Rules & Guidelines' : 'Guest Portal'}
                 </h1>
               </div>
             </div>
@@ -343,6 +367,8 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
                 </div>
               ) : portalTab === 'rate' ? (
                 <RateUs user={user} />
+              ) : portalTab === 'rules' ? (
+                <GuestHouseRules />
               ) : portalTab === 'settings' ? (
                 <ChangePassword
                   user={user}
@@ -360,6 +386,8 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               <SuitePasscodes section="keys" />
             ) : viewMode === 'wifi' ? (
               <SuitePasscodes section="wifi" />
+            ) : viewMode === 'rules' ? (
+              <HouseRulesManager user={user} />
             ) : viewMode === 'cms' ? (
               <ContentStudio user={user} />
             ) : (

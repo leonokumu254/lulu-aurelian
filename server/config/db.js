@@ -169,6 +169,10 @@ if (useMySQL) {
         await pool.query("ALTER TABLE unit_settings ADD COLUMN wifi_password VARCHAR(100) NOT NULL DEFAULT ''");
         console.log('[DB MIGRATE]: Added wifi_password column to unit_settings table.');
       }
+      if (!columnNames.includes('house_rules')) {
+        await pool.query("ALTER TABLE unit_settings ADD COLUMN house_rules TEXT NULL");
+        console.log('[DB MIGRATE]: Added house_rules column to unit_settings table.');
+      }
 
       // Check/create unit_pricing table for live dynamic rates
       await pool.query(`
@@ -874,14 +878,15 @@ export const db = {
         const existing = await db.unit_settings.getSettings(cleanId);
         const merged = { ...existing, ...fields };
         await pool.query(
-          `INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password)
-           VALUES (?, ?, ?, ?, ?)
+          `INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password, house_rules)
+           VALUES (?, ?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE
              passcode = VALUES(passcode),
              house_number = VALUES(house_number),
              wifi_ssid = VALUES(wifi_ssid),
-             wifi_password = VALUES(wifi_password)`,
-          [cleanId, merged.passcode, merged.house_number, merged.wifi_ssid, merged.wifi_password]
+             wifi_password = VALUES(wifi_password),
+             house_rules = VALUES(house_rules)`,
+          [cleanId, merged.passcode, merged.house_number, merged.wifi_ssid, merged.wifi_password, merged.house_rules !== undefined ? (typeof merged.house_rules === 'string' ? merged.house_rules : JSON.stringify(merged.house_rules)) : null]
         );
         return true;
       }

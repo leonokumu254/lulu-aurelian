@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, CheckCircle, MapPin, Edit3, Bed, Award, Star, History, Lock, Unlock, X, Copy } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, MapPin, Edit3, Bed, Award, Star, History, Lock, Unlock, X, Copy, ShieldCheck } from 'lucide-react';
+import GuestHouseRules from './GuestHouseRules';
 import './GuestPortal.css';
 
 const UNIT_NAMES = { skyview: 'Skyview Hideaway', cocoa: 'Cocoa Retreat', neema: 'Neema Haven' };
@@ -20,6 +21,7 @@ export default function GuestPortal({ user, onBookNew }) {
   const [mpesaPhone, setMpesaPhone] = useState('');
   const [mpesaCode, setMpesaCode] = useState('');
   const [copiedField, setCopiedField] = useState('');
+  const [showRulesModal, setShowRulesModal] = useState(false);
 
   const handleCopyText = (text, field) => {
     if (!text) return;
@@ -463,6 +465,29 @@ export default function GuestPortal({ user, onBookNew }) {
                   )}
                 </div>
               </div>
+
+              {/* HOUSE RULES QUICK ACCESS CARD */}
+              <div className="rules-quick-card glass" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem', borderRadius: '14px', border: '1px solid rgba(207, 168, 115, 0.35)', background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(250,248,243,0.9))' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <ShieldCheck size={20} color="#b58434" />
+                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#1a1714' }}>House Rules & Stay Guidelines</h3>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => setShowRulesModal(true)}
+                    style={{ background: '#1a1714', color: '#fff', border: 'none', padding: '0.4rem 0.85rem', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    View Full Guidelines &rarr;
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🕒 In: After 2:00 PM • Out: 10:00 AM</span>
+                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🚭 Strictly No Indoor Smoking</span>
+                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🔇 Quiet Hours: 10 PM - 7 AM</span>
+                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🧼 Towels for Personal Use Only</span>
+                </div>
+              </div>
             </>
           )}
 
@@ -612,6 +637,27 @@ export default function GuestPortal({ user, onBookNew }) {
             <button onClick={() => setPaymentError(null)} className="btn-primary" style={{ background: '#DC2626', borderColor: '#DC2626' }}>
               Dismiss and Try Again
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Full House Rules Modal */}
+      {showRulesModal && (
+        <div className="modal-overlay glass-modal" onClick={() => setShowRulesModal(false)} style={{ zIndex: 1100, overflowY: 'auto', padding: '2rem 1rem' }}>
+          <div 
+            className="dispatch-modal glass animate-slide-up" 
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '850px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '1.5rem', position: 'relative' }}
+          >
+            <button 
+              type="button"
+              onClick={() => setShowRulesModal(false)}
+              style={{ position: 'sticky', top: 0, float: 'right', background: '#1a1714', color: '#fff', border: 'none', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
+              aria-label="Close modal"
+            >
+              <X size={18} />
+            </button>
+            <GuestHouseRules unitId={activeBooking?.unit_id || 'skyview'} />
           </div>
         </div>
       )}

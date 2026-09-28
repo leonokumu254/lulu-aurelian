@@ -5,6 +5,7 @@ import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
 import { payheroService } from '../services/payheroService.js';
 import { dispatchPostPaymentNotifications } from './paymentController.js';
+import { DEFAULT_HOUSE_RULES } from '../config/constants.js';
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
@@ -619,7 +620,7 @@ export const getUnitSettings = async (req, res, next) => {
 export const updateUnitSettings = async (req, res, next) => {
   try {
     const { unitId } = req.params;
-    const { passcode, house_number, wifi_ssid, wifi_password } = req.body;
+    const { passcode, house_number, wifi_ssid, wifi_password, house_rules } = req.body;
 
     const fieldsToUpdate = {};
 
@@ -642,6 +643,10 @@ export const updateUnitSettings = async (req, res, next) => {
       fieldsToUpdate.wifi_password = wifi_password.trim();
     }
 
+    if (house_rules !== undefined) {
+      fieldsToUpdate.house_rules = typeof house_rules === 'string' ? house_rules : JSON.stringify(house_rules);
+    }
+
     if (Object.keys(fieldsToUpdate).length === 0) {
       return res.status(400).json({ success: false, error: 'No fields provided for update.' });
     }
@@ -655,6 +660,32 @@ export const updateUnitSettings = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: `Settings for ${displayName} updated successfully!`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getHouseRules = async (req, res, next) => {
+  try {
+    const unitId = (req.params.unitId || req.query.unitId || 'skyview').toLowerCase();
+    const settings = await db.unit_settings.getSettings(unitId);
+    let rules = null;
+    if (settings && settings.house_rules) {
+      try {
+        rules = typeof settings.house_rules === 'string' ? JSON.parse(settings.house_rules) : settings.house_rules;
+      } catch (e) {
+        rules = settings.house_rules;
+      }
+    }
+    if (!rules) {
+      rules = DEFAULT_HOUSE_RULES[unitId] || DEFAULT_HOUSE_RULES.skyview;
+    }
+    return res.status(200).json({
+      success: true,
+      unit_id: unitId,
+      rules,
+      is_custom: !!(settings && settings.house_rules)
     });
   } catch (error) {
     next(error);

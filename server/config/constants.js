@@ -33,10 +33,15 @@ export const UNIT_WELCOME_DETAILS = {
     },
     directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: 16 (Top floor).',
     rules: [
-      'Check-in is after 2:00 PM (early access available from 1:00 PM).',
-      'Check-out is strictly before 10:00 AM.',
-      'All items in the units are at your disposal to use except the washing machine in the second balcony (requires express permission from host).',
-      'Strict No-Smoking policy inside the apartment.'
+      '✨ Care & Respect: Please treat the home and furnishings with care. Report any accidental damage as soon as possible.',
+      '🧼 Cleanliness: Wash used dishes before checkout and dispose of trash in designated bins. Towels are strictly for personal drying (not for shoes or spills).',
+      '🔇 Noise & Quiet Hours: Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
+      '🚭 Strictly No Smoking: Smoking or vaping is not permitted inside the apartment or on the balcony.',
+      '👥 Registered Guests: Only registered guests on the reservation are allowed. No unauthorized parties or events.',
+      '🌱 Live Plants: Please do not water or move the indoor plants, and ensure children do not pull at them.',
+      '🌤️ Balcony & Top-Floor Safety: Supervise children on the balcony at all times. Washing machine on 2nd balcony requires express prior permission from host.',
+      '🔐 Safety & Security: Always lock doors and windows when leaving the apartment.',
+      '🛏️ Before Checkout: Check-out is before 10:00 AM. Ensure lights, appliances, and AC/heaters are turned off.'
     ]
   },
   cocoa: {
@@ -64,10 +69,13 @@ export const UNIT_WELCOME_DETAILS = {
     },
     directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: 19 (First floor).',
     rules: [
-      'Check-in is after 2:00 PM (early access available from 1:00 PM).',
-      'Check-out is strictly before 10:00 AM.',
-      'Strict No-Smoking policy inside the suite.',
-      'Quiet hours are between 10:00 PM and 7:00 AM.'
+      '✨ Care & Respect: Please treat the home and furnishings with care. Report accidental damage promptly.',
+      '🧼 Cleanliness: Please clean up after yourself in common areas and wash used dishes before checkout.',
+      '🔇 Quiet Hours: Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
+      '🚭 Strictly No Smoking: Smoking or vaping is not permitted inside the property.',
+      '👥 Registered Guests: Only registered guests on the reservation are allowed. No unauthorized parties or events.',
+      '🔐 Security: Always lock doors and windows when leaving the property.',
+      '🛏️ Before Checkout: Check-out is strictly before 10:00 AM. Ensure all lights and appliances are turned off.'
     ]
   },
   neema: {
@@ -94,11 +102,298 @@ export const UNIT_WELCOME_DETAILS = {
     },
     directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: SL- 2 (First floor).',
     rules: [
-      'Check-in is after 2:00 PM (early access available from 1:00 PM).',
-      'Check-out is strictly before 10:00 AM.',
-      'Strict No-Smoking policy inside the suite.',
-      'Please leave the balcony door locked during high winds.'
+      '✨ Care & Respect: Please treat the home and furnishings with care. Report accidental damage promptly.',
+      '🧼 Cleanliness: Kindly clean up after yourself and wash used dishes before checkout.',
+      '🔇 Consideration: Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
+      '🚭 Strictly No Smoking: Smoking or vaping is not permitted inside the property.',
+      '👥 Registered Guests: Only registered guests on the reservation are permitted. No parties or events.',
+      '🔐 Security & Balcony: Ensure the balcony door is securely latched during high winds. Always lock doors when leaving.',
+      '🛏️ Before Checkout: Check-out is strictly before 10:00 AM. Ensure lights and appliances are turned off.'
     ]
+  }
+};
+
+// ==========================================
+// COMPREHENSIVE HOUSE RULES & GUIDELINES
+// ==========================================
+export const DEFAULT_HOUSE_RULES = {
+  skyview: {
+    unit_id: 'skyview',
+    title: '🏡 House Rules & Guest Guidelines',
+    subtitle: 'Welcome to Lulu Aurelian Apartment Skyview Hideaway!',
+    welcomeNote: 'We’re delighted to host you. To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below. These help us maintain the quality of the space and provide a positive experience for all guests!',
+    specialGatewayText: '🌿 Welcome to Lulu Aurelian Apartments - Skyview Gateway\n\nWe’re honored to share our top-floor apartment with you. This space has been prepared with care, thoughtfulness, and a love for comfort. To help us maintain its beauty for all who stay, we kindly ask that you take a moment to read the guidelines below.',
+    sections: [
+      {
+        id: 'care',
+        icon: '✨',
+        title: '1. Care & Respect for the Property',
+        items: [
+          'Please treat the home and all furnishings with care.',
+          'Report any accidental damage or breakage as soon as possible—early communication helps us resolve issues smoothly.',
+          'Please use coasters, placemats, and protective surfaces where provided.',
+          'Only use appliances and amenities for their intended purposes.'
+        ]
+      },
+      {
+        id: 'cleanliness',
+        icon: '🧼',
+        title: '2. Cleanliness',
+        items: [
+          'Kindly clean up after yourself in common areas and the kitchen.',
+          'Wash used dishes or load them into the dishwasher before checkout.',
+          'Dispose of trash in the designated bins.',
+          'Wipe up spills promptly to avoid stains or damage.',
+          'Please use towels only for their intended purpose (personal drying). Towels must not be used for cleaning shoes, spills, or any other inappropriate purpose.',
+          'Guests are expected to leave the apartment in a tidy condition. Extra cleaning due to negligence or misuse of items may incur additional charges.',
+          'Leave furniture and items in the same place you found them.'
+        ]
+      },
+      {
+        id: 'noise',
+        icon: '🔇',
+        title: '3. Noise & Consideration',
+        items: [
+          'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
+          'Be considerate of neighbors and other guests at all times.'
+        ]
+      },
+      {
+        id: 'smoking',
+        icon: '🚭',
+        title: '4. Smoking & Vaping',
+        items: [
+          'Smoking or vaping inside the property is not allowed.',
+          'If you smoke outdoors, please use the provided ashtrays and dispose of cigarette waste responsibly.'
+        ]
+      },
+      {
+        id: 'guests',
+        icon: '👥',
+        title: '5. Guests & Visitors',
+        items: [
+          'Only registered guests are allowed on the property unless otherwise approved.',
+          'No parties or events without prior consent.'
+        ]
+      },
+      {
+        id: 'pets',
+        icon: '🐾',
+        title: '6. Pets (If applicable)',
+        items: [
+          'Pets are welcome only if approved in advance.',
+          'Please clean up after your pet and ensure they do not damage furniture or disturb neighbors.'
+        ]
+      },
+      {
+        id: 'safety',
+        icon: '🔐',
+        title: '7. Safety & Security',
+        items: [
+          'Always lock doors and windows when leaving the property.',
+          'Do not tamper with smoke detectors, security devices, or safety equipment.',
+          'Familiarize yourself with emergency exits and procedures.'
+        ]
+      },
+      {
+        id: 'checkout',
+        icon: '🛏️',
+        title: '8. Before Checkout',
+        items: [
+          'Please follow the checkout instructions provided.',
+          'Leave used towels in the designated area.',
+          'Ensure all lights, appliances, and AC/heating units are turned off.'
+        ]
+      },
+      {
+        id: 'plants',
+        icon: '🌱',
+        title: 'Live Plants',
+        items: [
+          'You’ll notice several live plants throughout the apartment. These are part of the home’s atmosphere and are cared for regularly.',
+          'Please do not water or move the plants, and kindly ensure children do not play with or pull at them.',
+          'Your help keeps them healthy and thriving.'
+        ]
+      },
+      {
+        id: 'balcony',
+        icon: '🌤️',
+        title: 'Balcony & Safety',
+        items: [
+          'The apartment sits on the top floor, offering a beautiful view and calming outdoor space.',
+          'Please supervise children at all times when using the balcony.',
+          'Avoid leaning over railings or adjusting balcony furniture.',
+          'Enjoy the space responsibly and mindfully.',
+          'All items in the units are at your disposal to use except the washing machine in the second balcony that requires express permission from the host to use.'
+        ]
+      }
+    ],
+    closingMessage: 'Thank you for respecting the space and being a considerate guest. Your cooperation helps us maintain a wonderful experience for everyone. We hope your time in this space is peaceful, memorable, and filled with beautiful moments! 💛',
+    supportContacts: {
+      safaricom: '0112299384',
+      airtel: '0756958531'
+    }
+  },
+  cocoa: {
+    unit_id: 'cocoa',
+    title: '🏡 House Rules & Guest Guidelines',
+    subtitle: 'Welcome to Lulu Aurelian Furnished Apartments - Cocoa Home!',
+    welcomeNote: 'We’re delighted to host you and hope you enjoy your stay. To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below.',
+    sections: [
+      {
+        id: 'care',
+        icon: '✨',
+        title: '1. Care & Respect for the Property',
+        items: [
+          'Please treat the home and all furnishings with care.',
+          'Report any accidental damage or breakage as soon as possible—early communication helps us resolve issues smoothly.',
+          'Please use coasters, placemats, and protective surfaces where provided.',
+          'Only use appliances and amenities for their intended purposes.'
+        ]
+      },
+      {
+        id: 'cleanliness',
+        icon: '🧼',
+        title: '2. Cleanliness',
+        items: [
+          'Kindly clean up after yourself in common areas and the kitchen.',
+          'Wash used dishes before checkout.',
+          'Dispose of trash in designated bins and wipe spills promptly.',
+          'Please use towels only for personal drying (not for cleaning shoes or spills).',
+          'Guests are expected to leave the apartment in a tidy condition.'
+        ]
+      },
+      {
+        id: 'noise',
+        icon: '🔇',
+        title: '3. Noise & Consideration',
+        items: [
+          'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
+          'Be considerate of neighbors and other guests at all times.'
+        ]
+      },
+      {
+        id: 'smoking',
+        icon: '🚭',
+        title: '4. Smoking & Vaping',
+        items: [
+          'Smoking or vaping inside the property is strictly not allowed.',
+          'If you smoke outdoors, please use the provided ashtrays and dispose of cigarette waste responsibly.'
+        ]
+      },
+      {
+        id: 'guests',
+        icon: '👥',
+        title: '5. Guests & Visitors',
+        items: [
+          'Only registered guests are allowed on the property unless otherwise approved.',
+          'No parties or events without prior consent.'
+        ]
+      },
+      {
+        id: 'safety',
+        icon: '🔐',
+        title: '6. Safety & Security',
+        items: [
+          'Always lock doors and windows when leaving the property.',
+          'Do not tamper with safety devices or equipment.'
+        ]
+      },
+      {
+        id: 'checkout',
+        icon: '🛏️',
+        title: '7. Before Checkout',
+        items: [
+          'Check-out is strictly before 10:00 AM.',
+          'Leave used towels in the designated area.',
+          'Ensure all lights and appliances are turned off.'
+        ]
+      }
+    ],
+    closingMessage: 'Thank you for choosing Cocoa Home and treating this property with care. We hope your stay is peaceful and memorable! 💛',
+    supportContacts: {
+      safaricom: '0112299384',
+      airtel: '0756958531'
+    }
+  },
+  neema: {
+    unit_id: 'neema',
+    title: '🏡 House Rules & Guest Guidelines',
+    subtitle: 'Welcome to Lulu Aurelian Furnished Apartments - Neema Home!',
+    welcomeNote: 'We’re delighted to host you and hope you enjoy your stay. To ensure a comfortable, safe, and enjoyable stay for everyone, please review the guidelines below.',
+    sections: [
+      {
+        id: 'care',
+        icon: '✨',
+        title: '1. Care & Respect for the Property',
+        items: [
+          'Please treat the home and all furnishings with care.',
+          'Report any accidental damage or breakage as soon as possible.',
+          'Only use appliances and amenities for their intended purposes.'
+        ]
+      },
+      {
+        id: 'cleanliness',
+        icon: '🧼',
+        title: '2. Cleanliness',
+        items: [
+          'Kindly clean up after yourself in common areas and the kitchen.',
+          'Wash used dishes before checkout.',
+          'Dispose of trash in designated bins and wipe spills promptly.',
+          'Please use towels only for personal drying.'
+        ]
+      },
+      {
+        id: 'noise',
+        icon: '🔇',
+        title: '3. Noise & Consideration',
+        items: [
+          'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
+          'Be considerate of neighbors at all times.'
+        ]
+      },
+      {
+        id: 'smoking',
+        icon: '🚭',
+        title: '4. Smoking & Vaping',
+        items: [
+          'Smoking or vaping inside the property is strictly not allowed.',
+          'If you smoke outdoors, please use the provided ashtrays.'
+        ]
+      },
+      {
+        id: 'guests',
+        icon: '👥',
+        title: '5. Guests & Visitors',
+        items: [
+          'Only registered guests are allowed on the property unless otherwise approved.',
+          'No parties or events without prior consent.'
+        ]
+      },
+      {
+        id: 'safety',
+        icon: '🔐',
+        title: '6. Safety & Security',
+        items: [
+          'Always lock doors and windows when leaving the property.',
+          'Please ensure the balcony door is securely latched during high winds.'
+        ]
+      },
+      {
+        id: 'checkout',
+        icon: '🛏️',
+        title: '7. Before Checkout',
+        items: [
+          'Check-out is strictly before 10:00 AM.',
+          'Leave used towels in the designated area and turn off all lights.'
+        ]
+      }
+    ],
+    closingMessage: 'Thank you for choosing Neema Home and being a wonderful guest. We hope your stay is peaceful and restful! 💛',
+    supportContacts: {
+      safaricom: '0112299384',
+      airtel: '0756958531'
+    }
   }
 };
 
