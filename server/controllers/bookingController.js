@@ -306,12 +306,15 @@ export const initiatePayment = async (req, res, next) => {
     const totalAmount   = Math.max(0, baseCost - lengthDiscountValue) + surcharge;
 
     // Trigger PayHero STK Push
-    console.log(`[PAYHERO STK PUSH]: Initiating checkout for booking ${booking.id} | Phone: ${targetPhone} | Amount: ${totalAmount}`);
-    const stkResponse = await payheroService.initiateSTKPush(targetPhone, totalAmount, booking.id.substring(0, 8).toUpperCase(), booking.guest_name || '');
+    const externalRef = booking.id.substring(0, 8).toUpperCase();
+    console.log(`[PAYHERO STK PUSH]: Initiating checkout for booking ${booking.id} | Phone: ${targetPhone} | Amount: ${totalAmount} | ExternalRef: ${externalRef}`);
+    const stkResponse = await payheroService.initiateSTKPush(targetPhone, totalAmount, externalRef, booking.guest_name || '');
 
     if (!stkResponse || !stkResponse.success) {
       return res.status(500).json({ success: false, error: 'Failed to initiate PayHero STK Push. Please verify your phone number and try again.' });
     }
+
+    console.log(`[PAYHERO STK PUSH]: STK Push response — checkoutRequestId: ${stkResponse.checkoutRequestId}, transactionReference: ${stkResponse.transactionReference}`);
 
     // ── Persist payment attempt with CheckoutRequestID as transaction_ref ──────────────────
     await db.payments.create({
@@ -322,6 +325,19 @@ export const initiatePayment = async (req, res, next) => {
       transaction_ref:  stkResponse.checkoutRequestId,
       status:           'PENDING'
     });
+
+    // Also create a lookup record for the external_reference so the PayHero callback
+    // can find this payment by the 8-char booking ID prefix it sends back
+    if (externalRef !== stkResponse.checkoutRequestId) {
+      await db.payments.create({
+        booking_id:       booking.id,
+        amount:           totalAmount,
+        currency:         'KES',
+        gateway:          'MPESA',
+        transaction_ref:  externalRef,
+        status:           'PENDING'
+      }).catch(() => {}); // Ignore duplicate key errors
+    }
 
     // Transition booking status to AUTHORIZING (Awaiting Callback)
     await db.bookings.updateStatus(booking.id, 'AUTHORIZING');

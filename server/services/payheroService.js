@@ -96,20 +96,38 @@ class PayHeroService {
    */
   async queryTransactionStatus(reference) {
     try {
-      const response = await fetch(`${this.baseUrl}/transactions?reference=${encodeURIComponent(reference)}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': this.getAuthHeader(),
-          'Content-Type': 'application/json'
-        }
-      });
+      // Try multiple query parameter names since PayHero may accept different identifiers
+      const queryUrls = [
+        `${this.baseUrl}/transactions?checkout_request_id=${encodeURIComponent(reference)}`,
+        `${this.baseUrl}/transactions?reference=${encodeURIComponent(reference)}`
+      ];
 
-      const rawText = await response.text();
       let data = {};
-      try {
-        data = rawText ? JSON.parse(rawText) : {};
-      } catch (e) {
-        throw new Error(`Invalid response from PayHero Status Query (HTTP ${response.status}): ${rawText.slice(0, 300) || 'Empty body'}`);
+      let response = null;
+
+      for (const url of queryUrls) {
+        console.log(`[PAYHERO]: Querying transaction status — ${url}`);
+        response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': this.getAuthHeader(),
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const rawText = await response.text();
+        try {
+          data = rawText ? JSON.parse(rawText) : {};
+        } catch (e) {
+          throw new Error(`Invalid response from PayHero Status Query (HTTP ${response.status}): ${rawText.slice(0, 300) || 'Empty body'}`);
+        }
+
+        console.log(`[PAYHERO]: Status Query response (HTTP ${response.status}):`, JSON.stringify(data).slice(0, 500));
+
+        // If we got a successful response (not 404), use it
+        if (response.ok || response.status !== 404) {
+          break;
+        }
       }
 
       if (!response.ok) {
@@ -139,6 +157,8 @@ class PayHeroService {
       } else {
         normalizedStatus = 'PENDING';
       }
+
+      console.log(`[PAYHERO]: Transaction ${reference} status resolved to: ${normalizedStatus}`);
 
       return {
         status: normalizedStatus,
