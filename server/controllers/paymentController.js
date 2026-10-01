@@ -165,12 +165,27 @@ export const payheroCallback = async (req, res) => {
       payment = await db.payments.findByRef(external_reference);
     }
 
-    // Fallback 1: search booking by external_reference prefix
+    // Fallback 1: Match booking by external_reference prefix (PayHero sends back the
+    // 8-char booking ID prefix we used as external_reference during STK push initiation,
+    // but the payment record stores the checkoutRequestId as transaction_ref — so the
+    // findByRef above won't find it. Match against booking IDs instead.)
     if (!payment && external_reference) {
       const allBookings = await db.bookings.getAll();
-      const matchedBooking = allBookings.find(b => b.id.toUpperCase().startsWith(String(external_reference).toUpperCase()));
+      const matchedBooking = allBookings.find(b =>
+        b.id.toUpperCase().startsWith(String(external_reference).toUpperCase()) &&
+        ['AUTHORIZING', 'PENDING'].includes(b.status)
+      );
       if (matchedBooking) {
-        payment = { booking_id: matchedBooking.id, transaction_ref: payHeroRef || external_reference };
+        // Retrieve the actual payment record for this booking so we can update it properly
+        const bookingPayments = await db.payments.findByBookingId(matchedBooking.id);
+        const pendingPayment = (bookingPayments || []).find(p => p.status === 'PENDING');
+        if (pendingPayment) {
+          payment = pendingPayment;
+          console.log(`[PAYHERO WEBHOOK]: Matched payment via external_reference prefix → booking ${matchedBooking.id}, payment ref: ${pendingPayment.transaction_ref}`);
+        } else {
+          payment = { booking_id: matchedBooking.id, transaction_ref: payHeroRef || external_reference };
+          console.log(`[PAYHERO WEBHOOK]: Matched booking ${matchedBooking.id} via external_reference prefix (no pending payment record found, using synthetic ref)`);
+        }
       }
     }
 
@@ -188,7 +203,14 @@ export const payheroCallback = async (req, res) => {
         });
         if (matched) {
           console.log(`[PAYHERO WEBHOOK]: Matched booking ${matched.id} via customer phone ${rawPhone}`);
-          payment = { booking_id: matched.id, transaction_ref: payHeroRef || external_reference || mpesaReceipt || matched.id };
+          // Also try to find the actual pending payment for this booking
+          const bookingPayments = await db.payments.findByBookingId(matched.id);
+          const pendingPayment = (bookingPayments || []).find(p => p.status === 'PENDING');
+          if (pendingPayment) {
+            payment = pendingPayment;
+          } else {
+            payment = { booking_id: matched.id, transaction_ref: payHeroRef || external_reference || mpesaReceipt || matched.id };
+          }
         }
       }
     }

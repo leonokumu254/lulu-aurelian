@@ -260,7 +260,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     if (!stkPushSent || !checkoutRequestId) return;
 
     let pollCount = 0;
-    const maxPolls = 24; // 24 × 5s = 2 minutes
+    const maxPolls = 36; // 36 × 5s = 3 minutes (allows time for PIN entry + callback processing)
 
     const interval = setInterval(async () => {
       pollCount++;
