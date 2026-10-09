@@ -4,18 +4,31 @@ import { VitePWA } from 'vite-plugin-pwa'
 import autoprefixer from 'autoprefixer'
 import { resolve } from 'path'
 
-// Rewrite clean URLs to .html files in dev server
+// Rewrite clean URLs to .html files in dev server & preview
 function unitPageRoutes() {
+  const cleanUrls = ['/skyview', '/cocoa', '/neema'];
+  const handler = (req, res, next) => {
+    if (!req.url) return next();
+    const [pathname, search] = req.url.split('?');
+    const trimmedPath = pathname.replace(/\/$/, '');
+    let unitKey = trimmedPath;
+    if (unitKey.startsWith('/unit/')) {
+      unitKey = '/' + unitKey.replace('/unit/', '');
+    }
+
+    if (cleanUrls.includes(unitKey)) {
+      req.url = `${unitKey}.html${search ? '?' + search : ''}`;
+    }
+    next();
+  };
+
   return {
     name: 'unit-page-routes',
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        const cleanUrls = ['/skyview', '/cocoa', '/neema'];
-        if (cleanUrls.includes(req.url)) {
-          req.url = `${req.url}.html`;
-        }
-        next();
-      });
+      server.middlewares.use(handler);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(handler);
     }
   };
 }

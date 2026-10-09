@@ -202,6 +202,13 @@ export default function App() {
 
       } else if (hash.startsWith('#/offers')) {
         setPage('offers');
+      } else if (hash.startsWith('#/skyview') || hash.startsWith('#/cocoa') || hash.startsWith('#/neema') || hash.startsWith('#/unit/')) {
+        let suite = 'skyview';
+        if (hash.includes('cocoa')) suite = 'cocoa';
+        else if (hash.includes('neema')) suite = 'neema';
+        const queryIdx = hash.indexOf('?');
+        const queryStr = queryIdx !== -1 ? hash.substring(queryIdx) : (window.location.search || '');
+        window.location.href = `/${suite}${queryStr}`;
       } else {
         // If query string has reset_token, auto-route to portal
         if (window.location.search.includes('reset_token=')) {
@@ -293,12 +300,14 @@ export default function App() {
       const checkOut = params.checkOut || formData.checkOut;
       const adults = params.adults || formData.adults;
       const children = params.children || formData.children;
+      const offerId = params.offerId || formData.offerId;
       
       let queryStr = `?suite=${suite}`;
       if (checkIn) queryStr += `&checkIn=${checkIn}`;
       if (checkOut) queryStr += `&checkOut=${checkOut}`;
       if (adults) queryStr += `&adults=${adults}`;
       if (children) queryStr += `&children=${children}`;
+      if (offerId) queryStr += `&offerId=${offerId}`;
       
       window.location.hash = `#/checkout${queryStr}`;
       window.scrollTo(0, 0);

@@ -167,7 +167,7 @@ export default function OffersSection({ setPage }) {
                       <div className="offer-actions">
                         <button 
                           className="offer-btn-book" 
-                          onClick={() => setPage('booking', { offerId: offer.id })}
+                          onClick={() => setPage('checkout', { offerId: offer.id, suite: 'skyview' })}
                           tabIndex={groupIndex > 0 ? -1 : undefined}
                         >
                           Book Now

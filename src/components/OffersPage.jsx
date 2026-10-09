@@ -30,7 +30,7 @@ export default function OffersPage({ setPage }) {
               <h3 className="offer-title">{offer.title}</h3>
               <p className="offer-desc">{offer.fullDesc}</p>
               <div className="offer-actions">
-                <button className="offer-btn-book" onClick={() => setPage('booking', { offerId: offer.id })}>
+                <button className="offer-btn-book" onClick={() => setPage('checkout', { offerId: offer.id, suite: 'skyview' })}>
                   Book Now
                 </button>
                 <a href="https://wa.me/254112299384" target="_blank" rel="noreferrer" className="offer-whatsapp-btn">

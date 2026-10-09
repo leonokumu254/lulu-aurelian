@@ -1,0 +1,14 @@
+# Apache Rewrite Rules for Lulu Aurelian Estate
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Rewrite clean URLs to corresponding .html files with query string append (QSA)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^/?(skyview|cocoa|neema)/?$ $1.html [L,QSA]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^/?unit/(skyview|cocoa|neema)/?$ $1.html [L,QSA]
+</IfModule>

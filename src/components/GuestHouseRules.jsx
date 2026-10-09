@@ -15,7 +15,7 @@ export default function GuestHouseRules({ unitId = 'skyview' }) {
   const [selectedUnit, setSelectedUnit] = useState(unitId);
   const [rulesData, setRulesData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [openSections, setOpenSections] = useState({});
 
   useEffect(() => {
     setSelectedUnit(unitId);
@@ -30,6 +30,11 @@ export default function GuestHouseRules({ unitId = 'skyview' }) {
         const data = await res.json();
         if (isMounted && data.success && data.rules) {
           setRulesData(data.rules);
+          const initial = {};
+          data.rules.sections?.forEach((sec, idx) => {
+            initial[sec.id || idx] = idx < 2; // Open first 2 by default
+          });
+          setOpenSections(initial);
         }
       } catch (err) {
         console.error('Failed to load house rules:', err);
@@ -42,7 +47,16 @@ export default function GuestHouseRules({ unitId = 'skyview' }) {
   }, [selectedUnit]);
 
   const toggleSection = (id) => {
-    setExpandedSection(prev => prev === id ? null : id);
+    setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleExpandAll = (expand) => {
+    if (!rulesData?.sections) return;
+    const updated = {};
+    rulesData.sections.forEach((sec, idx) => {
+      updated[sec.id || idx] = expand;
+    });
+    setOpenSections(updated);
   };
 
   return (
@@ -137,18 +151,42 @@ export default function GuestHouseRules({ unitId = 'skyview' }) {
         </div>
       </div>
 
+      {/* Detailed Rules Sections Header & Controls */}
+      <div className="rules-section-controls-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1a1714', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Detailed Policies ({rulesData?.sections?.length || 0})
+        </span>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button 
+            type="button" 
+            onClick={() => handleExpandAll(true)}
+            style={{ background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: '6px', padding: '0.3rem 0.6rem', fontSize: '0.76rem', fontWeight: 600, color: '#8c6014', cursor: 'pointer' }}
+          >
+            Expand All
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleExpandAll(false)}
+            style={{ background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: '6px', padding: '0.3rem 0.6rem', fontSize: '0.76rem', fontWeight: 600, color: '#666', cursor: 'pointer' }}
+          >
+            Collapse All
+          </button>
+        </div>
+      </div>
+
       {/* Detailed Rules Sections */}
       <div className="rules-sections-container">
         {loading ? (
           <div className="rules-loader">Loading suite guidelines...</div>
         ) : (
           rulesData?.sections?.map((section, idx) => {
-            const isExpanded = expandedSection === section.id || expandedSection === null;
+            const secKey = section.id || idx;
+            const isExpanded = !!openSections[secKey];
             return (
-              <div key={section.id || idx} className="rule-accordion-card glass">
+              <div key={secKey} className="rule-accordion-card glass">
                 <div 
                   className="accordion-header" 
-                  onClick={() => toggleSection(section.id)}
+                  onClick={() => toggleSection(secKey)}
                   role="button"
                   tabIndex={0}
                 >

@@ -15,6 +15,18 @@
     {
       "source": "/neema",
       "destination": "/neema.html"
+    },
+    {
+      "source": "/unit/skyview",
+      "destination": "/skyview.html"
+    },
+    {
+      "source": "/unit/cocoa",
+      "destination": "/cocoa.html"
+    },
+    {
+      "source": "/unit/neema",
+      "destination": "/neema.html"
     }
   ]
 }
