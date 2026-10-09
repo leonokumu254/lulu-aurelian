@@ -148,10 +148,33 @@ export const payheroCallback = async (req, res) => {
     const resObj = payload.response || payload.data || payload.results || {};
 
     // Extract all possible references and status formats
-    const external_reference = payload.external_reference || payload.ExternalReference || resObj.external_reference || resObj.ExternalReference || null;
-    const reference = payload.reference || payload.Reference || resObj.reference || resObj.Reference || payload.checkout_request_id || payload.CheckoutRequestID || null;
-    const rawStatus = payload.status || payload.Status || payload.payment_status || payload.PaymentStatus || resObj.status || resObj.Status || resObj.payment_status || (payload.success ? 'SUCCESS' : '');
-    const mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference || payload.Receipt || resObj.provider_reference || resObj.MpesaReceiptNumber || null;
+    const external_reference = payload.external_reference || payload.ExternalReference || payload.externalReference ||
+      resObj.external_reference || resObj.ExternalReference || resObj.externalReference || null;
+
+    const reference = payload.reference || payload.Reference ||
+      payload.checkout_request_id || payload.CheckoutRequestID || payload.checkoutRequestId ||
+      resObj.reference || resObj.Reference ||
+      resObj.checkout_request_id || resObj.CheckoutRequestID || resObj.checkoutRequestId ||
+      resObj.MerchantRequestID || resObj.merchant_request_id || null;
+
+    const mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference ||
+      payload.Receipt || payload.mpesaReceipt || payload.receipt ||
+      resObj.provider_reference || resObj.MpesaReceiptNumber || resObj.MPESA_Reference ||
+      resObj.Receipt || resObj.receipt || null;
+
+    // Determine normalized status safely (handles booleans, objects, and nested fields)
+    let rawStatus = '';
+    if (typeof resObj.status === 'string') rawStatus = resObj.status;
+    else if (typeof resObj.Status === 'string') rawStatus = resObj.Status;
+    else if (typeof resObj.payment_status === 'string') rawStatus = resObj.payment_status;
+    else if (typeof resObj.PaymentStatus === 'string') rawStatus = resObj.PaymentStatus;
+    else if (typeof payload.status === 'string') rawStatus = payload.status;
+    else if (typeof payload.Status === 'string') rawStatus = payload.Status;
+    else if (typeof payload.payment_status === 'string') rawStatus = payload.payment_status;
+    else if (typeof payload.PaymentStatus === 'string') rawStatus = payload.PaymentStatus;
+    else if (resObj.ResultCode === 0 || resObj.ResultCode === '0' || payload.ResultCode === 0 || payload.ResultCode === '0') rawStatus = 'SUCCESS';
+    else if (payload.success === true || payload.status === true || resObj.success === true || resObj.status === true) rawStatus = 'SUCCESS';
+    else if (payload.success === false || payload.status === false || resObj.success === false || resObj.status === false) rawStatus = 'FAILED';
 
     const payHeroStatus = String(rawStatus || '').toUpperCase();
     const payHeroRef = reference || external_reference;
@@ -220,7 +243,7 @@ export const payheroCallback = async (req, res) => {
       return res.status(200).json({ status: 'received' });
     }
 
-    if (['SUCCESS', 'COMPLETED', 'PAID'].includes(payHeroStatus) || payload.success === true || resObj.success === true) {
+    if (['SUCCESS', 'COMPLETED', 'PAID', 'TRUE'].includes(payHeroStatus) || payload.success === true || resObj.success === true) {
       // ── Payment successful ────────────────────────────────────────────
       await db.payments.updateStatus(payment.transaction_ref, 'COMPLETED');
       await db.bookings.updateStatus(payment.booking_id, 'PAID');

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Wifi, Utensils, Bed, Car, Map, ChevronLeft, ChevronRight, Grid, X, Star, Users, Maximize, ExternalLink, ChevronDown, Calendar } from 'lucide-react';
+import { ArrowLeft, Wifi, Utensils, Bed, Car, Map, ChevronLeft, ChevronRight, Grid, X, Star, Users, Maximize, ExternalLink, ChevronDown, Calendar, ShieldCheck, Sparkles, Check } from 'lucide-react';
 import Header from './Header';
 import Footer from './Footer';
 import CustomCalendarModal from './CustomCalendarModal';
 import Reviews from './Reviews';
+import GuestHouseRules from './GuestHouseRules';
 import { getSuitePrice } from '../utils/pricing';
 import './UnitPage.css';
 
@@ -190,6 +191,7 @@ export default function UnitPage({ unitId }) {
   const [hasChildren, setHasChildren] = useState(getQueryParam('hasChildren') === '1');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
+  const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
 
   const handleBookingTypeChange = (type) => {
@@ -242,27 +244,34 @@ export default function UnitPage({ unitId }) {
     else if (pageId === 'offers') window.location.href = '/#/offers';
   };
 
-  // Auto-play carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % unit.images.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [unit.images.length]);
+  const isProgrammaticScroll = useRef(false);
+  const scrollTimeout = useRef(null);
 
-  // Scroll carousel on index change
-  useEffect(() => {
-    if (scrollRef.current) {
+  const goToSlide = (index) => {
+    if (scrollRef.current && index >= 0 && index < unit.images.length) {
+      isProgrammaticScroll.current = true;
       const width = scrollRef.current.clientWidth;
-      scrollRef.current.scrollTo({ left: width * activeIndex, behavior: 'smooth' });
+      scrollRef.current.scrollTo({
+        left: width * index,
+        behavior: 'smooth'
+      });
+      setActiveIndex(index);
+      clearTimeout(scrollTimeout.current);
+      scrollTimeout.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 500);
     }
-  }, [activeIndex]);
+  };
 
   const handleScroll = (e) => {
+    if (isProgrammaticScroll.current) return;
     const scrollLeft = e.target.scrollLeft;
     const width = e.target.clientWidth;
     if (width > 0) {
-      setActiveIndex(Math.round(scrollLeft / width));
+      const idx = Math.round(scrollLeft / width);
+      if (idx !== activeIndex && idx >= 0 && idx < unit.images.length) {
+        setActiveIndex(idx);
+      }
     }
   };
 
@@ -322,6 +331,16 @@ export default function UnitPage({ unitId }) {
   const totalCost = Math.max(0, baseCost - lengthDiscountValue) + peakSurchargeAmount;
 
   const handleBookingCTA = () => {
+    if (window.innerWidth > 992) {
+      const card = document.getElementById('booking-card');
+      if (card && window.getComputedStyle(card).display !== 'none') {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (nights === 0) {
+          setIsCalendarOpen(true);
+        }
+        return;
+      }
+    }
     if (nights === 0) {
       setIsCalendarOpen(true);
     } else {
@@ -338,6 +357,7 @@ export default function UnitPage({ unitId }) {
         authUser={null} 
         onLogout={() => {}} 
         unitName={unit.name}
+        onBookClick={handleBookingCTA}
       />
 
       {/* HERO IMAGE GALLERY */}
@@ -362,20 +382,60 @@ export default function UnitPage({ unitId }) {
         </div>
 
         {/* Mobile Carousel */}
+        {/* Mobile Carousel */}
         <div className="unit-mobile-carousel">
-          <div className="unit-carousel-scroll" ref={scrollRef} onScroll={handleScroll}>
-            {unit.images.map((img, i) => (
-              <div key={i} className="unit-carousel-slide" onClick={() => openLightbox(i)}>
-                <img src={img} alt={unit.alts ? unit.alts[i] : `${unit.name} — view ${i + 1}`} />
-              </div>
-            ))}
+          <div className="unit-carousel-viewport">
+            <div className="unit-carousel-scroll" ref={scrollRef} onScroll={handleScroll}>
+              {unit.images.map((img, i) => (
+                <div key={i} className="unit-carousel-slide" onClick={() => openLightbox(i)}>
+                  <img 
+                    src={img} 
+                    alt={unit.alts ? unit.alts[i] : `${unit.name} — view ${i + 1}`} 
+                    loading={i === 0 ? "eager" : "lazy"}
+                    draggable="false"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Arrows on photo */}
+            {activeIndex > 0 && (
+              <button 
+                type="button" 
+                className="unit-carousel-arrow prev" 
+                onClick={(e) => { e.stopPropagation(); goToSlide(activeIndex - 1); }}
+                aria-label="Previous photo"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            {activeIndex < unit.images.length - 1 && (
+              <button 
+                type="button" 
+                className="unit-carousel-arrow next" 
+                onClick={(e) => { e.stopPropagation(); goToSlide(activeIndex + 1); }}
+                aria-label="Next photo"
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
+
+            {/* Counter pill inside photo bottom-right */}
+            <div className="unit-carousel-counter">{activeIndex + 1} / {unit.images.length}</div>
           </div>
+
+          {/* Dots below photo */}
           <div className="unit-carousel-dots">
             {unit.images.map((_, i) => (
-              <span key={i} className={`carousel-dot ${i === activeIndex ? 'active' : ''}`} />
+              <button 
+                key={i} 
+                type="button"
+                className={`carousel-dot ${i === activeIndex ? 'active' : ''}`} 
+                onClick={() => goToSlide(i)}
+                aria-label={`Photo ${i + 1}`}
+              />
             ))}
           </div>
-          <div className="unit-carousel-counter">{activeIndex + 1} / {unit.images.length}</div>
         </div>
       </section>
 
@@ -434,6 +494,67 @@ export default function UnitPage({ unitId }) {
                   );
                 })}
               </div>
+            </div>
+
+            <div className="unit-separator" />
+
+            {/* HOUSE RULES SECTION */}
+            <div className="unit-rules-section" id="suite-rules">
+              <div className="unit-rules-header">
+                <div>
+                  <span className="unit-rules-tagline">Guidelines & Policies</span>
+                  <h2 className="unit-rules-heading">House Rules</h2>
+                </div>
+                <span className="unit-rules-badge">Good to know</span>
+              </div>
+              <p className="unit-rules-subtext">
+                To ensure a peaceful, pristine, and memorable stay for all guests, please review our property guidelines:
+              </p>
+
+              {/* Mobile-Friendly Quick Rules Grid */}
+              <div className="unit-rules-quick-grid">
+                <div className="unit-quick-rule-card">
+                  <div className="quick-rule-icon">🕒</div>
+                  <div className="quick-rule-content">
+                    <h4>Check-in & Checkout</h4>
+                    <p>Check-in: After <strong>2:00 PM</strong><br />Checkout: Strictly before <strong>10:00 AM</strong></p>
+                  </div>
+                </div>
+
+                <div className="unit-quick-rule-card">
+                  <div className="quick-rule-icon">🚭</div>
+                  <div className="quick-rule-content">
+                    <h4>Strictly Non-Smoking</h4>
+                    <p>Smoking indoors is strictly prohibited. Balcony ashtrays provided.</p>
+                  </div>
+                </div>
+
+                <div className="unit-quick-rule-card">
+                  <div className="quick-rule-icon">🔇</div>
+                  <div className="quick-rule-content">
+                    <h4>Quiet Hours</h4>
+                    <p>Respect peaceful neighbor hours between <strong>10:00 PM – 7:00 AM</strong>.</p>
+                  </div>
+                </div>
+
+                <div className="unit-quick-rule-card">
+                  <div className="quick-rule-icon">🧼</div>
+                  <div className="quick-rule-content">
+                    <h4>Cleanliness & Towel Care</h4>
+                    <p>Towels for personal use only. Please wash kitchen dishes before checkout.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* View Full House Rules Button */}
+              <button 
+                type="button" 
+                className="unit-open-rules-btn"
+                onClick={() => setIsRulesModalOpen(true)}
+              >
+                <span>View Full House Rules & Stay Policies</span>
+                <ChevronRight size={18} />
+              </button>
             </div>
           </div>
 
@@ -606,26 +727,58 @@ export default function UnitPage({ unitId }) {
               </div>
             )}
 
-            {(unit.airbnbUrl !== '/' || unit.bookingUrl !== '/') && (
-            <div className="booking-card-channels">
-              <span className="channels-label">Or book via:</span>
-              <div className="channels-links">
-                {unit.airbnbUrl !== '/' && (
-                  <a href={unit.airbnbUrl} target="_blank" rel="noopener noreferrer" className="channel-link channel-airbnb">
-                    <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" />
-                  </a>
-                )}
-                {unit.bookingUrl !== '/' && (
-                  <a href={unit.bookingUrl} target="_blank" rel="noopener noreferrer" className="channel-link channel-booking">
-                    <img src="/bookingcom-logo-svgrepo-com.svg" alt="Booking.com" />
-                  </a>
-                )}
+            <div className="direct-booking-privileges-box">
+              <div className="privileges-header">
+                <Sparkles size={14} className="privileges-icon" />
+                <span>DIRECT BOOKING PRIVILEGES</span>
+              </div>
+              <ul className="privileges-list">
+                <li>
+                  <span className="privilege-bullet">✓</span>
+                  <span><strong>Best Rate Guaranteed</strong> — Zero Airbnb 15% booking fees</span>
+                </li>
+                <li>
+                  <span className="privilege-bullet">✓</span>
+                  <span><strong>Direct WhatsApp Concierge</strong> for personalized requests</span>
+                </li>
+                <li>
+                  <span className="privilege-bullet">✓</span>
+                  <span><strong>Instant Keyless Door Code</strong> upon confirmation</span>
+                </li>
+                <li>
+                  <span className="privilege-bullet">✓</span>
+                  <span><strong>Free Early Check-In</strong> (subject to suite availability)</span>
+                </li>
+              </ul>
+              <div className="privileges-reassurance">
+                <span className="reassurance-label">Guest Verified Quality:</span>
+                <div className="reassurance-badges">
+                  <span className="reassurance-badge">★ 4.98 Superhost on Airbnb</span>
+                  <span className="reassurance-badge">★ 9.4 on Booking.com</span>
+                </div>
               </div>
             </div>
+
+            {(unit.airbnbUrl !== '/' || unit.bookingUrl !== '/') && (
+              <div className="booking-card-channels">
+                <span className="channels-label">Or book via partner platforms:</span>
+                <div className="channels-links">
+                  {unit.airbnbUrl !== '/' && (
+                    <a href={unit.airbnbUrl} target="_blank" rel="noopener noreferrer" className="channel-link channel-airbnb" aria-label="Book on Airbnb">
+                      <img src="/Airbnb--Streamline-Svg-Logos.svg" alt="Airbnb" />
+                    </a>
+                  )}
+                  {unit.bookingUrl !== '/' && (
+                    <a href={unit.bookingUrl} target="_blank" rel="noopener noreferrer" className="channel-link channel-booking" aria-label="Book on Booking.com">
+                      <img src="/bookingcom-logo-svgrepo-com.svg" alt="Booking.com" />
+                    </a>
+                  )}
+                </div>
+              </div>
             )}
 
             <div className="booking-card-note">
-              <p>✓ Free cancellation · ✓ Instant confirmation</p>
+              <p>✓ Free cancellation up to 48h before check-in · ✓ Instant confirmation</p>
             </div>
           </aside>
         </div>
@@ -683,6 +836,28 @@ export default function UnitPage({ unitId }) {
             </button>
           </div>
           <div className="unit-lightbox-counter">{lightboxIndex + 1} / {unit.images.length}</div>
+        </div>
+      )}
+
+      {/* Full House Rules Modal for Unit Page */}
+      {isRulesModalOpen && (
+        <div className="unit-rules-modal-overlay" onClick={() => setIsRulesModalOpen(false)}>
+          <div className="unit-rules-modal-container glass" onClick={(e) => e.stopPropagation()}>
+            <div className="unit-rules-modal-header">
+              <span className="modal-title-text">{unit.name} — House Rules</span>
+              <button 
+                type="button" 
+                className="unit-rules-modal-close"
+                onClick={() => setIsRulesModalOpen(false)}
+                aria-label="Close rules"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="unit-rules-modal-scroll">
+              <GuestHouseRules unitId={unit.id} />
+            </div>
+          </div>
         </div>
       )}
     </div>

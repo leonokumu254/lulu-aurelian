@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { getSuitePrice } from '../utils/pricing';
 import './Listings.css';
 
 const LISTINGS = [
@@ -91,6 +92,18 @@ function ListingCard({ listing }) {
   const checkIn = searchParams.get('checkIn') || '';
   const checkOut = searchParams.get('checkOut') || '';
 
+  let nights = 0;
+  if (checkIn && checkOut) {
+    const s = new Date(checkIn);
+    const e = new Date(checkOut);
+    if (e > s) {
+      nights = Math.ceil((e - s) / (1000 * 60 * 60 * 24));
+    }
+  }
+
+  const nightlyRate = getSuitePrice(listing.id);
+  const totalCost = nightlyRate * nights;
+
   let cardHref = listing.href;
   const urlParams = [];
   if (checkIn) urlParams.push(`checkIn=${checkIn}`);
@@ -138,16 +151,36 @@ function ListingCard({ listing }) {
 
       {/* Card Info */}
       <div className="bnb-card-info">
-        <h3 className="bnb-card-name">
-          <span className="name-primary">{listing.name.split(' ')[0]}</span>{' '}
-          <span className="name-secondary">{listing.name.split(' ').slice(1).join(' ')}</span>
-        </h3>
+        <div className="bnb-card-header-row">
+          <h3 className="bnb-card-name">
+            <span className="name-primary">{listing.name.split(' ')[0]}</span>{' '}
+            <span className="name-secondary">{listing.name.split(' ').slice(1).join(' ')}</span>
+          </h3>
+          <div className="bnb-card-rating">
+            <Star size={13} fill="#a3721d" stroke="#a3721d" />
+            <span>4.98</span>
+          </div>
+        </div>
+
         <p className="bnb-card-location">{listing.tagline}</p>
         <p className="bnb-card-specs">
           {listing.beds} · 2 beds · {listing.baths}
         </p>
+
+        <div className="bnb-card-pricing-row">
+          <div className="bnb-price-container">
+            <span className="bnb-price-val">KES {nightlyRate.toLocaleString('en-KE')}</span>
+            <span className="bnb-price-unit"> / night</span>
+          </div>
+          {nights > 0 && (
+            <span className="bnb-price-total">
+              · KES {totalCost.toLocaleString('en-KE')} total ({nights} {nights === 1 ? 'nt' : 'nts'})
+            </span>
+          )}
+        </div>
+
         <div className="bnb-card-action">
-          <span className="bnb-action-label">Book to View Rates</span>
+          <span className="bnb-action-label">Reserve Suite</span>
           <span className="bnb-action-arrow">→</span>
         </div>
       </div>

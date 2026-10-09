@@ -1,6 +1,14 @@
 import { env } from '../config/env.js';
 
 export const errorHandler = (err, req, res, next) => {
+  // Gracefully handle malformed URL encoding from web scanners and bots
+  if (err instanceof URIError) {
+    return res.status(400).json({
+      success: false,
+      error: 'Bad Request: Malformed URI path'
+    });
+  }
+
   // Capture details to stderr console
   console.error(`[EXPRESS SYSTEM ERROR]: ${err.name} - ${err.message}`);
   if (env.NODE_ENV !== 'production') {

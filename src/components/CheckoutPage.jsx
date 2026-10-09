@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home, Copy, CheckCircle } from 'lucide-react';
+import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home, Copy, CheckCircle, Sparkles, Star } from 'lucide-react';
 import { getSuitePrice } from '../utils/pricing';
+import { OFFERS } from '../data/OffersData';
 import './CheckoutPage.css';
 
 const SUITES_METADATA = {
@@ -32,7 +33,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     checkOut: '',
     adults: 1,
     children: 0,
-    bookingType: 'entire'
+    bookingType: 'entire',
+    offerId: null
   });
 
   useEffect(() => {
@@ -47,7 +49,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
         checkOut: searchParams.get('checkOut') || '',
         adults: parseInt(searchParams.get('adults'), 10) || 1,
         children: parseInt(searchParams.get('children'), 10) || 0,
-        bookingType: searchParams.get('bookingType') || searchParams.get('booking_type') || 'entire'
+        bookingType: searchParams.get('bookingType') || searchParams.get('booking_type') || 'entire',
+        offerId: searchParams.get('offerId') ? parseInt(searchParams.get('offerId'), 10) : null
       });
     }
   }, []);
@@ -99,10 +102,22 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   else if (nights >= 3) discountPercent = 5;
   const lengthDiscountValue = baseCost * (discountPercent / 100);
 
+  // Offer savings if applicable
+  let offerSavings = 0;
+  const selectedOffer = params.offerId ? OFFERS.find(o => o.id === params.offerId) : null;
+  if (selectedOffer && nights > 0) {
+    if (selectedOffer.discountType === 'percentage' && nights >= (selectedOffer.minNights || 1)) {
+      offerSavings = baseCost * ((selectedOffer.discountValue || 10) / 100);
+    } else if (selectedOffer.discountType === 'free_nights' && nights >= (selectedOffer.minNights || 1)) {
+      offerSavings = suitePrice * (selectedOffer.freeNights || 1);
+    }
+  }
+
   const maxAdults = isOneBed ? 3 : 5;
   const isPeakSurcharge = !isOneBed && params.adults === 5;
   const peakSurchargeAmount = isPeakSurcharge ? 1500 : 0;
-  const totalCost = Math.max(0, baseCost - lengthDiscountValue) + peakSurchargeAmount;
+  const totalSavings = lengthDiscountValue + offerSavings;
+  const totalCost = Math.max(0, baseCost - totalSavings) + peakSurchargeAmount;
 
   // ── Step Navigation & Form State ──────────────────────────────────────────
   const [step, setStep] = useState(1); // 1 = Details, 2 = Payment
@@ -144,36 +159,26 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     }
   }, [user]);
 
-  // Redirect unauthenticated users to secure portal login/signup page
+  // Non-blocking session check: if logged in, auto-populate; if guest, seamlessly stay on checkout!
   useEffect(() => {
-    const checkSessionAndRedirect = async () => {
+    const checkSession = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/session`, { credentials: 'include' });
         const data = await res.json();
-        if (res.ok && data.success) {
+        if (res.ok && data.success && data.user) {
           setUser({
             ...data.user,
             role: data.user.role.toLowerCase(),
             avatar: data.user.role === 'MANAGER' ? '/avatar.svg' : '/user-icon.svg'
           });
-        } else {
-          // Extract search query parameters from current hash url
-          const hash = window.location.hash;
-          const queryIdx = hash.indexOf('?');
-          let queryStr = '';
-          if (queryIdx !== -1) {
-            queryStr = hash.substring(queryIdx + 1);
-          }
-          window.location.href = `/?redirect=checkout&${queryStr}#/portal`;
         }
       } catch (err) {
-        console.error('Session fetch failed in CheckoutPage:', err);
-        window.location.href = `/?redirect=checkout#/portal`;
+        // Guest checkout mode stays active without redirect
       }
     };
 
     if (!user) {
-      checkSessionAndRedirect();
+      checkSession();
     }
   }, [user, setUser]);
 
@@ -418,11 +423,17 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
         await registerGuestAccount();
       }
 
+      // Normalize phone number to standard Safaricom / Kenyan format (+254XXXXXXXXX)
+      let rawDigits = guestDetails.phone.trim().replace(/[^0-9]/g, '');
+      if (rawDigits.startsWith('0')) rawDigits = rawDigits.slice(1);
+      if (rawDigits.startsWith('254')) rawDigits = rawDigits.slice(3);
+      const formattedPhone = `+254${rawDigits}`;
+
       // Create Booking Hold Request
       const payload = {
         guest_name: `${guestDetails.firstName.trim()} ${guestDetails.lastName.trim()}`,
         guest_email: guestDetails.email.trim().toLowerCase(),
-        guest_phone: `+254${guestDetails.phone.trim()}`,
+        guest_phone: formattedPhone,
         unit_id: suiteId,
         booking_type: bookingType,
         check_in: params.checkIn,
@@ -456,12 +467,12 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
           adults: params.adults,
           children: params.children,
           totalCost: totalCost,
-          phone: `+254${guestDetails.phone.trim()}`,
+          phone: formattedPhone,
           email: guestDetails.email.trim().toLowerCase()
         });
 
-        // Initialize payment variables
-        setMpesaPhone(guestDetails.phone);
+        // Initialize payment variables with local Kenyan number format (07XXXXXXXX or 7XXXXXXXX)
+        setMpesaPhone(rawDigits.startsWith('0') ? rawDigits : `0${rawDigits}`);
         setPaypalEmail(guestDetails.email);
         idempotencyKey.current = `${data.booking.id}-${Date.now()}`;
 
@@ -550,17 +561,6 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
   const handleGoToPortal = () => {
     window.location.hash = '#/portal';
   };
-
-  if (!user) {
-    return (
-      <div className="checkout-loading-screen animate-fade-in">
-        <div className="luxury-spinner-container">
-          <span className="logo-text">LULU AURELIAN</span>
-          <p>Redirecting to secure login...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="checkout-page animate-fade-in">
@@ -923,92 +923,140 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       <div className="success-icon-ring" style={{ color: '#1a9e35', borderColor: '#1a9e35' }}>
                         <Check size={36} />
                       </div>
-                      <h3 className="payment-status-title">Payment Confirmed!</h3>
-                      <p className="payment-status-desc">
-                        Your M-Pesa payment has been successfully received and verified.
-                        Your booking is now confirmed — check-in credentials have been sent to your email.
+                      <span style={{ color: '#a3721d', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.78rem', fontWeight: 600 }}>Reservation Confirmed</span>
+                      <h3 className="payment-status-title" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.1rem', margin: '0.35rem 0 0.5rem', color: '#1D1912' }}>
+                        Welcome to Lulu Aurelian
+                      </h3>
+                      <p className="payment-status-desc" style={{ maxWidth: '520px', margin: '0 auto 1.5rem', color: '#4b5563', lineHeight: '1.6', fontSize: '0.95rem' }}>
+                        Thank you, <strong>{createdBooking?.guestName || `${guestDetails.firstName} ${guestDetails.lastName}`}</strong>. Your reservation for <strong>{createdBooking?.suiteName || suite.name}</strong> is verified and locked in.
                       </p>
-                      <button onClick={handleGoToPortal} className="btn-primary checkout-action-btn">
-                        Go to Guest Portal Dashboard
-                      </button>
+
+                      <div style={{ background: 'rgba(163, 114, 29, 0.05)', border: '1.5px solid rgba(163, 114, 29, 0.25)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.5rem' }}>
+                          <span style={{ fontSize: '0.8rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Booking Reference</span>
+                          <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1rem', color: '#1D1912', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: '4px' }}>
+                            #{createdBooking?.bookingId ? createdBooking.bookingId.substring(0, 8).toUpperCase() : 'LULU-CONFIRMED'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem', fontSize: '0.88rem' }}>
+                          <div>
+                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Check-In:</span>
+                            <strong style={{ color: '#1D1912' }}>{formatDate(params.checkIn)} (from 2:00 PM)</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Check-Out:</span>
+                            <strong style={{ color: '#1D1912' }}>{formatDate(params.checkOut)} (by 10:00 AM)</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Total Paid:</span>
+                            <strong style={{ color: '#1a9e35' }}>KES {totalCost.toLocaleString('en-KE')}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ background: '#fdfbf7', border: '1px dashed #d5b881', borderRadius: '10px', padding: '1rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                        <h4 style={{ margin: '0 0 0.35rem', fontSize: '0.9rem', color: '#8c6014', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Sparkles size={16} /> Keyless Smart-Lock Access
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '0.82rem', color: '#4b5563', lineHeight: '1.5' }}>
+                          Your unique digital door passcode, high-speed Wi-Fi credentials, and driving directions have been dispatched to <strong>{createdBooking?.email || guestDetails.email}</strong>.
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '420px', margin: '0 auto' }}>
+                        <a
+                          href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello Lulu Aurelian Estate, I have completed payment for my reservation #${createdBooking?.bookingId ? createdBooking.bookingId.substring(0, 8).toUpperCase() : ''} for ${suite.name} (${formatDate(params.checkIn)} - ${formatDate(params.checkOut)}).`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                            background: '#25D366', color: '#fff', padding: '0.85rem 1.25rem', borderRadius: '8px',
+                            fontWeight: 600, textDecoration: 'none', fontSize: '0.95rem', boxShadow: '0 2px 8px rgba(37, 211, 102, 0.25)'
+                          }}
+                        >
+                          <Phone size={18} />
+                          <span>Chat with Concierge on WhatsApp</span>
+                        </a>
+
+                        {user ? (
+                          <button onClick={handleGoToPortal} className="btn-primary checkout-action-btn">
+                            View Reservation in Guest Dashboard
+                          </button>
+                        ) : (
+                          <a
+                            href="/"
+                            style={{
+                              display: 'block', textAlign: 'center', padding: '0.8rem 1.25rem',
+                              border: '1.5px solid var(--color-dark, #1D1912)', borderRadius: '8px',
+                              color: 'var(--color-dark, #1D1912)', textDecoration: 'none', fontWeight: 600, fontSize: '0.9rem'
+                            }}
+                          >
+                            Return to Home
+                          </a>
+                        )}
+                      </div>
                     </div>
                   ) : stkPushSent ? (
                     <div className="payment-success-card animate-slide-down">
-                      <div style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem',
-                        padding: '1.5rem 1rem', textAlign: 'center', maxWidth: '520px', margin: '0 auto'
-                      }}>
+                      <div className="stk-waiting-container">
                         {/* Pulsing phone animation */}
-                        <div style={{
-                          width: '84px', height: '84px', borderRadius: '50%',
-                          background: 'rgba(26, 158, 53, 0.12)', border: '2px solid rgba(26, 158, 53, 0.4)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          animation: 'pulse 2s ease-in-out infinite'
-                        }}>
-                          <Phone size={38} style={{ color: '#1a9e35' }} />
+                        <div className="stk-pulsing-phone">
+                          <Phone size={36} />
                         </div>
                         <div>
                           <h3 className="payment-status-title" style={{ color: '#1a9e35', margin: '0 0 0.5rem', fontWeight: 600 }}>
                             Check Your Phone
                           </h3>
-                          <p className="payment-status-desc" style={{ color: '#334155', margin: '0 0 1rem', fontSize: '0.95rem' }}>
+                          <p className="payment-status-desc" style={{ color: '#334155', margin: '0 0 0.85rem' }}>
                             An M-Pesa payment prompt for <strong style={{ color: '#1D1912' }}>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
                             Enter your M-Pesa PIN on your phone handset to complete the transaction.
                           </p>
                         </div>
-                        <div style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
-                          background: 'rgba(26, 158, 53, 0.08)', border: '1px solid rgba(26, 158, 53, 0.25)',
-                          padding: '0.5rem 1.25rem', borderRadius: '30px',
-                          color: '#166534', fontSize: '0.88rem', fontWeight: 600
-                        }}>
-                          <div style={{
-                            width: '8px', height: '8px', borderRadius: '50%',
-                            background: '#1a9e35', animation: 'pulse 1.5s ease-in-out infinite'
-                          }} />
-                          Verifying payment status...
+                        <div className="stk-status-pill">
+                          <div className="stk-dot-pulse" />
+                          <span>Verifying payment status...</span>
                         </div>
 
                         {/* Manual Transaction Code Verification Form */}
-                        <form onSubmit={handleVerifyManualCode} style={{ width: '100%', marginTop: '0.5rem', background: 'rgba(0,0,0,0.02)', border: '1.5px solid rgba(207, 168, 115, 0.4)', borderRadius: '10px', padding: '1rem', textAlign: 'left' }}>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#1D1912', marginBottom: '0.25rem' }}>
+                        <form onSubmit={handleVerifyManualCode} className="manual-code-form">
+                          <label>
                             Already entered your M-Pesa PIN?
                           </label>
-                          <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', color: '#64748b', lineHeight: '1.4' }}>
+                          <p className="form-subtext">
                             Paste the M-Pesa Transaction Code from your Safaricom SMS to verify instantly:
                           </p>
-                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <div className="manual-code-input-row">
                             <input
                               type="text"
                               value={mpesaCode}
                               onChange={(e) => setMpesaCode(e.target.value.toUpperCase())}
                               placeholder="e.g. SJR48Z9X2"
                               className="checkout-input"
-                              style={{ flex: 1, padding: '0.6rem 0.75rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, fontSize: '0.88rem' }}
+                              maxLength={12}
+                              autoCapitalize="characters"
+                              autoCorrect="off"
+                              spellCheck="false"
                             />
                             <button
                               type="submit"
                               disabled={manualCodeSubmitting}
                               className="btn-primary"
-                              style={{ padding: '0.6rem 1rem', whiteSpace: 'nowrap', fontSize: '0.82rem', fontWeight: 600, backgroundColor: '#1a9e35', borderColor: '#1a9e35' }}
                             >
                               {manualCodeSubmitting ? 'Verifying...' : 'Verify Code'}
                             </button>
                           </div>
                           {manualCodeError && (
-                            <p style={{ margin: '0.4rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}>
+                            <p className="manual-code-error">
                               {manualCodeError}
                             </p>
                           )}
                         </form>
 
-                        <div style={{
-                          marginTop: '0.25rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', width: '100%'
-                        }}>
-                          <p style={{ margin: '0 0 0.5rem', fontSize: '0.82rem', color: '#64748b' }}>
+                        <div className="stk-till-section">
+                          <p className="stk-till-prompt">
                             Didn't receive the prompt? You can pay manually using Buy Goods Till:
                           </p>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.03)', padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
+                          <div className="stk-till-box">
                             <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>TILL NO:</span>
                             <strong style={{ fontSize: '0.95rem', color: '#1D1912' }}>4364845</strong>
                             <button
@@ -1024,17 +1072,9 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                             <button
                               type="button"
                               onClick={() => setStkPushSent(false)}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                color: '#a3721d',
-                                textDecoration: 'underline',
-                                cursor: 'pointer',
-                                fontSize: '0.82rem',
-                                fontWeight: 600
-                              }}
+                              className="stk-cancel-btn"
                             >
-                              Back to Payment Options / Retry STK
+                              ← Try another number or payment method
                             </button>
                           </div>
                         </div>
@@ -1242,33 +1282,35 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                             <span>{paymentError}</span>
                           </div>
 
-                          <form onSubmit={handleVerifyManualCode} style={{ background: 'rgba(0,0,0,0.02)', border: '1.5px solid rgba(207, 168, 115, 0.4)', borderRadius: '10px', padding: '1rem', textAlign: 'left' }}>
-                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#1D1912', marginBottom: '0.25rem' }}>
+                          <form onSubmit={handleVerifyManualCode} className="manual-code-form">
+                            <label>
                               Did you already enter your PIN or send payment?
                             </label>
-                            <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', color: '#64748b', lineHeight: '1.4' }}>
+                            <p className="form-subtext">
                               Enter your M-Pesa Transaction Code (from your Safaricom confirmation SMS) to confirm your booking immediately:
                             </p>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <div className="manual-code-input-row">
                               <input
                                 type="text"
                                 value={mpesaCode}
                                 onChange={(e) => setMpesaCode(e.target.value.toUpperCase())}
                                 placeholder="e.g. SJR48Z9X2"
                                 className="checkout-input"
-                                style={{ flex: 1, padding: '0.6rem 0.75rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, fontSize: '0.88rem' }}
+                                maxLength={12}
+                                autoCapitalize="characters"
+                                autoCorrect="off"
+                                spellCheck="false"
                               />
                               <button
                                 type="submit"
                                 disabled={manualCodeSubmitting}
                                 className="btn-primary"
-                                style={{ padding: '0.6rem 1rem', whiteSpace: 'nowrap', fontSize: '0.82rem', fontWeight: 600, backgroundColor: '#1a9e35', borderColor: '#1a9e35' }}
                               >
                                 {manualCodeSubmitting ? 'Verifying...' : 'Verify Code'}
                               </button>
                             </div>
                             {manualCodeError && (
-                              <p style={{ margin: '0.4rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}>
+                              <p className="manual-code-error">
                                 {manualCodeError}
                               </p>
                             )}
@@ -1389,6 +1431,13 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                   </div>
                 )}
 
+                {offerSavings > 0 && selectedOffer && (
+                  <div className="pricing-row discount" style={{ color: '#8c6014', fontWeight: 600 }}>
+                    <span>Special Offer: {selectedOffer.title}</span>
+                    <span>- KES {offerSavings.toLocaleString('en-KE')}</span>
+                  </div>
+                )}
+
                 {isPeakSurcharge && (
                   <div className="pricing-row surcharge">
                     <span>5-guest peak surcharge</span>
@@ -1406,7 +1455,13 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
 
               <div className="summary-trust-badge">
                 <ShieldCheck size={16} />
-                <span>Secure payment via M-Pesa</span>
+                <span>Direct Booking Guarantee · Best Rate</span>
+              </div>
+
+              <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(0,0,0,0.06)', fontSize: '0.78rem', color: '#6b7280', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span>✓ Zero Airbnb / OTA 15% guest booking fees</span>
+                <span>✓ Instant keyless entry code on confirmation</span>
+                <span>✓ Free cancellation up to 48h before check-in</span>
               </div>
             </div>
           </div>

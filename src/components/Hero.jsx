@@ -138,7 +138,7 @@ const getUnitIdFromImage = (imgPath) => {
             onClick={() => {
               const unitId = getUnitIdFromImage(img);
               if (unitId) {
-                window.location.href = `/unit/${unitId}`;
+                window.location.href = `/${unitId}`;
               }
             }}
             style={{ 

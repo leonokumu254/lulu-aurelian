@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, LogOut, ArrowLeft } from 'lucide-react';
 import './Header.css';
 
-export default function Header({ page, setPage, authUser, onLogout, unitName }) {
+export default function Header({ page, setPage, authUser, onLogout, unitName, onBookClick }) {
   const isUnitPage = page === 'unit';
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -60,10 +60,20 @@ export default function Header({ page, setPage, authUser, onLogout, unitName }) 
     }
   };
 
-  const handleUnitBookClick = () => {
+  const handleUnitBookClick = (e) => {
+    if (e) e.preventDefault();
+    if (typeof onBookClick === 'function') {
+      onBookClick();
+      return;
+    }
     const el = document.getElementById('booking-card') || document.querySelector('.unit-booking-card-container');
-    if (el) {
+    if (el && window.getComputedStyle(el).display !== 'none') {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      const mobileCta = document.querySelector('.mobile-cta-button');
+      if (mobileCta) {
+        mobileCta.click();
+      }
     }
   };
 
@@ -84,7 +94,14 @@ export default function Header({ page, setPage, authUser, onLogout, unitName }) 
             </div>
             {/* Mobile: same simplified layout */}
             <div className="mobile-controls">
-              <button onClick={handleUnitBookClick} className="btn-header" style={{ fontSize: '0.65rem', padding: '0.45rem 0.9rem' }}>Book</button>
+              <button 
+                type="button" 
+                onClick={handleUnitBookClick} 
+                className="btn-header header-unit-book-btn"
+                aria-label="Book this suite"
+              >
+                Book
+              </button>
             </div>
           </>
         ) : (
