@@ -3,6 +3,7 @@ import { paypalService } from '../services/paypalService.js';
 import { payheroService } from '../services/payheroService.js';
 import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
+import { getTodayEAT, getCurrentHourEAT, normalizeDateEAT, formatDateEAT } from '../config/constants.js';
 
 export const initiateMpesaPayment = async (req, res, next) => {
   try {
@@ -39,7 +40,7 @@ export const initiateMpesaPayment = async (req, res, next) => {
       booking_id: booking.id,
       amount: amount,
       gateway: 'MPESA',
-      transaction_ref: response.checkoutRequestId, 
+      transaction_ref: response.checkoutRequestId,
       status: 'PENDING'
     });
 
@@ -57,7 +58,7 @@ export const initiatePaypalPayment = async (req, res, next) => {
   try {
     const { booking_id } = req.body;
     const booking = await db.bookings.findById(booking_id);
-  
+
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking not found.' });
     }
@@ -83,7 +84,7 @@ export const initiatePaypalPayment = async (req, res, next) => {
     });
 
     const approveLink = response.links.find(link => link.rel === 'approve').href;
-    
+
     res.status(200).json({
       success: true,
       orderId: response.orderId,
@@ -94,40 +95,90 @@ export const initiatePaypalPayment = async (req, res, next) => {
   }
 };
 
-export const dispatchPostPaymentNotifications = async (booking) => {
+export const dispatchPostPaymentNotifications = async (booking, paymentInfo = {}) => {
   if (!booking) return;
 
-  // 1. Immediate payment success confirmation
+  // 1. Immediate payment success confirmation to Guest
   emailService.sendPaymentSuccess(booking).catch(e => console.error('[EMAIL ERROR]:', e));
   whatsappService.sendBookingStatusAlert(booking, 'PAID').catch(e => console.error('[WHATSAPP ERROR]:', e));
 
-  // 2. Check if check-in is today and current time in Nairobi is >= 13:00 (1:00 PM)
-  const todayEAT = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi' }).format(new Date());
-  const hourEAT = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: 'numeric', hour12: false }).format(new Date()));
+  // 2. Resolve Payment Details for Staff Notification
+  let txRef = paymentInfo.transaction_ref || paymentInfo.mpesaReceipt || null;
+  let gateway = paymentInfo.gateway || null;
+  let amount = paymentInfo.amount || booking.total_price || 0;
 
-  if (booking.check_in === todayEAT && hourEAT >= 13) {
-    console.log(`[POST-PAYMENT DISPATCH]: Booking ${booking.id} check-in is today (${booking.check_in}) and payment completed at/after 1:00 PM. Sending check-in credentials immediately.`);
+  if (!txRef || !gateway) {
+    try {
+      const payments = await db.payments.findByBookingId(booking.id);
+      const completedPayment = (payments || []).find(p => p.status === 'COMPLETED') || payments?.[0];
+      if (completedPayment) {
+        txRef = txRef || completedPayment.transaction_ref;
+        gateway = gateway || completedPayment.gateway;
+        amount = amount || completedPayment.amount;
+      }
+    } catch (e) {
+      console.warn('[PAYMENT LOOKUP ERROR]:', e.message);
+    }
+  }
+
+  const resolvedPaymentInfo = {
+    transaction_ref: txRef || 'CONFIRMED',
+    gateway: gateway || 'MPESA',
+    amount: amount || booking.total_price || 0
+  };
+
+  // 3. Notify Managers and Agents immediately
+  try {
+    const allUsers = await db.users.getAll();
+    const staffUsers = (allUsers || []).filter(u =>
+      u.role && (u.role.toUpperCase() === 'MANAGER' || u.role.toUpperCase() === 'AGENT')
+    );
+    const staffEmails = staffUsers.map(u => u.email).filter(Boolean);
+
+    if (staffEmails.length > 0) {
+      console.log(`[POST-PAYMENT DISPATCH]: Dispatching Confirmed Payment Alert to ${staffEmails.length} staff members:`, staffEmails.join(', '));
+      emailService.sendStaffPaymentAlert(staffEmails, booking, resolvedPaymentInfo).catch(e => console.error('[STAFF PAYMENT EMAIL ERROR]:', e));
+    } else {
+      console.warn('[POST-PAYMENT DISPATCH]: No manager or agent email addresses found.');
+    }
+
+    // Send instant WhatsApp alert to management
+    whatsappService.sendStaffPaymentAlert(booking, resolvedPaymentInfo).catch(e => console.error('[STAFF PAYMENT WHATSAPP ERROR]:', e));
+  } catch (err) {
+    console.error('[STAFF NOTIFICATION DISPATCH ERROR]:', err);
+  }
+
+  // 4. Check-in Access Credentials Dispatch in East Africa Time (EAT)
+  // If payment completed past 1:00 PM (13:00) EAT and check-in is today (or past/ongoing), dispatch credentials immediately!
+  const todayEAT = getTodayEAT();
+  const checkInNorm = normalizeDateEAT(booking.check_in);
+  const hourEAT = getCurrentHourEAT();
+
+  console.log(`[POST-PAYMENT DISPATCH]: Check-in: ${checkInNorm} | Today (EAT): ${todayEAT} | Current Hour (EAT): ${hourEAT}:00`);
+
+  if (checkInNorm && checkInNorm <= todayEAT && hourEAT >= 13) {
+    console.log(`[POST-PAYMENT DISPATCH]: ✅ Payment completed past 1:00 PM EAT (${hourEAT}:00 EAT) on check-in day (${checkInNorm}). Sending check-in access credentials immediately!`);
     emailService.sendCheckInCredentials(booking).catch(e => console.error('[EMAIL ERROR]:', e));
     whatsappService.sendCheckInCredentials(booking).catch(e => console.error('[WHATSAPP ERROR]:', e));
   } else {
-    console.log(`[POST-PAYMENT DISPATCH]: Booking ${booking.id} confirmed. Check-in details will be sent from 1:00 PM on ${booking.check_in}.`);
+    console.log(`[POST-PAYMENT DISPATCH]: Booking ${booking.id} confirmed. Check-in is on ${checkInNorm || booking.check_in}. Full access details will be sent from 1:00 PM EAT on arrival day.`);
   }
 };
 
 export const capturePaypalPayment = async (req, res, next) => {
   try {
     const { orderId } = req.body;
-    
+
     const response = await paypalService.captureOrder(orderId);
-    
+
     if (response.success) {
       const payment = await db.payments.findByRef(orderId);
       if (payment) {
         await db.payments.updateStatus(orderId, 'COMPLETED');
         await db.bookings.updateStatus(payment.booking_id, 'PAID');
-        
+
         const booking = await db.bookings.findById(payment.booking_id);
-        dispatchPostPaymentNotifications(booking);
+        dispatchPostPaymentNotifications(booking, { transaction_ref: orderId, gateway: 'PAYPAL', amount: payment?.amount });
       }
 
       res.status(200).json({ success: true, message: 'Payment successfully captured.' });
@@ -148,33 +199,10 @@ export const payheroCallback = async (req, res) => {
     const resObj = payload.response || payload.data || payload.results || {};
 
     // Extract all possible references and status formats
-    const external_reference = payload.external_reference || payload.ExternalReference || payload.externalReference ||
-      resObj.external_reference || resObj.ExternalReference || resObj.externalReference || null;
-
-    const reference = payload.reference || payload.Reference ||
-      payload.checkout_request_id || payload.CheckoutRequestID || payload.checkoutRequestId ||
-      resObj.reference || resObj.Reference ||
-      resObj.checkout_request_id || resObj.CheckoutRequestID || resObj.checkoutRequestId ||
-      resObj.MerchantRequestID || resObj.merchant_request_id || null;
-
-    const mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference ||
-      payload.Receipt || payload.mpesaReceipt || payload.receipt ||
-      resObj.provider_reference || resObj.MpesaReceiptNumber || resObj.MPESA_Reference ||
-      resObj.Receipt || resObj.receipt || null;
-
-    // Determine normalized status safely (handles booleans, objects, and nested fields)
-    let rawStatus = '';
-    if (typeof resObj.status === 'string') rawStatus = resObj.status;
-    else if (typeof resObj.Status === 'string') rawStatus = resObj.Status;
-    else if (typeof resObj.payment_status === 'string') rawStatus = resObj.payment_status;
-    else if (typeof resObj.PaymentStatus === 'string') rawStatus = resObj.PaymentStatus;
-    else if (typeof payload.status === 'string') rawStatus = payload.status;
-    else if (typeof payload.Status === 'string') rawStatus = payload.Status;
-    else if (typeof payload.payment_status === 'string') rawStatus = payload.payment_status;
-    else if (typeof payload.PaymentStatus === 'string') rawStatus = payload.PaymentStatus;
-    else if (resObj.ResultCode === 0 || resObj.ResultCode === '0' || payload.ResultCode === 0 || payload.ResultCode === '0') rawStatus = 'SUCCESS';
-    else if (payload.success === true || payload.status === true || resObj.success === true || resObj.status === true) rawStatus = 'SUCCESS';
-    else if (payload.success === false || payload.status === false || resObj.success === false || resObj.status === false) rawStatus = 'FAILED';
+    const external_reference = payload.external_reference || payload.ExternalReference || resObj.external_reference || resObj.ExternalReference || null;
+    const reference = payload.reference || payload.Reference || resObj.reference || resObj.Reference || payload.checkout_request_id || payload.CheckoutRequestID || null;
+    const rawStatus = payload.status || payload.Status || payload.payment_status || payload.PaymentStatus || resObj.status || resObj.Status || resObj.payment_status || (payload.success ? 'SUCCESS' : '');
+    const mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference || payload.Receipt || resObj.provider_reference || resObj.MpesaReceiptNumber || null;
 
     const payHeroStatus = String(rawStatus || '').toUpperCase();
     const payHeroRef = reference || external_reference;
@@ -243,7 +271,7 @@ export const payheroCallback = async (req, res) => {
       return res.status(200).json({ status: 'received' });
     }
 
-    if (['SUCCESS', 'COMPLETED', 'PAID', 'TRUE'].includes(payHeroStatus) || payload.success === true || resObj.success === true) {
+    if (['SUCCESS', 'COMPLETED', 'PAID'].includes(payHeroStatus) || payload.success === true || resObj.success === true) {
       // ── Payment successful ────────────────────────────────────────────
       await db.payments.updateStatus(payment.transaction_ref, 'COMPLETED');
       await db.bookings.updateStatus(payment.booking_id, 'PAID');
@@ -257,12 +285,16 @@ export const payheroCallback = async (req, res) => {
           gateway: 'MPESA',
           transaction_ref: mpesaReceipt,
           status: 'COMPLETED'
-        }).catch(() => {});
+        }).catch(() => { });
       }
 
       const booking = await db.bookings.findById(payment.booking_id);
       if (booking) {
-        dispatchPostPaymentNotifications(booking);
+        dispatchPostPaymentNotifications(booking, {
+          transaction_ref: mpesaReceipt || payment.transaction_ref,
+          gateway: 'MPESA',
+          amount: booking.total_price
+        });
       }
 
       console.log(`[PAYHERO WEBHOOK]: ✅ Payment verified. Booking ${payment.booking_id} activated to PAID! M-Pesa Receipt: ${mpesaReceipt || 'N/A'}`);
@@ -336,14 +368,18 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
         status: 'COMPLETED'
       });
     } catch (e) {
-      await db.payments.updateStatus(cleanCode, 'COMPLETED').catch(() => {});
+      await db.payments.updateStatus(cleanCode, 'COMPLETED').catch(() => { });
     }
 
     // Mark booking as PAID (even if it was EXPIRED due to hold timeout while guest paid)
     const confirmedBooking = await db.bookings.updateStatus(booking.id, 'PAID');
 
     // Trigger instant email & WhatsApp credentials dispatch
-    dispatchPostPaymentNotifications(confirmedBooking || booking);
+    dispatchPostPaymentNotifications(confirmedBooking || booking, {
+      transaction_ref: cleanCode,
+      gateway: 'MPESA',
+      amount
+    });
 
     console.log(`[MANUAL MPESA VERIFY]: ✅ Booking ${booking.id} verified with code ${cleanCode}. Post-payment notifications dispatched.`);
 
@@ -384,7 +420,11 @@ export const queryPayheroStatus = async (req, res) => {
         await db.bookings.updateStatus(bId, 'PAID');
         const updatedBooking = await db.bookings.findById(bId);
         if (updatedBooking) {
-          dispatchPostPaymentNotifications(updatedBooking);
+          dispatchPostPaymentNotifications(updatedBooking, {
+            transaction_ref: completedPayment.transaction_ref,
+            gateway: completedPayment.gateway || 'MPESA',
+            amount: completedPayment.amount || updatedBooking.total_price
+          });
         }
         return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
       }
@@ -404,7 +444,13 @@ export const queryPayheroStatus = async (req, res) => {
       if (payment.booking_id) {
         await db.bookings.updateStatus(payment.booking_id, 'PAID');
         const b = await db.bookings.findById(payment.booking_id);
-        if (b) dispatchPostPaymentNotifications(b);
+        if (b) {
+          dispatchPostPaymentNotifications(b, {
+            transaction_ref: payment.transaction_ref,
+            gateway: payment.gateway || 'MPESA',
+            amount: payment.amount || b.total_price
+          });
+        }
       }
       return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });
     }
@@ -424,7 +470,11 @@ export const queryPayheroStatus = async (req, res) => {
           await db.bookings.updateStatus(targetBookingId, 'PAID');
           const booking = await db.bookings.findById(targetBookingId);
           if (booking) {
-            dispatchPostPaymentNotifications(booking);
+            dispatchPostPaymentNotifications(booking, {
+              transaction_ref: checkoutRequestId,
+              gateway: 'MPESA',
+              amount: booking.total_price
+            });
           }
         }
         return res.status(200).json({ success: true, status: 'COMPLETED', message: 'Payment confirmed.' });

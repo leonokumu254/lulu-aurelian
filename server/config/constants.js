@@ -5,6 +5,113 @@
  */
 
 // ==========================================
+// EAST AFRICA TIME (EAT - UTC+3) HELPERS
+// ==========================================
+
+/**
+ * Formats date values strictly in East Africa Time (Africa/Nairobi, UTC+3) into human-readable strings.
+ * Example: 'Saturday, 10 October 2026' or '10 Oct 2026'
+ */
+export const formatDateEAT = (dateInput, { short = false } = {}) => {
+  if (!dateInput) return 'N/A';
+  try {
+    let d;
+    if (typeof dateInput === 'string') {
+      const match = dateInput.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (match) {
+        const [, year, month, day] = match;
+        // Midday UTC ensures conversion to Africa/Nairobi matches the exact intended day
+        d = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
+      } else {
+        d = new Date(dateInput);
+      }
+    } else if (dateInput instanceof Date) {
+      d = dateInput;
+    } else {
+      d = new Date(dateInput);
+    }
+
+    if (isNaN(d.getTime())) return String(dateInput);
+
+    if (short) {
+      return new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Africa/Nairobi',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }).format(d);
+    }
+
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Africa/Nairobi',
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(d);
+  } catch (err) {
+    return String(dateInput);
+  }
+};
+
+/**
+ * Normalizes any date value to 'YYYY-MM-DD' in East Africa Time (Africa/Nairobi).
+ */
+export const normalizeDateEAT = (dateInput) => {
+  if (!dateInput) return '';
+  if (typeof dateInput === 'string') {
+    const match = dateInput.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (match) {
+      const y = match[1];
+      const m = match[2].padStart(2, '0');
+      const d = match[3].padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+  }
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return String(dateInput);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi' }).format(d);
+};
+
+/**
+ * Returns today's date formatted as YYYY-MM-DD in East Africa Time (Africa/Nairobi).
+ */
+export const getTodayEAT = () => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi' }).format(new Date());
+};
+
+/**
+ * Returns current hour (0-23) in East Africa Time (Africa/Nairobi).
+ */
+export const getCurrentHourEAT = () => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Africa/Nairobi',
+    hour: 'numeric',
+    hourCycle: 'h23'
+  }).formatToParts(new Date());
+  const hourPart = parts.find(p => p.type === 'hour');
+  return hourPart ? parseInt(hourPart.value, 10) : new Date().getUTCHours() + 3;
+};
+
+/**
+ * Returns formatted time string in East Africa Time (e.g., '1:30 PM EAT').
+ */
+export const formatTimeEAT = (dateInput = new Date()) => {
+  try {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    const timeStr = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Africa/Nairobi',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }).format(d);
+    return `${timeStr} EAT`;
+  } catch (e) {
+    return 'EAT';
+  }
+};
+
+// ==========================================
 // UNIT SPECIFIC WELCOME DETAILS
 // ==========================================
 export const UNIT_WELCOME_DETAILS = {
@@ -397,6 +504,14 @@ export const DEFAULT_HOUSE_RULES = {
   }
 };
 
+// Helper to retrieve legitimate, high-resolution website suite image assets
+export const getUnitHeroImage = (unitId) => {
+  const id = (unitId || 'skyview').toLowerCase();
+  if (id === 'cocoa') return 'https://www.luluaurelian.co.ke/assets/cocoa/cocoa_1.jpg';
+  if (id === 'neema') return 'https://www.luluaurelian.co.ke/assets/Neema/neema_1.jpeg';
+  return 'https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg';
+};
+
 // ==========================================
 // EMAIL CONTENT TEMPLATES
 // ==========================================
@@ -409,24 +524,25 @@ export const EMAIL_TEMPLATES = {
   BOOKING_CONFIRMATION: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const inDateReadable = formatDateEAT(booking.check_in);
+    const outDateReadable = formatDateEAT(booking.check_out);
+
     return {
-      text: `Dear ${booking.guest_name}, We have received your booking request for ${details.name}.`,
+      text: `Dear ${booking.guest_name}, We have received your booking request for ${details.name} (${inDateReadable} to ${outDateReadable}).`,
       title: 'Reservation Request Received',
       subject: `Reservation Request Received: Ref #${booking.id.substring(0, 8)}`,
       preheader: `Your booking for ${details.name} is awaiting payment.`,
-      heroImage: unitId === 'cocoa' 
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
-        : unitId === 'neema'
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
-        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      heroImage: getUnitHeroImage(unitId),
       badge: 'Action Required',
       headingLine1: 'Awaiting',
       headingLine2: 'Payment',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `We have received your booking request for <strong>${details.name}</strong> (Check-in: ${booking.check_in}, Check-out: ${booking.check_out}).`
+        `We have received your booking request for <strong>${details.name}</strong>.<br/>
+         <strong>Check-In Date:</strong> ${inDateReadable} (from 2:00 PM EAT)<br/>
+         <strong>Check-Out Date:</strong> ${outDateReadable} (by 10:00 AM EAT)`
       ],
-      alertText: 'Your reservation status is currently <strong>AWAITING PAYMENT</strong>. Please ensure your payment is completed within the strict 3-hour payment window to secure your dates.',
+      alertText: 'Your reservation status is currently <strong>AWAITING PAYMENT</strong>. Please ensure your payment is completed within the payment hold window to secure your dates.',
       bookingRef: booking.id.substring(0, 8).toUpperCase(),
       button: {
         label: 'Pay Now',
@@ -439,31 +555,43 @@ export const EMAIL_TEMPLATES = {
    * Content for payment success confirmation email.
    * Sent immediately after successful payment.
    * Informs the client that payment succeeded and that complete check-in details
-   * will be sent as from 1:00 PM on their check-in day.
+   * are sent immediately (if payment is past 1:00 PM EAT today) or will be sent as from 1:00 PM EAT on arrival day.
    */
   PAYMENT_SUCCESS_CONFIRMATION: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const inDateReadable = formatDateEAT(booking.check_in);
+    const outDateReadable = formatDateEAT(booking.check_out);
+
+    const todayEAT = getTodayEAT();
+    const checkInNorm = normalizeDateEAT(booking.check_in);
+    const currentHourEAT = getCurrentHourEAT();
+    const isPast1pmOnCheckInDay = checkInNorm && checkInNorm <= todayEAT && currentHourEAT >= 13;
+
+    const alertMessage = isPast1pmOnCheckInDay
+      ? `🔑 <strong>Immediate Check-In Access Dispatched:</strong><br/>
+Since your check-in is today (<strong>${inDateReadable}</strong>) and payment has been confirmed past 1:00 PM EAT, <strong>your complete digital check-in credentials (smart lock box code, Wi-Fi credentials, and apartment guide) have been dispatched to you immediately</strong> via separate email and WhatsApp.`
+      : `🕒 <strong>Check-In Details Timing:</strong><br/>
+Check-in is officially as from <strong>2:00 PM EAT</strong>, but guests can access the unit early from 1:00 PM EAT. <strong>Your full check-in details (lock box code, apartment number, and Wi-Fi credentials) will be sent to you as from 1:00 PM EAT</strong> on your arrival day (${inDateReadable}).`;
+
     return {
-      text: `Dear ${booking.guest_name}, thank you for your payment! Your reservation for ${details.fullName || details.name} is fully confirmed. Full check-in details (lock box code, apartment number, Wi-Fi credentials) will be sent as from 1:00 PM on your check-in day (${booking.check_in}). Location: ${details.location}. Check-in: After 2:00 PM. Check-out: Before 10:00 AM.`,
+      text: `Dear ${booking.guest_name}, thank you for your payment! Your reservation for ${details.fullName || details.name} is fully confirmed. Stay Dates: ${inDateReadable} to ${outDateReadable}. Location: ${details.location}. Check-in: After 2:00 PM EAT. Check-out: Before 10:00 AM EAT.`,
       title: 'Payment Successful - Booking Confirmed',
       subject: `Payment Confirmed: Your Stay at ${details.name} is Secured! (Ref #${booking.id.substring(0, 8).toUpperCase()})`,
-      preheader: `Payment received successfully! Check-in details will be sent from 1:00 PM on your arrival day.`,
-      heroImage: unitId === 'cocoa' 
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
-        : unitId === 'neema'
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
-        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      preheader: `Payment received successfully! Stay dates: ${inDateReadable} to ${outDateReadable}.`,
+      heroImage: getUnitHeroImage(unitId),
       badge: 'Payment Received & Secured',
       headingLine1: 'Payment',
       headingLine2: 'Successful!',
       paragraphs: [
         `Dear ${booking.guest_name},`,
         `Thank you for choosing <strong>${details.fullName || details.name}</strong>. We are delighted to confirm that your payment has been received successfully and your booking is fully secured!`,
-        `<strong>Check-In Date:</strong> ${booking.check_in}<br/><strong>Check-Out Date:</strong> ${booking.check_out}<br/><strong>Check-in Time:</strong> After 2:00 PM<br/><strong>Check-out Time:</strong> Before 10:00 AM`
+        `<strong>Check-In Date:</strong> ${inDateReadable}<br/>
+         <strong>Check-Out Date:</strong> ${outDateReadable}<br/>
+         <strong>Check-in Time:</strong> After 2:00 PM EAT (Early entry from 1:00 PM EAT)<br/>
+         <strong>Check-out Time:</strong> Before 10:00 AM EAT`
       ],
-      alertText: `🕒 <strong>Check-In Details Timing:</strong><br/>
-Check-in is officially as from <strong>2:00 PM</strong>, but guests can access the unit earlier than planned. <strong>Your full check-in details (lock box code, apartment number, and Wi-Fi credentials) will be sent to you as from 1:00 PM</strong> on your arrival day (${booking.check_in}).`,
+      alertText: alertMessage,
       bookingRef: booking.id.substring(0, 8).toUpperCase(),
       button: {
         label: 'View Booking Itinerary',
@@ -570,11 +698,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: `${details.greeting || details.fullName}`,
       subject: `${details.fullName} - Your Check-In Access Details`,
       preheader: `Your door lockbox code and arrival instructions for ${details.name}.`,
-      heroImage: unitId === 'cocoa' 
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
-        : unitId === 'neema'
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
-        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      heroImage: getUnitHeroImage(unitId),
       badge: 'Check-In Access Pass',
       headingLine1: 'Welcome to',
       headingLine2: `${details.name}!`,
@@ -607,21 +731,21 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
    */
   NEWSLETTER_WELCOME: (email) => {
     return {
-      text: `Thank you for subscribing to the Pearl Apartments newsletter!`,
-      title: 'Aurelian Newsletter',
-      subject: 'Welcome to the Lulu Aurelian Circle',
-      preheader: 'You are now on the exclusive list.',
-      heroImage: 'https://a0.muscache.com/im/pictures/hosting/Hosting-1563631404126316993/original/a65cf4e4-7976-4589-80e2-47668ea56329.jpeg?im_w=1200',
-      badge: 'Exclusive Updates',
-      headingLine1: "You're on the",
-      headingLine2: 'List.',
+      text: `Thank you for subscribing to Lulu Aurelian Estate! Discover luxury and tranquil hospitality in Nyeri.`,
+      title: 'Experience luxury at Lulu Aurelian Estate!',
+      subject: 'Experience luxury at Lulu Aurelian Estate - Welcome to Our Circle',
+      preheader: 'Discover Lulu Aurelian Estate, where luxury meets serene comfort.',
+      heroImage: 'https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg',
+      badge: 'Welcome to the Estate',
+      headingLine1: "Experience Luxury at",
+      headingLine2: 'Lulu Aurelian Estate!',
       paragraphs: [
-        'Thank you for subscribing to the Lulu Aurelian Estate newsletter!',
-        'As part of our inner circle, you will now receive curated travel blogs, exclusive booking rates, and sneak previews of upcoming luxury suites directly to your inbox.'
+        'Thank you for joining the Lulu Aurelian Estate circle!',
+        'Discover Lulu Aurelian Estate, where luxury meets comfort. Enjoy key features like scenic mountain views, spacious designer suites, and world-class hospitality for an unforgettable stay.'
       ],
       button: {
-        label: 'Explore Suites',
-        url: 'https://www.luluaurelian.co.ke'
+        label: 'Explore Our Suites',
+        url: 'https://www.luluaurelian.co.ke/#/units'
       }
     };
   },
@@ -633,21 +757,21 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
    */
   ACCOUNT_CREATION_WELCOME: (email, name) => {
     return {
-      text: `Dear ${name}, Welcome to Lulu Aurelian Estate family! Your guest account has been successfully created.`,
-      title: 'Welcome to Lulu Aurelian',
-      subject: 'Welcome to Pearl Apartments - Account Created Successfully',
-      preheader: 'Your guest account has been successfully created.',
-      heroImage: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o=',
-      badge: 'Welcome to the Pack',
-      headingLine1: 'Welcome to the',
-      headingLine2: 'Family!',
+      text: `Dear ${name}, Welcome to Lulu Aurelian Estate! Your guest account has been successfully created.`,
+      title: 'Experience luxury at Lulu Aurelian Estate!',
+      subject: 'Welcome to Lulu Aurelian Estate - Your Account is Ready',
+      preheader: 'Discover Lulu Aurelian Estate, where luxury meets comfort.',
+      heroImage: 'https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg',
+      badge: 'Welcome to the Estate',
+      headingLine1: 'Experience Luxury at',
+      headingLine2: 'Lulu Aurelian Estate!',
       paragraphs: [
         `Dear ${name},`,
-        "We're tail-waggingly excited to have you here. As part of our luxury family, you'll be the first to know about new suite drops, special events, and our 10-night loyalty rewards.",
-        'Your guest account has been successfully provisioned. You can now use your dashboard to securely manage your stays.'
+        "We are delighted to welcome you to the Lulu Aurelian Estate family. Where luxury meets comfort, offering scenic views, plush suites, and seamless boutique hospitality.",
+        'Your guest account is now fully provisioned. You can manage your bookings, check-in details, and loyalty rewards directly from your guest portal.'
       ],
       button: {
-        label: 'Access Dashboard',
+        label: 'Access Guest Portal',
         url: 'https://www.luluaurelian.co.ke/#/portal'
       }
     };
@@ -662,7 +786,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: 'Lulu Aurelian Updates',
       subject: subject,
       preheader: 'Latest news from the Estate.',
-      heroImage: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o=',
+      heroImage: 'https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg',
       badge: 'Estate Dispatch',
       headingLine1: 'The Latest',
       headingLine2: 'From Lulu Aurelian',
@@ -688,11 +812,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: 'Today is Your Check-in Day',
       subject: `Today is Your Check-in Day - ${details.name.toUpperCase()}`,
       preheader: `Welcome to Lulu Aurelian! Your check-in location and directions for ${details.name}.`,
-      heroImage: unitId === 'cocoa' 
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
-        : unitId === 'neema'
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
-        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      heroImage: getUnitHeroImage(unitId),
       badge: 'Welcome to Lulu Aurelian',
       headingLine1: 'Today is Your',
       headingLine2: 'Check-in Day.',
@@ -722,7 +842,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: 'Morning Comfort Check-in',
       subject: `Morning Comfort Check-in - ${details.name}`,
       preheader: `Checking in on your stay at ${details.name}`,
-      heroImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQd-WSmf7IU8rhoVMkpn_IpS8lY_CY7akhhm1gaF7HPA&s=10',
+      heroImage: 'https://www.luluaurelian.co.ke/assets/skyview/skyview_5.jpg',
       badge: 'Guest Services',
       headingLine1: 'Good',
       headingLine2: 'Morning.',
@@ -751,7 +871,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: 'Share Your Experience',
       subject: `Share Your Stay Experience at ${details.name} (Ref #${booking.id.substring(0, 8)})`,
       preheader: `We trust you had a flawless experience.`,
-      heroImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx1QRw7IQroE1OvYqdqcw1U3-J1lI3WUFl_1-IedA0LQ&s=10',
+      heroImage: 'https://www.luluaurelian.co.ke/rateus.jpg',
       badge: 'Guest Feedback',
       headingLine1: 'How was your',
       headingLine2: 'Stay?',
@@ -779,11 +899,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: 'Check-out Guidelines - Lulu Aurelian',
       subject: `Check-out Guidelines for ${details.name} (Check-out Before 10:00 AM)`,
       preheader: `Thank you for staying with us! Please review the check-out guidelines before 10:00 AM.`,
-      heroImage: unitId === 'cocoa' 
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123623.jpg?k=1984bd8ee32203a3d8e7b9b68a2793fcd784a2f434594d2e3189fccc77ee602f&o='
-        : unitId === 'neema'
-        ? 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/827123567.jpg?k=69b2a1ce45be6fe744d09881cf8b0f20898a61b5ce737fa36787147be35acada&o='
-        : 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920322.jpg?k=f1777694ce60ac5b3585f28b1e970fb84c1fb5acc577d36cd81e44846279dd91&o=',
+      heroImage: 'https://www.luluaurelian.co.ke/time.jpg',
       badge: 'Check-out Notice',
       headingLine1: 'Check-out',
       headingLine2: 'Guidelines',
@@ -825,11 +941,11 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
    */
   HOLIDAY_MARKETING: (email, holidayName) => {
     return {
-      text: `Wishing you a joyful and memorable ${holidayName} from all of us at Pearl Apartments!`,
+      text: `Wishing you a joyful and memorable ${holidayName} from all of us at Lulu Aurelian Estate!`,
       title: `Happy ${holidayName}`,
       subject: `Happy ${holidayName} from Lulu Aurelian Estate`,
       preheader: `Exclusive 15% rate deduction on all bookings made in the next 14 days.`,
-      heroImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj2gI876xu5CH8Fy5dCJoVMLdy5rPSHkV8RrkUBiXOJA&s=10',
+      heroImage: 'https://www.luluaurelian.co.ke/golden_pearl.jpg',
       badge: 'Holiday Special',
       headingLine1: 'Happy',
       headingLine2: `${holidayName}!`,
@@ -860,7 +976,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: blogData.emailTitle || 'Aurelian Chronicles',
       subject: blogData.subject || `Lulu Aurelian: ${blogData.title}`,
       preheader: blogData.excerpt || 'Read our latest update and luxury travel logs.',
-      heroImage: blogData.heroImage || 'https://a0.muscache.com/im/pictures/hosting/Hosting-1563631404126316993/original/a65cf4e4-7976-4589-80e2-47668ea56329.jpeg?im_w=1200',
+      heroImage: blogData.heroImage || 'https://www.luluaurelian.co.ke/golden_pearl.jpg',
       badge: blogData.badge || 'Aurelian Club',
       headingLine1: blogData.headingLine1 || 'Latest',
       headingLine2: blogData.headingLine2 || 'Update',
@@ -877,18 +993,19 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
   GUEST_CANCELLATION: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const inDateReadable = formatDateEAT(booking.check_in);
     return {
       text: `Dear ${booking.guest_name}, Your booking at ${details.name} (Ref #${booking.id.substring(0, 8)}) has been cancelled. We'd love to know why.`,
       title: 'Booking Cancelled',
       subject: `Booking Cancelled: Ref #${booking.id.substring(0, 8)}`,
       preheader: `Your reservation has been cancelled successfully.`,
-      heroImage: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/773920301.jpg?k=a54142f102014f7ca339af537b0a4c026ed95739c5a2550dfc39f8129ef294ff&o=',
+      heroImage: getUnitHeroImage(unitId),
       badge: 'Status Update',
       headingLine1: 'Booking',
       headingLine2: 'Cancelled',
       paragraphs: [
         `Dear ${booking.guest_name},`,
-        `This email confirms that your booking request for <strong>${details.name}</strong> (Check-in: ${booking.check_in}) has been successfully cancelled.`,
+        `This email confirms that your booking request for <strong>${details.name}</strong> (Check-in: ${inDateReadable}) has been successfully cancelled.`,
         'We would love to understand what happened. Could you please take a moment to reply to this email and let us know your reason for cancelling? Your feedback helps us improve our luxury experience for future stays.'
       ],
       button: {
@@ -909,7 +1026,7 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       title: 'Co-host Invitation',
       subject: `Invitation to co-host on Lulu Aurelian Estate`,
       preheader: `You have been invited to help manage our listings.`,
-      heroImage: 'https://a0.muscache.com/im/pictures/hosting/Hosting-1563631404126316993/original/a65cf4e4-7976-4589-80e2-47668ea56329.jpeg?im_w=1200',
+      heroImage: 'https://www.luluaurelian.co.ke/assets/skyview/skyview_1.jpg',
       badge: 'Co-host Request',
       headingLine1: 'Co-host',
       headingLine2: 'Invitation',
@@ -922,6 +1039,66 @@ Check-in is officially as from <strong>2:00 PM</strong>, but guests can access t
       button: {
         label: 'Accept Invitation',
         url: `https://www.luluaurelian.co.ke/#/auth/reset?token=${inviteToken}`
+      }
+    };
+  },
+
+  /**
+   * Operations Notification for Managers & Agents upon Confirmed Payment.
+   */
+  STAFF_PAYMENT_ALERT: (booking, paymentInfo = {}) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const ref = (booking.id || '').substring(0, 8).toUpperCase();
+    const inDateReadable = formatDateEAT(booking.check_in);
+    const outDateReadable = formatDateEAT(booking.check_out);
+    const amountStr = Number(paymentInfo.amount || booking.total_price || 0).toLocaleString('en-KE');
+    const gateway = paymentInfo.gateway || 'M-PESA (Buy Goods)';
+    const tx = paymentInfo.transaction_ref || 'CONFIRMED';
+    const timeEAT = formatTimeEAT();
+
+    const todayEAT = getTodayEAT();
+    const checkInNorm = normalizeDateEAT(booking.check_in);
+    const currentHourEAT = getCurrentHourEAT();
+    const isPast1pmOnCheckInDay = checkInNorm && checkInNorm <= todayEAT && currentHourEAT >= 13;
+
+    const accessDispatchStatus = isPast1pmOnCheckInDay
+      ? '🟢 <strong>Check-in credentials dispatched immediately</strong> to guest (Check-in is today and payment completed past 1:00 PM EAT).'
+      : `🟡 Check-in credentials scheduled to dispatch at <strong>1:00 PM EAT</strong> on arrival day (${inDateReadable}).`;
+
+    return {
+      text: `[PAYMENT CONFIRMED] KES ${amountStr} received for ${details.name} (Ref #${ref}) from ${booking.guest_name}. Check-in: ${inDateReadable}, Check-out: ${outDateReadable}. Gateway Ref: ${tx}.`,
+      title: 'Operations Alert · Payment Confirmed',
+      subject: `[ALERT] Payment Confirmed: KES ${amountStr} - ${details.name} (#${ref})`,
+      preheader: `Payment received: KES ${amountStr} for ${details.name} from ${booking.guest_name}.`,
+      heroImage: getUnitHeroImage(unitId),
+      badge: 'STAFF OPERATIONS ALERT · PAYMENT RECEIVED',
+      headingLine1: 'Payment Confirmed',
+      headingLine2: `#${ref}`,
+      paragraphs: [
+        `Hello Team,`,
+        `A payment has been confirmed and verified on the estate booking engine at <strong>${timeEAT}</strong>. The suite dates are locked.`,
+        `<strong>Guest Details:</strong><br/>
+         • Name: <strong>${booking.guest_name || 'Guest'}</strong><br/>
+         • Phone: <strong>${booking.guest_phone || 'N/A'}</strong><br/>
+         • Email: <strong>${booking.guest_email || 'N/A'}</strong><br/>
+         • Party: <strong>${booking.adults || 1} Adult(s)</strong>${booking.children ? `, ${booking.children} Child(ren)` : ''}`,
+        `<strong>Reservation Details:</strong><br/>
+         • Suite: <strong>${details.fullName || details.name}</strong><br/>
+         • Check-in: <strong>${inDateReadable}</strong> (from 2:00 PM EAT)<br/>
+         • Check-out: <strong>${outDateReadable}</strong> (by 10:00 AM EAT)`,
+        `<strong>Transaction Audit:</strong><br/>
+         • Total Amount: <strong style="color: #1a9e35; font-size: 16px;">KES ${amountStr}</strong><br/>
+         • Payment Gateway: <strong>${gateway}</strong><br/>
+         • Transaction Reference: <strong style="font-family: monospace;">${tx}</strong><br/>
+         • Automated Dispatch: ${accessDispatchStatus}`
+      ],
+      alertText: `🔑 <strong>Unit Access Credentials:</strong><br/>
+Apartment: <strong>${details.apartmentNo}</strong> | Lock Box Code: <strong>${booking.passcode || 'Assigned'}</strong> | Wi-Fi: <strong>${details.wifiSSID || details.wifiUsername}</strong> (Password: <strong>${details.wifiPass || details.wifiPassword}</strong>)`,
+      bookingRef: ref,
+      button: {
+        label: 'Open Staff Operations Portal',
+        url: 'https://www.luluaurelian.co.ke/#/portal'
       }
     };
   }
@@ -953,17 +1130,28 @@ Status updates and receipt coordinates will be dispatched to your email at ${boo
   BOOKING_PAID_CONFIRMATION: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const inDateReadable = formatDateEAT(booking.check_in);
+    const outDateReadable = formatDateEAT(booking.check_out);
+
+    const todayEAT = getTodayEAT();
+    const checkInNorm = normalizeDateEAT(booking.check_in);
+    const currentHourEAT = getCurrentHourEAT();
+    const isPast1pmOnCheckInDay = checkInNorm && checkInNorm <= todayEAT && currentHourEAT >= 13;
+
+    const accessNote = isPast1pmOnCheckInDay
+      ? `🔑 *Immediate Access Details Dispatched:* Since check-in is today and payment completed past 1:00 PM EAT, your complete check-in access details (apartment number, lock box code, and Wi-Fi credentials) have been dispatched to you immediately via separate message.`
+      : `🔑 *Check-in Access Details:* Your complete check-in access details (apartment number, door lock box code, and Wi-Fi credentials) will be sent to you as from *1:00 PM EAT* on your check-in day (${inDateReadable}), allowing you early access to the unit.`;
+
     return `Hello *${booking.guest_name}*, thank you for your payment! Your reservation for *${details.fullName || details.name}* is fully confirmed.
 
-📅 *Stay Dates:* ${booking.check_in} to ${booking.check_out}
-🕒 *Check-In Time:* After 2:00 PM
-🕘 *Check-Out Time:* Before 10:00 AM
+📅 *Stay Dates:* ${inDateReadable} to ${outDateReadable}
+🕒 *Check-In Time:* After 2:00 PM EAT (Early entry from 1:00 PM EAT)
+🕘 *Check-Out Time:* Before 10:00 AM EAT
 
 📍 *Location:* ${details.location}
 🗺️ *Google Maps Pin:* ${details.mapUrl}
 
-🔑 *Check-in Access Details:*
-Your complete check-in access details (apartment number, door lock box code, and Wi-Fi credentials) will be sent to you as from *1:00 PM* on your check-in day (${booking.check_in}), allowing you early access to the unit.
+${accessNote}
 
 Should you need any assistance, feel free to reach out:
 Safaricom: 0112299384
@@ -971,6 +1159,34 @@ Airtel: 0756958531
 
 Warm Regards,
 LuluAurelian team`;
+  },
+
+  /**
+   * WhatsApp alert sent to estate managers and agents upon confirmed payment.
+   */
+  STAFF_PAYMENT_ALERT: (booking, paymentInfo = {}) => {
+    const unitId = (booking.unit_id || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
+    const ref = (booking.id || '').substring(0, 8).toUpperCase();
+    const inDateReadable = formatDateEAT(booking.check_in);
+    const outDateReadable = formatDateEAT(booking.check_out);
+    const amountStr = Number(paymentInfo.amount || booking.total_price || 0).toLocaleString('en-KE');
+    const tx = paymentInfo.transaction_ref || 'VERIFIED';
+    const gateway = paymentInfo.gateway || 'M-PESA';
+
+    return `🔔 *[STAFF ALERT: PAYMENT CONFIRMED]* 🔔
+
+A guest payment has been verified on Lulu Aurelian Estate!
+
+🏨 *Suite:* ${details.name}
+🔖 *Booking Ref:* #${ref}
+👤 *Guest:* ${booking.guest_name || 'Guest'} (${booking.guest_phone || 'N/A'})
+💰 *Amount Paid:* KES ${amountStr}
+💳 *Gateway / Ref:* ${gateway} · ${tx}
+📅 *Check-In:* ${inDateReadable} (from 2:00 PM EAT)
+📅 *Check-Out:* ${outDateReadable} (by 10:00 AM EAT)
+
+View and manage on Staff Portal: https://www.luluaurelian.co.ke/#/portal`;
   },
 
   /**

@@ -394,7 +394,11 @@ export const approveBooking = async (req, res, next) => {
     console.log(`[STAFF APPROVAL]: ✅ Booking ${id} approved by ${approvedBy}. Payment Ref: ${transactionRef}`);
 
     // Dispatch post-payment confirmation and credentials if eligible
-    dispatchPostPaymentNotifications(confirmedBooking);
+    dispatchPostPaymentNotifications(confirmedBooking, {
+      transaction_ref: transactionRef,
+      gateway: latestPayment?.gateway || 'STAFF_APPROVAL',
+      amount: latestPayment?.amount || confirmedBooking.total_price
+    });
 
     return res.status(200).json({
       success: true,
@@ -511,7 +515,11 @@ export const stanbicCallback = async (req, res, next) => {
     console.log(`[STANBIC CALLBACK]: ✅ Booking ${booking.id} PAID. TransID: ${TransID}, M-Pesa Receipt: ${ThirdPartyTransID}, Amount: ${TransAmount}`);
 
     // ── Send payment confirmation & credentials if eligible ──────────────
-    dispatchPostPaymentNotifications(confirmedBooking);
+    dispatchPostPaymentNotifications(confirmedBooking, {
+      transaction_ref: ThirdPartyTransID || TransID || BillRefNumber,
+      gateway: 'MPESA',
+      amount: TransAmount || confirmedBooking.total_price
+    });
 
     // ── MUST respond with this exact format ──────────────────────────────
     return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
@@ -578,6 +586,22 @@ export const getMyBookings = async (req, res, next) => {
           b.total_price = 5000;
         }
       }
+
+      // If booking is PAID or COMPLETED, attach unit access credentials
+      if (['PAID', 'COMPLETED'].includes(b.status)) {
+        try {
+          const settings = await db.unit_settings.getSettings(b.unit_id);
+          if (settings) {
+            b.passcode = settings.passcode;
+            b.house_number = settings.house_number;
+            b.wifi_ssid = settings.wifi_ssid;
+            b.wifi_password = settings.wifi_password;
+            b.house_rules = settings.house_rules;
+          }
+        } catch (sErr) {
+          console.warn(`[GET MY BOOKINGS]: Could not attach unit settings for ${b.unit_id}:`, sErr.message);
+        }
+      }
     }
     return res.status(200).json({ success: true, count: list.length, bookings: list });
   } catch (error) {
@@ -616,6 +640,13 @@ export const checkBookingStatus = async (req, res, next) => {
       }
     }
 
+    let unitSettings = null;
+    if (['PAID', 'COMPLETED'].includes(booking.status)) {
+      try {
+        unitSettings = await db.unit_settings.getSettings(booking.unit_id);
+      } catch (e) {}
+    }
+
     return res.status(200).json({
       success: true,
       booking: {
@@ -629,7 +660,12 @@ export const checkBookingStatus = async (req, res, next) => {
         status:       booking.status,
         created_at:   booking.created_at,
         hold_expires_at: booking.hold_expires_at,
-        total_price:  price
+        total_price:  price,
+        passcode:     unitSettings?.passcode,
+        house_number: unitSettings?.house_number,
+        wifi_ssid:    unitSettings?.wifi_ssid,
+        wifi_password: unitSettings?.wifi_password,
+        house_rules:  unitSettings?.house_rules
       }
     });
   } catch (error) {
