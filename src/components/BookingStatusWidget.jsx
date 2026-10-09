@@ -30,7 +30,7 @@ export default function BookingStatusWidget({ user }) {
 
           if (activeOrUpcoming.length > 0) {
             const active = activeOrUpcoming.find(b => 
-              ['PENDING', 'APPROVED', 'PAID'].includes(b.status)
+              ['PENDING', 'APPROVED', 'PAID', 'AUTHORIZING'].includes(b.status)
             ) || activeOrUpcoming[0];
             
             setActiveBooking(active);
@@ -46,6 +46,8 @@ export default function BookingStatusWidget({ user }) {
     };
 
     fetchMyBookings();
+    const interval = setInterval(fetchMyBookings, 8000);
+    return () => clearInterval(interval);
   }, [user]);
 
   if (!user || loading || !activeBooking) {
@@ -65,6 +67,17 @@ export default function BookingStatusWidget({ user }) {
     }
   };
 
+  const formatEAT = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB', {
+      timeZone: 'Africa/Nairobi',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
   return (
     <section className="booking-status-section">
       <div className="container" data-aos="fade-up">
@@ -79,7 +92,7 @@ export default function BookingStatusWidget({ user }) {
               {getStatusIcon(activeBooking.status)}
               <div className="status-text">
                 <span className="label">Current Status</span>
-                <strong className={`status-badge ${activeBooking.status.toLowerCase()}`}>{activeBooking.status}</strong>
+                <strong className={`status-badge ${activeBooking.status.toLowerCase()}`}>{activeBooking.status === 'PAID' ? 'Confirmed (Paid)' : activeBooking.status}</strong>
               </div>
             </div>
             
@@ -90,11 +103,11 @@ export default function BookingStatusWidget({ user }) {
               </div>
               <div className="detail-item">
                 <span className="label">Check In</span>
-                <span className="value">{new Date(activeBooking.check_in).toLocaleDateString()}</span>
+                <span className="value">{formatEAT(activeBooking.check_in)}</span>
               </div>
               <div className="detail-item">
                 <span className="label">Check Out</span>
-                <span className="value">{new Date(activeBooking.check_out).toLocaleDateString()}</span>
+                <span className="value">{formatEAT(activeBooking.check_out)}</span>
               </div>
               <div className="detail-item">
                 <span className="label">Actions</span>

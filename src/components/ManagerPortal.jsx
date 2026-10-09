@@ -679,11 +679,14 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
         });
         if (response.ok) {
           const data = await response.json();
-          if (Array.isArray(data)) setBookings(data);
+          const list = Array.isArray(data) ? data : (data.bookings || []);
+          setBookings(list);
         }
       } catch (err) {}
     };
     fetchBookings();
+    const interval = setInterval(fetchBookings, 8000);
+    return () => clearInterval(interval);
   }, []);
 
   const [reviews, setReviews] = useState([]);

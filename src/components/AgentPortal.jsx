@@ -100,8 +100,8 @@ export default function AgentPortal({ user }) {
 
   useEffect(() => {
     fetchBookings();
-    // Refresh bookings every 30 seconds
-    const interval = setInterval(fetchBookings, 30000);
+    // Refresh bookings every 8 seconds for real-time operations
+    const interval = setInterval(fetchBookings, 8000);
     return () => clearInterval(interval);
   }, []);
 

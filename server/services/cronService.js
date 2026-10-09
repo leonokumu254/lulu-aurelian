@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import { db } from '../config/db.js';
 import { emailService } from './emailService.js';
 import { whatsappService } from './whatsappService.js';
-import { WHATSAPP_TEMPLATES } from '../config/constants.js';
+import { WHATSAPP_TEMPLATES, normalizeDateEAT } from '../config/constants.js';
 
 const getEATDate = (offsetDays = 0) => {
   const d = new Date();
@@ -113,7 +113,7 @@ class CronService {
     try {
       const paidBookings = await db.bookings.findPaidBookings();
       for (const b of paidBookings) {
-        if (b.check_out === todayStr) {
+        if (normalizeDateEAT(b.check_out) === todayStr) {
           console.log(`[CHECKOUT REMINDER]: Dispatching 10:00 AM check-out checklist to ${b.guest_name}.`);
           emailService.sendCheckoutMorningReminder(b).catch(e => console.error(e));
           whatsappService.sendCheckoutReminder(b).catch(e => console.error(e));
@@ -132,7 +132,7 @@ class CronService {
     try {
       const paidBookings = await db.bookings.findPaidBookings();
       for (const b of paidBookings) {
-        if (b.check_in === yesterdayStr) {
+        if (normalizeDateEAT(b.check_in) === yesterdayStr) {
           console.log(`[COMFORT CHECK-IN]: Dispatching morning check-in follow-up to ${b.guest_name}.`);
           emailService.sendCheckInFollowUp(b).catch(e => console.error(e));
           whatsappService.sendLifecyclePing(b.guest_phone, WHATSAPP_TEMPLATES.CHECK_IN_FOLLOW_UP(b)).catch(e => console.error(e));
@@ -154,7 +154,7 @@ class CronService {
     try {
       const paidBookings = await db.bookings.findPaidBookings();
       for (const b of paidBookings) {
-        if (b.check_in === todayStr) {
+        if (normalizeDateEAT(b.check_in) === todayStr) {
           console.log(`[CHECK-IN DISPATCH]: Dispatching lockbox codes and Wi-Fi credentials to arriving guest ${b.guest_name} at 1:00 PM.`);
           emailService.sendCheckInCredentials(b).catch(e => console.error('[EMAIL ERROR]:', e));
           whatsappService.sendCheckInCredentials(b).catch(e => console.error('[WHATSAPP ERROR]:', e));
@@ -173,7 +173,7 @@ class CronService {
     try {
       const paidBookings = await db.bookings.findPaidBookings();
       for (const b of paidBookings) {
-        if (b.check_out === todayStr) {
+        if (normalizeDateEAT(b.check_out) === todayStr) {
           console.log(`[REVIEW REQUEST]: Sending review feedback link to departed guest ${b.guest_name}.`);
           emailService.sendCheckoutReviewRequest(b).catch(e => console.error(e));
           whatsappService.sendLifecyclePing(b.guest_phone, WHATSAPP_TEMPLATES.CHECKOUT_REVIEW_REQUEST(b)).catch(e => console.error(e));

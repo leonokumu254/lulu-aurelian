@@ -59,13 +59,12 @@ class PayHeroService {
         throw new Error(`Invalid response from PayHero STK Push (HTTP ${response.status}): ${rawText.slice(0, 300) || 'Empty body'}`);
       }
 
-      if (!response.ok || data.status === false || data.success === false) {
-        console.error(`[PAYHERO]: STK Push rejected (HTTP ${response.status}) — Payload:`, JSON.stringify(payload), `Response:`, JSON.stringify(data));
+      if (!response.ok) {
         let errMsg = data.message || data.error || data.detail;
         if (response.status === 401) {
-          errMsg = `PayHero authentication failed (HTTP 401): ${errMsg || 'Unable to perform request'}. Please verify PAYHERO_API_USERNAME and PAYHERO_API_KEY in .env.`;
-        } else if (errMsg === 'Unable to perform request' || !errMsg) {
-          errMsg = `PayHero rejected request (HTTP ${response.status}): 'Unable to perform request'. Check PayHero Service Wallet balance (float required for STK push), Channel ID (${this.channelId}), and account status.`;
+          errMsg = `PayHero authentication failed (HTTP 401): ${errMsg || 'Unable to perform request'}. Please verify your PayHero API credentials and account status.`;
+        } else if (!errMsg) {
+          errMsg = `PayHero STK Push failed (HTTP ${response.status})`;
         }
         throw new Error(errMsg);
       }
@@ -139,11 +138,11 @@ class PayHeroService {
       }
 
       // Check all possible status locations (objects, nested response, arrays, data)
-      const resObj = Array.isArray(data.response) 
-        ? data.response[0] 
+      const resObj = Array.isArray(data.response)
+        ? data.response[0]
         : (data.response || (Array.isArray(data.data) ? data.data[0] : (data.data || data)));
 
-      const rawStatus = (resObj && (resObj.status || resObj.Status || resObj.payment_status || resObj.PaymentStatus || resObj.state || resObj.State)) 
+      const rawStatus = (resObj && (resObj.status || resObj.Status || resObj.payment_status || resObj.PaymentStatus || resObj.state || resObj.State))
         || data.status || data.Status || data.payment_status || '';
 
       const payHeroStatus = String(rawStatus || '').toUpperCase();

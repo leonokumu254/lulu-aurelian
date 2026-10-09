@@ -39,6 +39,12 @@ class WhatsappService {
     return this.sendWhatsapp(booking.guest_phone, message);
   }
 
+  async sendStaffPaymentAlert(booking, paymentInfo = {}) {
+    const staffPhone = '254112299384'; // Central Manager & Concierge line
+    const message = WHATSAPP_TEMPLATES.STAFF_PAYMENT_ALERT(booking, paymentInfo);
+    return this.sendWhatsapp(staffPhone, message);
+  }
+
   async sendLifecyclePing(phone, message) {
     return this.sendWhatsapp(phone, message);
   }
