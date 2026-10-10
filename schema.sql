@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     'PENDING',
     'AUTHORIZING',
     'PAID',
+    'COMPLETED',
     'EXPIRED',
     'PAYMENT_FAILED',
     'CANCELLED'

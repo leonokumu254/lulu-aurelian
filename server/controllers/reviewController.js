@@ -30,8 +30,8 @@ export const submitReview = async (req, res, next) => {
       });
     }
 
-    // Verify stay fulfillment constraints (MUST be PAID status)
-    if (booking.status !== 'PAID') {
+    // Verify stay fulfillment constraints (MUST be PAID or COMPLETED status)
+    if (!['PAID', 'COMPLETED'].includes(booking.status)) {
       return res.status(403).json({
         success: false,
         error: 'Access Denied. Reviews can only be submitted for completed/paid stays.'

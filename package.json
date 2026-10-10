@@ -12,7 +12,8 @@
     "dev:staff": "vite --config vite.staff.config.js",
     "preview:staff": "vite preview --config vite.staff.config.js",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "email:previews": "node server/generatePreviews.js"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",

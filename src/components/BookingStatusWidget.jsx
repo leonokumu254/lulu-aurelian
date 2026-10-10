@@ -58,6 +58,7 @@ export default function BookingStatusWidget({ user }) {
     switch (status) {
       case 'APPROVED':
       case 'PAID':
+      case 'COMPLETED':
         return <CheckCircle size={24} color="#10B981" />;
       case 'CANCELLED':
       case 'DECLINED':
@@ -92,7 +93,7 @@ export default function BookingStatusWidget({ user }) {
               {getStatusIcon(activeBooking.status)}
               <div className="status-text">
                 <span className="label">Current Status</span>
-                <strong className={`status-badge ${activeBooking.status.toLowerCase()}`}>{activeBooking.status === 'PAID' ? 'Confirmed (Paid)' : activeBooking.status}</strong>
+                <strong className={`status-badge ${activeBooking.status.toLowerCase()}`}>{activeBooking.status === 'PAID' ? 'Confirmed (Paid)' : activeBooking.status === 'COMPLETED' ? 'Completed' : activeBooking.status}</strong>
               </div>
             </div>
             

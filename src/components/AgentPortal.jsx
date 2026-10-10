@@ -61,15 +61,24 @@ export default function AgentPortal({ user }) {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const now = new Date();
 
         setBookings(data.bookings.map(b => {
-          let derivedStatus = b.status.charAt(0) + b.status.slice(1).toLowerCase();
-          const checkOutDate = new Date(b.check_out?.split('T')[0] || b.check_out);
+          const s = (b.status || '').toUpperCase();
+          let derivedStatus = s.charAt(0) + s.slice(1).toLowerCase();
           
-          if (b.status === 'PAID' && checkOutDate < today) {
+          const outDateStr = b.check_out?.split('T')[0] || b.check_out;
+          const [oy, om, od] = (outDateStr || '').split('-').map(Number);
+          const checkoutTime = oy && om && od ? new Date(oy, om - 1, od, 10, 0, 0) : new Date(b.check_out);
+
+          const inDateStr = b.check_in?.split('T')[0] || b.check_in;
+          const [iy, im, id] = (inDateStr || '').split('-').map(Number);
+          const checkinTime = iy && im && id ? new Date(iy, im - 1, id, 13, 0, 0) : new Date(b.check_in);
+
+          if (s === 'COMPLETED' || (s === 'PAID' && now >= checkoutTime)) {
             derivedStatus = 'Completed';
+          } else if (s === 'PAID' && now >= checkinTime) {
+            derivedStatus = 'Active';
           }
 
           return {
@@ -245,6 +254,30 @@ export default function AgentPortal({ user }) {
     }
   };
 
+  // Complete booking / check out guest via API
+  const handleComplete = async (id) => {
+    if (!window.confirm('Mark this reservation as Completed (guest checked out)?')) return;
+    setActionLoading(id);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/bookings/${id}/complete`, {
+        method: 'PUT',
+        credentials: 'include'
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        triggerToast('Reservation marked as Completed!');
+        await fetchBookings();
+      } else {
+        triggerToast(data.error || 'Failed to complete booking.');
+      }
+    } catch (err) {
+      triggerToast('Connection error. Please try again.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   // Format countdown helper
   const formatTTL = (seconds) => {
     if (seconds === null || seconds <= 0) return 'Expired';
@@ -358,8 +391,9 @@ Lulu Aurelian Concierge Team`;
     if (filter === 'Pending') matchesFilter = b.rawStatus === 'PENDING';
     else if (filter === 'Awaiting Verification') matchesFilter = b.rawStatus === 'AUTHORIZING';
     else if (filter === 'Awaiting Payment') matchesFilter = b.rawStatus === 'APPROVED';
-    else if (filter === 'Paid') matchesFilter = b.rawStatus === 'PAID' && b.status !== 'Completed';
-    else if (filter === 'Completed') matchesFilter = b.status === 'Completed';
+    else if (filter === 'Paid') matchesFilter = (b.rawStatus === 'PAID' || b.status === 'Paid') && b.status !== 'Completed' && b.status !== 'Active';
+    else if (filter === 'Active') matchesFilter = b.status === 'Active';
+    else if (filter === 'Completed') matchesFilter = b.status === 'Completed' || b.rawStatus === 'COMPLETED';
     else if (filter === 'Cancelled') matchesFilter = b.rawStatus === 'CANCELLED';
     else if (filter === 'Declined') matchesFilter = b.rawStatus === 'DECLINED';
 
@@ -379,8 +413,9 @@ Lulu Aurelian Concierge Team`;
     Pending: bookings.filter(b => b.rawStatus === 'PENDING').length,
     'Awaiting Verification': bookings.filter(b => b.rawStatus === 'AUTHORIZING').length,
     'Awaiting Payment': bookings.filter(b => b.rawStatus === 'APPROVED').length,
-    Paid: bookings.filter(b => b.rawStatus === 'PAID' && b.status !== 'Completed').length,
-    Completed: bookings.filter(b => b.status === 'Completed').length,
+    Paid: bookings.filter(b => (b.rawStatus === 'PAID' || b.status === 'Paid') && b.status !== 'Completed' && b.status !== 'Active').length,
+    Active: bookings.filter(b => b.status === 'Active').length,
+    Completed: bookings.filter(b => b.status === 'Completed' || b.rawStatus === 'COMPLETED').length,
     Cancelled: bookings.filter(b => b.rawStatus === 'CANCELLED').length,
     Declined: bookings.filter(b => b.rawStatus === 'DECLINED').length
   };
@@ -468,6 +503,7 @@ Lulu Aurelian Concierge Team`;
           'Awaiting Verification', 
           'Awaiting Payment', 
           'Paid', 
+          'Active',
           'Completed', 
           'Cancelled', 
           'Declined'
@@ -645,6 +681,18 @@ Lulu Aurelian Concierge Team`;
                       <X size={15} />
                     </button>
                   )}
+
+                  {['PAID', 'ACTIVE'].includes((b.rawStatus || '').toUpperCase()) && b.status !== 'Completed' && (
+                    <button 
+                      onClick={() => handleComplete(b.id)} 
+                      className="btn-action-complete"
+                      title="Check Out Guest & Complete Stay"
+                      disabled={actionLoading === b.id}
+                    >
+                      <CheckCircle2 size={15} />
+                      <span>Complete Stay</span>
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -795,6 +843,18 @@ Lulu Aurelian Concierge Team`;
                           </button>
                         )}
                         
+                        {['PAID', 'ACTIVE'].includes((b.rawStatus || '').toUpperCase()) && b.status !== 'Completed' && (
+                          <button 
+                            onClick={() => handleComplete(b.id)} 
+                            className="btn-table-complete"
+                            title="Check Out Guest & Complete Stay"
+                            disabled={actionLoading === b.id}
+                          >
+                            <CheckCircle2 size={13} />
+                            <span>Complete</span>
+                          </button>
+                        )}
+
                         <button 
                           onClick={() => openWhatsAppModal(b)} 
                           className="btn-whatsapp-table"

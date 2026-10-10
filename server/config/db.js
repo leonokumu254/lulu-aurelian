@@ -61,7 +61,7 @@ const inMemory = {
       adults: 3,
       children: 0,
       has_peak_surcharge: 0,
-      status: 'PAID',
+      status: 'COMPLETED',
       secure_token: 'sec_token_brandon_miller_331b2890',
       approved_by: null,
       approved_at: null,
@@ -585,10 +585,10 @@ export const db = {
 
     findPaidBookings: async () => {
       if (useMySQL) {
-        const [rows] = await pool.query("SELECT * FROM bookings WHERE status = 'PAID'");
+        const [rows] = await pool.query("SELECT * FROM bookings WHERE status IN ('PAID', 'COMPLETED')");
         return rows;
       }
-      return inMemory.bookings.filter(b => b.status === 'PAID');
+      return inMemory.bookings.filter(b => ['PAID', 'COMPLETED'].includes(b.status));
     },
 
     delete: async (id) => {
