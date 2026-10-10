@@ -55,7 +55,15 @@ class CronService {
       timezone: 'Africa/Nairobi'
     });
 
-    console.log('[CRON SERVICE]: 6:00 AM Morning Follow-up, 8:00 AM Check-out, 1:00 PM Check-in credentials, and 12:00 PM Review crons initialized in Africa/Nairobi timezone.');
+    // 7. AUTO-COMPLETE PAST STAYS (Runs every 10 minutes — checks out bookings past 10:00 AM EAT)
+    cron.schedule('*/10 * * * *', () => {
+      this.autoCompletePastBookings();
+    });
+
+    // Run auto-complete sweep immediately on server initialization
+    this.autoCompletePastBookings();
+
+    console.log('[CRON SERVICE]: 6:00 AM Comfort, 8:00 AM Check-out, 1:00 PM Credentials, 12:00 PM Review, and 10-min Auto-Complete crons initialized.');
   }
 
   // Task 1: Expire PENDING bookings whose 1-hour hold has elapsed
@@ -181,6 +189,39 @@ class CronService {
       }
     } catch (err) {
       console.error('[CRON SERVICE ERROR]: Post-checkout review scan failed:', err.message);
+    }
+  }
+
+  // Task 7: Auto-complete past bookings whose check-out time (10:00 AM EAT / 07:00 AM UTC) has passed
+  async autoCompletePastBookings() {
+    console.log('[CRON WORKER]: Scanning for completed stays to transition from PAID to COMPLETED...');
+    try {
+      const now = new Date();
+      const bookings = await db.bookings.getAll('PAID');
+      let completedCount = 0;
+
+      for (const b of bookings) {
+        if (b.status === 'PAID') {
+          const outDateStr = b.check_out instanceof Date 
+            ? b.check_out.toISOString().split('T')[0] 
+            : String(b.check_out || '').split('T')[0];
+          
+          if (outDateStr) {
+            const checkoutTime = new Date(`${outDateStr}T07:00:00.000Z`); // 10:00 AM EAT
+            if (now >= checkoutTime) {
+              await db.bookings.updateStatus(b.id, 'COMPLETED');
+              completedCount++;
+              console.log(`[CRON COMPLETE]: ✅ Booking ${b.id} (${b.guest_name}) transitioned to COMPLETED (Checked out on ${outDateStr}).`);
+            }
+          }
+        }
+      }
+
+      if (completedCount > 0) {
+        console.log(`[CRON WORKER]: Auto-completed ${completedCount} past bookings to COMPLETED.`);
+      }
+    } catch (err) {
+      console.error('[CRON ERROR]: Auto-complete scan failed:', err.message);
     }
   }
 

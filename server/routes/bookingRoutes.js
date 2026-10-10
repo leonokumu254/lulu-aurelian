@@ -12,6 +12,7 @@ import {
   getBlockedDates,
   approveBooking,
   declineBooking,
+  completeBooking,
   createManualBlock,
   deleteManualBlock,
   getHouseRules
@@ -58,6 +59,9 @@ router.put('/:id/approve', authMiddleware, requireRole('MANAGER', 'AGENT'), appr
 
 // Decline manual payment (Managers & Agents)
 router.put('/:id/decline', authMiddleware, requireRole('MANAGER', 'AGENT'), declineBooking);
+
+// Mark booking completed / checkout guest (Managers & Agents)
+router.put('/:id/complete', authMiddleware, requireRole('MANAGER', 'AGENT'), completeBooking);
 
 // Unit settings
 router.get('/unit-settings', authMiddleware, requireRole('MANAGER', 'AGENT'), getUnitSettings);

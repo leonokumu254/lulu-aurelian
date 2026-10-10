@@ -90,11 +90,46 @@ export default function GuestPortal({ user, onBookNew }) {
     fetchBookings(false);
   }, [fetchBookings]);
 
-  // Find active and past bookings (include PENDING and AUTHORIZING so users always track them)
-  const activeBookings = bookings.filter(b =>
-    ['APPROVED', 'PAID', 'PENDING', 'AUTHORIZING'].includes(b.status) &&
-    new Date(b.check_out) >= new Date(new Date().setHours(0, 0, 0, 0))
-  );
+  const getStepIndex = (b) => {
+    if (!b) return 1;
+    const s = (b.status || '').toUpperCase();
+    if (s === 'COMPLETED') return 4;
+
+    if (s === 'PAID') {
+      const now = new Date();
+      const inDateStr = b.check_in?.split('T')[0] || b.check_in;
+      const outDateStr = b.check_out?.split('T')[0] || b.check_out;
+
+      const [oy, om, od] = (outDateStr || '').split('-').map(Number);
+      const checkoutTime = oy && om && od ? new Date(oy, om - 1, od, 10, 0, 0) : new Date(b.check_out);
+
+      const [iy, im, id] = (inDateStr || '').split('-').map(Number);
+      const checkinTime = iy && im && id ? new Date(iy, im - 1, id, 13, 0, 0) : new Date(b.check_in);
+
+      if (now >= checkoutTime) return 4; // Completed
+      if (now >= checkinTime) return 3;  // Active (Stay in progress)
+      return 2; // Confirmed (Paid)
+    }
+
+    if (['PENDING', 'AUTHORIZING', 'APPROVED'].includes(s)) return 1;
+    return 1;
+  };
+
+  const getDisplayStatus = (b) => {
+    if (!b) return '';
+    const step = getStepIndex(b);
+    if ((b.status || '').toUpperCase() === 'COMPLETED' || step === 4) return 'COMPLETED';
+    if (step === 3) return 'ACTIVE';
+    if (b.status === 'PAID') return 'PAID';
+    if (b.status === 'APPROVED') return 'AWAITING PAYMENT';
+    return b.status;
+  };
+
+  // Find active and past bookings (Active bookings are unexpired bookings whose stay is not yet completed)
+  const activeBookings = bookings.filter(b => {
+    const step = getStepIndex(b);
+    return ['APPROVED', 'PAID', 'PENDING', 'AUTHORIZING'].includes((b.status || '').toUpperCase()) && step < 4;
+  });
 
   const pastBookings = bookings.filter(b =>
     !activeBookings.find(ab => ab.id === b.id)
@@ -169,13 +204,6 @@ export default function GuestPortal({ user, onBookNew }) {
     return () => clearInterval(interval);
   }, [bookings, fetchBookings]);
 
-  const getStepIndex = (status) => {
-    if (status === 'PENDING' || status === 'AUTHORIZING' || status === 'APPROVED') return 1; // Awaiting Payment
-    if (status === 'PAID') return 2; // Confirmed
-    if (status === 'COMPLETED') return 4;
-    return 1;
-  };
-
   if (loading) return <div className="guest-portal-loader">Initializing Dashboard...</div>;
 
   return (
@@ -206,14 +234,14 @@ export default function GuestPortal({ user, onBookNew }) {
               <div className="status-banner-card glass">
                 <div className="status-banner-header">
                   <span className="tracker-label">Booking Tracker</span>
-                  <div className={`status-badge-pastel ${activeBooking.status.toLowerCase()}`}>
-                    <span className="dot">●</span> {activeBooking.status === 'APPROVED' ? 'Awaiting Payment' : activeBooking.status}
+                  <div className={`status-badge-pastel ${getDisplayStatus(activeBooking).toLowerCase().replace(/\s+/g, '-')}`}>
+                    <span className="dot">●</span> {getDisplayStatus(activeBooking)}
                   </div>
                 </div>
 
                 <div className="stepper-track">
                   {['Awaiting Payment', 'Confirmed', 'Active', 'Completed'].map((step, idx) => {
-                    const currentStepIndex = getStepIndex(activeBooking.status);
+                    const currentStepIndex = getStepIndex(activeBooking);
                     const isCompleted = idx + 1 <= currentStepIndex;
                     const isActive = idx + 1 === currentStepIndex;
 
@@ -234,7 +262,13 @@ export default function GuestPortal({ user, onBookNew }) {
               <div className="action-card glass">
                 <div className="action-card-content">
                   <div className="action-card-dates">
-                    <span className="arrival-label">Upcoming Arrival</span>
+                    <span className="arrival-label">
+                      {getStepIndex(activeBooking) === 4 
+                        ? 'Completed Stay' 
+                        : getStepIndex(activeBooking) === 3 
+                        ? 'Current Stay' 
+                        : 'Upcoming Arrival'}
+                    </span>
                     <h2 className="arrival-date">
                       {formatEATDate(activeBooking.check_in, { weekday: 'short', day: 'numeric', month: 'short' })}
                       <span className="arrival-year">, {formatEATDate(activeBooking.check_in, { year: 'numeric' })}</span>
@@ -745,7 +779,7 @@ export default function GuestPortal({ user, onBookNew }) {
                       <span>{formatEATDate(booking.check_in, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                     </div>
                     <div className="history-item-status">
-                      <span className={`micro-badge ${booking.status.toLowerCase()}`}>{booking.status}</span>
+                      <span className={`micro-badge ${getDisplayStatus(booking).toLowerCase().replace(/\s+/g, '-')}`}>{getDisplayStatus(booking)}</span>
                     </div>
                   </div>
                 ))}
@@ -770,7 +804,7 @@ export default function GuestPortal({ user, onBookNew }) {
                       <span>{formatEATDate(booking.check_in, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                     </div>
                     <div className="history-item-status">
-                      <span className={`micro-badge ${booking.status.toLowerCase()}`}>{booking.status}</span>
+                      <span className={`micro-badge ${getDisplayStatus(booking).toLowerCase().replace(/\s+/g, '-')}`}>{getDisplayStatus(booking)}</span>
                     </div>
                   </div>
                 ))}

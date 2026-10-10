@@ -447,6 +447,59 @@ export const declineBooking = async (req, res, next) => {
   }
 };
 
+export const completeBooking = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await db.bookings.findById(id);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking record not found.' });
+    }
+
+    if (!['PAID', 'ACTIVE', 'COMPLETED'].includes(booking.status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot complete booking in status: ${booking.status}. Booking must be paid first.`
+      });
+    }
+
+    const completedBooking = await db.bookings.updateStatus(id, 'COMPLETED');
+    console.log(`[STAFF ACTION]: ✅ Booking ${id} marked as COMPLETED by ${req.user ? req.user.name : 'Staff'}.`);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Booking marked as completed successfully.',
+      booking: completedBooking
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Auto-complete helper: transitions PAID bookings to COMPLETED once 10:00 AM EAT checkout passes
+const checkAndAutoCompleteBooking = async (b) => {
+  if (!b) return b;
+  if (b.status === 'PAID') {
+    const now = new Date();
+    const outDateStr = b.check_out instanceof Date 
+      ? b.check_out.toISOString().split('T')[0] 
+      : String(b.check_out || '').split('T')[0];
+    
+    if (outDateStr) {
+      // 10:00 AM EAT is 07:00 AM UTC
+      const checkoutTime = new Date(`${outDateStr}T07:00:00.000Z`);
+      if (now >= checkoutTime) {
+        try {
+          await db.bookings.updateStatus(b.id, 'COMPLETED');
+          b.status = 'COMPLETED';
+        } catch (e) {
+          b.status = 'COMPLETED';
+        }
+      }
+    }
+  }
+  return b;
+};
+
 
 // ─── WEBHOOK: Stanbic Transaction Notification Callback ─────────────────────
 // Stanbic POSTs OutboundTransactionNotificationRequest to your CallbackUrl.
@@ -540,6 +593,7 @@ export const getBookings = async (req, res, next) => {
     const { status } = req.query;
     const list = await db.bookings.getAll(status);
     for (const b of list) {
+      await checkAndAutoCompleteBooking(b);
       if (!b.total_price || isNaN(b.total_price)) {
         try {
           const p = await db.pricing.getUnitPricing(b.unit_id);
@@ -569,6 +623,7 @@ export const getMyBookings = async (req, res, next) => {
     const userEmail = req.user.email;
     const list = await db.bookings.findByGuestEmail(userEmail);
     for (const b of list) {
+      await checkAndAutoCompleteBooking(b);
       if (!b.total_price || isNaN(b.total_price)) {
         try {
           const p = await db.pricing.getUnitPricing(b.unit_id);
@@ -616,10 +671,12 @@ export const checkBookingStatus = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Missing secure access token.' });
     }
 
-    const booking = await db.bookings.findByToken(token);
+    let booking = await db.bookings.findByToken(token);
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Unauthorized token reference.' });
     }
+
+    await checkAndAutoCompleteBooking(booking);
 
     let price = booking.total_price;
     if (!price || isNaN(price)) {
@@ -705,7 +762,7 @@ export const getBlockedDates = async (req, res, next) => {
   try {
     const { unitId } = req.params;
     const allBookings = await db.bookings.getAll();
-    const activeStatuses = ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED'];
+    const activeStatuses = ['PAID', 'CONFIRMED', 'BLOCKED', 'BOOKED', 'COMPLETED'];
 
     const formatCleanDate = (d) => {
       if (!d) return '';

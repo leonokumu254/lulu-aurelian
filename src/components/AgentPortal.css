@@ -547,10 +547,16 @@
   border: 1px solid #D6D3D1;
 }
 
-.status-pill.status-paid {
+.status-pill.status-active {
   background: #DCFCE7;
-  color: #15803D;
+  color: #166534;
   border: 1px solid #86EFAC;
+}
+
+.status-pill.status-paid {
+  background: #DBEAFE;
+  color: #1E40AF;
+  border: 1px solid #93C5FD;
 }
 
 .status-pill.status-approved,
@@ -671,6 +677,50 @@
 
 .btn-table-decline:hover {
   background: #DC2626;
+  color: #FFFFFF;
+}
+
+.btn-table-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 0.65rem;
+  border-radius: 6px;
+  background: rgba(120, 113, 108, 0.12);
+  color: #44403C;
+  border: 1px solid rgba(120, 113, 108, 0.28);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-table-complete:hover {
+  background: #44403C;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(68, 64, 60, 0.25);
+}
+
+.btn-action-complete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #F5F5F4;
+  color: #44403C;
+  border: 1px solid #D6D3D1;
+  border-radius: 6px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-action-complete:hover {
+  background: #44403C;
   color: #FFFFFF;
 }
 
