@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Wifi, Utensils, Bed, Car, Map, ChevronLeft, ChevronRight, Grid, X, Star, Users, Maximize, ExternalLink, ChevronDown, Calendar, ShieldCheck, Sparkles, Check } from 'lucide-react';
+import { ArrowLeft, Wifi, Utensils, Bed, Car, Map, ChevronLeft, ChevronRight, Grid, X, Star, Users, Maximize, ExternalLink, ChevronDown, Calendar, ShieldCheck, Sparkles, Check, Clock, CigaretteOff, VolumeX } from 'lucide-react';
 import Header from './Header';
 import Footer from './Footer';
 import CustomCalendarModal from './CustomCalendarModal';
@@ -192,6 +192,7 @@ export default function UnitPage({ unitId }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
+  const [activeRulesUnit, setActiveRulesUnit] = useState(unit.id);
   const [blockedDates, setBlockedDates] = useState([]);
 
   const handleBookingTypeChange = (type) => {
@@ -330,7 +331,15 @@ export default function UnitPage({ unitId }) {
 
   const totalCost = Math.max(0, baseCost - lengthDiscountValue) + peakSurchargeAmount;
 
-  const handleBookingCTA = () => {
+  const handleReserveClick = () => {
+    if (nights === 0) {
+      setIsCalendarOpen(true);
+    } else {
+      window.location.href = `/#/checkout?suite=${unit.id}&bookingType=${bookingType}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&hasChildren=${hasChildren ? 1 : 0}`;
+    }
+  };
+
+  const handleHeaderBookClick = () => {
     if (window.innerWidth > 992) {
       const card = document.getElementById('booking-card');
       if (card && window.getComputedStyle(card).display !== 'none') {
@@ -341,11 +350,7 @@ export default function UnitPage({ unitId }) {
         return;
       }
     }
-    if (nights === 0) {
-      setIsCalendarOpen(true);
-    } else {
-      window.location.href = `/#/checkout?suite=${unit.id}&bookingType=${bookingType}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&hasChildren=${hasChildren ? 1 : 0}`;
-    }
+    handleReserveClick();
   };
 
   return (
@@ -357,7 +362,7 @@ export default function UnitPage({ unitId }) {
         authUser={null} 
         onLogout={() => {}} 
         unitName={unit.name}
-        onBookClick={handleBookingCTA}
+        onBookClick={handleHeaderBookClick}
       />
 
       {/* HERO IMAGE GALLERY */}
@@ -514,7 +519,9 @@ export default function UnitPage({ unitId }) {
               {/* Mobile-Friendly Quick Rules Grid */}
               <div className="unit-rules-quick-grid">
                 <div className="unit-quick-rule-card">
-                  <div className="quick-rule-icon">🕒</div>
+                  <div className="quick-rule-icon">
+                    <Clock size={20} />
+                  </div>
                   <div className="quick-rule-content">
                     <h4>Check-in & Checkout</h4>
                     <p>Check-in: After <strong>2:00 PM</strong><br />Checkout: Strictly before <strong>10:00 AM</strong></p>
@@ -522,7 +529,9 @@ export default function UnitPage({ unitId }) {
                 </div>
 
                 <div className="unit-quick-rule-card">
-                  <div className="quick-rule-icon">🚭</div>
+                  <div className="quick-rule-icon">
+                    <CigaretteOff size={20} />
+                  </div>
                   <div className="quick-rule-content">
                     <h4>Strictly Non-Smoking</h4>
                     <p>Smoking indoors is strictly prohibited. Balcony ashtrays provided.</p>
@@ -530,7 +539,9 @@ export default function UnitPage({ unitId }) {
                 </div>
 
                 <div className="unit-quick-rule-card">
-                  <div className="quick-rule-icon">🔇</div>
+                  <div className="quick-rule-icon">
+                    <VolumeX size={20} />
+                  </div>
                   <div className="quick-rule-content">
                     <h4>Quiet Hours</h4>
                     <p>Respect peaceful neighbor hours between <strong>10:00 PM – 7:00 AM</strong>.</p>
@@ -538,7 +549,9 @@ export default function UnitPage({ unitId }) {
                 </div>
 
                 <div className="unit-quick-rule-card">
-                  <div className="quick-rule-icon">🧼</div>
+                  <div className="quick-rule-icon">
+                    <Sparkles size={20} />
+                  </div>
                   <div className="quick-rule-content">
                     <h4>Cleanliness & Towel Care</h4>
                     <p>Towels for personal use only. Please wash kitchen dishes before checkout.</p>
@@ -550,7 +563,10 @@ export default function UnitPage({ unitId }) {
               <button 
                 type="button" 
                 className="unit-open-rules-btn"
-                onClick={() => setIsRulesModalOpen(true)}
+                onClick={() => {
+                  setActiveRulesUnit(unit.id);
+                  setIsRulesModalOpen(true);
+                }}
               >
                 <span>View Full House Rules & Stay Policies</span>
                 <ChevronRight size={18} />
@@ -693,7 +709,7 @@ export default function UnitPage({ unitId }) {
 
             {/* Call to Action Button */}
             <button 
-              onClick={handleBookingCTA} 
+              onClick={handleReserveClick} 
               className="btn-primary booking-card-btn widget-cta-btn"
             >
               {nights > 0 ? 'Reserve' : 'Check Availability'}
@@ -750,13 +766,6 @@ export default function UnitPage({ unitId }) {
                   <span><strong>Free Early Check-In</strong> (subject to suite availability)</span>
                 </li>
               </ul>
-              <div className="privileges-reassurance">
-                <span className="reassurance-label">Guest Verified Quality:</span>
-                <div className="reassurance-badges">
-                  <span className="reassurance-badge">★ 4.98 Superhost on Airbnb</span>
-                  <span className="reassurance-badge">★ 9.4 on Booking.com</span>
-                </div>
-              </div>
             </div>
 
             {(unit.airbnbUrl !== '/' || unit.bookingUrl !== '/') && (
@@ -797,7 +806,7 @@ export default function UnitPage({ unitId }) {
           <span className="price-unit">/ night</span>
           {nights > 0 && <span className="price-nights-label"> · {nights} {nights === 1 ? 'night' : 'nights'}</span>}
         </div>
-        <button onClick={handleBookingCTA} className="btn-primary mobile-cta-button">
+        <button onClick={handleReserveClick} className="btn-primary mobile-cta-button">
           {nights > 0 ? 'Reserve' : 'Select dates'}
         </button>
       </div>
@@ -844,7 +853,9 @@ export default function UnitPage({ unitId }) {
         <div className="unit-rules-modal-overlay" onClick={() => setIsRulesModalOpen(false)}>
           <div className="unit-rules-modal-container glass" onClick={(e) => e.stopPropagation()}>
             <div className="unit-rules-modal-header">
-              <span className="modal-title-text">{unit.name} — House Rules</span>
+              <span className="modal-title-text">
+                {(activeRulesUnit === 'skyview' ? 'Skyview Hideaway' : activeRulesUnit === 'neema' ? 'Neema Haven' : 'Cocoa Retreat')} — House Rules
+              </span>
               <button 
                 type="button" 
                 className="unit-rules-modal-close"
@@ -855,7 +866,7 @@ export default function UnitPage({ unitId }) {
               </button>
             </div>
             <div className="unit-rules-modal-scroll">
-              <GuestHouseRules unitId={unit.id} />
+              <GuestHouseRules unitId={unit.id} onUnitChange={setActiveRulesUnit} />
             </div>
           </div>
         </div>

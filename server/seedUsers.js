@@ -14,16 +14,18 @@ const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 const databaseUrl = `mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
 const USERS_TO_ADD = [
-  { name: 'Carolyne Mutwiri', email: 'carolynemuwiri124@gmail.com', role: 'MANAGER' },
+  { name: 'Carolyne Mutwiri', email: 'carolynemutwiri124@gmail.com', role: 'MANAGER' },
   { name: 'Christine Nechesa', email: 'pearlisprime@gmail.com', role: 'MANAGER' },
   { name: 'Leon Shireku', email: 'leonshireku@gmail.com', role: 'MANAGER' },
   { name: 'Diana Sanya', email: 'dianasanya13@gmail.com', role: 'AGENT' }
 ];
 
 async function seedUsers() {
-  console.log('[SEED USERS]: Starting user creation script...');
-  const passwordHash = await bcrypt.hash('12345', 10);
-  console.log('[SEED USERS]: Generated password hash for "12345":', passwordHash);
+  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD || '12345';
+  if (defaultPassword === '12345') {
+    console.warn('[SEED USERS WARNING]: Using default password "12345". Please set SEED_DEFAULT_PASSWORD in production!');
+  }
+  const passwordHash = await bcrypt.hash(defaultPassword, 10);
 
   let connection;
   try {

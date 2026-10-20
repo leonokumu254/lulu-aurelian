@@ -337,7 +337,7 @@ export const db = {
       if (useMySQL) {
         const [users] = await pool.query('SELECT email FROM users WHERE id = ?', [id]);
         if (users[0]) userEmail = users[0].email;
-        await pool.query('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, id]);
+        await pool.query('UPDATE users SET password_hash = ?, reset_token = NULL, reset_expires_at = NULL WHERE id = ?', [passwordHash, id]);
         if (userEmail) {
           await pool.query('DELETE FROM password_resets WHERE email = ?', [userEmail]);
         }
@@ -345,6 +345,8 @@ export const db = {
         const user = inMemory.users.find(u => u.id === id);
         if (user) {
           user.password_hash = passwordHash;
+          user.reset_token = null;
+          user.reset_expires_at = null;
           inMemory.password_resets = inMemory.password_resets.filter(r => r.email !== user.email.toLowerCase());
         }
       }

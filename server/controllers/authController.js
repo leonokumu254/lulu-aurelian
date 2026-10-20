@@ -266,8 +266,18 @@ export const forgotPassword = async (req, res, next) => {
 
     await db.users.setResetToken(user.email, resetToken, expiresAt);
 
-    const origin = req.headers.origin || 'http://localhost:5173';
-    const resetLink = `${origin}/?reset_token=${resetToken}`;
+    const trustedOrigins = [
+      'https://luluaurelian.co.ke',
+      'https://www.luluaurelian.co.ke',
+      'https://staff.luluaurelian.co.ke',
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ];
+    let baseUrl = process.env.FRONTEND_URL || (env.NODE_ENV === 'production' ? 'https://luluaurelian.co.ke' : 'http://localhost:5173');
+    if (req.headers.origin && trustedOrigins.includes(req.headers.origin)) {
+      baseUrl = req.headers.origin;
+    }
+    const resetLink = `${baseUrl}/?reset_token=${resetToken}`;
 
     emailService.sendPasswordReset(user.email, resetLink).catch(err => {
       console.error('[AUTH CONTROLLER]: Failed to dispatch reset email:', err);

@@ -195,6 +195,19 @@ export const payheroCallback = async (req, res) => {
   try {
     console.log('[PAYHERO WEBHOOK]: Received callback payload', JSON.stringify(req.body));
 
+    // ── Webhook Authentication Verification ──────────────────────────
+    const apiKeyHeader = req.headers['x-api-key'] || req.headers['x-payhero-signature'] || '';
+    const querySecret = req.query.secret || '';
+    const configuredSecret = env.PAYHERO_API_KEY || env.MPESA_CALLBACK_SECRET;
+
+    if (configuredSecret && (apiKeyHeader || querySecret)) {
+      const provided = apiKeyHeader || querySecret;
+      if (provided !== configuredSecret) {
+        console.warn('[PAYHERO WEBHOOK]: Unauthorized callback attempt. Invalid key or secret.');
+        return res.status(401).json({ status: 'unauthorized', message: 'Invalid callback credentials' });
+      }
+    }
+
     const payload = req.body || {};
     const resObj = payload.response || payload.data || payload.results || {};
 

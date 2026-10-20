@@ -784,7 +784,7 @@ class EmailService {
 
   _renderRulesList(rules) {
     if (!rules || !rules.items || !rules.items.length) return '';
-    const title = rules.title || '🏡 House Rules & Stay Guidelines';
+    const title = rules.title || 'House Rules & Stay Guidelines';
     const itemsHtml = rules.items.map(item => `
       <tr style="border-bottom: 1px solid #f0ece3;">
         <td style="padding: 10px 0; font-size: 13px; color: #4a4a4a; line-height: 1.6; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
@@ -806,7 +806,7 @@ class EmailService {
           <tr>
             <td style="padding-top: 14px; text-align: center;">
               <a href="https://www.luluaurelian.co.ke/#/portal" target="_blank" style="color: #cfa873; font-weight: 600; font-size: 12px; text-decoration: underline;">
-                📖 View Complete Digital House Rules in Guest Portal &rarr;
+                View Complete Digital House Rules in Guest Portal &rarr;
               </a>
             </td>
           </tr>

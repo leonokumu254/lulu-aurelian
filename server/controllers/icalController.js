@@ -136,6 +136,28 @@ export const importICalSync = async (req, res, next) => {
     let content = icsContent;
 
     if (!content && icalUrl) {
+      // Validate URL to prevent SSRF against localhost / cloud metadata
+      try {
+        const parsed = new URL(icalUrl);
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+          return res.status(400).json({ error: 'Only HTTP/HTTPS protocols are allowed for iCal feeds.' });
+        }
+        const host = parsed.hostname.toLowerCase();
+        if (
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host === '::1' ||
+          host === '169.254.169.254' ||
+          host.startsWith('10.') ||
+          host.startsWith('192.168.') ||
+          /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)
+        ) {
+          return res.status(400).json({ error: 'Access to internal or private network addresses is restricted.' });
+        }
+      } catch {
+        return res.status(400).json({ error: 'Invalid iCal feed URL format.' });
+      }
+
       const fetchRes = await fetch(icalUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 LuluAurelianCalendarSync/1.0',

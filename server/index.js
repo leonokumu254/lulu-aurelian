@@ -73,11 +73,9 @@ app.use(cors({
       allowedOrigins.includes(origin) ||
       /^https?:\/\/(.+\.)?luluaurelian\.co\.ke$/.test(origin) ||
       /^https?:\/\/(.+\.)?payhero\.co\.ke$/.test(origin) ||
-      /^https?:\/\/lulu-aurelian.*\.vercel\.app$/.test(origin) ||
+      /^https?:\/\/lulu-aurelian(-[a-zA-Z0-9_-]+)?\.vercel\.app$/.test(origin) ||
       /^https?:\/\/102\.203\.116\.227(:\d+)?$/.test(origin) ||
-      /^https?:\/\/(.+\.)?ngrok-free\.app$/.test(origin) ||
-      /^https?:\/\/(.+\.)?ngrok\.app$/.test(origin) ||
-      /^https?:\/\/(.+\.)?ngrok\.io$/.test(origin)
+      (env.NODE_ENV !== 'production' && /^https?:\/\/(.+\.)?ngrok(-free)?\.(app|io)$/.test(origin))
     ) {
       return callback(null, true);
     }

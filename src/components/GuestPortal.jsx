@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Calendar, Clock, CheckCircle, MapPin, Edit3, Bed, Award, Star, 
   History, Lock, Unlock, X, Copy, ShieldCheck, Wifi, Key, 
-  PhoneCall, Loader2, MessageSquare, Check, AlertCircle 
+  PhoneCall, Loader2, MessageSquare, Check, AlertCircle, CigaretteOff, VolumeX, Sparkles 
 } from 'lucide-react';
 import GuestHouseRules from './GuestHouseRules';
 import './GuestPortal.css';
@@ -703,11 +703,19 @@ export default function GuestPortal({ user, onBookNew }) {
                     View Full Guidelines &rarr;
                   </button>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
-                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🕒 In: After 2:00 PM • Out: 10:00 AM</span>
-                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🚭 Strictly No Indoor Smoking</span>
-                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🔇 Quiet Hours: 10 PM - 7 AM</span>
-                  <span style={{ background: 'rgba(0,0,0,0.05)', padding: '0.3rem 0.65rem', borderRadius: '15px', fontSize: '0.78rem', color: '#443f38' }}>🧼 Towels for Personal Use Only</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '0.6rem' }}>
+                  <span className="guest-portal-rule-badge">
+                    <Clock size={13} className="rule-badge-icon" /> In: After 2:00 PM • Out: 10:00 AM
+                  </span>
+                  <span className="guest-portal-rule-badge">
+                    <CigaretteOff size={13} className="rule-badge-icon" /> Strictly No Indoor Smoking
+                  </span>
+                  <span className="guest-portal-rule-badge">
+                    <VolumeX size={13} className="rule-badge-icon" /> Quiet Hours: 10 PM - 7 AM
+                  </span>
+                  <span className="guest-portal-rule-badge">
+                    <Sparkles size={13} className="rule-badge-icon" /> Towels for Personal Use Only
+                  </span>
                 </div>
               </div>
             </>

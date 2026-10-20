@@ -140,15 +140,15 @@ export const UNIT_WELCOME_DETAILS = {
     },
     directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: 16 (Top floor).',
     rules: [
-      '✨ Care & Respect: Please treat the home and furnishings with care. Report any accidental damage as soon as possible.',
-      '🧼 Cleanliness: Wash used dishes before checkout and dispose of trash in designated bins. Towels are strictly for personal drying (not for shoes or spills).',
-      '🔇 Noise & Quiet Hours: Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
-      '🚭 Strictly No Smoking: Smoking or vaping is not permitted inside the apartment or on the balcony.',
-      '👥 Registered Guests: Only registered guests on the reservation are allowed. No unauthorized parties or events.',
-      '🌱 Live Plants: Please do not water or move the indoor plants, and ensure children do not pull at them.',
-      '🌤️ Balcony & Top-Floor Safety: Supervise children on the balcony at all times. Washing machine on 2nd balcony requires express prior permission from host.',
-      '🔐 Safety & Security: Always lock doors and windows when leaving the apartment.',
-      '🛏️ Before Checkout: Check-out is before 10:00 AM. Ensure lights, appliances, and AC/heaters are turned off.'
+      'Care & Respect: Please treat the home and furnishings with care. Report any accidental damage as soon as possible.',
+      'Cleanliness: Wash used dishes before checkout and dispose of trash in designated bins. Towels are strictly for personal drying (not for shoes or spills).',
+      'Noise & Quiet Hours: Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
+      'Strictly No Smoking: Smoking or vaping is not permitted inside the apartment or on the balcony.',
+      'Registered Guests: Only registered guests on the reservation are allowed. No unauthorized parties or events.',
+      'Live Plants: Please do not water or move the indoor plants, and ensure children do not pull at them.',
+      'Balcony & Top-Floor Safety: Supervise children on the balcony at all times. Washing machine on 2nd balcony requires express prior permission from host.',
+      'Safety & Security: Always lock doors and windows when leaving the apartment.',
+      'Before Checkout: Check-out is before 10:00 AM. Ensure lights, appliances, and AC/heaters are turned off.'
     ]
   },
   cocoa: {
@@ -176,13 +176,13 @@ export const UNIT_WELCOME_DETAILS = {
     },
     directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: 19 (First floor).',
     rules: [
-      '✨ Care & Respect: Please treat the home and furnishings with care. Report accidental damage promptly.',
-      '🧼 Cleanliness: Please clean up after yourself in common areas and wash used dishes before checkout.',
-      '🔇 Quiet Hours: Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
-      '🚭 Strictly No Smoking: Smoking or vaping is not permitted inside the property.',
-      '👥 Registered Guests: Only registered guests on the reservation are allowed. No unauthorized parties or events.',
-      '🔐 Security: Always lock doors and windows when leaving the property.',
-      '🛏️ Before Checkout: Check-out is strictly before 10:00 AM. Ensure all lights and appliances are turned off.'
+      'Care & Respect: Please treat the home and furnishings with care. Report accidental damage promptly.',
+      'Cleanliness: Please clean up after yourself in common areas and wash used dishes before checkout.',
+      'Noise & Consideration: Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
+      'Strictly No Smoking: Smoking or vaping is not permitted inside the property.',
+      'Registered Guests: Only registered guests on the reservation are allowed. No unauthorized parties or events.',
+      'Safety & Security: Always lock doors and windows when leaving the property.',
+      'Before Checkout: Check-out is strictly before 10:00 AM. Ensure all lights and appliances are turned off.'
     ]
   },
   neema: {
@@ -209,13 +209,13 @@ export const UNIT_WELCOME_DETAILS = {
     },
     directions: 'Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri. Apartment No: SL- 2 (First floor).',
     rules: [
-      '✨ Care & Respect: Please treat the home and furnishings with care. Report accidental damage promptly.',
-      '🧼 Cleanliness: Kindly clean up after yourself and wash used dishes before checkout.',
-      '🔇 Consideration: Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
-      '🚭 Strictly No Smoking: Smoking or vaping is not permitted inside the property.',
-      '👥 Registered Guests: Only registered guests on the reservation are permitted. No parties or events.',
-      '🔐 Security & Balcony: Ensure the balcony door is securely latched during high winds. Always lock doors when leaving.',
-      '🛏️ Before Checkout: Check-out is strictly before 10:00 AM. Ensure lights and appliances are turned off.'
+      'Care & Respect: Please treat the home and furnishings with care. Report accidental damage promptly.',
+      'Cleanliness: Kindly clean up after yourself and wash used dishes before checkout.',
+      'Noise & Consideration: Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
+      'Strictly No Smoking: Smoking or vaping is not permitted inside the property.',
+      'Registered Guests: Only registered guests on the reservation are permitted. No parties or events.',
+      'Safety & Security: Ensure the balcony door is securely latched during high winds. Always lock doors when leaving.',
+      'Before Checkout: Check-out is strictly before 10:00 AM. Ensure lights and appliances are turned off.'
     ]
   }
 };
@@ -226,14 +226,14 @@ export const UNIT_WELCOME_DETAILS = {
 export const DEFAULT_HOUSE_RULES = {
   skyview: {
     unit_id: 'skyview',
-    title: '🏡 House Rules & Guest Guidelines',
+    title: 'House Rules & Guest Guidelines',
     subtitle: 'Welcome to Lulu Aurelian Apartment Skyview Hideaway!',
     welcomeNote: 'We’re delighted to host you. To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below. These help us maintain the quality of the space and provide a positive experience for all guests!',
-    specialGatewayText: '🌿 Welcome to Lulu Aurelian Apartments - Skyview Gateway\n\nWe’re honored to share our top-floor apartment with you. This space has been prepared with care, thoughtfulness, and a love for comfort. To help us maintain its beauty for all who stay, we kindly ask that you take a moment to read the guidelines below.',
+    specialGatewayText: 'Welcome to Lulu Aurelian Apartments - Skyview Gateway\n\nWe’re honored to share our top-floor apartment with you. This space has been prepared with care, thoughtfulness, and a love for comfort. To help us maintain its beauty for all who stay, we kindly ask that you take a moment to read the guidelines below.',
     sections: [
       {
         id: 'care',
-        icon: '✨',
+        icon: 'care',
         title: '1. Care & Respect for the Property',
         items: [
           'Please treat the home and all furnishings with care.',
@@ -244,7 +244,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'cleanliness',
-        icon: '🧼',
+        icon: 'cleanliness',
         title: '2. Cleanliness',
         items: [
           'Kindly clean up after yourself in common areas and the kitchen.',
@@ -258,7 +258,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'noise',
-        icon: '🔇',
+        icon: 'noise',
         title: '3. Noise & Consideration',
         items: [
           'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
@@ -267,7 +267,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'smoking',
-        icon: '🚭',
+        icon: 'smoking',
         title: '4. Smoking & Vaping',
         items: [
           'Smoking or vaping inside the property is not allowed.',
@@ -276,7 +276,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'guests',
-        icon: '👥',
+        icon: 'guests',
         title: '5. Guests & Visitors',
         items: [
           'Only registered guests are allowed on the property unless otherwise approved.',
@@ -285,7 +285,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'pets',
-        icon: '🐾',
+        icon: 'pets',
         title: '6. Pets (If applicable)',
         items: [
           'Pets are welcome only if approved in advance.',
@@ -294,7 +294,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'safety',
-        icon: '🔐',
+        icon: 'safety',
         title: '7. Safety & Security',
         items: [
           'Always lock doors and windows when leaving the property.',
@@ -304,7 +304,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'checkout',
-        icon: '🛏️',
+        icon: 'checkout',
         title: '8. Before Checkout',
         items: [
           'Please follow the checkout instructions provided.',
@@ -314,7 +314,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'plants',
-        icon: '🌱',
+        icon: 'plants',
         title: 'Live Plants',
         items: [
           'You’ll notice several live plants throughout the apartment. These are part of the home’s atmosphere and are cared for regularly.',
@@ -324,7 +324,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'balcony',
-        icon: '🌤️',
+        icon: 'balcony',
         title: 'Balcony & Safety',
         items: [
           'The apartment sits on the top floor, offering a beautiful view and calming outdoor space.',
@@ -335,7 +335,7 @@ export const DEFAULT_HOUSE_RULES = {
         ]
       }
     ],
-    closingMessage: 'Thank you for respecting the space and being a considerate guest. Your cooperation helps us maintain a wonderful experience for everyone. We hope your time in this space is peaceful, memorable, and filled with beautiful moments! 💛',
+    closingMessage: 'Thank you for respecting the space and being a considerate guest. Your cooperation helps us maintain a wonderful experience for everyone. We hope your time in this space is peaceful, memorable, and filled with beautiful moments!',
     supportContacts: {
       safaricom: '0112299384',
       airtel: '0756958531'
@@ -343,13 +343,13 @@ export const DEFAULT_HOUSE_RULES = {
   },
   cocoa: {
     unit_id: 'cocoa',
-    title: '🏡 House Rules & Guest Guidelines',
+    title: 'House Rules & Guest Guidelines',
     subtitle: 'Welcome to Lulu Aurelian Furnished Apartments - Cocoa Home!',
     welcomeNote: 'We’re delighted to host you and hope you enjoy your stay. To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below.',
     sections: [
       {
         id: 'care',
-        icon: '✨',
+        icon: 'care',
         title: '1. Care & Respect for the Property',
         items: [
           'Please treat the home and all furnishings with care.',
@@ -360,7 +360,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'cleanliness',
-        icon: '🧼',
+        icon: 'cleanliness',
         title: '2. Cleanliness',
         items: [
           'Kindly clean up after yourself in common areas and the kitchen.',
@@ -372,7 +372,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'noise',
-        icon: '🔇',
+        icon: 'noise',
         title: '3. Noise & Consideration',
         items: [
           'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
@@ -381,7 +381,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'smoking',
-        icon: '🚭',
+        icon: 'smoking',
         title: '4. Smoking & Vaping',
         items: [
           'Smoking or vaping inside the property is strictly not allowed.',
@@ -390,7 +390,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'guests',
-        icon: '👥',
+        icon: 'guests',
         title: '5. Guests & Visitors',
         items: [
           'Only registered guests are allowed on the property unless otherwise approved.',
@@ -399,7 +399,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'safety',
-        icon: '🔐',
+        icon: 'safety',
         title: '6. Safety & Security',
         items: [
           'Always lock doors and windows when leaving the property.',
@@ -408,7 +408,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'checkout',
-        icon: '🛏️',
+        icon: 'checkout',
         title: '7. Before Checkout',
         items: [
           'Check-out is strictly before 10:00 AM.',
@@ -417,7 +417,7 @@ export const DEFAULT_HOUSE_RULES = {
         ]
       }
     ],
-    closingMessage: 'Thank you for choosing Cocoa Home and treating this property with care. We hope your stay is peaceful and memorable! 💛',
+    closingMessage: 'Thank you for choosing Cocoa Home and treating this property with care. We hope your stay is peaceful and memorable!',
     supportContacts: {
       safaricom: '0112299384',
       airtel: '0756958531'
@@ -425,13 +425,13 @@ export const DEFAULT_HOUSE_RULES = {
   },
   neema: {
     unit_id: 'neema',
-    title: '🏡 House Rules & Guest Guidelines',
+    title: 'House Rules & Guest Guidelines',
     subtitle: 'Welcome to Lulu Aurelian Furnished Apartments - Neema Home!',
     welcomeNote: 'We’re delighted to host you and hope you enjoy your stay. To ensure a comfortable, safe, and enjoyable stay for everyone, please review the guidelines below.',
     sections: [
       {
         id: 'care',
-        icon: '✨',
+        icon: 'care',
         title: '1. Care & Respect for the Property',
         items: [
           'Please treat the home and all furnishings with care.',
@@ -441,7 +441,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'cleanliness',
-        icon: '🧼',
+        icon: 'cleanliness',
         title: '2. Cleanliness',
         items: [
           'Kindly clean up after yourself in common areas and the kitchen.',
@@ -452,7 +452,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'noise',
-        icon: '🔇',
+        icon: 'noise',
         title: '3. Noise & Consideration',
         items: [
           'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
@@ -461,7 +461,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'smoking',
-        icon: '🚭',
+        icon: 'smoking',
         title: '4. Smoking & Vaping',
         items: [
           'Smoking or vaping inside the property is strictly not allowed.',
@@ -470,7 +470,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'guests',
-        icon: '👥',
+        icon: 'guests',
         title: '5. Guests & Visitors',
         items: [
           'Only registered guests are allowed on the property unless otherwise approved.',
@@ -479,7 +479,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'safety',
-        icon: '🔐',
+        icon: 'safety',
         title: '6. Safety & Security',
         items: [
           'Always lock doors and windows when leaving the property.',
@@ -488,7 +488,7 @@ export const DEFAULT_HOUSE_RULES = {
       },
       {
         id: 'checkout',
-        icon: '🛏️',
+        icon: 'checkout',
         title: '7. Before Checkout',
         items: [
           'Check-out is strictly before 10:00 AM.',
@@ -496,7 +496,7 @@ export const DEFAULT_HOUSE_RULES = {
         ]
       }
     ],
-    closingMessage: 'Thank you for choosing Neema Home and being a wonderful guest. We hope your stay is peaceful and restful! 💛',
+    closingMessage: 'Thank you for choosing Neema Home and being a wonderful guest. We hope your stay is peaceful and restful!',
     supportContacts: {
       safaricom: '0112299384',
       airtel: '0756958531'

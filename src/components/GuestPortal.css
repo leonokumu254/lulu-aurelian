@@ -929,3 +929,29 @@
     box-sizing: border-box;
   }
 }
+
+/* Guest Portal House Rules Quick Access Badges */
+.guest-portal-rule-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(158, 108, 21, 0.08);
+  border: 1px solid rgba(158, 108, 21, 0.18);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--portal-dark, #1D1912);
+  transition: all 0.2s ease;
+}
+
+.guest-portal-rule-badge:hover {
+  background: rgba(158, 108, 21, 0.14);
+  border-color: rgba(158, 108, 21, 0.32);
+}
+
+.guest-portal-rule-badge .rule-badge-icon {
+  color: var(--portal-gold-deep, #9E6C15);
+  flex-shrink: 0;
+}
+

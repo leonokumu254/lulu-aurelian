@@ -352,10 +352,14 @@ export default function App() {
   const handleBookSelect = (suiteId) => {
     setFormData(prev => ({ ...prev, suite: suiteId }));
     
-    // Scroll smoothly to suites listing section
-    const el = document.getElementById('suites');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    const searchParams = new URLSearchParams(window.location.search);
+    const checkIn = searchParams.get('checkIn') || formData.checkIn;
+    const checkOut = searchParams.get('checkOut') || formData.checkOut;
+    
+    if (checkIn && checkOut) {
+      navigateToPage('checkout', { suite: suiteId, checkIn, checkOut });
+    } else {
+      window.location.href = `/${suiteId}`;
     }
   };
 

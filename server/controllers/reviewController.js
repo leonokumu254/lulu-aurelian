@@ -47,13 +47,19 @@ export const submitReview = async (req, res, next) => {
       });
     }
 
+    // Sanitize comment to prevent XSS and limit length
+    const cleanComment = (comment || '')
+      .trim()
+      .slice(0, 1000)
+      .replace(/[<>]/g, '');
+
     // Create Review record
     const newReview = {
       id: crypto.randomUUID(),
       booking_id: booking.id,
       rating: parseInt(rating, 10),
-      comment: comment ? comment.trim() : '',
-      is_published: true, // Default to published
+      comment: cleanComment,
+      is_published: true, // Published for guests with verified tokens
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -90,34 +96,37 @@ export const submitReviewAuthenticated = async (req, res, next) => {
       });
     }
 
+    // Verify guest has an actual fulfilled booking
     let bookings = await db.bookings.findByGuestEmail(req.user.email);
-    let bookingId;
+    const eligibleBooking = (bookings || []).find(b => ['PAID', 'COMPLETED'].includes(b.status));
     
-    if (bookings && bookings.length > 0) {
-      bookingId = bookings[0].id;
-    } else {
-      // Create a dummy booking for the review to satisfy DB foreign key constraint
-      const dummyBooking = {
-        id: crypto.randomUUID(),
-        guest_name: req.user.name,
-        guest_email: req.user.email,
-        guest_phone: null,
-        unit_id: 'skyview',
-        check_in: new Date().toISOString().split('T')[0],
-        check_out: new Date().toISOString().split('T')[0],
-        status: 'PAID',
-        secure_token: crypto.randomUUID()
-      };
-      await db.bookings.create(dummyBooking);
-      bookingId = dummyBooking.id;
+    if (!eligibleBooking) {
+      return res.status(403).json({
+        success: false,
+        error: 'Reviews can only be submitted after completing a stay at Lulu Aurelian Estate.'
+      });
     }
+
+    // Check if this booking was already reviewed
+    const existing = await db.reviews.findByBookingId(eligibleBooking.id);
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        error: 'You have already submitted a review for your recent stay.'
+      });
+    }
+
+    const cleanComment = (comment || '')
+      .trim()
+      .slice(0, 1000)
+      .replace(/[<>]/g, '');
 
     const newReview = {
       id: crypto.randomUUID(),
-      booking_id: bookingId,
+      booking_id: eligibleBooking.id,
       rating: parseInt(rating, 10),
-      comment: comment ? comment.trim() : '',
-      is_published: false, // Default to unpublished for moderation
+      comment: cleanComment,
+      is_published: false, // Moderation hold for general authenticated reviews
       created_at: new Date(),
       updated_at: new Date()
     };

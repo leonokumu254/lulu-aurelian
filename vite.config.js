@@ -37,6 +37,15 @@ function unitPageRoutes() {
 export default defineConfig({
   appType: 'mpa',
 
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      }
+    }
+  },
+
   css: {
     postcss: {
       plugins: [

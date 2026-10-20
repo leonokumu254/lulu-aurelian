@@ -258,7 +258,7 @@ export default function HouseRulesManager({ user }) {
               {rulesData?.sections?.map((section, sIdx) => (
                 <div key={section.id || sIdx} className="section-edit-block">
                   <div className="section-edit-header">
-                    <span className="section-edit-icon">{section.icon || '📌'}</span>
+                    <span className="section-edit-icon"><FileText size={16} /></span>
                     <input 
                       type="text" 
                       className="section-title-input"

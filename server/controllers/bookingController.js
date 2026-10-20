@@ -252,10 +252,11 @@ export const initiatePayment = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Booking record not found.' });
     }
 
-    // ── Auth: either session user or secure_token ownership ─────────────────
-    const hasSessionAuth = req.user && req.user.email;
+    // ── Auth: either session user matches booking guest, staff member, or valid secure_token ownership ──
+    const isOwner = req.user && req.user.email && booking.guest_email && req.user.email.toLowerCase() === booking.guest_email.toLowerCase();
+    const isStaff = req.user && req.user.role && ['MANAGER', 'AGENT'].includes(req.user.role.toUpperCase());
     const hasTokenAuth   = secure_token && booking.secure_token === secure_token;
-    if (!hasSessionAuth && !hasTokenAuth) {
+    if (!isOwner && !isStaff && !hasTokenAuth) {
       return res.status(403).json({ success: false, error: 'Not authorized to pay for this booking.' });
     }
 
@@ -739,6 +740,13 @@ export const cancelBooking = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Booking record not found.' });
     }
 
+    // ── Auth: only booking owner or staff can cancel ─────────────────────────
+    const isOwner = req.user && req.user.email && booking.guest_email && req.user.email.toLowerCase() === booking.guest_email.toLowerCase();
+    const isStaff = req.user && req.user.role && ['MANAGER', 'AGENT'].includes(req.user.role.toUpperCase());
+    if (!isOwner && !isStaff) {
+      return res.status(403).json({ success: false, error: 'You are not authorized to cancel this booking.' });
+    }
+
     const cancellableStatuses = ['PENDING', 'AUTHORIZING'];
     if (!cancellableStatuses.includes(booking.status)) {
       return res.status(400).json({
@@ -935,6 +943,14 @@ export const deleteManualBlock = async (req, res, next) => {
     const booking = await db.bookings.findById(id);
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking or block record not found.' });
+    }
+
+    // Protect actual customer reservations from accidental or unauthorized deletion
+    if (booking.status !== 'BLOCKED') {
+      return res.status(400).json({
+        success: false,
+        error: 'Only manual date blocks can be removed via this endpoint. Paid guest reservations cannot be deleted.'
+      });
     }
 
     await db.bookings.delete(id);

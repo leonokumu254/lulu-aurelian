@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getSuitePrice } from '../utils/pricing';
 import './Listings.css';
 
@@ -55,7 +55,7 @@ const LISTINGS = [
   }
 ];
 
-function ListingCard({ listing }) {
+function ListingCard({ listing, onBookSelect }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = React.useRef(null);
 
@@ -156,10 +156,6 @@ function ListingCard({ listing }) {
             <span className="name-primary">{listing.name.split(' ')[0]}</span>{' '}
             <span className="name-secondary">{listing.name.split(' ').slice(1).join(' ')}</span>
           </h3>
-          <div className="bnb-card-rating">
-            <Star size={13} fill="#a3721d" stroke="#a3721d" />
-            <span>4.98</span>
-          </div>
         </div>
 
         <p className="bnb-card-location">{listing.tagline}</p>
@@ -179,8 +175,17 @@ function ListingCard({ listing }) {
           )}
         </div>
 
-        <div className="bnb-card-action">
-          <span className="bnb-action-label">Reserve Suite</span>
+        <div 
+          className="bnb-card-action"
+          onClick={(e) => {
+            if (nights > 0 && onBookSelect) {
+              e.preventDefault();
+              e.stopPropagation();
+              onBookSelect(listing.id);
+            }
+          }}
+        >
+          <span className="bnb-action-label">{nights > 0 ? 'Book Now' : 'Reserve Suite'}</span>
           <span className="bnb-action-arrow">→</span>
         </div>
       </div>
@@ -202,7 +207,7 @@ export default function Listings({ onBookSelect }) {
 
         <div className="bnb-grid">
           {LISTINGS.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
+            <ListingCard key={listing.id} listing={listing} onBookSelect={onBookSelect} />
           ))}
         </div>
       </div>

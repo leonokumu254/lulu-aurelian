@@ -10,6 +10,10 @@ export const subscribe = async (req, res, next) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail) || normalizedEmail.length > 100) {
+      return res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
+    }
 
     // Check if subscriber profile exists
     const subscriber = await db.newsletters.findByEmail(normalizedEmail);

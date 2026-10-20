@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { db } from '../config/db.js';
-import { authMiddleware } from '../middleware/auth.js';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 
 const router = Router();
 
-// Get all users – used by manager/agent portals
-router.get('/', authMiddleware, async (req, res) => {
+// Get all users – used by manager/agent portals (restricted to staff)
+router.get('/', authMiddleware, requireRole('MANAGER', 'AGENT'), async (req, res) => {
   try {
     const users = await db.users.getAll();
     // Expose only needed fields (avoid sending password hashes)
