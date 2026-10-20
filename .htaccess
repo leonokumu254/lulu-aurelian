@@ -1,4 +1,6 @@
 # Apache Rewrite Rules for Lulu Aurelian Estate
+ErrorDocument 404 /404.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -6,7 +8,7 @@
   # Rewrite clean URLs to corresponding .html files with query string append (QSA)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^/?(skyview|cocoa|neema)/?$ $1.html [L,QSA]
+  RewriteRule ^/?(skyview|cocoa|neema|404)/?$ $1.html [L,QSA]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

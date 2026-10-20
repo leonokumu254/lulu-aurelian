@@ -563,6 +563,10 @@ export const EMAIL_TEMPLATES = {
     const inDateReadable = formatDateEAT(booking.check_in);
     const outDateReadable = formatDateEAT(booking.check_out);
 
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+    const wifiSSID = (!isDummy(booking.wifi_ssid)) ? booking.wifi_ssid.trim() : (details.wifiUsername || details.wifiSSID);
+    const wifiPass = (!isDummy(booking.wifi_password)) ? booking.wifi_password.trim() : (details.wifiPassword || details.wifiPass);
+
     const todayEAT = getTodayEAT();
     const checkInNorm = normalizeDateEAT(booking.check_in);
     const currentHourEAT = getCurrentHourEAT();
@@ -575,7 +579,7 @@ Since your check-in is today (<strong>${inDateReadable}</strong>) and payment ha
 Check-in is officially as from <strong>2:00 PM EAT</strong>, but guests can access the unit early from 1:00 PM EAT. <strong>Your full check-in details (lock box code, apartment number, and Wi-Fi credentials) will be sent to you as from 1:00 PM EAT</strong> on your arrival day (${inDateReadable}).`;
 
     return {
-      text: `Dear ${booking.guest_name}, thank you for your payment! Your reservation for ${details.fullName || details.name} is fully confirmed. Stay Dates: ${inDateReadable} to ${outDateReadable}. Location: ${details.location}. Check-in: After 2:00 PM EAT. Check-out: Before 10:00 AM EAT.`,
+      text: `Dear ${booking.guest_name}, thank you for your payment! Your reservation for ${details.fullName || details.name} is fully confirmed. Stay Dates: ${inDateReadable} to ${outDateReadable}. Location: ${details.location}. Wi-Fi Network: ${wifiSSID} | Password: ${wifiPass}. Check-in: After 2:00 PM EAT. Check-out: Before 10:00 AM EAT.`,
       title: 'Payment Successful - Booking Confirmed',
       subject: `Payment Confirmed: Your Stay at ${details.name} is Secured! (Ref #${booking.id.substring(0, 8).toUpperCase()})`,
       preheader: `Payment received successfully! Stay dates: ${inDateReadable} to ${outDateReadable}.`,
@@ -607,10 +611,11 @@ Check-in is officially as from <strong>2:00 PM EAT</strong>, but guests can acce
   FULFILLMENT_CREDENTIALS: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    const lockboxCode = booking.passcode || '';
-    const aptNumber = booking.house_number || details.apartmentNo || '';
-    const wifiSSID = booking.wifi_ssid || details.wifiUsername || details.wifiSSID;
-    const wifiPass = booking.wifi_password || details.wifiPassword || details.wifiPass;
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+    const lockboxCode = (!isDummy(booking.passcode)) ? booking.passcode.trim() : (details.passcode || '');
+    const aptNumber = (booking.house_number && String(booking.house_number).trim()) ? String(booking.house_number).trim() : (details.apartmentNo || details.house_number || '');
+    const wifiSSID = (!isDummy(booking.wifi_ssid)) ? booking.wifi_ssid.trim() : (details.wifiUsername || details.wifiSSID);
+    const wifiPass = (!isDummy(booking.wifi_password)) ? booking.wifi_password.trim() : (details.wifiPassword || details.wifiPass);
 
     let textMessage = '';
     let credentialItems = [];
@@ -1195,10 +1200,11 @@ View and manage on Staff Portal: https://www.luluaurelian.co.ke/#/portal`;
   CHECK_IN_CREDENTIALS: (booking) => {
     const unitId = (booking.unit_id || 'skyview').toLowerCase();
     const details = UNIT_WELCOME_DETAILS[unitId] || UNIT_WELCOME_DETAILS.skyview;
-    const lockboxCode = booking.passcode || '';
-    const aptNumber = booking.house_number || details.apartmentNo || '';
-    const wifiSSID = booking.wifi_ssid || details.wifiUsername || details.wifiSSID;
-    const wifiPass = booking.wifi_password || details.wifiPassword || details.wifiPass;
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+    const lockboxCode = (!isDummy(booking.passcode)) ? booking.passcode.trim() : (details.passcode || '');
+    const aptNumber = (booking.house_number && String(booking.house_number).trim()) ? String(booking.house_number).trim() : (details.apartmentNo || details.house_number || '');
+    const wifiSSID = (!isDummy(booking.wifi_ssid)) ? booking.wifi_ssid.trim() : (details.wifiUsername || details.wifiSSID);
+    const wifiPass = (!isDummy(booking.wifi_password)) ? booking.wifi_password.trim() : (details.wifiPassword || details.wifiPass);
 
     if (unitId === 'skyview') {
       return `Welcome to Lulu Aurenian Furnished Apartments- SkyView!

@@ -84,16 +84,18 @@ export default function BookingStatusWidget({ user }) {
       <div className="container" data-aos="fade-up">
         <div className="status-widget-container">
           <div className="status-widget-header">
-            <h2>Welcome Back, {user.name.split(' ')[0]}</h2>
+            <h2>Welcome Back, {user?.name ? user.name.split(' ')[0] : 'Guest'}</h2>
             <p>Here is the status of your current reservation.</p>
           </div>
 
           <div className="status-result-card animate-slide-up" style={{ marginTop: 0 }}>
             <div className="status-result-header">
-              {getStatusIcon(activeBooking.status)}
+              {getStatusIcon(activeBooking?.status)}
               <div className="status-text">
                 <span className="label">Current Status</span>
-                <strong className={`status-badge ${activeBooking.status.toLowerCase()}`}>{activeBooking.status === 'PAID' ? 'Confirmed (Paid)' : activeBooking.status === 'COMPLETED' ? 'Completed' : activeBooking.status}</strong>
+                <strong className={`status-badge ${(activeBooking?.status || '').toLowerCase()}`}>
+                  {activeBooking?.status === 'PAID' ? 'Confirmed (Paid)' : activeBooking?.status === 'COMPLETED' ? 'Completed' : (activeBooking?.status || 'PENDING')}
+                </strong>
               </div>
             </div>
             

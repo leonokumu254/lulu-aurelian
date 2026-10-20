@@ -1,0 +1,471 @@
+/* ==============================================================================
+   LULU AURELIAN ESTATE — LUXURY 404 NOT FOUND STYLES
+   ============================================================================== */
+
+.not-found-page {
+  min-height: 80vh;
+  padding: 5rem 1rem 6rem;
+  background-color: var(--color-bg, #F3F3E6);
+  color: var(--color-dark, #1D1912);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background Subtle Radial Glow */
+.not-found-page::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(238, 205, 92, 0.08) 0%, rgba(243, 243, 230, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.not-found-hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 4.5rem;
+}
+
+/* Brand Badge */
+.not-found-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 1rem 0.45rem 0.55rem;
+  background: #FFFFFF;
+  border: 1px solid rgba(158, 108, 21, 0.22);
+  border-radius: 50px;
+  box-shadow: 0 4px 14px rgba(29, 25, 18, 0.04);
+  margin-bottom: 2rem;
+}
+
+.badge-crest {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1D1912;
+  color: #EECD5C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.badge-text {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: #9E6C15;
+  text-transform: uppercase;
+}
+
+/* 404 Large Code */
+.not-found-code-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.not-found-code {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: clamp(6.5rem, 16vw, 11rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #1D1912 25%, #9E6C15 65%, #EECD5C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 10px 30px rgba(158, 108, 21, 0.12);
+  margin: 0;
+  user-select: none;
+}
+
+/* Shimmer Bar Under 404 */
+.not-found-shimmer {
+  width: 90px;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, #9E6C15, #EECD5C, transparent);
+  margin: 1.25rem auto 1.5rem;
+  border-radius: 2px;
+}
+
+/* Headings */
+.not-found-title {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: clamp(1.8rem, 4vw, 2.75rem);
+  font-weight: 600;
+  color: #1D1912;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.15rem;
+  line-height: 1.2;
+}
+
+.not-found-description {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+  line-height: 1.75;
+  color: rgba(29, 25, 18, 0.72);
+  max-width: 620px;
+  margin: 0 auto 2.5rem;
+}
+
+/* Action Buttons */
+.not-found-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-not-found-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.95rem 1.85rem;
+  background-color: #1D1912;
+  color: #FFFFFF;
+  border: 1px solid #1D1912;
+  border-radius: 8px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 8px 20px rgba(29, 25, 18, 0.15);
+}
+
+.btn-not-found-primary:hover {
+  background-color: #9E6C15;
+  border-color: #9E6C15;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(158, 108, 21, 0.25);
+}
+
+.btn-not-found-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.95rem 1.75rem;
+  background-color: transparent;
+  color: #1D1912;
+  border: 1px solid rgba(29, 25, 18, 0.28);
+  border-radius: 8px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.btn-not-found-secondary:hover {
+  background-color: #FFFFFF;
+  border-color: #9E6C15;
+  color: #9E6C15;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.btn-not-found-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.95rem 1.65rem;
+  background-color: rgba(238, 205, 92, 0.15);
+  color: #8C5F12;
+  border: 1px solid rgba(158, 108, 21, 0.35);
+  border-radius: 8px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.btn-not-found-whatsapp:hover {
+  background-color: #25D366;
+  border-color: #25D366;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+}
+
+/* ==============================================================================
+   SUITES SHOWCASE SECTION
+   ============================================================================== */
+
+.not-found-suites-section {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(29, 25, 18, 0.08);
+}
+
+.suites-section-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.gold-accent-line {
+  width: 44px;
+  height: 2px;
+  background-color: #9E6C15;
+  margin: 0 auto 1rem;
+}
+
+.suites-section-title {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: #1D1912;
+  margin-bottom: 0.5rem;
+}
+
+.suites-section-subtitle {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.92rem;
+  color: rgba(29, 25, 18, 0.65);
+}
+
+/* Suites Grid */
+.not-found-suites-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+  margin-bottom: 3rem;
+}
+
+.not-found-suite-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(29, 25, 18, 0.07);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(29, 25, 18, 0.04);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  flex-direction: column;
+}
+
+.not-found-suite-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(29, 25, 18, 0.1);
+  border-color: rgba(158, 108, 21, 0.3);
+}
+
+.suite-card-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: #E7E3D8;
+}
+
+.suite-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.not-found-suite-card:hover .suite-card-image {
+  transform: scale(1.06);
+}
+
+.suite-card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  background: rgba(29, 25, 18, 0.82);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.suite-card-content {
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.suite-card-name {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1D1912;
+  margin-bottom: 0.4rem;
+}
+
+.suite-card-view {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.82rem;
+  color: rgba(29, 25, 18, 0.62);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.suite-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(29, 25, 18, 0.06);
+}
+
+.suite-card-rate {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #9E6C15;
+}
+
+.suite-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1D1912;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.suite-card-cta:hover {
+  color: #9E6C15;
+  transform: translateX(3px);
+}
+
+/* ==============================================================================
+   QUICKBAR
+   ============================================================================== */
+
+.not-found-quickbar {
+  background: #FFFFFF;
+  border: 1px solid rgba(158, 108, 21, 0.2);
+  border-radius: 12px;
+  padding: 1.4rem 1.8rem;
+  box-shadow: 0 8px 24px rgba(29, 25, 18, 0.04);
+}
+
+.quickbar-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.quickbar-icon {
+  color: #9E6C15;
+  flex-shrink: 0;
+}
+
+.quickbar-item strong {
+  display: block;
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: 1.15rem;
+  color: #1D1912;
+  margin-bottom: 0.15rem;
+}
+
+.quickbar-item p {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.84rem;
+  color: rgba(29, 25, 18, 0.65);
+  margin: 0;
+}
+
+.quickbar-btn {
+  padding: 0.65rem 1.35rem;
+  background-color: transparent;
+  color: #9E6C15;
+  border: 1.5px solid #9E6C15;
+  border-radius: 6px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.quickbar-btn:hover {
+  background-color: #9E6C15;
+  color: #FFFFFF;
+}
+
+/* ==============================================================================
+   RESPONSIVENESS
+   ============================================================================== */
+
+@media (max-width: 992px) {
+  .not-found-suites-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .not-found-page {
+    padding: 3.5rem 1rem 4rem;
+  }
+
+  .not-found-suites-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-not-found-primary,
+  .btn-not-found-secondary,
+  .btn-not-found-whatsapp {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .quickbar-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .quickbar-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

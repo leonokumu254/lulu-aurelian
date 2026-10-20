@@ -209,9 +209,13 @@ class CronService {
           if (outDateStr) {
             const checkoutTime = new Date(`${outDateStr}T07:00:00.000Z`); // 10:00 AM EAT
             if (now >= checkoutTime) {
-              await db.bookings.updateStatus(b.id, 'COMPLETED');
-              completedCount++;
-              console.log(`[CRON COMPLETE]: ✅ Booking ${b.id} (${b.guest_name}) transitioned to COMPLETED (Checked out on ${outDateStr}).`);
+              try {
+                await db.bookings.updateStatus(b.id, 'COMPLETED');
+                completedCount++;
+                console.log(`[CRON COMPLETE]: ✅ Booking ${b.id} (${b.guest_name}) transitioned to COMPLETED (Checked out on ${outDateStr}).`);
+              } catch (upErr) {
+                console.warn(`[CRON WARN]: Could not transition booking ${b.id} to COMPLETED:`, upErr.message);
+              }
             }
           }
         }

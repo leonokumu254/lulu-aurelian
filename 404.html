@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F3F3E6" />
+
+    <!-- Google Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/lulu_aurelian_favicon.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Primary Meta -->
+    <title>404 — Sanctuary Not Found | Lulu Aurelian Estate</title>
+    <meta name="description" content="The page or suite you are searching for does not exist on Lulu Aurelian Estate. Explore our luxury residences in Nyeri, Kenya or contact our host concierge." />
+    <meta name="robots" content="noindex, follow" />
+
+    <style>
+      :root {
+        --color-dark: #1D1912;
+        --color-bg: #F3F3E6;
+        --color-gold-bright: #EECD5C;
+        --color-gold-muted: #D2A63C;
+        --color-gold-deep: #9E6C15;
+        --color-white: #FFFFFF;
+        --font-serif: 'Cormorant Garamond', Georgia, serif;
+        --font-sans: 'Montserrat', Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-dark);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow-x: hidden;
+      }
+
+      /* Navigation Bar */
+      .nav-bar {
+        padding: 1.5rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(29, 25, 18, 0.08);
+        background: rgba(243, 243, 230, 0.95);
+        backdrop-filter: blur(10px);
+      }
+
+      .brand-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .brand-crest {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--color-dark);
+        color: var(--color-gold-bright);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-serif);
+        font-weight: 700;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .brand-title {
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        line-height: 1.1;
+      }
+
+      .brand-sub {
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        letter-spacing: 2.5px;
+        color: var(--color-gold-deep);
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .nav-actions a {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-dark);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .nav-actions a:hover {
+        color: var(--color-gold-deep);
+      }
+
+      /* Main Hero */
+      .main-content {
+        flex: 1;
+        padding: 4rem 1.5rem 5rem;
+        max-width: 1140px;
+        margin: 0 auto;
+        width: 100%;
+        text-align: center;
+        position: relative;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        background: var(--color-white);
+        border: 1px solid rgba(158, 108, 21, 0.22);
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1.8px;
+        color: var(--color-gold-deep);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      }
+
+      .error-code {
+        font-family: var(--font-serif);
+        font-size: clamp(6.5rem, 16vw, 10.5rem);
+        font-weight: 700;
+        line-height: 0.9;
+        letter-spacing: 4px;
+        background: linear-gradient(135deg, var(--color-dark) 25%, var(--color-gold-deep) 65%, var(--color-gold-bright) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        user-select: none;
+        margin-bottom: 0.5rem;
+      }
+
+      .shimmer-line {
+        width: 80px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--color-gold-deep), var(--color-gold-bright), transparent);
+        margin: 1rem auto 1.5rem;
+      }
+
+      .error-title {
+        font-family: var(--font-serif);
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--color-dark);
+      }
+
+      .error-desc {
+        font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+        color: rgba(29, 25, 18, 0.72);
+        max-width: 620px;
+        margin: 0 auto 2.25rem;
+        line-height: 1.7;
+      }
+
+      /* Buttons */
+      .action-btns {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 4.5rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.9rem 1.8rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .btn-primary {
+        background-color: var(--color-dark);
+        color: var(--color-white);
+        border: 1px solid var(--color-dark);
+        box-shadow: 0 8px 20px rgba(29, 25, 18, 0.15);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--color-gold-deep);
+        border-color: var(--color-gold-deep);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(158, 108, 21, 0.25);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: var(--color-dark);
+        border: 1px solid rgba(29, 25, 18, 0.28);
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--color-white);
+        border-color: var(--color-gold-deep);
+        color: var(--color-gold-deep);
+        transform: translateY(-2px);
+      }
+
+      .btn-whatsapp {
+        background-color: rgba(238, 205, 92, 0.15);
+        color: #8C5F12;
+        border: 1px solid rgba(158, 108, 21, 0.35);
+      }
+
+      .btn-whatsapp:hover {
+        background-color: #25D366;
+        border-color: #25D366;
+        color: #FFFFFF;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+      }
+
+      /* Suite Showcase Cards */
+      .suites-header {
+        border-top: 1px solid rgba(29, 25, 18, 0.08);
+        padding-top: 3rem;
+        margin-bottom: 2rem;
+      }
+
+      .suites-header h3 {
+        font-family: var(--font-serif);
+        font-size: 1.85rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+      }
+
+      .suites-header p {
+        font-size: 0.92rem;
+        color: rgba(29, 25, 18, 0.65);
+      }
+
+      .suites-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.75rem;
+        text-align: left;
+      }
+
+      .suite-card {
+        background: var(--color-white);
+        border: 1px solid rgba(29, 25, 18, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(29, 25, 18, 0.04);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .suite-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 36px rgba(29, 25, 18, 0.1);
+        border-color: rgba(158, 108, 21, 0.3);
+      }
+
+      .suite-img-wrap {
+        position: relative;
+        height: 190px;
+        overflow: hidden;
+        background-color: #E7E3D8;
+      }
+
+      .suite-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .suite-card:hover .suite-img {
+        transform: scale(1.06);
+      }
+
+      .suite-pill {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 4px 10px;
+        background: rgba(29, 25, 18, 0.85);
+        color: #FFFFFF;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 4px;
+      }
+
+      .suite-info {
+        padding: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+
+      .suite-info h4 {
+        font-family: var(--font-serif);
+        font-size: 1.35rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .suite-info p {
+        font-size: 0.82rem;
+        color: rgba(29, 25, 18, 0.65);
+        margin-bottom: 1.25rem;
+        flex-grow: 1;
+      }
+
+      .suite-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(29, 25, 18, 0.06);
+      }
+
+      .suite-rate {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--color-gold-deep);
+      }
+
+      .suite-link-text {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--color-dark);
+      }
+
+      /* Footer */
+      footer {
+        background-color: var(--color-dark);
+        color: var(--color-white);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        font-size: 0.82rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      footer a {
+        color: var(--color-gold-bright);
+        text-decoration: none;
+      }
+
+      @media (max-width: 860px) {
+        .suites-grid {
+          grid-template-columns: 1fr;
+        }
+        .action-btns {
+          flex-direction: column;
+        }
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Navigation -->
+    <header class="nav-bar">
+      <a href="/" class="brand-link">
+        <div class="brand-crest">LA</div>
+        <div>
+          <div class="brand-title">LULU AURELIAN</div>
+          <div class="brand-sub">ESTATE</div>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <a href="/">Grand Foyer</a>
+        <a href="/#suites">Our Suites</a>
+        <a href="/#portal">Guest Portal</a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="badge">404 &bull; SANCTUARY NOT FOUND</div>
+
+      <div class="error-code">404</div>
+      <div class="shimmer-line"></div>
+
+      <h1 class="error-title">The Sanctuary You Seek Is Elusive</h1>
+      <p class="error-desc">
+        It appears the door you are trying to open does not exist, or this suite has been secluded from the public registry. 
+        Allow our concierge to guide you back to refined comfort.
+      </p>
+
+      <div class="action-btns">
+        <a href="/" class="btn btn-primary">
+          <span>← Return to Grand Foyer</span>
+        </a>
+        <a href="/#/booking" class="btn btn-secondary">
+          <span>📅 Check Availability</span>
+        </a>
+        <a href="https://wa.me/254112299384?text=Hello%20Lulu%20Aurelian%20Estate%2C%20I%20need%20assistance%20finding%20a%20suite." class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">
+          <span>💬 Contact Concierge</span>
+        </a>
+      </div>
+
+      <!-- Quick Showcase -->
+      <section class="suites-header">
+        <h3>Explore Our Luxury Residences</h3>
+        <p>Step directly into one of our three bespoke furnished apartments in Nyeri:</p>
+      </section>
+
+      <div class="suites-grid">
+        <a href="/skyview" class="suite-card">
+          <div class="suite-img-wrap">
+            <img src="/assets/skyview/skyview_1.jpg" alt="Skyview Hideaway" class="suite-img" loading="lazy" />
+            <span class="suite-pill">Penthouse (Top Floor)</span>
+          </div>
+          <div class="suite-info">
+            <h4>Skyview Hideaway</h4>
+            <p>270° Panoramic Mt. Kenya views, private balcony, workspace, 2 King bedrooms.</p>
+            <div class="suite-foot">
+              <span class="suite-rate">From KES 5,500 / night</span>
+              <span class="suite-link-text">Explore Suite →</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/cocoa" class="suite-card">
+          <div class="suite-img-wrap">
+            <img src="/assets/cocoa/cocoa_1.jpg" alt="Cocoa Retreat" class="suite-img" loading="lazy" />
+            <span class="suite-pill">First Floor Sanctuary</span>
+          </div>
+          <div class="suite-info">
+            <h4>Cocoa Retreat</h4>
+            <p>Warm earthy cocoa ambiance, pine forest views, fully equipped kitchen.</p>
+            <div class="suite-foot">
+              <span class="suite-rate">From KES 5,000 / night</span>
+              <span class="suite-link-text">Explore Suite →</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/neema" class="suite-card">
+          <div class="suite-img-wrap">
+            <img src="/assets/Neema/neema_1.jpeg" alt="Neema Haven" class="suite-img" loading="lazy" />
+            <span class="suite-pill">First Floor Suite</span>
+          </div>
+          <div class="suite-info">
+            <h4>Neema Haven</h4>
+            <p>Sunlit minimalist tranquility for sunset lovers with modern aesthetic luxury.</p>
+            <div class="suite-foot">
+              <span class="suite-rate">From KES 5,000 / night</span>
+              <span class="suite-link-text">Explore Suite →</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 Lulu Aurelian Estate. Skyline Lifestyle Apartments, Nyeri, Kenya. <a href="/">Return Home</a> &bull; <a href="/#/portal">Guest Portal</a> &bull; <a href="https://wa.me/254112299384">Concierge</a></p>
+    </footer>
+  </body>
+</html>

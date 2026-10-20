@@ -17,6 +17,10 @@
       "destination": "/neema.html"
     },
     {
+      "source": "/404",
+      "destination": "/404.html"
+    },
+    {
       "source": "/unit/skyview",
       "destination": "/skyview.html"
     },

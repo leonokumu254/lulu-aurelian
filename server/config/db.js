@@ -205,6 +205,13 @@ if (useMySQL) {
           await pool.query("ALTER TABLE bookings ADD COLUMN total_price DECIMAL(10,2) NULL");
           console.log('[DB MIGRATE]: Added total_price column to bookings table.');
         }
+
+        // Ensure status ENUM includes 'COMPLETED'
+        const statusCol = bookingCols.find(c => c.Field === 'status');
+        if (statusCol && !statusCol.Type.includes('COMPLETED')) {
+          await pool.query("ALTER TABLE bookings MODIFY COLUMN status ENUM('PENDING', 'AUTHORIZING', 'PAID', 'COMPLETED', 'EXPIRED', 'PAYMENT_FAILED', 'CANCELLED') NOT NULL DEFAULT 'PENDING'");
+          console.log("[DB MIGRATE]: Updated bookings.status ENUM to include 'COMPLETED'.");
+        }
       } catch (bErr) {
         console.warn('[DB MIGRATE]: Could not alter bookings table:', bErr.message);
       }
@@ -501,16 +508,41 @@ export const db = {
     updateStatus: async (id, status, { approved_by, approved_at } = {}) => {
       const now = new Date();
       if (useMySQL) {
-        if (approved_by) {
-          await pool.query(
-            'UPDATE bookings SET status = ?, approved_by = ?, approved_at = ?, updated_at = ? WHERE id = ?',
-            [status, approved_by, approved_at || now, now, id]
-          );
-        } else {
-          await pool.query(
-            'UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?',
-            [status, now, id]
-          );
+        try {
+          if (approved_by) {
+            await pool.query(
+              'UPDATE bookings SET status = ?, approved_by = ?, approved_at = ?, updated_at = ? WHERE id = ?',
+              [status, approved_by, approved_at || now, now, id]
+            );
+          } else {
+            await pool.query(
+              'UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?',
+              [status, now, id]
+            );
+          }
+        } catch (dbErr) {
+          if (dbErr.message && dbErr.message.includes("Data truncated for column 'status'")) {
+            console.warn("[DB RECOVERY]: Altering bookings.status ENUM to include 'COMPLETED'...");
+            try {
+              await pool.query("ALTER TABLE bookings MODIFY COLUMN status ENUM('PENDING', 'AUTHORIZING', 'PAID', 'COMPLETED', 'EXPIRED', 'PAYMENT_FAILED', 'CANCELLED') NOT NULL DEFAULT 'PENDING'");
+              if (approved_by) {
+                await pool.query(
+                  'UPDATE bookings SET status = ?, approved_by = ?, approved_at = ?, updated_at = ? WHERE id = ?',
+                  [status, approved_by, approved_at || now, now, id]
+                );
+              } else {
+                await pool.query(
+                  'UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?',
+                  [status, now, id]
+                );
+              }
+            } catch (retryErr) {
+              console.error('[DB RECOVERY FAILED]:', retryErr.message);
+              throw dbErr;
+            }
+          } else {
+            throw dbErr;
+          }
         }
         // Fetch fresh copy post-update
         const [rows] = await pool.query('SELECT * FROM bookings WHERE id = ?', [id]);
@@ -894,34 +926,56 @@ export const db = {
   unit_settings: {
     getSettings: async (unitId) => {
       const cleanId = (unitId || 'skyview').toLowerCase();
-      if (useMySQL) {
-        const [rows] = await pool.query('SELECT * FROM unit_settings WHERE unit_id = ?', [cleanId]);
-        if (rows.length > 0) {
-          return rows[0];
-        }
-        const defaults = {
-          skyview: { passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
-          cocoa: { passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
-          neema: { passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
-        };
-        const def = defaults[cleanId] || defaults.skyview;
-        await pool.query(
-          'INSERT IGNORE INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password) VALUES (?, ?, ?, ?, ?)',
-          [cleanId, def.passcode, def.house_number, def.wifi_ssid, def.wifi_password]
-        );
-        return { unit_id: cleanId, ...def };
-      }
-      const found = inMemory.unit_settings.find(u => u.unit_id === cleanId);
-      if (found) return found;
-
       const defaults = {
         skyview: { passcode: '9010', house_number: '16', wifi_ssid: 'Pearl_16', wifi_password: 'PearlSL_16' },
         cocoa: { passcode: '2050', house_number: '19', wifi_ssid: 'MK_Ny-0', wifi_password: 'CMutwiri' },
         neema: { passcode: '2428', house_number: 'SL- 2', wifi_ssid: 'AURELIAN', wifi_password: 'Lulu_26#' }
       };
-      const def = { unit_id: cleanId, ...(defaults[cleanId] || defaults.skyview) };
-      inMemory.unit_settings.push(def);
-      return def;
+      const def = defaults[cleanId] || defaults.skyview;
+      const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+
+      if (useMySQL) {
+        const [rows] = await pool.query('SELECT * FROM unit_settings WHERE unit_id = ?', [cleanId]);
+        if (rows.length > 0) {
+          const row = rows[0];
+          let needsUpdate = false;
+          if (isDummy(row.wifi_ssid)) { row.wifi_ssid = def.wifi_ssid; needsUpdate = true; }
+          if (isDummy(row.wifi_password)) { row.wifi_password = def.wifi_password; needsUpdate = true; }
+          if (!row.house_number || row.house_number === '601' || row.house_number === '402' || row.house_number === '201') {
+            row.house_number = def.house_number;
+            needsUpdate = true;
+          }
+          if (isDummy(row.passcode)) { row.passcode = def.passcode; needsUpdate = true; }
+
+          if (needsUpdate) {
+            await pool.query(
+              'UPDATE unit_settings SET wifi_ssid = ?, wifi_password = ?, house_number = ?, passcode = ? WHERE unit_id = ?',
+              [row.wifi_ssid, row.wifi_password, row.house_number, row.passcode, cleanId]
+            ).catch(() => {});
+          }
+          return row;
+        }
+        await pool.query(
+          'INSERT IGNORE INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password) VALUES (?, ?, ?, ?, ?)',
+          [cleanId, def.passcode, def.house_number, def.wifi_ssid, def.wifi_password]
+        ).catch(() => {});
+        return { unit_id: cleanId, ...def };
+      }
+
+      const found = inMemory.unit_settings.find(u => u.unit_id === cleanId);
+      if (found) {
+        if (isDummy(found.wifi_ssid)) found.wifi_ssid = def.wifi_ssid;
+        if (isDummy(found.wifi_password)) found.wifi_password = def.wifi_password;
+        if (!found.house_number || found.house_number === '601' || found.house_number === '402' || found.house_number === '201') {
+          found.house_number = def.house_number;
+        }
+        if (isDummy(found.passcode)) found.passcode = def.passcode;
+        return found;
+      }
+
+      const item = { unit_id: cleanId, ...def };
+      inMemory.unit_settings.push(item);
+      return item;
     },
 
     getPasscode: async (unitId) => {

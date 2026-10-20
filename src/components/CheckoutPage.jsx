@@ -928,14 +928,14 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                         Welcome to Lulu Aurelian
                       </h3>
                       <p className="payment-status-desc" style={{ maxWidth: '520px', margin: '0 auto 1.5rem', color: '#4b5563', lineHeight: '1.6', fontSize: '0.95rem' }}>
-                        Thank you, <strong>{createdBooking?.guestName || `${guestDetails.firstName} ${guestDetails.lastName}`}</strong>. Your reservation for <strong>{createdBooking?.suiteName || suite.name}</strong> is verified and locked in.
+                        Thank you, <strong>{createdBooking?.guestName || `${guestDetails?.firstName || ''} ${guestDetails?.lastName || ''}`.trim() || 'Valued Guest'}</strong>. Your reservation for <strong>{createdBooking?.suiteName || suite?.name || 'Your Suite'}</strong> is verified and locked in.
                       </p>
 
                       <div style={{ background: 'rgba(163, 114, 29, 0.05)', border: '1.5px solid rgba(163, 114, 29, 0.25)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', textAlign: 'left' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.5rem' }}>
                           <span style={{ fontSize: '0.8rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Booking Reference</span>
                           <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1rem', color: '#1D1912', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: '4px' }}>
-                            #{createdBooking?.bookingId ? createdBooking.bookingId.substring(0, 8).toUpperCase() : 'LULU-CONFIRMED'}
+                            #{createdBooking?.bookingId ? String(createdBooking.bookingId).substring(0, 8).toUpperCase() : 'LULU-CONFIRMED'}
                           </span>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem', fontSize: '0.88rem' }}>
@@ -949,7 +949,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                           </div>
                           <div>
                             <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Total Paid:</span>
-                            <strong style={{ color: '#1a9e35' }}>KES {totalCost.toLocaleString('en-KE')}</strong>
+                            <strong style={{ color: '#1a9e35' }}>KES {(totalCost || 0).toLocaleString('en-KE')}</strong>
                           </div>
                         </div>
                       </div>
@@ -959,13 +959,13 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                           <Sparkles size={16} /> Keyless Smart-Lock Access
                         </h4>
                         <p style={{ margin: 0, fontSize: '0.82rem', color: '#4b5563', lineHeight: '1.5' }}>
-                          Your unique digital door passcode, high-speed Wi-Fi credentials, and driving directions have been dispatched to <strong>{createdBooking?.email || guestDetails.email}</strong>.
+                          Your unique digital door passcode, high-speed Wi-Fi credentials, and driving directions have been dispatched to <strong>{createdBooking?.email || guestDetails?.email || 'your email'}</strong>.
                         </p>
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '420px', margin: '0 auto' }}>
                         <a
-                          href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello Lulu Aurelian Estate, I have completed payment for my reservation #${createdBooking?.bookingId ? createdBooking.bookingId.substring(0, 8).toUpperCase() : ''} for ${suite.name} (${formatDate(params.checkIn)} - ${formatDate(params.checkOut)}).`)}`}
+                          href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello Lulu Aurelian Estate, I have completed payment for my reservation #${createdBooking?.bookingId ? String(createdBooking.bookingId).substring(0, 8).toUpperCase() : ''} for ${suite?.name || 'Your Suite'} (${formatDate(params.checkIn)} - ${formatDate(params.checkOut)}).`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{

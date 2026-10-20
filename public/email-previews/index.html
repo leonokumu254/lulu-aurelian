@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lulu Aurelian Estate · Email Templates Preview Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #12100D;
+      color: #FAF9F6;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background-color: #1D1912;
+      border-bottom: 1px solid rgba(207, 168, 115, 0.25);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-crest {
+      width: 32px;
+      height: 40px;
+      border: 1.5px solid #cfa873;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      color: #cfa873;
+      font-size: 13px;
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #FAF9F6;
+    }
+    .brand-subtitle {
+      font-size: 10px;
+      color: #cfa873;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #C5C0B8;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover {
+      background: rgba(207, 168, 115, 0.15);
+      color: #FAF9F6;
+      border-color: rgba(207, 168, 115, 0.4);
+    }
+    .tab-btn.active {
+      background: #cfa873;
+      color: #1D1912;
+      border-color: #cfa873;
+      box-shadow: 0 4px 12px rgba(207, 168, 115, 0.3);
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .view-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FAF9F6;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .view-btn.active {
+      border-color: #cfa873;
+      color: #cfa873;
+      background: rgba(207, 168, 115, 0.1);
+    }
+    .open-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #cfa873;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .open-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .preview-container {
+      flex: 1;
+      background-color: #25221C;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px;
+      overflow-y: auto;
+    }
+    .preview-frame-wrapper {
+      background: #FFFFFF;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 660px;
+      height: 92vh;
+    }
+    .preview-frame-wrapper.mobile {
+      width: 390px;
+      border-radius: 36px;
+      border: 6px solid #1D1912;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background-color: #FAF9F6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-crest">LA</div>
+      <div>
+        <div class="brand-title">Lulu Aurelian</div>
+        <div class="brand-subtitle">Email Preview Gallery</div>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="loadEmail('welcome.html', this)">
+        <span>✨</span> Welcome (Image 3)
+      </button>
+      <button class="tab-btn" onclick="loadEmail('review.html', this)">
+        <span>⭐</span> Review Survey (Image 1)
+      </button>
+      <button class="tab-btn" onclick="loadEmail('cancellation.html', this)">
+        <span>🚫</span> Cancellation (Image 2)
+      </button>
+      <button class="tab-btn" onclick="loadEmail('payment-confirmation.html', this)">
+        <span>💳</span> Payment Confirmed
+      </button>
+      <button class="tab-btn" onclick="loadEmail('checkin-pass.html', this)">
+        <span>🔑</span> Check-in Access Pass
+      </button>
+      <button class="tab-btn" onclick="loadEmail('booking-confirmation.html', this)">
+        <span>🛎️</span> Booking Request
+      </button>
+    </div>
+
+    <div class="controls">
+      <button class="view-btn active" id="btnDesktop" onclick="setMode('desktop')">Desktop (660px)</button>
+      <button class="view-btn" id="btnMobile" onclick="setMode('mobile')">Mobile (390px)</button>
+      <a class="open-btn" id="openExternal" href="welcome.html" target="_blank">Open Tab ↗</a>
+    </div>
+  </header>
+
+  <div class="preview-container">
+    <div class="preview-frame-wrapper" id="frameWrapper">
+      <iframe id="previewIframe" src="welcome.html"></iframe>
+    </div>
+  </div>
+
+  <script>
+    let currentEmail = 'welcome.html';
+
+    function loadEmail(file, btn) {
+      currentEmail = file;
+      document.getElementById('previewIframe').src = file;
+      document.getElementById('openExternal').href = file;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function setMode(mode) {
+      const wrapper = document.getElementById('frameWrapper');
+      const btnDesk = document.getElementById('btnDesktop');
+      const btnMob = document.getElementById('btnMobile');
+
+      if (mode === 'mobile') {
+        wrapper.classList.add('mobile');
+        btnMob.classList.add('active');
+        btnDesk.classList.remove('active');
+      } else {
+        wrapper.classList.remove('mobile');
+        btnDesk.classList.add('active');
+        btnMob.classList.remove('active');
+      }
+    }
+  </script>
+
+</body>
+</html>

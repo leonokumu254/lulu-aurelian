@@ -6,7 +6,7 @@ import { resolve } from 'path'
 
 // Rewrite clean URLs to .html files in dev server & preview
 function unitPageRoutes() {
-  const cleanUrls = ['/skyview', '/cocoa', '/neema'];
+  const cleanUrls = ['/skyview', '/cocoa', '/neema', '/404'];
   const handler = (req, res, next) => {
     if (!req.url) return next();
     const [pathname, search] = req.url.split('?');
@@ -79,10 +79,11 @@ export default defineConfig({
 
     rollupOptions: {
       input: {
-        main:    resolve(__dirname, 'index.html'),
-        skyview: resolve(__dirname, 'skyview.html'),
-        cocoa:   resolve(__dirname, 'cocoa.html'),
-        neema:   resolve(__dirname, 'neema.html'),
+        main:     resolve(__dirname, 'index.html'),
+        skyview:  resolve(__dirname, 'skyview.html'),
+        cocoa:    resolve(__dirname, 'cocoa.html'),
+        neema:    resolve(__dirname, 'neema.html'),
+        notfound: resolve(__dirname, '404.html'),
       },
 
       output: {

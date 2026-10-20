@@ -31,6 +31,7 @@ const AuthPage         = lazy(() => import('./components/AuthPage'));
 const GuestAuthModal   = lazy(() => import('./components/GuestAuthModal'));
 const BookingStatusWidget = lazy(() => import('./components/BookingStatusWidget'));
 const CheckoutPage     = lazy(() => import('./components/CheckoutPage'));
+const NotFound         = lazy(() => import('./components/NotFound'));
 
 // Minimal inline fallback — seamless cream transition
 const PageFallback = () => (
@@ -202,6 +203,8 @@ export default function App() {
 
       } else if (hash.startsWith('#/offers')) {
         setPage('offers');
+      } else if (hash.startsWith('#/404')) {
+        setPage('404');
       } else if (hash.startsWith('#/skyview') || hash.startsWith('#/cocoa') || hash.startsWith('#/neema') || hash.startsWith('#/unit/')) {
         let suite = 'skyview';
         if (hash.includes('cocoa')) suite = 'cocoa';
@@ -209,6 +212,11 @@ export default function App() {
         const queryIdx = hash.indexOf('?');
         const queryStr = queryIdx !== -1 ? hash.substring(queryIdx) : (window.location.search || '');
         window.location.href = `/${suite}${queryStr}`;
+      } else if (hash === '#/' || hash === '#/home') {
+        setPage('home');
+      } else if (hash.startsWith('#/')) {
+        // Unknown route -> 404
+        setPage('404');
       } else {
         // If query string has reset_token, auto-route to portal
         if (window.location.search.includes('reset_token=')) {
@@ -317,6 +325,9 @@ export default function App() {
     } else if (newPage === 'offers') {
       window.location.hash = '#/offers';
       window.scrollTo(0, 0);
+    } else if (newPage === '404') {
+      window.location.hash = '#/404';
+      window.scrollTo(0, 0);
     }
   };
 
@@ -383,7 +394,7 @@ export default function App() {
         }} />
       )}
       <Helmet>
-        <title>{page === 'home' ? 'Lulu Aurelian Estate | Luxury Escapes' : page === 'booking' ? 'Book Your Stay | Lulu Aurelian' : page === 'portal' ? 'Guest Portal | Lulu Aurelian' : 'Lulu Aurelian Estate'}</title>
+        <title>{page === 'home' ? 'Lulu Aurelian Estate | Luxury Escapes' : page === 'booking' ? 'Book Your Stay | Lulu Aurelian' : page === 'portal' ? 'Guest Portal | Lulu Aurelian' : page === '404' ? '404 — Page Not Found | Lulu Aurelian Estate' : 'Lulu Aurelian Estate'}</title>
         <meta name="description" content="Lulu Aurelian Estate is the epitome of luxury penthouse living and refined hospitality in East Africa. Our estate offers an unparalleled blend of modern elegance and bespoke services, featuring meticulously designed suites like the Cocoa Suite and Skyview Suite, both offering breathtaking panoramic views. Guests experience a world-class stay with dedicated concierge assistance, gourmet dining options, premium amenities, and immaculate housekeeping services. Whether you are seeking a peaceful retreat, a romantic getaway, or an executive stay, our property ensures an unforgettable experience tailored to your exact desires. From seamless direct bookings and integrated payment gateways to secure user portals for both guests and management, Lulu Aurelian Estate is committed to providing seamless convenience and sophisticated comfort. Discover opulence, tranquility, and exclusivity at Lulu Aurelian Estate, where every detail is crafted to exceed your highest expectations in modern hospitality." />
       </Helmet>
 
@@ -434,6 +445,10 @@ export default function App() {
       ) : page === 'offers' ? (
         <Suspense fallback={<PageFallback />}>
           <OffersPage setPage={(p, params) => navigateToPage(p, params)} />
+        </Suspense>
+      ) : page === '404' ? (
+        <Suspense fallback={<PageFallback />}>
+          <NotFound setPage={(p, params) => navigateToPage(p, params)} />
         </Suspense>
       ) : page === 'checkout' ? (
         <Suspense fallback={<PageFallback />}>
@@ -519,7 +534,7 @@ export default function App() {
           });
           setShowGuestAuth(false);
           // Auto-fill booking form from profile
-          const nameParts = user.name.split(' ');
+          const nameParts = (user?.name || '').split(' ');
           
           // Handle phone prefix if applicable
           let rawPhone = user.phone || '';

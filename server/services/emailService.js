@@ -825,6 +825,38 @@ class EmailService {
     `;
   }
 
+  _renderWifiBlock(unitId, customSettings = {}) {
+    const key = (unitId || 'skyview').toLowerCase();
+    const details = UNIT_WELCOME_DETAILS[key] || UNIT_WELCOME_DETAILS.skyview;
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+
+    const ssid = (!isDummy(customSettings?.wifi_ssid)) ? customSettings.wifi_ssid.trim() : (details.wifiUsername || details.wifiSSID);
+    const pass = (!isDummy(customSettings?.wifi_password)) ? customSettings.wifi_password.trim() : (details.wifiPassword || details.wifiPass);
+    const extNote = key === 'cocoa' ? `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e5dfd3; font-size: 12px; color: #666666;">Bedroom Extender: <strong>Bedroom</strong> &bull; Password: <strong>CMutwiri</strong></div>` : '';
+
+    return `
+      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td width="36" valign="top" style="padding-top: 2px;">
+              <span style="font-size: 22px; display: block; line-height: 1;">📶</span>
+            </td>
+            <td>
+              <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">High-Speed Suite Wi-Fi Access</h4>
+              <p style="margin: 0 0 4px 0; font-size: 13.5px; color: #444444; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+                <strong>Network Name (SSID):</strong> <span style="color: #9E6C15; font-weight: 700;">${ssid}</span>
+              </p>
+              <p style="margin: 0; font-size: 13.5px; color: #444444; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+                <strong>Password:</strong> <span style="color: #1a1a1a; font-weight: 700;">${pass}</span>
+              </p>
+              ${extNote}
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+  }
+
   _renderLocationBlock(unitId) {
     const details = UNIT_WELCOME_DETAILS[(unitId || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
     return `
@@ -982,12 +1014,14 @@ class EmailService {
   }
 
   async sendPaymentSuccess(booking) {
+    const settings = await db.unit_settings.getSettings(booking.unit_id);
     const data = EMAIL_TEMPLATES.PAYMENT_SUCCESS_CONFIRMATION(booking);
     const bodyContent =
       this._renderBadge(data.badge) +
       this._renderHeading(data.headingLine1, data.headingLine2) +
       this._renderParagraphs(data.paragraphs) +
       this._renderAlertBox(data.alertText) +
+      this._renderWifiBlock(booking.unit_id, settings) +
       this._renderLocationBlock(booking.unit_id) +
       this._renderContactCards() +
       this._renderBookingRef(data.bookingRef) +
@@ -1009,12 +1043,16 @@ class EmailService {
 
   async sendFulfillmentCredentials(booking) {
     const settings = await db.unit_settings.getSettings(booking.unit_id);
+    const unitKey = (booking.unit_id || 'skyview').toLowerCase();
+    const canon = UNIT_WELCOME_DETAILS[unitKey] || UNIT_WELCOME_DETAILS.skyview;
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+
     const bookingWithSettings = {
       ...booking,
-      passcode: settings.passcode,
-      house_number: settings.house_number,
-      wifi_ssid: settings.wifi_ssid,
-      wifi_password: settings.wifi_password
+      passcode: (!isDummy(settings?.passcode)) ? settings.passcode.trim() : (canon.passcode || '9010'),
+      house_number: (settings?.house_number && String(settings.house_number).trim()) ? String(settings.house_number).trim() : (canon.house_number || canon.apartmentNo),
+      wifi_ssid: (!isDummy(settings?.wifi_ssid)) ? settings.wifi_ssid.trim() : (canon.wifiSSID || canon.wifiUsername),
+      wifi_password: (!isDummy(settings?.wifi_password)) ? settings.wifi_password.trim() : (canon.wifiPass || canon.wifiPassword)
     };
     const data = EMAIL_TEMPLATES.FULFILLMENT_CREDENTIALS(bookingWithSettings);
     const bodyContent =
@@ -1096,12 +1134,16 @@ class EmailService {
 
   async sendCheckInDayReminder(booking) {
     const settings = await db.unit_settings.getSettings(booking.unit_id);
+    const unitKey = (booking.unit_id || 'skyview').toLowerCase();
+    const canon = UNIT_WELCOME_DETAILS[unitKey] || UNIT_WELCOME_DETAILS.skyview;
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+
     const bookingWithSettings = {
       ...booking,
-      passcode: settings.passcode,
-      house_number: settings.house_number,
-      wifi_ssid: settings.wifi_ssid,
-      wifi_password: settings.wifi_password
+      passcode: (!isDummy(settings?.passcode)) ? settings.passcode.trim() : (canon.passcode || '9010'),
+      house_number: (settings?.house_number && String(settings.house_number).trim()) ? String(settings.house_number).trim() : (canon.house_number || canon.apartmentNo),
+      wifi_ssid: (!isDummy(settings?.wifi_ssid)) ? settings.wifi_ssid.trim() : (canon.wifiSSID || canon.wifiUsername),
+      wifi_password: (!isDummy(settings?.wifi_password)) ? settings.wifi_password.trim() : (canon.wifiPass || canon.wifiPassword)
     };
     const data = EMAIL_TEMPLATES.CHECK_IN_DAY_REMINDER(bookingWithSettings);
     const bodyContent =
@@ -1114,8 +1156,8 @@ class EmailService {
         items: [
           { label: 'Check-In Time', value: 'From 14:00 PM (2:00 PM)' },
           { label: 'Key Box PIN', value: bookingWithSettings.passcode },
-          { label: 'Wi-Fi SSID', value: bookingWithSettings.wifi_ssid || 'LuluAurelian_5G' },
-          { label: 'Wi-Fi Password', value: bookingWithSettings.wifi_password || 'Luxury2026!' }
+          { label: 'Wi-Fi SSID', value: bookingWithSettings.wifi_ssid },
+          { label: 'Wi-Fi Password', value: bookingWithSettings.wifi_password }
         ]
       }) : '') +
       this._renderButton(data.button);

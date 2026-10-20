@@ -57,10 +57,11 @@ ALTER TABLE unit_settings ADD COLUMN wifi_password VARCHAR(100) NOT NULL DEFAULT
 -- Seed or insert defaults
 INSERT INTO unit_settings (unit_id, passcode, house_number, wifi_ssid, wifi_password) 
 VALUES 
-  ('skyview', '9841', '601', 'LuluAurelian_Skyview_5G', 'SkyviewLuxury2026!'),
-  ('cocoa', '1234', '402', 'LuluAurelian_Cocoa_5G', 'CocoaLuxury2026!'),
-  ('neema', '9841', '201', 'LuluAurelian_Neema_5G', 'NeemaLuxury2026!')
+  ('skyview', '9010', '16', 'Pearl_16', 'PearlSL_16'),
+  ('cocoa', '2050', '19', 'MK_Ny-0', 'CMutwiri'),
+  ('neema', '2428', 'SL- 2', 'AURELIAN', 'Lulu_26#')
 ON DUPLICATE KEY UPDATE 
+  passcode = VALUES(passcode),
   house_number = VALUES(house_number),
   wifi_ssid = VALUES(wifi_ssid),
   wifi_password = VALUES(wifi_password);

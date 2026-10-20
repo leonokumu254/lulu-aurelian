@@ -9,17 +9,22 @@ import './GuestPortal.css';
 
 const UNIT_NAMES = { skyview: 'Skyview Hideaway', cocoa: 'Cocoa Retreat', neema: 'Neema Haven' };
 const UNIT_THUMBNAILS = { skyview: '/assets/skyview/skyview_1.jpg', cocoa: '/assets/cocoa/cocoa_1.jpg', neema: '/assets/Neema/neema_1.jpeg' };
-const getUnitName = (id) => UNIT_NAMES[id] || id;
-const getUnitThumb = (id) => UNIT_THUMBNAILS[id] || UNIT_THUMBNAILS.skyview;
+const getUnitName = (id) => (id && UNIT_NAMES[id]) ? UNIT_NAMES[id] : (id || 'Your Suite');
+const getUnitThumb = (id) => (id && UNIT_THUMBNAILS[id]) ? UNIT_THUMBNAILS[id] : UNIT_THUMBNAILS.skyview;
 
 // Helper to format dates cleanly in East Africa Time (EAT)
 const formatEATDate = (dateStr, options = {}) => {
   if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', {
-    timeZone: 'Africa/Nairobi',
-    ...options
-  });
+  try {
+    const d = dateStr instanceof Date ? dateStr : new Date(dateStr);
+    if (isNaN(d.getTime())) return String(dateStr);
+    return d.toLocaleDateString('en-GB', {
+      timeZone: 'Africa/Nairobi',
+      ...options
+    });
+  } catch (err) {
+    return String(dateStr);
+  }
 };
 
 export default function GuestPortal({ user, onBookNew }) {
@@ -92,23 +97,27 @@ export default function GuestPortal({ user, onBookNew }) {
 
   const getStepIndex = (b) => {
     if (!b) return 1;
-    const s = (b.status || '').toUpperCase();
+    const s = String(b.status || '').toUpperCase();
     if (s === 'COMPLETED') return 4;
 
     if (s === 'PAID') {
-      const now = new Date();
-      const inDateStr = b.check_in?.split('T')[0] || b.check_in;
-      const outDateStr = b.check_out?.split('T')[0] || b.check_out;
+      try {
+        const now = new Date();
+        const inDate = b.check_in instanceof Date ? b.check_in : new Date(b.check_in);
+        const outDate = b.check_out instanceof Date ? b.check_out : new Date(b.check_out);
 
-      const [oy, om, od] = (outDateStr || '').split('-').map(Number);
-      const checkoutTime = oy && om && od ? new Date(oy, om - 1, od, 10, 0, 0) : new Date(b.check_out);
+        const checkoutTime = new Date(outDate);
+        checkoutTime.setHours(10, 0, 0, 0);
 
-      const [iy, im, id] = (inDateStr || '').split('-').map(Number);
-      const checkinTime = iy && im && id ? new Date(iy, im - 1, id, 13, 0, 0) : new Date(b.check_in);
+        const checkinTime = new Date(inDate);
+        checkinTime.setHours(13, 0, 0, 0);
 
-      if (now >= checkoutTime) return 4; // Completed
-      if (now >= checkinTime) return 3;  // Active (Stay in progress)
-      return 2; // Confirmed (Paid)
+        if (!isNaN(checkoutTime.getTime()) && now >= checkoutTime) return 4; // Completed
+        if (!isNaN(checkinTime.getTime()) && now >= checkinTime) return 3;  // Active (Stay in progress)
+        return 2; // Confirmed (Paid)
+      } catch (err) {
+        return 2;
+      }
     }
 
     if (['PENDING', 'AUTHORIZING', 'APPROVED'].includes(s)) return 1;
@@ -118,11 +127,12 @@ export default function GuestPortal({ user, onBookNew }) {
   const getDisplayStatus = (b) => {
     if (!b) return '';
     const step = getStepIndex(b);
-    if ((b.status || '').toUpperCase() === 'COMPLETED' || step === 4) return 'COMPLETED';
+    const s = String(b.status || '').toUpperCase();
+    if (s === 'COMPLETED' || step === 4) return 'COMPLETED';
     if (step === 3) return 'ACTIVE';
-    if (b.status === 'PAID') return 'PAID';
-    if (b.status === 'APPROVED') return 'AWAITING PAYMENT';
-    return b.status;
+    if (s === 'PAID' || step === 2) return 'PAID';
+    if (s === 'APPROVED') return 'AWAITING PAYMENT';
+    return s || 'PENDING';
   };
 
   // Find active and past bookings (Active bookings are unexpired bookings whose stay is not yet completed)
@@ -210,7 +220,7 @@ export default function GuestPortal({ user, onBookNew }) {
     <div className="guest-portal-container">
       <div className="guest-portal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="guest-portal-title">Welcome <span id="title">back, {user.name.split(' ')[0]}</span></h1>
+          <h1 className="guest-portal-title">Welcome <span id="title">back, {user?.name ? user.name.split(' ')[0] : 'Guest'}</span></h1>
           <p className="guest-portal-subtitle">Is my booking confirmed? Track your status instantly below.</p>
         </div>
         <button onClick={onBookNew} className="btn-primary">Book New Stay</button>
@@ -302,7 +312,7 @@ export default function GuestPortal({ user, onBookNew }) {
                         </div>
                         <div className="booking-ref-block" style={{ margin: 0 }}>
                           <span className="ref-label">Reference</span>
-                          <span className="ref-value">{activeBooking.id.split('-')[0].toUpperCase()}</span>
+                          <span className="ref-value">{String(activeBooking?.id || '').split('-')[0].toUpperCase()}</span>
                         </div>
                       </div>
 
@@ -367,7 +377,7 @@ export default function GuestPortal({ user, onBookNew }) {
                       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                         <a 
                           href={`https://wa.me/254112299384?text=${encodeURIComponent(
-                            `Hello Lulu Aurelian Concierge,\n\nI am contacting you regarding my confirmed stay.\nReference: ${activeBooking.id.split('-')[0].toUpperCase()}\nSuite: ${getUnitName(activeBooking.unit_id)}\nDates: ${formatEATDate(activeBooking.check_in)} to ${formatEATDate(activeBooking.check_out)}`
+                            `Hello Lulu Aurelian Concierge,\n\nI am contacting you regarding my confirmed stay.\nReference: ${String(activeBooking?.id || '').split('-')[0].toUpperCase()}\nSuite: ${getUnitName(activeBooking?.unit_id)}\nDates: ${formatEATDate(activeBooking?.check_in)} to ${formatEATDate(activeBooking?.check_out)}`
                           )}`}
                           target="_blank"
                           rel="noreferrer"
@@ -394,10 +404,10 @@ export default function GuestPortal({ user, onBookNew }) {
                           className="btn-modify"
                           style={{ flex: '0 0 auto', padding: '0.75rem 1.25rem' }}
                           onClick={() => {
-                            const checkIn = formatEATDate(activeBooking.check_in, { day: 'numeric', month: 'short', year: 'numeric' });
-                            const checkOut = formatEATDate(activeBooking.check_out, { day: 'numeric', month: 'short', year: 'numeric' });
-                            const ref = activeBooking.id.split('-')[0].toUpperCase();
-                            const unit = getUnitName(activeBooking.unit_id);
+                            const checkIn = formatEATDate(activeBooking?.check_in, { day: 'numeric', month: 'short', year: 'numeric' });
+                            const checkOut = formatEATDate(activeBooking?.check_out, { day: 'numeric', month: 'short', year: 'numeric' });
+                            const ref = String(activeBooking?.id || '').split('-')[0].toUpperCase();
+                            const unit = getUnitName(activeBooking?.unit_id);
                             const text = encodeURIComponent(`Hello, I would like to request an adjustment for my confirmed booking.\n\n*Reference:* ${ref}\n*Unit:* ${unit}\n*Dates:* ${checkIn} to ${checkOut}`);
                             window.open(`https://wa.me/254112299384?text=${text}`, '_blank');
                           }}

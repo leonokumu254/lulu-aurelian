@@ -1,4 +1,4 @@
-import { WHATSAPP_TEMPLATES } from '../config/constants.js';
+import { WHATSAPP_TEMPLATES, UNIT_WELCOME_DETAILS } from '../config/constants.js';
 import { db } from '../config/db.js';
 
 class WhatsappService {
@@ -23,12 +23,16 @@ class WhatsappService {
 
   async sendCheckInCredentials(booking) {
     const settings = await db.unit_settings.getSettings(booking.unit_id);
+    const unitKey = (booking.unit_id || 'skyview').toLowerCase();
+    const canon = UNIT_WELCOME_DETAILS[unitKey] || UNIT_WELCOME_DETAILS.skyview;
+    const isDummy = (val) => !val || typeof val !== 'string' || !val.trim() || val.includes('LuluAurelian_') || val.includes('Luxury2026');
+
     const bookingWithSettings = {
       ...booking,
-      passcode: settings.passcode,
-      house_number: settings.house_number,
-      wifi_ssid: settings.wifi_ssid,
-      wifi_password: settings.wifi_password
+      passcode: (!isDummy(settings?.passcode)) ? settings.passcode.trim() : (canon.passcode || '9010'),
+      house_number: (settings?.house_number && String(settings.house_number).trim()) ? String(settings.house_number).trim() : (canon.house_number || canon.apartmentNo),
+      wifi_ssid: (!isDummy(settings?.wifi_ssid)) ? settings.wifi_ssid.trim() : (canon.wifiSSID || canon.wifiUsername),
+      wifi_password: (!isDummy(settings?.wifi_password)) ? settings.wifi_password.trim() : (canon.wifiPass || canon.wifiPassword)
     };
     const message = WHATSAPP_TEMPLATES.CHECK_IN_CREDENTIALS(bookingWithSettings);
     return this.sendWhatsapp(booking.guest_phone, message);

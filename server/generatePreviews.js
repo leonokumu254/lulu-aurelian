@@ -22,9 +22,10 @@ const mockBooking = {
   check_out: '2026-10-23',
   total_price: 45000,
   secure_token: 'demo-secure-token-9988',
-  passcode: '8492',
-  wifi_ssid: 'Skyview_HighSpeed_5G',
-  wifi_password: 'LuxuryEstate2026!'
+  passcode: '9010',
+  house_number: '16',
+  wifi_ssid: 'Pearl_16',
+  wifi_password: 'PearlSL_16'
 };
 
 console.log('Generating email preview files into:', outputDir);
@@ -53,7 +54,9 @@ const paymentBody =
   emailService._renderHeading(paymentData.headingLine1, paymentData.headingLine2) +
   emailService._renderParagraphs(paymentData.paragraphs) +
   emailService._renderAlertBox(paymentData.alertText) +
+  emailService._renderWifiBlock(mockBooking.unit_id, mockBooking) +
   emailService._renderLocationBlock(mockBooking.unit_id) +
+  emailService._renderContactCards() +
   emailService._renderBookingRef(paymentData.bookingRef) +
   emailService._renderButton(paymentData.button);
 const paymentHtml = emailService._getHtmlTemplate(paymentData.title, paymentData.preheader, paymentBody, paymentData.heroImage);
