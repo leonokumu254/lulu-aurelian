@@ -1,5 +1,6 @@
 // ==========================================
 // CLIENT-SIDE CURATED DEFAULT HOUSE RULES
+// Brand Voice: Warm, Welcoming, Genuinely Hospitable
 // ==========================================
 export const DEFAULT_HOUSE_RULES = {
   skyview: {
@@ -8,136 +9,133 @@ export const DEFAULT_HOUSE_RULES = {
     floor: 'Top Floor (Penthouse)',
     title: 'House Rules & Guest Guidelines',
     subtitle: 'Welcome to Lulu Aurelian Apartment Skyview Hideaway (Top Floor)!',
-    welcomeNote: 'We’re delighted to host you. To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below. These help us maintain the quality of the space and provide a positive experience for all guests!',
-    specialGatewayText: 'Welcome to Lulu Aurelian Apartments - Skyview Gateway\n\nWe’re honored to share our top-floor apartment with you. This space has been prepared with care, thoughtfulness, and a love for comfort. To help us maintain its beauty for all who stay, we kindly ask that you take a moment to read the guidelines below.',
+    welcomeNote: 'We’re so happy to welcome you! This mountain retreat was prepared with care and comfort in mind so you can unwind and feel right at home. Here are a few friendly guidelines to ensure your stay—and everyone else’s—is smooth, safe, and truly relaxing.',
+    specialGatewayText: 'Welcome to Lulu Aurelian Apartments - Skyview Gateway\n\nWe’re honored to share our top-floor apartment with you. This space has been prepared with care, thoughtfulness, and a genuine love for comfort. To help us maintain its beauty for everyone who stays, we kindly invite you to review our guidelines below.',
     highlights: [
       {
         icon: 'clock',
         title: 'Check-In & Out',
-        text: 'Check-in: After 2:00 PM • Check-out: Strictly before 10:00 AM'
+        text: 'Check-in is from 2:00 PM • Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. (Need extra time? Just ask!)'
       },
       {
         icon: 'smoking',
-        title: 'Strictly Non-Smoking',
-        text: 'Smoking indoors is strictly prohibited. Balcony ashtrays provided.'
+        title: 'Fresh & Smoke-Free Indoors',
+        text: 'We keep indoor air fresh and clean for everyone. You are warmly welcome to enjoy the open breeze on the balcony with the provided ashtrays.'
       },
       {
         icon: 'noise',
-        title: 'Quiet Hours',
-        text: 'Mountain retreat quiet hours between 10:00 PM – 7:00 AM.'
+        title: 'Peaceful Mountain Nights',
+        text: 'Evenings here are wonderfully quiet. We observe restful hours from 10:00 PM to 7:00 AM so everyone gets a great night’s sleep.'
       },
       {
         icon: 'cleanliness',
-        title: 'Towel & Cleanliness',
-        text: 'Towels for personal drying only. Wash dishes before checkout.'
+        title: 'Caring for the Space',
+        text: 'Fluffy towels and soft linens are ready for your comfort. A quick rinse of kitchen dishes before you head out helps our team immensely!'
       }
     ],
     sections: [
       {
         id: 'care',
         icon: 'care',
-        title: '1. Care & Respect for the Property',
+        title: '1. Make Yourself at Home',
         items: [
-          'Please treat the home and all furnishings with care.',
-          'Report any accidental damage or breakage as soon as possible—early communication helps us resolve issues smoothly.',
-          'Please use coasters, placemats, and protective surfaces where provided.',
-          'Only use appliances and amenities for their intended purposes.'
+          'Please treat the apartment, cozy furnishings, and decor with the same love you’d treat your own home.',
+          'Accidents happen—if anything spills or breaks, please let us know right away! Early communication helps us fix or replace things easily without any stress.',
+          'Feel free to use the coasters and placemats on tables to keep the wood and stone surfaces looking pristine.',
+          'All appliances and kitchen amenities are here for your enjoyment—please use them as intended.'
         ]
       },
       {
         id: 'cleanliness',
         icon: 'cleanliness',
-        title: '2. Cleanliness',
+        title: '2. Keeping Things Fresh & Clean',
         items: [
-          'Kindly clean up after yourself in common areas and the kitchen.',
-          'Wash used dishes or load them into the dishwasher before checkout.',
-          'Dispose of trash in the designated bins.',
-          'Wipe up spills promptly to avoid stains or damage.',
-          'Please use towels only for their intended purpose (personal drying). Towels must not be used for cleaning shoes, spills, or any other inappropriate purpose.',
-          'Guests are expected to leave the apartment in a tidy condition. Extra cleaning due to negligence or misuse of items may incur additional charges.',
-          'Leave furniture and items in the same place you found them.'
+          'We love keeping the living space and kitchen welcoming for you—a quick tidy-up of personal items as you go keeps the space feeling open and relaxing.',
+          'Before checking out, a quick rinse or wash of your used plates, cups, and cookware is deeply appreciated by our cleaning crew.',
+          'Trash bins are placed conveniently throughout the home—please pop waste inside and wipe up any quick spills.',
+          'Our plush white towels are provided exclusively for your personal drying and bathing comfort. To help us keep them fresh and stain-free, please do not use them to wipe down shoes, luggage, or floor spills.',
+          'Leaving the home reasonably tidy helps us turn it around promptly and beautifully for the next arriving guest.'
         ]
       },
       {
         id: 'noise',
         icon: 'noise',
-        title: '3. Noise & Consideration',
+        title: '3. Peaceful Nights & Good Neighbors',
         items: [
-          'Please keep noise to a reasonable level, especially between 10:00 PM and 7:00 AM.',
-          'Be considerate of neighbors and other guests at all times.'
+          'Sound carries softly in the fresh mountain air. We kindly ask for quiet, restful hours between 10:00 PM and 7:00 AM.',
+          'Our neighbors in the building are lovely people—thank you for helping us maintain a peaceful, respectful neighborhood atmosphere.'
         ]
       },
       {
         id: 'smoking',
         icon: 'smoking',
-        title: '4. Smoking & Vaping',
+        title: '4. Smoke-Free Sanctuary',
         items: [
-          'Smoking or vaping inside the property is not allowed.',
-          'If you smoke outdoors, please use the provided ashtrays and dispose of cigarette waste responsibly.'
+          'To keep the apartment smelling fresh, crisp, and allergen-free for all travelers, indoor smoking and vaping are not permitted.',
+          'You are warmly welcome to step out onto the private balcony to smoke—please use the provided ashtrays and keep the balcony door closed so smoke doesn’t drift inside.'
         ]
       },
       {
         id: 'guests',
         icon: 'guests',
-        title: '5. Guests & Visitors',
+        title: '5. Visitors & Friends',
         items: [
-          'Only registered guests are allowed on the property unless otherwise approved.',
-          'No parties or events without prior consent.'
+          'Your booking covers the guests listed on your reservation. If you’d like to host a friend for coffee or lunch, just give us a quick heads-up beforehand!',
+          'Our home is intended as a calm sanctuary, so large parties, loud celebrations, and unauthorized overnight visitors are not permitted.'
         ]
       },
       {
         id: 'pets',
         icon: 'pets',
-        title: '6. Pets (If applicable)',
+        title: '6. Furry Friends',
         items: [
-          'Pets are welcome only if approved in advance.',
-          'Please clean up after your pet and ensure they do not damage furniture or disturb neighbors.'
+          'We love pets! Just be sure to check in with us in advance so we can confirm if your four-legged companion can be accommodated.',
+          'Please make sure pets stay off the beds, don’t disturb our neighbors, and that any messes are cleaned up promptly.'
         ]
       },
       {
         id: 'safety',
         icon: 'safety',
-        title: '7. Safety & Security',
+        title: '7. Your Safety & Peace of Mind',
         items: [
-          'Always lock doors and windows when leaving the property.',
-          'Do not tamper with smoke detectors, security devices, or safety equipment.',
-          'Familiarize yourself with emergency exits and procedures.'
+          'For your comfort and peace of mind, please remember to lock the front door and latch the windows whenever you head out exploring.',
+          'Smoke detectors and safety devices are here to protect you—please keep them clear and undisturbed.',
+          'Take a quick moment to familiarize yourself with the building stairs and emergency exits when you settle in.'
         ]
       },
       {
         id: 'checkout',
         icon: 'checkout',
-        title: '8. Before Checkout',
+        title: '8. Stress-Free Checkout',
         items: [
-          'Please follow the checkout instructions provided.',
-          'Leave used towels in the designated area.',
-          'Ensure all lights, appliances, and AC/heating units are turned off.'
+          'Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. If you need a bit of extra time, just let us know and we’ll do our best to accommodate you!',
+          'Please place your used towels together in the bathroom basket or hamper.',
+          'Give the lights, electronics, and heating or AC a quick switch-off before locking the door behind you.'
         ]
       },
       {
         id: 'plants',
         icon: 'plants',
-        title: '9. Live Plants',
+        title: '9. Our Green Friends (Live Plants)',
         items: [
-          'You’ll notice several live plants throughout the apartment. These are part of the home’s atmosphere and are cared for regularly.',
-          'Please do not water or move the plants, and kindly ensure children do not play with or pull at them.',
-          'Your help keeps them healthy and thriving.'
+          'You’ll notice several live plants around the apartment—they bring fresh oxygen, nature, and positive energy into the home!',
+          'Our team takes care of their regular watering and nourishment, so no need to water or move them. Please ensure little hands don’t tug on the leaves.',
+          'Your gentle appreciation keeps them happy and thriving!'
         ]
       },
       {
         id: 'balcony',
         icon: 'balcony',
-        title: '10. Balcony & Safety',
+        title: '10. Penthouse Balcony & High Views',
         items: [
-          'The apartment sits on the top floor, offering a beautiful view and calming outdoor space.',
-          'Please supervise children at all times when using the balcony.',
-          'Avoid leaning over railings or adjusting balcony furniture.',
-          'Enjoy the space responsibly and mindfully.',
-          'All items in the units are at your disposal to use except the washing machine in the second balcony that requires express permission from the host to use.'
+          'The top-floor balcony offers panoramic views of Nyeri’s rolling hills—the ideal spot for morning coffee or evening sunsets.',
+          'Please always keep a watchful eye on young children whenever they enjoy the balcony.',
+          'For your safety, please avoid leaning over the railings or climbing on balcony furniture.',
+          'Everything in the apartment is here for your enjoyment! If you’d like to use the washing machine on the second balcony, just send us a quick text and we’ll gladly get you set up.'
         ]
       }
     ],
-    closingMessage: 'Thank you for respecting the space and being a considerate guest. Your cooperation helps us maintain a wonderful experience for everyone. We hope your time in this space is peaceful, memorable, and filled with beautiful moments!',
+    closingMessage: 'Thank you so much for being a thoughtful and considerate guest. Your care helps us keep this home a joyful retreat for everyone. We hope your time here is peaceful, memorable, and filled with warm moments!',
     supportContacts: {
       safaricom: '0112299384',
       airtel: '0756958531'
@@ -150,39 +148,39 @@ export const DEFAULT_HOUSE_RULES = {
     floor: 'First Floor (Apartment 19)',
     title: 'House Rules & Guest Guidelines',
     subtitle: 'Welcome to Lulu Aurelian Furnished Apartments - Cocoa Retreat!',
-    welcomeNote: 'We’re delighted to host you at Cocoa Retreat. Designed for serene, sophisticated living, we ask that you review these guidelines to preserve the quality and comfort of the retreat for everyone.',
+    welcomeNote: 'We’re so delighted to have you stay with us at Cocoa Retreat. Designed for serene, sophisticated living, we invite you to review these friendly guidelines so your stay is completely relaxing, seamless, and comfortable.',
     highlights: [
       {
         icon: 'clock',
         title: 'Check-In & Out',
-        text: 'Check-in: After 2:00 PM • Check-out: Strictly before 10:00 AM'
+        text: 'Check-in is from 2:00 PM • Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. (Need extra time? Just ask!)'
       },
       {
         icon: 'smoking',
-        title: 'Strictly Non-Smoking',
-        text: 'Smoking indoors is strictly prohibited. Balcony ashtrays provided.'
+        title: 'Fresh & Smoke-Free Indoors',
+        text: 'We keep indoor air clean and inviting. Outdoor balcony space with an ashtray is ready whenever you need fresh air.'
       },
       {
         icon: 'noise',
-        title: 'Quiet Neighborhood',
-        text: 'Peaceful hours observed between 10:00 PM – 7:00 AM.'
+        title: 'Peaceful Living',
+        text: 'Our residential community observes quiet hours between 10:00 PM and 7:00 AM so you can enjoy deep, uninterrupted rest.'
       },
       {
         icon: 'cleanliness',
-        title: 'Cleanliness & Towels',
-        text: 'Towels for personal use only. Please wash kitchen dishes before checkout.'
+        title: 'Comfort & Towel Care',
+        text: 'Fresh, fluffy towels are ready for you. A quick rinse of your dishes before you check out makes our cleaning team smile!'
       }
     ],
     sections: [
       {
         id: 'care',
         icon: 'care',
-        title: '1. Care & Respect for the Property',
+        title: '1. Caring for Your Home Away from Home',
         items: [
-          'Please treat the home, plush furnishings, and cocoa-toned decor with utmost care.',
-          'Report any accidental damage or breakage as soon as possible—early communication helps us resolve issues promptly.',
-          'Please use coasters, placemats, and protective surfaces where provided.',
-          'Only use kitchen appliances and amenities for their intended purposes.'
+          'Please enjoy and treat the plush cocoa-toned furnishings, artwork, and decor with gentle care.',
+          'Spills and accidents happen—if anything gets damaged, please let us know right away! Early communication makes it simple and easy for us to take care of it.',
+          'Kindly use the provided coasters and mats to protect our lovely tabletops and counters.',
+          'Kitchen appliances and entertainment features are all yours to enjoy—please use them as intended.'
         ]
       },
       {
@@ -190,62 +188,62 @@ export const DEFAULT_HOUSE_RULES = {
         icon: 'cleanliness',
         title: '2. Cleanliness & Kitchen Care',
         items: [
-          'Kindly clean up after yourself in common living areas and the kitchen.',
-          'Wash used dishes and cookware before checkout.',
-          'Dispose of trash in designated bins and wipe spills promptly.',
-          'Please use towels strictly for personal drying (not for cleaning shoes, luggage, or spills).',
-          'Guests are expected to leave the apartment in a tidy condition upon departure.'
+          'A quick tidy-up of kitchen counters and living spaces as you go keeps the retreat feeling luxurious and open.',
+          'Please give used dishes and cookware a quick wash or rinse before your departure.',
+          'Trash bins are ready for your use—please toss waste inside and wipe up spills while they’re fresh.',
+          'Our white towels are provided exclusively for your personal drying and bathing comfort. To keep them fresh and stain-free for every guest, please avoid using them to wipe down shoes, luggage, or spills.',
+          'Leaving the apartment reasonably tidy helps our housekeeping team prepare the space smoothly for the next traveler.'
         ]
       },
       {
         id: 'noise',
         icon: 'noise',
-        title: '3. Noise & Consideration',
+        title: '3. Peaceful Nights & Good Neighbors',
         items: [
-          'Please keep noise and music to a respectful level, especially between 10:00 PM and 7:00 AM.',
-          'Be considerate of residential neighbors in the building at all times.'
+          'Please keep music and conversation to a respectful volume, particularly during quiet hours from 10:00 PM to 7:00 AM.',
+          'Our neighbors in the building appreciate the tranquil atmosphere—thank you for being mindful of those around you.'
         ]
       },
       {
         id: 'smoking',
         icon: 'smoking',
-        title: '4. Smoking & Vaping',
+        title: '4. Smoke-Free Sanctuary',
         items: [
-          'Smoking or vaping inside the property is strictly prohibited.',
-          'If smoking outdoors, please use the provided ashtrays and dispose of cigarette waste responsibly.'
+          'To keep the retreat smelling sweet and fresh for everyone, indoor smoking and vaping are not permitted.',
+          'You are welcome to smoke outside on the balcony—please use the provided ashtrays and close the sliding door so smoke stays outside.'
         ]
       },
       {
         id: 'guests',
         icon: 'guests',
-        title: '5. Guests & Visitors',
+        title: '5. Visitors & Friends',
         items: [
-          'Only registered guests named on the reservation are permitted on the property.',
-          'No unauthorized parties, gatherings, or commercial events without prior consent.'
+          'Your stay covers the guests on your booking. If you plan to invite a friend over for tea or dinner, please let us know beforehand!',
+          'Cocoa Retreat is a tranquil space, so we do not host parties, large gatherings, or unregistered overnight guests.'
         ]
       },
       {
         id: 'safety',
         icon: 'safety',
-        title: '6. Safety & Security',
+        title: '6. Your Safety & Security',
         items: [
-          'Always lock all entry doors and windows when leaving the apartment.',
-          'Do not tamper with safety devices, electrical panels, or fire protection equipment.',
-          'Key lockbox passcode must remain confidential to registered guests.'
+          'Please lock the entry door and latch windows whenever you leave the retreat.',
+          'Safety devices and fire equipment are installed for your security—please keep them undisturbed.',
+          'Your lockbox passcode is private for your booking—please keep it secure.'
         ]
       },
       {
         id: 'checkout',
         icon: 'checkout',
-        title: '7. Before Checkout',
+        title: '7. Stress-Free Checkout',
         items: [
-          'Check-out is strictly before 10:00 AM to allow our housekeeping team adequate preparation.',
-          'Leave used towels inside the designated laundry basket in the bathroom.',
-          'Ensure all lights, cooking appliances, and electronics are turned off.'
+          'Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. If you need a bit of extra time, just let us know!',
+          'Please place your used towels in the bathroom laundry basket.',
+          'Before you close the door, please ensure kitchen appliances, lights, and electronics are turned off.'
         ]
       }
     ],
-    closingMessage: 'Thank you for choosing Cocoa Retreat and treating this property with care. We hope your stay is peaceful, memorable, and filled with warmth!',
+    closingMessage: 'Thank you for choosing Cocoa Retreat and treating this home with genuine love and care. We hope your stay is filled with comfort, calm, and memorable moments!',
     supportContacts: {
       safaricom: '0112299384',
       airtel: '0756958531'
@@ -258,100 +256,100 @@ export const DEFAULT_HOUSE_RULES = {
     floor: 'First Floor (Apartment SL-2)',
     title: 'House Rules & Guest Guidelines',
     subtitle: 'Welcome to Lulu Aurelian Furnished Apartments - Neema Haven!',
-    welcomeNote: 'We’re delighted to host you at Neema Haven. To ensure a peaceful, safe, and restful stay for all guests, please review the guidelines below.',
+    welcomeNote: 'A warm welcome to Neema Haven! Designed as a restful sanctuary, we invite you to review these friendly guidelines so your stay is wonderfully peaceful, safe, and rejuvenating.',
     highlights: [
       {
         icon: 'clock',
         title: 'Check-In & Out',
-        text: 'Check-in: After 2:00 PM • Check-out: Strictly before 10:00 AM'
+        text: 'Check-in is from 2:00 PM • Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. (Need extra time? Just ask!)'
       },
       {
         icon: 'smoking',
-        title: 'Strictly Non-Smoking',
-        text: 'Smoking indoors is strictly prohibited. Balcony ashtrays provided.'
+        title: 'Fresh & Smoke-Free Indoors',
+        text: 'We maintain a 100% smoke-free home indoors. You are welcome to smoke on the balcony with the provided ashtrays.'
       },
       {
         icon: 'noise',
-        title: 'Peaceful Atmosphere',
-        text: 'Respectful quiet hours observed between 10:00 PM – 7:00 AM.'
+        title: 'Peaceful Haven',
+        text: 'Enjoy quiet, restful hours between 10:00 PM and 7:00 AM for a deeply refreshing night of sleep.'
       },
       {
         icon: 'safety',
-        title: 'Balcony & High Winds',
-        text: 'Ensure balcony door is firmly latched during high winds.'
+        title: 'Balcony Care & High Winds',
+        text: 'Please keep the balcony door securely latched during windy afternoon breezes.'
       }
     ],
     sections: [
       {
         id: 'care',
         icon: 'care',
-        title: '1. Care & Respect for the Property',
+        title: '1. Make Yourself at Home',
         items: [
-          'Please treat the home, bedding, and furnishings with care and respect.',
-          'Report any accidental damage or breakage promptly to our management team.',
-          'Only use appliances and home amenities for their intended purposes.'
+          'Please treat the bedding, furnishings, and home amenities with kindness and care.',
+          'If an accident or breakage occurs, just drop our team a quick text—early communication helps us resolve things without any worry!',
+          'All appliances and comforts are here for you to enjoy—please use them as intended.'
         ]
       },
       {
         id: 'cleanliness',
         icon: 'cleanliness',
-        title: '2. Cleanliness',
+        title: '2. Keeping Things Fresh & Clean',
         items: [
-          'Kindly tidy up after yourself in common areas and the kitchen.',
-          'Wash used cookware and dishes before checkout.',
-          'Dispose of trash in designated bins and wipe spills promptly.',
-          'Please use towels strictly for personal drying.'
+          'Tidying up after yourself in the kitchen and common areas keeps the haven feeling light and spacious.',
+          'Please wash or rinse used cookware and dishes before you head out.',
+          'Trash bins are ready for you—please dispose of waste inside and wipe up spills promptly.',
+          'Our fluffy towels are provided exclusively for your personal drying and bathing comfort. Please ensure they are not used to clean shoes, luggage, or floor spills.'
         ]
       },
       {
         id: 'noise',
         icon: 'noise',
-        title: '3. Noise & Consideration',
+        title: '3. Peaceful Nights & Good Neighbors',
         items: [
-          'Please keep noise to a respectful level, especially between 10:00 PM and 7:00 AM.',
-          'Be considerate of surrounding neighbors at all times.'
+          'Please keep volume and music to a gentle level, especially during quiet hours from 10:00 PM to 7:00 AM.',
+          'Thank you for being thoughtful of our neighbors throughout the building.'
         ]
       },
       {
         id: 'smoking',
         icon: 'smoking',
-        title: '4. Smoking & Vaping',
+        title: '4. Smoke-Free Sanctuary',
         items: [
-          'Smoking or vaping inside the apartment is strictly prohibited.',
-          'If you smoke outdoors, please use the provided ashtrays.'
+          'To keep indoor air clean and fresh for every guest, smoking and vaping are not permitted inside.',
+          'You are welcome to step onto the balcony to smoke—please use the provided ashtrays and close the door behind you.'
         ]
       },
       {
         id: 'guests',
         icon: 'guests',
-        title: '5. Guests & Visitors',
+        title: '5. Visitors & Friends',
         items: [
-          'Only registered guests named on the booking are permitted.',
-          'No parties, loud celebrations, or unauthorized overnight guests.'
+          'Your stay is reserved for the guests listed on your booking. If you’d like to invite a guest over for a chat, please let us know beforehand.',
+          'To preserve the peaceful haven for everyone, we do not host parties or unregistered overnight visitors.'
         ]
       },
       {
         id: 'safety',
         icon: 'safety',
-        title: '6. Safety & Security',
+        title: '6. Your Safety & Security',
         items: [
-          'Always lock doors and latch windows when leaving the apartment.',
-          'Please ensure the balcony door is securely latched during periods of high winds.',
-          'Keep lockbox codes confidential.'
+          'Always lock the front door and secure windows whenever you step out.',
+          'When mountain winds pick up, please ensure the balcony door is firmly latched.',
+          'Keep your lockbox passcode private for your own peace of mind.'
         ]
       },
       {
         id: 'checkout',
         icon: 'checkout',
-        title: '7. Before Checkout',
+        title: '7. Stress-Free Checkout',
         items: [
-          'Check-out is strictly before 10:00 AM.',
-          'Leave used towels in the designated area.',
-          'Ensure lights and appliances are switched off before locking up.'
+          'Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. If you need a bit of extra time, just let us know!',
+          'Please leave used towels in the designated bathroom basket.',
+          'A quick turn-off of the lights and appliances before locking up is deeply appreciated.'
         ]
       }
     ],
-    closingMessage: 'Thank you for choosing Neema Haven and being a wonderful guest. We hope your stay is restful and refreshing!',
+    closingMessage: 'Thank you for choosing Neema Haven and being such a thoughtful, wonderful guest. We hope your stay leaves you refreshed, inspired, and deeply rested!',
     supportContacts: {
       safaricom: '0112299384',
       airtel: '0756958531'

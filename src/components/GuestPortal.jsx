@@ -887,7 +887,7 @@ export default function GuestPortal({ user, onBookNew }) {
             >
               <X size={18} />
             </button>
-            <GuestHouseRules unitId={activeBooking?.unit_id || 'skyview'} />
+            <GuestHouseRules unitId={activeBooking?.unit_id || 'skyview'} inModal={true} />
           </div>
         </div>
       )}

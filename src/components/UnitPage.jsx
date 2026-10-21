@@ -524,7 +524,7 @@ export default function UnitPage({ unitId }) {
                   </div>
                   <div className="quick-rule-content">
                     <h4>Check-in & Checkout</h4>
-                    <p>Check-in: After <strong>2:00 PM</strong><br />Checkout: Strictly before <strong>10:00 AM</strong></p>
+                    <p>Check-in from <strong>2:00 PM</strong> • Check-out at <strong>10:00 AM</strong> (need extra time? Just ask!)</p>
                   </div>
                 </div>
 
@@ -533,8 +533,8 @@ export default function UnitPage({ unitId }) {
                     <CigaretteOff size={20} />
                   </div>
                   <div className="quick-rule-content">
-                    <h4>Strictly Non-Smoking</h4>
-                    <p>Smoking indoors is strictly prohibited. Balcony ashtrays provided.</p>
+                    <h4>Fresh & Smoke-Free</h4>
+                    <p>Indoor air stays clean and fresh. Balcony with ashtrays is ready for you!</p>
                   </div>
                 </div>
 
@@ -543,8 +543,8 @@ export default function UnitPage({ unitId }) {
                     <VolumeX size={20} />
                   </div>
                   <div className="quick-rule-content">
-                    <h4>Quiet Hours</h4>
-                    <p>Respect peaceful neighbor hours between <strong>10:00 PM – 7:00 AM</strong>.</p>
+                    <h4>Peaceful Nights</h4>
+                    <p>Quiet, restful hours observed between <strong>10:00 PM – 7:00 AM</strong>.</p>
                   </div>
                 </div>
 
@@ -553,8 +553,8 @@ export default function UnitPage({ unitId }) {
                     <Sparkles size={20} />
                   </div>
                   <div className="quick-rule-content">
-                    <h4>Cleanliness & Towel Care</h4>
-                    <p>Towels for personal use only. Please wash kitchen dishes before checkout.</p>
+                    <h4>Comfort & Cleanliness</h4>
+                    <p>Plush towels are ready. A quick dish rinse before you go makes our team smile!</p>
                   </div>
                 </div>
               </div>
@@ -866,7 +866,7 @@ export default function UnitPage({ unitId }) {
               </button>
             </div>
             <div className="unit-rules-modal-scroll">
-              <GuestHouseRules unitId={unit.id} onUnitChange={setActiveRulesUnit} />
+              <GuestHouseRules unitId={unit.id} onUnitChange={setActiveRulesUnit} inModal={true} />
             </div>
           </div>
         </div>

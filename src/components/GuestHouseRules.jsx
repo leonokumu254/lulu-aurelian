@@ -43,7 +43,7 @@ const renderHighlightIcon = (iconType) => {
   return <Sparkles size={20} />;
 };
 
-export default function GuestHouseRules({ unitId = 'skyview', onUnitChange }) {
+export default function GuestHouseRules({ unitId = 'skyview', onUnitChange, inModal = false }) {
   const normalizedInitial = (unitId || 'skyview').toLowerCase();
   const [selectedUnit, setSelectedUnit] = useState(normalizedInitial);
   
@@ -133,51 +133,79 @@ export default function GuestHouseRules({ unitId = 'skyview', onUnitChange }) {
   const activeHighlights = rulesData?.highlights && rulesData.highlights.length > 0
     ? rulesData.highlights
     : [
-        { icon: 'clock', title: 'Check-In & Out', text: 'Check-in: After 2:00 PM • Check-out: Strictly before 10:00 AM' },
-        { icon: 'smoking', title: 'Strictly Non-Smoking', text: 'Smoking indoors is strictly prohibited. Balcony ashtrays provided.' },
-        { icon: 'noise', title: 'Quiet Hours', text: 'Respectful noise levels at all times, especially 10:00 PM – 7:00 AM.' },
-        { icon: 'cleanliness', title: 'Towel & Cleanliness', text: 'Towels for personal drying only. Wash dishes before checkout.' }
+        { icon: 'clock', title: 'Check-In & Out', text: 'Check-in is from 2:00 PM • Check-out is at 10:00 AM so we can get the space sparkling clean for our next guests. (Need extra time? Just ask!)' },
+        { icon: 'smoking', title: 'Fresh & Smoke-Free Indoors', text: 'We keep indoor air clean and inviting. You are welcome to smoke on the balcony with the provided ashtrays.' },
+        { icon: 'noise', title: 'Peaceful Nights', text: 'Mountain evenings here are so serene! We kindly observe restful hours from 10:00 PM to 7:00 AM.' },
+        { icon: 'cleanliness', title: 'Comfort & Towel Care', text: 'Fresh, fluffy towels are ready for you. A quick rinse of your dishes before you check out makes our cleaning team smile!' }
       ];
 
   const totalSections = rulesData?.sections?.length || 0;
 
   return (
-    <div className="guest-rules-wrapper">
+    <div className={`guest-rules-wrapper ${inModal ? 'in-modal' : ''}`}>
       {/* Header Banner */}
-      <div className="guest-rules-header glass">
-        <h1 className="rules-main-title">House Rules & Stay Guidelines</h1>
-        <p className="rules-sub-title">
-          {rulesData?.subtitle || `Welcome to Lulu Aurelian Apartment ${UNIT_TITLES[selectedUnit] || 'Luxury Suites'}!`}
-        </p>
-        <p className="rules-intro-text">
-          {rulesData?.welcomeNote || "To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below. These help us maintain the quality of the space and provide a positive experience for all guests!"}
-        </p>
+      {!inModal ? (
+        <div className="guest-rules-header glass">
+          <h1 className="rules-main-title">House Rules & Stay Guidelines</h1>
+          <p className="rules-sub-title">
+            {rulesData?.subtitle || `Welcome to Lulu Aurelian Apartment ${UNIT_TITLES[selectedUnit] || 'Luxury Suites'}!`}
+          </p>
+          <p className="rules-intro-text">
+            {rulesData?.welcomeNote || "To ensure a comfortable, safe, and enjoyable stay for everyone, please take a moment to review the guidelines below. These help us maintain the quality of the space and provide a positive experience for all guests!"}
+          </p>
 
-        {/* Unit Selector Pills */}
-        <div className="rules-unit-selector">
-          <button 
-            type="button"
-            className={`unit-pill ${selectedUnit === 'skyview' ? 'active' : ''}`}
-            onClick={() => handleUnitSelect('skyview')}
-          >
-            <Building2 size={14} /> SkyView Hideaway
-          </button>
-          <button 
-            type="button"
-            className={`unit-pill ${selectedUnit === 'cocoa' ? 'active' : ''}`}
-            onClick={() => handleUnitSelect('cocoa')}
-          >
-            <Building2 size={14} /> Cocoa Retreat
-          </button>
-          <button 
-            type="button"
-            className={`unit-pill ${selectedUnit === 'neema' ? 'active' : ''}`}
-            onClick={() => handleUnitSelect('neema')}
-          >
-            <Building2 size={14} /> Neema Haven
-          </button>
+          {/* Unit Selector Pills */}
+          <div className="rules-unit-selector">
+            <button 
+              type="button"
+              className={`unit-pill ${selectedUnit === 'skyview' ? 'active' : ''}`}
+              onClick={() => handleUnitSelect('skyview')}
+            >
+              <Building2 size={14} /> SkyView Hideaway
+            </button>
+            <button 
+              type="button"
+              className={`unit-pill ${selectedUnit === 'cocoa' ? 'active' : ''}`}
+              onClick={() => handleUnitSelect('cocoa')}
+            >
+              <Building2 size={14} /> Cocoa Retreat
+            </button>
+            <button 
+              type="button"
+              className={`unit-pill ${selectedUnit === 'neema' ? 'active' : ''}`}
+              onClick={() => handleUnitSelect('neema')}
+            >
+              <Building2 size={14} /> Neema Haven
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="modal-rules-topbar">
+          <div className="rules-unit-selector modal-selector">
+            <button 
+              type="button"
+              className={`unit-pill ${selectedUnit === 'skyview' ? 'active' : ''}`}
+              onClick={() => handleUnitSelect('skyview')}
+            >
+              <Building2 size={13} /> SkyView
+            </button>
+            <button 
+              type="button"
+              className={`unit-pill ${selectedUnit === 'cocoa' ? 'active' : ''}`}
+              onClick={() => handleUnitSelect('cocoa')}
+            >
+              <Building2 size={13} /> Cocoa
+            </button>
+            <button 
+              type="button"
+              className={`unit-pill ${selectedUnit === 'neema' ? 'active' : ''}`}
+              onClick={() => handleUnitSelect('neema')}
+            >
+              <Building2 size={13} /> Neema
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Special Top Floor Gateway Notice (Skyview only) */}
       {selectedUnit === 'skyview' && (
@@ -262,7 +290,7 @@ export default function GuestHouseRules({ unitId = 'skyview', onUnitChange }) {
               >
                 <div className="header-left">
                   <span className="section-icon">{renderSectionIcon(section)}</span>
-                  <h3 className="section-title">{section.title}</h3>
+                  <h3 className="rules-accordion-title">{section.title}</h3>
                 </div>
                 <span className="toggle-btn" aria-hidden="true">
                   {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

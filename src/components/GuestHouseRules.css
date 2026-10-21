@@ -1,83 +1,114 @@
+/* ======================================================
+   GuestHouseRules.css — Standard-sized stay guidelines & policies
+   ====================================================== */
+
 .guest-rules-wrapper {
-  max-width: 920px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3.5rem;
+  padding: 1rem 0.75rem 2rem;
   color: var(--color-dark, #1D1912);
   font-family: var(--font-sans, 'Montserrat', sans-serif);
+}
+
+.guest-rules-wrapper.in-modal {
+  max-width: 100%;
+  padding: 0.25rem 0.25rem 1rem;
+  margin: 0;
+}
+
+.modal-rules-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(158, 108, 21, 0.12);
+}
+
+.modal-selector {
+  border-top: none !important;
+  padding-top: 0 !important;
+  gap: 0.45rem !important;
+}
+
+.modal-selector .unit-pill {
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.76rem !important;
+  border-radius: 16px !important;
 }
 
 .guest-rules-header {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(243, 243, 230, 0.85));
   border: 1px solid rgba(158, 108, 21, 0.25);
-  border-radius: 16px;
-  padding: 2.25rem 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 10px 30px rgba(29, 25, 18, 0.04);
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 16px rgba(29, 25, 18, 0.03);
 }
 
 .rules-header-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
   background: rgba(158, 108, 21, 0.08);
   color: var(--color-gold-deep, #9E6C15);
   border: 1px solid rgba(158, 108, 21, 0.22);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  padding: 0.35rem 0.85rem;
-  border-radius: 20px;
-  margin-bottom: 0.9rem;
+  letter-spacing: 0.7px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 16px;
+  margin-bottom: 0.6rem;
 }
 
 .rules-main-title {
-  font-size: 2.15rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--color-dark, #1D1912);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.35rem 0;
   font-family: var(--font-serif, 'Cormorant Garamond', Georgia, serif);
-  letter-spacing: -0.5px;
-  line-height: 1.2;
+  letter-spacing: -0.3px;
+  line-height: 1.25;
 }
 
 .rules-sub-title {
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-gold-deep, #9E6C15);
-  margin: 0 0 0.85rem 0;
-  letter-spacing: 0.2px;
+  margin: 0 0 0.55rem 0;
+  letter-spacing: 0.1px;
 }
 
 .rules-intro-text {
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 0.85rem;
+  line-height: 1.55;
   color: #555048;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
 }
 
 .rules-unit-selector {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.5rem;
   border-top: 1px solid rgba(158, 108, 21, 0.14);
-  padding-top: 1.15rem;
+  padding-top: 0.85rem;
 }
 
 .unit-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1.15rem;
-  border-radius: 30px;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
   border: 1.5px solid rgba(158, 108, 21, 0.2);
   background: #ffffff;
   color: #4a453e;
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .unit-pill:hover {
@@ -90,7 +121,7 @@
   background: var(--color-dark, #1D1912);
   border-color: var(--color-dark, #1D1912);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(29, 25, 18, 0.18);
+  box-shadow: 0 3px 10px rgba(29, 25, 18, 0.15);
 }
 
 /* Skyview Special Gateway Welcome Card */
@@ -98,23 +129,23 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(243, 243, 230, 0.7));
   border: 1px solid rgba(158, 108, 21, 0.22);
   border-left: 4px solid var(--color-gold-deep, #9E6C15);
-  border-radius: 14px;
-  padding: 1.35rem 1.6rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 18px rgba(29, 25, 18, 0.03);
+  border-radius: 10px;
+  padding: 0.9rem 1.15rem;
+  margin-bottom: 1.15rem;
+  box-shadow: 0 3px 12px rgba(29, 25, 18, 0.02);
 }
 
 .gateway-card-header {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 0.6rem;
+  gap: 0.7rem;
+  margin-bottom: 0.4rem;
 }
 
 .gateway-icon-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   background: rgba(158, 108, 21, 0.09);
   color: var(--color-gold-deep, #9E6C15);
   border: 1px solid rgba(158, 108, 21, 0.2);
@@ -126,24 +157,24 @@
 
 .gateway-card-header h3 {
   font-family: var(--font-serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--color-dark, #1D1912);
   margin: 0;
 }
 
 .gateway-card-header p {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   color: var(--color-gold-deep, #9E6C15);
-  margin: 2px 0 0 0;
+  margin: 1px 0 0 0;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.7px;
   font-weight: 700;
 }
 
 .gateway-body p {
-  font-size: 0.92rem;
-  line-height: 1.65;
+  font-size: 0.84rem;
+  line-height: 1.5;
   color: #4a453e;
   margin: 0;
 }
@@ -151,19 +182,19 @@
 /* Quick Summary Highlights Grid */
 .rules-highlight-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
 }
 
 .highlight-card {
   background: transparent;
   border: 1px solid var(--color-border, rgba(158, 108, 21, 0.18));
   border-radius: 8px;
-  padding: 1rem 1.15rem;
+  padding: 0.7rem 0.85rem;
   display: flex;
   align-items: flex-start;
-  gap: 0.9rem;
+  gap: 0.65rem;
   box-shadow: none;
   transition: var(--transition-fast, all 0.2s ease);
 }
@@ -171,14 +202,12 @@
 .highlight-card:hover {
   background: rgba(187, 133, 37, 0.05);
   border-color: var(--color-gold-muted, rgba(158, 108, 21, 0.4));
-  transform: none;
-  box-shadow: none;
 }
 
 .highlight-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   background: rgba(158, 108, 21, 0.08);
   color: var(--color-gold-deep, #9E6C15);
   border: 1px solid rgba(158, 108, 21, 0.18);
@@ -186,28 +215,28 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .highlight-card:hover .highlight-icon {
   background: var(--color-gold-deep, #9E6C15);
   color: #ffffff;
   border-color: var(--color-gold-deep, #9E6C15);
-  box-shadow: 0 4px 12px rgba(158, 108, 21, 0.22);
+  box-shadow: 0 3px 10px rgba(158, 108, 21, 0.2);
 }
 
 .highlight-info h4 {
-  margin: 0 0 0.3rem 0;
+  margin: 0 0 0.2rem 0;
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--color-dark, #1D1912);
 }
 
 .highlight-info p {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: 0.76rem;
+  line-height: 1.35;
   color: #635d54;
 }
 
@@ -216,40 +245,40 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.65rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.45rem;
   border-bottom: 1px solid var(--color-border, rgba(158, 108, 21, 0.15));
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .rules-section-title {
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--color-dark, #1D1912);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.7px;
 }
 
 .rules-toggle-buttons-group {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .rules-toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.85rem;
-  border-radius: 6px;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 5px;
   font-family: var(--font-sans);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.18s ease;
   user-select: none;
 }
 
@@ -264,7 +293,6 @@
   border-color: var(--color-gold-deep, #9E6C15);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(158, 108, 21, 0.2);
 }
 
 .rules-toggle-btn.collapse {
@@ -284,8 +312,8 @@
 .rules-sections-container {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  margin-bottom: 2.25rem;
+  gap: 0.55rem;
+  margin-bottom: 1.5rem;
 }
 
 .rule-accordion-card {
@@ -302,7 +330,7 @@
 }
 
 .accordion-header {
-  padding: 1.05rem 1.35rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -319,13 +347,13 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.7rem;
 }
 
 .section-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
   background: rgba(158, 108, 21, 0.08);
   color: var(--color-gold-deep, #9E6C15);
   border: 1px solid rgba(158, 108, 21, 0.16);
@@ -340,12 +368,18 @@
   border-color: rgba(158, 108, 21, 0.35);
 }
 
-.section-title {
-  font-family: var(--font-sans);
-  font-size: 0.96rem;
-  font-weight: 700;
-  color: var(--color-dark, #1D1912);
-  margin: 0;
+/* Scoped, standard-sized accordion title preventing global index.css 2.8rem leakage */
+.rules-accordion-title,
+.rule-accordion-card .section-title,
+.rule-accordion-card h3 {
+  font-family: var(--font-sans, 'Montserrat', sans-serif) !important;
+  font-size: 0.98rem !important; /* ~15.5px standard title */
+  font-weight: 600 !important;
+  color: var(--color-dark, #1D1912) !important;
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.1px !important;
+  text-transform: none !important;
 }
 
 .toggle-btn {
@@ -356,8 +390,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.35rem;
-  border-radius: 6px;
+  padding: 0.25rem;
+  border-radius: 5px;
   transition: color 0.2s ease, background 0.2s ease;
 }
 
@@ -366,89 +400,96 @@
 }
 
 .accordion-content {
-  padding: 0 1.35rem 1.35rem 1.35rem;
+  padding: 0 1rem 0.9rem 1rem;
   border-top: 1px dashed rgba(158, 108, 21, 0.15);
 }
 
 .rules-items-list {
   list-style: none;
   padding: 0;
-  margin: 0.9rem 0 0 0;
+  margin: 0.65rem 0 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 
 .rule-item {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
   color: #443f38;
 }
 
 .item-bullet-icon {
   color: var(--color-gold-deep, #9E6C15);
   flex-shrink: 0;
-  margin-top: 0.25rem;
+  margin-top: 0.18rem;
+  width: 14px;
+  height: 14px;
 }
 
 /* Thank You & Host Support Box */
 .rules-closing-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(243, 243, 230, 0.85));
   border: 1px solid rgba(158, 108, 21, 0.25);
-  border-radius: 16px;
-  padding: 2.25rem 1.75rem;
+  border-radius: 12px;
+  padding: 1.25rem;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(29, 25, 18, 0.04);
+  box-shadow: 0 4px 16px rgba(29, 25, 18, 0.03);
 }
 
 .closing-heart {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
   background: rgba(158, 108, 21, 0.09);
   border: 1px solid rgba(158, 108, 21, 0.22);
   border-radius: 50%;
   color: var(--color-gold-deep, #9E6C15);
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.55rem;
+}
+
+.closing-heart svg {
+  width: 20px;
+  height: 20px;
 }
 
 .rules-closing-card h3 {
   font-family: var(--font-serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 1.45rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--color-dark, #1D1912);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.35rem 0;
 }
 
 .closing-text {
-  font-size: 0.93rem;
-  line-height: 1.65;
+  font-size: 0.84rem;
+  line-height: 1.5;
   color: #555048;
-  max-width: 680px;
-  margin: 0 auto 1.75rem;
+  max-width: 580px;
+  margin: 0 auto 1.15rem;
 }
 
 .support-action-box {
   background: #ffffff;
   border: 1px solid rgba(158, 108, 21, 0.18);
-  border-radius: 12px;
-  padding: 1.35rem;
-  max-width: 680px;
+  border-radius: 10px;
+  padding: 0.95rem;
+  max-width: 580px;
   margin: 0 auto;
-  box-shadow: 0 4px 14px rgba(29, 25, 18, 0.02);
+  box-shadow: 0 3px 10px rgba(29, 25, 18, 0.02);
 }
 
 .support-title-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  margin-bottom: 0.35rem;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
 }
 
 .support-title-icon {
@@ -457,39 +498,39 @@
 
 .support-title-row h4 {
   font-family: var(--font-sans);
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--color-dark, #1D1912);
   margin: 0;
 }
 
 .support-action-box p {
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   color: #635d54;
-  margin: 0 0 1.15rem 0;
+  margin: 0 0 0.85rem 0;
 }
 
 .contact-buttons-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.65rem;
+  gap: 0.55rem;
 }
 
 .btn-contact-call {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1.15rem;
-  border-radius: 30px;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 20px;
   background: rgba(158, 108, 21, 0.08);
   border: 1px solid rgba(158, 108, 21, 0.25);
   color: var(--color-gold-deep, #9E6C15);
   text-decoration: none;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-contact-call:hover {
@@ -502,14 +543,14 @@
 .btn-contact-whatsapp {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1.25rem;
-  border-radius: 30px;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
   background: #25d366;
   color: #ffffff;
   text-decoration: none;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -521,9 +562,9 @@
 
 .rules-loader {
   text-align: center;
-  padding: 2.5rem;
+  padding: 2rem;
   color: #8c8273;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
 }
 
 /* ======================================================
@@ -531,151 +572,152 @@
    ====================================================== */
 @media (max-width: 768px) {
   .guest-rules-wrapper {
-    padding: 1rem 0.75rem 2.5rem;
+    padding: 0.75rem 0.5rem 1.5rem;
     max-width: 100%;
   }
 
   .guest-rules-header {
-    padding: 1.6rem 1.25rem;
-    border-radius: 14px;
-    margin-bottom: 1.25rem;
+    padding: 1rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
   }
 
   .rules-main-title {
-    font-size: 1.65rem;
+    font-size: 1.2rem;
     line-height: 1.25;
   }
 
   .rules-sub-title {
-    font-size: 0.95rem;
+    font-size: 0.84rem;
   }
 
   .rules-intro-text {
-    font-size: 0.88rem;
-    line-height: 1.55;
-    margin-bottom: 1.25rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    margin-bottom: 0.85rem;
   }
 
   .rules-highlight-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
   }
 
   .highlight-card {
-    padding: 0.85rem 0.75rem;
-    gap: 0.65rem;
+    padding: 0.65rem 0.65rem;
+    gap: 0.55rem;
   }
 
   .highlight-icon {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
   }
 
   .highlight-info h4 {
-    font-size: 0.84rem;
+    font-size: 0.78rem;
   }
 
   .highlight-info p {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
 
   .rule-accordion-card {
-    border-radius: 10px;
+    border-radius: 8px;
   }
 
   .accordion-header {
-    padding: 0.85rem 1rem;
-    min-height: 48px;
+    padding: 0.65rem 0.85rem;
   }
 
-  .section-title {
-    font-size: 0.92rem;
+  .rules-accordion-title,
+  .rule-accordion-card .section-title,
+  .rule-accordion-card h3 {
+    font-size: 0.92rem !important;
   }
 
   .accordion-content {
-    padding: 0 1rem 1rem;
+    padding: 0 0.85rem 0.85rem;
   }
 
   .rule-item {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    gap: 0.5rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    gap: 0.45rem;
   }
 
   .rules-closing-card {
-    padding: 1.5rem 1.15rem;
-    border-radius: 14px;
+    padding: 1.1rem 0.9rem;
+    border-radius: 10px;
   }
 
   .closing-text {
-    font-size: 0.88rem;
-    line-height: 1.55;
+    font-size: 0.8rem;
+    line-height: 1.45;
   }
 
   .support-action-box {
-    padding: 1rem 0.85rem;
+    padding: 0.85rem 0.75rem;
   }
 
   .contact-buttons-row {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .btn-contact-call,
   .btn-contact-whatsapp {
     width: 100%;
     justify-content: center;
-    padding: 0.7rem 1rem;
-    font-size: 0.84rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.78rem;
     box-sizing: border-box;
-    min-height: 42px;
   }
 }
 
 @media (max-width: 440px) {
   .guest-rules-wrapper {
-    padding: 0.65rem 0.35rem 2rem;
+    padding: 0.5rem 0.25rem 1.25rem;
   }
 
   .guest-rules-header {
-    padding: 1.25rem 0.85rem;
-    border-radius: 12px;
+    padding: 0.85rem 0.75rem;
+    border-radius: 10px;
   }
 
   .rules-main-title {
-    font-size: 1.35rem;
+    font-size: 1.15rem;
   }
 
   .rules-unit-selector {
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
 
   .unit-pill {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.8rem;
-    min-height: 38px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
   }
 
   .rules-highlight-grid {
     grid-template-columns: 1fr;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .highlight-card {
-    padding: 0.75rem;
+    padding: 0.6rem;
   }
 
   .header-left {
-    gap: 0.6rem;
+    gap: 0.55rem;
   }
 
   .section-icon {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
   }
 
-  .section-title {
-    font-size: 0.88rem;
+  .rules-accordion-title,
+  .rule-accordion-card .section-title,
+  .rule-accordion-card h3 {
+    font-size: 0.88rem !important;
   }
 }
