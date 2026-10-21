@@ -946,12 +946,14 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       <div className="success-icon-ring" style={{ color: '#1a9e35', borderColor: '#1a9e35' }}>
                         <Check size={36} />
                       </div>
-                      <span style={{ color: '#a3721d', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.78rem', fontWeight: 600 }}>Reservation Confirmed</span>
-                      <h3 className="payment-status-title" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.1rem', margin: '0.35rem 0 0.5rem', color: '#1D1912' }}>
+                      <span style={{ color: '#a3721d', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.5rem' }}>
+                        Reservation Confirmed
+                      </span>
+                      <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.1rem', fontWeight: 600, margin: '0 0 0.5rem', color: '#1D1912', lineHeight: '1.2' }}>
                         Welcome to Lulu Aurelian
                       </h3>
-                      <p className="payment-status-desc" style={{ maxWidth: '520px', margin: '0 auto 1.5rem', color: '#4b5563', lineHeight: '1.6', fontSize: '0.95rem' }}>
-                        Thank you, <strong>{createdBooking?.guestName || `${guestDetails?.firstName || ''} ${guestDetails?.lastName || ''}`.trim() || 'Valued Guest'}</strong>. Your reservation for <strong>{createdBooking?.suiteName || suite?.name || 'Your Suite'}</strong> is verified and locked in.
+                      <p style={{ maxWidth: '520px', margin: '0 auto 1.5rem', color: '#475569', lineHeight: '1.6', fontSize: '0.95rem', fontWeight: 400 }}>
+                        Thank you, <strong style={{ color: '#1D1912', fontWeight: 600 }}>{createdBooking?.guestName || `${guestDetails?.firstName || ''} ${guestDetails?.lastName || ''}`.trim() || 'Valued Guest'}</strong>. Your reservation for <strong style={{ color: '#1D1912', fontWeight: 600 }}>{createdBooking?.suiteName || suite?.name || 'Your Suite'}</strong> is verified and locked in.
                       </p>
 
                       <div style={{ background: 'rgba(163, 114, 29, 0.05)', border: '1.5px solid rgba(163, 114, 29, 0.25)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', textAlign: 'left' }}>
@@ -977,12 +979,15 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                         </div>
                       </div>
 
-                      <div style={{ background: '#fdfbf7', border: '1px dashed #d5b881', borderRadius: '10px', padding: '1rem', marginBottom: '1.5rem', textAlign: 'left' }}>
-                        <h4 style={{ margin: '0 0 0.35rem', fontSize: '0.9rem', color: '#8c6014', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Sparkles size={16} /> Keyless Smart-Lock Access
-                        </h4>
-                        <p style={{ margin: 0, fontSize: '0.82rem', color: '#4b5563', lineHeight: '1.5' }}>
-                          Your unique digital door passcode, high-speed Wi-Fi credentials, and driving directions have been dispatched to <strong>{createdBooking?.email || guestDetails?.email || 'your email'}</strong>.
+                      <div style={{ background: '#FAF6ED', border: '1.5px dashed #C29B38', borderRadius: '12px', padding: '1.15rem 1.25rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.45rem' }}>
+                          <Sparkles size={18} style={{ color: '#8C6014', flexShrink: 0 }} />
+                          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#8C6014', letterSpacing: '0.02em' }}>
+                            Keyless Smart-Lock Access
+                          </h4>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#334155', lineHeight: '1.55', fontWeight: 400 }}>
+                          Your unique digital door passcode, high-speed Wi-Fi credentials, and driving directions have been dispatched to <strong style={{ color: '#1D1912', fontWeight: 600 }}>{createdBooking?.email || guestDetails?.email || 'your email'}</strong>.
                         </p>
                       </div>
 
