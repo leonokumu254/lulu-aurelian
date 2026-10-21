@@ -129,18 +129,32 @@
       .badge {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.4rem 1rem;
-        background: var(--color-white);
-        border: 1px solid rgba(158, 108, 21, 0.22);
+        gap: 0.65rem;
+        padding: 0.4rem 1rem 0.4rem 0.55rem;
+        background: rgba(210, 166, 60, 0.1);
+        border: 1px solid rgba(210, 166, 60, 0.28);
         border-radius: 50px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         letter-spacing: 1.8px;
         color: var(--color-gold-deep);
         text-transform: uppercase;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 14px rgba(29, 25, 18, 0.03);
+      }
+
+      .badge-crest-sm {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--color-dark);
+        color: var(--color-gold-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-serif);
+        font-weight: 700;
+        font-size: 0.82rem;
       }
 
       .error-code {
@@ -149,7 +163,7 @@
         font-weight: 700;
         line-height: 0.9;
         letter-spacing: 4px;
-        background: linear-gradient(135deg, var(--color-dark) 25%, var(--color-gold-deep) 65%, var(--color-gold-bright) 100%);
+        background: linear-gradient(135deg, var(--color-dark) 25%, var(--color-gold-deep) 65%, var(--color-gold-muted) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -160,7 +174,7 @@
       .shimmer-line {
         width: 80px;
         height: 2px;
-        background: linear-gradient(90deg, transparent, var(--color-gold-deep), var(--color-gold-bright), transparent);
+        background: linear-gradient(90deg, transparent, var(--color-gold-deep), var(--color-gold-muted), transparent);
         margin: 1rem auto 1.5rem;
       }
 
@@ -194,7 +208,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.9rem 1.8rem;
+        padding: 0.95rem 1.85rem;
         border-radius: 8px;
         font-size: 0.88rem;
         font-weight: 600;
@@ -221,28 +235,29 @@
       .btn-secondary {
         background-color: transparent;
         color: var(--color-dark);
-        border: 1px solid rgba(29, 25, 18, 0.28);
+        border: 1px solid var(--color-gold-deep);
       }
 
       .btn-secondary:hover {
-        background-color: var(--color-white);
+        background-color: var(--color-gold-deep);
         border-color: var(--color-gold-deep);
-        color: var(--color-gold-deep);
+        color: var(--color-white);
         transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(158, 108, 21, 0.2);
       }
 
       .btn-whatsapp {
-        background-color: rgba(238, 205, 92, 0.15);
-        color: #8C5F12;
-        border: 1px solid rgba(158, 108, 21, 0.35);
+        background-color: rgba(210, 166, 60, 0.12);
+        color: var(--color-gold-deep);
+        border: 1px solid rgba(210, 166, 60, 0.35);
       }
 
       .btn-whatsapp:hover {
-        background-color: #25D366;
-        border-color: #25D366;
-        color: #FFFFFF;
+        background-color: var(--color-gold-muted);
+        border-color: var(--color-gold-muted);
+        color: var(--color-dark);
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+        box-shadow: 0 8px 20px rgba(210, 166, 60, 0.35);
       }
 
       /* Suite Showcase Cards */
@@ -250,6 +265,13 @@
         border-top: 1px solid rgba(29, 25, 18, 0.08);
         padding-top: 3rem;
         margin-bottom: 2rem;
+      }
+
+      .gold-accent-line {
+        width: 44px;
+        height: 2px;
+        background-color: var(--color-gold-deep);
+        margin: 0 auto 1rem;
       }
 
       .suites-header h3 {
@@ -272,22 +294,25 @@
       }
 
       .suite-card {
-        background: var(--color-white);
+        background: rgba(255, 255, 255, 0.65);
         border: 1px solid rgba(29, 25, 18, 0.08);
-        border-radius: 14px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 6px 20px rgba(29, 25, 18, 0.04);
-        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        box-shadow: 0 4px 16px rgba(29, 25, 18, 0.03);
+        transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         display: flex;
         flex-direction: column;
         text-decoration: none;
         color: inherit;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
       }
 
       .suite-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 16px 36px rgba(29, 25, 18, 0.1);
-        border-color: rgba(158, 108, 21, 0.3);
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(29, 25, 18, 0.08);
+        border-color: rgba(210, 166, 60, 0.4);
+        background: rgba(255, 255, 255, 0.95);
       }
 
       .suite-img-wrap {
@@ -408,7 +433,10 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <div class="badge">404 &bull; SANCTUARY NOT FOUND</div>
+      <div class="badge">
+        <div class="badge-crest-sm">LA</div>
+        <span>LULU AURELIAN ESTATE &bull; SANCTUARY ERROR</span>
+      </div>
 
       <div class="error-code">404</div>
       <div class="shimmer-line"></div>
@@ -433,6 +461,7 @@
 
       <!-- Quick Showcase -->
       <section class="suites-header">
+        <div class="gold-accent-line"></div>
         <h3>Explore Our Luxury Residences</h3>
         <p>Step directly into one of our three bespoke furnished apartments in Nyeri:</p>
       </section>
