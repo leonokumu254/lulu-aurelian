@@ -11,7 +11,7 @@
   --color-glass: rgba(243, 243, 230, 0.75);
   
   --font-serif: 'Cormorant Garamond', serif;
-  --font-sans: 'Montserrat', sans-serif;  
+  --font-sans: '+', sans-serif;  
   
   --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --transition-fast: all 0.2s ease;

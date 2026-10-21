@@ -142,7 +142,7 @@ export default function SuccessModal({ bookingDetails, onClose, onPayLater }) {
           <h2 className="sm-title">STK Push Initiated!</h2>
           <p className="sm-subtitle">
             A direct payment request has been sent to your phone number for <strong>{bookingDetails.suiteName}</strong>.
-            Please enter your M-Pesa PIN on your phone handset to authorize the transaction. Once completed, your booking status will update to Confirmed automatically.
+            Please enter your M-Pesa PIN on your phone handset to authorize the transaction. Once completed, your booking status will update to Confirmed automatically and complete check-in details will be sent via email.
           </p>
           <button onClick={onClose} className="sm-btn-primary" style={{ marginTop: '1.5rem' }}>
             Got It

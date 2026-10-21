@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Calendar, Clock, CheckCircle, MapPin, Edit3, Bed, Award, Star, 
   History, Lock, Unlock, X, Copy, ShieldCheck, Wifi, Key, 
-  PhoneCall, Loader2, MessageSquare, Check, AlertCircle, CigaretteOff, VolumeX, Sparkles 
+  PhoneCall, Loader2, MessageSquare, Check, AlertCircle, CigaretteOff, VolumeX, Sparkles, Mail 
 } from 'lucide-react';
 import GuestHouseRules from './GuestHouseRules';
 import './GuestPortal.css';
@@ -393,6 +393,11 @@ export default function GuestPortal({ user, onBookNew }) {
                     );
                   })}
                 </div>
+
+                <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(29, 25, 18, 0.08)', display: 'flex', alignItems: 'center', gap: '0.55rem', fontSize: '0.82rem', color: '#5C5245' }}>
+                  <Mail size={15} color="#8F6517" style={{ flexShrink: 0 }} />
+                  <span>Check-in details, smart lockbox codes, and arrival instructions are sent directly via email.</span>
+                </div>
               </div>
 
               {/* GLASSMORPHIC ACTION CARD */}
@@ -440,6 +445,19 @@ export default function GuestPortal({ user, onBookNew }) {
                         <div className="booking-ref-block" style={{ margin: 0 }}>
                           <span className="ref-label">Reference</span>
                           <span className="ref-value">{String(activeBooking?.id || '').split('-')[0].toUpperCase()}</span>
+                        </div>
+                      </div>
+
+                      {/* Prominent Check-In Details Email Dispatch Notice */}
+                      <div style={{ background: 'rgba(210, 166, 60, 0.1)', border: '1px solid rgba(210, 166, 60, 0.35)', borderRadius: '10px', padding: '0.85rem 1.1rem', marginBottom: '1.1rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                        <Mail size={18} color="#9E6C15" style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                          <strong style={{ fontSize: '0.88rem', color: '#1D1912', display: 'block', marginBottom: '2px' }}>
+                            Check-In Details Sent Via Email
+                          </strong>
+                          <p style={{ margin: 0, fontSize: '0.82rem', color: '#4A3E31', lineHeight: 1.5 }}>
+                            Your door lockbox passcode, Wi-Fi credentials, and arrival guide will be sent via email to <strong>{user?.email || activeBooking?.guest_email || 'your registered email'}</strong>. Full check-in credentials are dispatched on your arrival day ({formatEATDate(activeBooking?.check_in)}) as from <strong>1:00 PM EAT</strong>.
+                          </p>
                         </div>
                       </div>
 
@@ -497,7 +515,7 @@ export default function GuestPortal({ user, onBookNew }) {
                       <div style={{ background: 'rgba(212, 175, 55, 0.08)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', border: '1px solid rgba(212, 175, 55, 0.2)' }}>
                         <Clock size={18} color="#9a7629" style={{ flexShrink: 0 }} />
                         <p style={{ margin: 0, fontSize: '0.8rem', color: '#524424', lineHeight: 1.45 }}>
-                          <strong>Check-in from 2:00 PM EAT (Early access from 1:00 PM EAT)</strong> • Check-out by 10:00 AM EAT. Full credentials have also been dispatched to your email & WhatsApp.
+                          <strong>Check-in from 2:00 PM EAT (Early access from 1:00 PM EAT)</strong> • Check-out by 10:00 AM EAT. Complete check-in details and credentials are sent directly via email.
                         </p>
                       </div>
 
@@ -619,6 +637,14 @@ export default function GuestPortal({ user, onBookNew }) {
                       <div className="payment-timer-alert">
                         <span>Payment Window Closes In:</span>
                         <strong>{timeRemaining || 'Calculating...'}</strong>
+                      </div>
+
+                      {/* Notice that check-in details are sent via email upon payment */}
+                      <div style={{ background: 'rgba(210, 166, 60, 0.08)', border: '1px solid rgba(210, 166, 60, 0.25)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        <Mail size={16} color="#9E6C15" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.82rem', color: '#524424', lineHeight: 1.45 }}>
+                          <strong>Check-In Notice:</strong> Your complete check-in details (smart lockbox passcode and Wi-Fi access) will be sent via email once your payment is confirmed.
+                        </span>
                       </div>
                       <div className="payment-options">
                         <label className={`pay-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}>
@@ -1034,7 +1060,10 @@ export default function GuestPortal({ user, onBookNew }) {
               </div>
             </div>
             <h2>Payment Successful!</h2>
-            <p style={{ marginBottom: '2rem' }}>Your booking for {getUnitName(activeBooking?.unit_id)} has been fully paid and confirmed.</p>
+            <p style={{ marginBottom: '1.25rem', fontSize: '0.92rem', color: '#4A3E31', lineHeight: 1.5 }}>
+              Your booking for <strong>{getUnitName(activeBooking?.unit_id)}</strong> has been fully paid and confirmed.<br />
+              <strong>Your complete check-in details and lockbox passcode will be sent via email.</strong>
+            </p>
             <button onClick={() => { setPaymentSuccess(false); fetchBookings(true); }} className="btn-primary">
               View Reservation & Keyless Access
             </button>

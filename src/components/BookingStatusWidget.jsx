@@ -119,6 +119,11 @@ export default function BookingStatusWidget({ user }) {
                 </a>
               </div>
             </div>
+
+            <div style={{ marginTop: '0.85rem', padding: '0.65rem 0.9rem', background: 'rgba(210, 166, 60, 0.08)', borderRadius: '8px', border: '1px solid rgba(210, 166, 60, 0.2)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: '#524424' }}>
+              <Clock size={15} color="#9a7629" style={{ flexShrink: 0 }} />
+              <span>Full check-in details, door lockbox code, and directions will be sent via email.</span>
+            </div>
           </div>
         </div>
       </div>
