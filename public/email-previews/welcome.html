@@ -4,11 +4,17 @@
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>Experience luxury at Lulu Aurelian Estate!</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }
         body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; }
         @media only screen and (max-width: 620px) {
@@ -16,6 +22,12 @@
           .feature-col-img { width: 100px !important; }
           .feature-col-img img { width: 100px !important; height: 100px !important; }
         }
+        @media (prefers-color-scheme: dark) {
+          .brand-footer { background-color: #231F19 !important; border-top-color: rgba(210, 166, 60, 0.35) !important; }
+          .footer-brand-title, .footer-copy, .footer-link { color: #FFFFFF !important; }
+        }
+        [data-ogsc] .brand-footer { background-color: #231F19 !important; }
+        [data-ogsc] .footer-brand-title, [data-ogsc] .footer-copy, [data-ogsc] .footer-link { color: #FFFFFF !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -39,14 +51,14 @@
             <table cellpadding="0" cellspacing="0" border="0" align="center">
               <tr>
                 <td align="center" style="width: 44px; height: 54px; border: 1.5px solid #1D1912; border-radius: 22px; text-align: center; vertical-align: middle; background-color: #FAF9F6;">
-                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #cfa873; letter-spacing: 1.5px; display: block; line-height: 1;">LA</span>
+                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #9E6C15; letter-spacing: 1.5px; display: block; line-height: 1;">LA</span>
                 </td>
               </tr>
             </table>
             <div style="margin-top: 10px; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3.5px; color: #1D1912; text-transform: uppercase;">
               LULU AURELIAN
             </div>
-            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 2.5px; color: #cfa873; text-transform: uppercase; margin-top: 3px;">
+            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 2.5px; color: #9E6C15; text-transform: uppercase; margin-top: 3px;">
               ESTATE
             </div>
           </td>
@@ -201,15 +213,15 @@
                         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top: 1px solid rgba(29,25,18,0.08); padding-top: 18px;">
                           <tr>
                             <td width="33.3%" align="center">
-                              <span style="font-size: 20px; display: block; margin-bottom: 4px;">🎁</span>
+                              <span style="display: inline-block; width: 6px; height: 6px; background-color: #D2A63C; border-radius: 50%; margin-bottom: 6px;"></span>
                               <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: #1D1912; display: block;">Discounts & Perks</span>
                             </td>
                             <td width="33.3%" align="center">
-                              <span style="font-size: 20px; display: block; margin-bottom: 4px;">📶</span>
+                              <span style="display: inline-block; width: 6px; height: 6px; background-color: #D2A63C; border-radius: 50%; margin-bottom: 6px;"></span>
                               <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: #1D1912; display: block;">High Speed Internet</span>
                             </td>
                             <td width="33.3%" align="center">
-                              <span style="font-size: 20px; display: block; margin-bottom: 4px;">☕</span>
+                              <span style="display: inline-block; width: 6px; height: 6px; background-color: #D2A63C; border-radius: 50%; margin-bottom: 6px;"></span>
                               <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: #1D1912; display: block;">Free Refreshments</span>
                             </td>
                           </tr>
@@ -224,70 +236,76 @@
               <tr>
                 <td>
                   
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #1D1912; color: #FFFFFF; border-radius: 0 0 24px 24px; text-align: center;">
+      <!-- Contact Section Frosted Glass Style Brand Footer -->
+      <table class="brand-footer" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #231F19; background-image: linear-gradient(rgba(29, 25, 18, 0.78), rgba(29, 25, 18, 0.88)), url('https://www.luluaurelian.co.ke/assets/cocoa/cocoa_25.jpeg'); background-size: cover; background-position: center; color: #FFFFFF; border-radius: 0 0 24px 24px; text-align: center; border-top: 1px solid rgba(210, 166, 60, 0.35);">
         <tr>
-          <td align="center" style="padding: 38px 24px 34px 24px;">
+          <td align="center" style="padding: 36px 24px 32px 24px;">
             <!-- Footer Crest Badge -->
-            <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 12px;">
+            <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 14px;">
               <tr>
-                <td align="center" style="width: 36px; height: 46px; border: 1.5px solid #cfa873; border-radius: 18px; text-align: center; vertical-align: middle;">
-                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 14px; font-weight: 700; color: #cfa873; letter-spacing: 1px; display: block;">LA</span>
+                <td align="center" style="width: 40px; height: 50px; border: 1.5px solid #D2A63C; border-radius: 20px; text-align: center; vertical-align: middle; background-color: rgba(210, 166, 60, 0.15);">
+                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; font-weight: 700; color: #EECD5C; letter-spacing: 1px; display: block; line-height: 1;">LA</span>
                 </td>
               </tr>
             </table>
-            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #FFFFFF; text-transform: uppercase; margin-bottom: 18px;">
-              LULU AURELIAN ESTATE
+
+            <!-- Brand Title matching Contact Section (White Lulu + Gold Aurelian) -->
+            <div class="footer-brand-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 500; letter-spacing: 1px; margin-bottom: 3px;">
+              <span style="color: #FFFFFF;">Lulu</span> <span style="color: #D2A63C; font-weight: 600;">Aurelian</span>
+            </div>
+            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 3.5px; color: #D2A63C; text-transform: uppercase; margin-bottom: 20px;">
+              ESTATE
             </div>
 
-            <!-- Social Links -->
+            <!-- Social Links (Matching Contact Section .contact-social-btn with Muted Gold Buttons) -->
             <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 20px auto;">
               <tr>
-                <td style="padding: 0 8px;">
-                  <a href="https://wa.me/254112299384" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/whatsapp.png" alt="WhatsApp" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://wa.me/254112299384" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/whatsapp.png" alt="WhatsApp" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/instagram-new.png" alt="Instagram" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/instagram-new.png" alt="Instagram" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.facebook.com/share/1EY74Cxf23/" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/facebook-new.png" alt="Facebook" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.facebook.com/share/1EY74Cxf23/" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/facebook-new.png" alt="Facebook" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/tiktok.png" alt="TikTok" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/tiktok.png" alt="TikTok" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/airbnb.png" alt="Airbnb" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/airbnb.png" alt="Airbnb" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/booking.png" alt="Booking.com" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/booking.png" alt="Booking.com" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
               </tr>
             </table>
 
             <!-- Copyright -->
-            <p style="margin: 0 0 10px 0; font-size: 11px; color: #A0A0A0; font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px;">
-              © 2026 Lulu Aurelian Estate. Skyline Apartments, Nyeri, Kenya.
+            <p class="footer-copy" style="margin: 0 0 12px 0; font-size: 11.5px; color: rgba(255, 255, 255, 0.75); font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px; font-weight: 400;">
+              &copy; 2026 Lulu Aurelian Estate. Skyline Apartments, Nyeri, Kenya.
             </p>
 
             <!-- Nav Links -->
             <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
               <tr>
-                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">About Us</a></td>
-                <td style="color: #555555; font-size: 11px;">|</td>
-                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">Privacy Policy</a></td>
-                <td style="color: #555555; font-size: 11px;">|</td>
-                <td style="padding: 0 8px;"><a href="https://wa.me/254112299384" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">Support</a></td>
+                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">About Us</a></td>
+                <td style="color: rgba(210, 166, 60, 0.6); font-size: 11px;">|</td>
+                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke/#/portal" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">Privacy Policy</a></td>
+                <td style="color: rgba(210, 166, 60, 0.6); font-size: 11px;">|</td>
+                <td style="padding: 0 8px;"><a href="https://wa.me/254112299384" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">Support</a></td>
               </tr>
             </table>
             

@@ -1,0 +1,326 @@
+/* ==============================================================================
+   LULU AURELIAN ESTATE — GUEST REVIEW & RATING PAGE STYLES
+   ============================================================================== */
+
+.review-page {
+  min-height: 85vh;
+  padding: 8.5rem 1.25rem 5rem;
+  background-color: var(--color-bg, #F3F3E6);
+  color: var(--color-dark, #1D1912);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.review-page-container {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.review-card {
+  background: #FFFFFF;
+  border: 1px solid #EFECE6;
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 15px 35px rgba(29, 25, 18, 0.05);
+  text-align: center;
+}
+
+/* Brand Crest Header */
+.review-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 1rem 0.4rem 0.55rem;
+  background: rgba(210, 166, 60, 0.1);
+  border: 1px solid rgba(210, 166, 60, 0.28);
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+}
+
+.review-badge-crest {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-dark, #1D1912);
+  color: var(--color-gold-muted, #D2A63C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.review-badge-text {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-gold-deep, #9E6C15);
+  text-transform: uppercase;
+}
+
+.review-title {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-dark, #1D1912);
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.review-subtitle {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.95rem;
+  color: #666666;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+}
+
+/* NPS Notification Chip */
+.nps-selected-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem;
+  background-color: #FAF7F0;
+  border: 1px solid #D2A63C;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #8C6518;
+  margin-bottom: 1.75rem;
+}
+
+/* Interactive Star Rating */
+.star-rating-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.star-rating-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.star-rating-btn:hover {
+  transform: scale(1.18);
+}
+
+.star-icon-page {
+  stroke: #D2A63C;
+  stroke-width: 1.5;
+  color: #E5E7EB;
+  fill: transparent;
+  transition: all 0.2s ease;
+}
+
+.star-icon-page.active {
+  color: #D2A63C;
+  fill: #D2A63C;
+  filter: drop-shadow(0 2px 6px rgba(210, 166, 60, 0.35));
+}
+
+.rating-descriptor {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gold-deep, #9E6C15);
+  margin-bottom: 2rem;
+  min-height: 1.35rem;
+}
+
+/* Form Controls */
+.review-form {
+  text-align: left;
+}
+
+.review-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.review-form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--color-dark, #1D1912);
+  margin-bottom: 0.5rem;
+}
+
+.review-form-group textarea,
+.review-form-group input {
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.95rem;
+  color: var(--color-dark, #1D1912);
+  background-color: #FAF9F6;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.review-form-group textarea:focus,
+.review-form-group input:focus {
+  outline: none;
+  border-color: #D2A63C;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(210, 166, 60, 0.15);
+}
+
+.btn-submit-review-page {
+  width: 100%;
+  padding: 1.1rem;
+  background-color: var(--color-dark, #1D1912);
+  color: #FFFFFF;
+  border: 1px solid var(--color-dark, #1D1912);
+  border-radius: 50px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.25s ease;
+}
+
+.btn-submit-review-page:hover:not(:disabled) {
+  background-color: var(--color-gold-deep, #9E6C15);
+  border-color: var(--color-gold-deep, #9E6C15);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(158, 108, 21, 0.2);
+}
+
+.btn-submit-review-page:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Alert */
+.review-alert-error {
+  padding: 0.9rem 1.1rem;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 10px;
+  color: #DC2626;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Success State */
+.review-success-state {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.success-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: rgba(210, 166, 60, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  color: var(--color-gold-deep, #9E6C15);
+}
+
+.review-success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-review-home {
+  padding: 0.85rem 1.75rem;
+  background-color: var(--color-dark, #1D1912);
+  color: #FFFFFF;
+  border: 1px solid var(--color-dark, #1D1912);
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-review-home:hover {
+  background-color: var(--color-gold-deep, #9E6C15);
+  border-color: var(--color-gold-deep, #9E6C15);
+}
+
+.btn-review-whatsapp {
+  padding: 0.85rem 1.75rem;
+  background-color: transparent;
+  color: #1D1912;
+  border: 1.5px solid #D2A63C;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+}
+
+.btn-review-whatsapp:hover {
+  background-color: rgba(210, 166, 60, 0.08);
+}
+
+/* Mobile & Small Screens */
+@media (max-width: 640px) {
+  .review-page {
+    padding-top: 7.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .review-card {
+    padding: 2.25rem 1.5rem;
+    border-radius: 20px;
+  }
+
+  .review-title {
+    font-size: 1.85rem;
+  }
+
+  .star-icon-page {
+    width: 32px;
+    height: 32px;
+  }
+
+  .review-success-actions {
+    flex-direction: column;
+  }
+
+  .btn-review-home,
+  .btn-review-whatsapp {
+    width: 100%;
+    justify-content: center;
+  }
+}

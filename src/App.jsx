@@ -31,6 +31,7 @@ const AuthPage         = lazy(() => import('./components/AuthPage'));
 const GuestAuthModal   = lazy(() => import('./components/GuestAuthModal'));
 const BookingStatusWidget = lazy(() => import('./components/BookingStatusWidget'));
 const CheckoutPage     = lazy(() => import('./components/CheckoutPage'));
+const ReviewPage       = lazy(() => import('./components/ReviewPage'));
 const NotFound         = lazy(() => import('./components/NotFound'));
 
 // Minimal inline fallback — seamless cream transition
@@ -203,6 +204,8 @@ export default function App() {
 
       } else if (hash.startsWith('#/offers')) {
         setPage('offers');
+      } else if (hash.startsWith('#/review')) {
+        setPage('review');
       } else if (hash.startsWith('#/404')) {
         setPage('404');
       } else if (hash.startsWith('#/skyview') || hash.startsWith('#/cocoa') || hash.startsWith('#/neema') || hash.startsWith('#/unit/')) {
@@ -222,6 +225,8 @@ export default function App() {
         if (window.location.search.includes('reset_token=')) {
           setPage('portal');
           window.location.hash = '#/portal';
+        } else if (window.location.pathname.startsWith('/review')) {
+          setPage('review');
         } else {
           setPage('home');
         }
@@ -454,6 +459,10 @@ export default function App() {
       ) : page === 'offers' ? (
         <Suspense fallback={<PageFallback />}>
           <OffersPage setPage={(p, params) => navigateToPage(p, params)} />
+        </Suspense>
+      ) : page === 'review' ? (
+        <Suspense fallback={<PageFallback />}>
+          <ReviewPage setPage={(p, params) => navigateToPage(p, params)} />
         </Suspense>
       ) : page === '404' ? (
         <Suspense fallback={<PageFallback />}>

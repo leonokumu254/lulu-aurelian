@@ -328,8 +328,15 @@ export const payheroCallback = async (req, res) => {
       await db.payments.updateStatus(payment.transaction_ref, 'FAILED');
 
       const booking = await db.bookings.findById(payment.booking_id);
-      if (booking && booking.status === 'AUTHORIZING') {
-        await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+      if (booking) {
+        if (booking.status === 'AUTHORIZING') {
+          await db.bookings.updateStatus(payment.booking_id, 'PENDING');
+        }
+
+        // Send courteous follow-up email to assist the guest with completing payment
+        emailService.sendPaymentFailedFollowUp(booking, payHeroStatus).catch(err => {
+          console.error('[PAYMENT FAILED FOLLOW-UP ERROR]:', err.message);
+        });
       }
     } else {
       console.log(`[PAYHERO WEBHOOK]: ⏳ Status "${payHeroStatus}" for ref ${payHeroRef}.`);

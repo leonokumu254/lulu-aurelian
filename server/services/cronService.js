@@ -78,6 +78,11 @@ class CronService {
         expiredCount++;
         console.log(`[CRON EXPIRE]: Booking ${b.id} EXPIRED — 1-hour payment hold elapsed.`);
 
+        // Dispatch follow-up email for incomplete reservation
+        emailService.sendPaymentFailedFollowUp(b, 'Hold expired').catch(err => {
+          console.error('[EXPIRED HOLD EMAIL ERROR]:', err.message);
+        });
+
         whatsappService.sendLifecyclePing(
           b.guest_phone,
           WHATSAPP_TEMPLATES.BOOKING_CANCELED_EXPIRED(b)
@@ -213,6 +218,15 @@ class CronService {
                 await db.bookings.updateStatus(b.id, 'COMPLETED');
                 completedCount++;
                 console.log(`[CRON COMPLETE]: ✅ Booking ${b.id} (${b.guest_name}) transitioned to COMPLETED (Checked out on ${outDateStr}).`);
+
+                // Send review request upon stay completion
+                emailService.sendCheckoutReviewRequest(b).catch(err => {
+                  console.error('[POST-CHECKOUT REVIEW ERROR]:', err.message);
+                });
+                whatsappService.sendLifecyclePing(
+                  b.guest_phone,
+                  WHATSAPP_TEMPLATES.CHECKOUT_REVIEW_REQUEST(b)
+                ).catch(() => {});
               } catch (upErr) {
                 console.warn(`[CRON WARN]: Could not transition booking ${b.id} to COMPLETED:`, upErr.message);
               }

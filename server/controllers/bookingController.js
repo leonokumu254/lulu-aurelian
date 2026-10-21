@@ -5,7 +5,7 @@ import { emailService } from '../services/emailService.js';
 import { whatsappService } from '../services/whatsappService.js';
 import { payheroService } from '../services/payheroService.js';
 import { dispatchPostPaymentNotifications } from './paymentController.js';
-import { DEFAULT_HOUSE_RULES } from '../config/constants.js';
+import { DEFAULT_HOUSE_RULES, WHATSAPP_TEMPLATES } from '../config/constants.js';
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const PAYMENT_TTL_MS     = 1 * 60 * 60 * 1000; // 1 hour (down from 3)
@@ -466,6 +466,15 @@ export const completeBooking = async (req, res, next) => {
     const completedBooking = await db.bookings.updateStatus(id, 'COMPLETED');
     console.log(`[STAFF ACTION]: ✅ Booking ${id} marked as COMPLETED by ${req.user ? req.user.name : 'Staff'}.`);
 
+    // Prompt guest for stay rating & review immediately upon checkout
+    emailService.sendCheckoutReviewRequest(completedBooking).catch(err => {
+      console.warn('[CHECKOUT REVIEW EMAIL ERROR]:', err.message);
+    });
+    whatsappService.sendLifecyclePing(
+      completedBooking.guest_phone,
+      WHATSAPP_TEMPLATES.CHECKOUT_REVIEW_REQUEST(completedBooking)
+    ).catch(() => {});
+
     return res.status(200).json({
       success: true,
       message: 'Booking marked as completed successfully.',
@@ -492,6 +501,11 @@ const checkAndAutoCompleteBooking = async (b) => {
         try {
           await db.bookings.updateStatus(b.id, 'COMPLETED');
           b.status = 'COMPLETED';
+          emailService.sendCheckoutReviewRequest(b).catch(() => {});
+          whatsappService.sendLifecyclePing(
+            b.guest_phone,
+            WHATSAPP_TEMPLATES.CHECKOUT_REVIEW_REQUEST(b)
+          ).catch(() => {});
         } catch (e) {
           b.status = 'COMPLETED';
         }

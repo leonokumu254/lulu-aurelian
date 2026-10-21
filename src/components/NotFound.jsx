@@ -54,7 +54,7 @@ export default function NotFound({ setPage }) {
       <div className="not-found-hero container">
         <div className="not-found-badge">
           <div className="badge-crest">LA</div>
-          <span className="badge-text">LULU AURELIAN ESTATE &bull; SANCTUARY ERROR</span>
+          <span className="badge-text">LULU AURELIAN ESTATE &bull; PAGE NOT FOUND</span>
         </div>
 
         <div className="not-found-code-wrapper">
@@ -62,11 +62,10 @@ export default function NotFound({ setPage }) {
           <div className="not-found-shimmer" />
         </div>
 
-        <h2 className="not-found-title">The Sanctuary You Seek Is Elusive</h2>
+        <h2 className="not-found-title">Page Not Found</h2>
         <p className="not-found-description">
-          It appears the corridor you followed leads beyond our recorded estate grounds. 
-          The door may have been secluded, the route retired, or the address entered with a slight wander.
-          Allow our concierge to guide you back to refined comfort.
+          We couldn't find the page you are looking for. The link may have changed, or the page is no longer available. 
+          You can return home, browse our available apartments, or message our team for assistance.
         </p>
 
         {/* Action Buttons */}
@@ -77,7 +76,7 @@ export default function NotFound({ setPage }) {
             onClick={() => handleNavigate('home')}
           >
             <Home size={18} />
-            <span>Return to Grand Foyer</span>
+            <span>Return to Home</span>
           </button>
 
           <button 
@@ -90,13 +89,13 @@ export default function NotFound({ setPage }) {
           </button>
 
           <a 
-            href="https://wa.me/254112299384?text=Hello%20Lulu%20Aurelian%20Estate%2C%20I%20got%20lost%20on%20the%20website%20and%20need%20assistance."
+            href="https://wa.me/254112299384?text=Hello%20Lulu%20Aurelian%20Estate%2C%20I%20need%20help%20finding%20a%20page%20or%20booking%20a%20stay."
             target="_blank" 
             rel="noopener noreferrer" 
             className="btn-not-found-whatsapp"
           >
             <MessageCircle size={18} />
-            <span>Contact Host Concierge</span>
+            <span>Chat on WhatsApp</span>
           </a>
         </div>
       </div>
@@ -105,9 +104,9 @@ export default function NotFound({ setPage }) {
       <section className="not-found-suites-section container">
         <div className="suites-section-header">
           <div className="gold-accent-line" />
-          <h3 className="suites-section-title">Explore Our Curated Luxury Residences</h3>
+          <h3 className="suites-section-title">Explore Our Suites</h3>
           <p className="suites-section-subtitle">
-            Rather than wandering, step directly into one of our three bespoke furnished apartments in Nyeri:
+            Choose from our three fully furnished apartments in Nyeri:
           </p>
         </div>
 

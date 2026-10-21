@@ -4,13 +4,25 @@
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>Payment Successful - Booking Confirmed</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }
         body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; font-weight: 600 !important; }
+        @media (prefers-color-scheme: dark) {
+          .brand-footer { background-color: #231F19 !important; border-top-color: rgba(210, 166, 60, 0.35) !important; }
+          .footer-brand-title, .footer-copy, .footer-link { color: #FFFFFF !important; }
+        }
+        [data-ogsc] .brand-footer { background-color: #231F19 !important; }
+        [data-ogsc] .footer-brand-title, [data-ogsc] .footer-copy, [data-ogsc] .footer-link { color: #FFFFFF !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -35,14 +47,14 @@
             <table cellpadding="0" cellspacing="0" border="0" align="center">
               <tr>
                 <td align="center" style="width: 44px; height: 54px; border: 1.5px solid #1D1912; border-radius: 22px; text-align: center; vertical-align: middle; background-color: #FAF9F6;">
-                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #cfa873; letter-spacing: 1.5px; display: block; line-height: 1;">LA</span>
+                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #9E6C15; letter-spacing: 1.5px; display: block; line-height: 1;">LA</span>
                 </td>
               </tr>
             </table>
             <div style="margin-top: 10px; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3.5px; color: #1D1912; text-transform: uppercase;">
               LULU AURELIAN
             </div>
-            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 2.5px; color: #cfa873; text-transform: uppercase; margin-top: 3px;">
+            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 2.5px; color: #9E6C15; text-transform: uppercase; margin-top: 3px;">
               ESTATE
             </div>
           </td>
@@ -62,52 +74,40 @@
               <!-- Dynamic Content Area -->
               <tr>
                 <td style="padding: 34px 28px; background-color: #FFFFFF;">
-                  <p style="margin: 0 0 15px 0; font-size: 13px; color: #cfa873; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Payment Received & Secured</p><h2 style="margin: 0 0 25px 0; font-size: 32px; font-weight: 300; color: #1a1a1a; letter-spacing: -1px; line-height: 1.1;">Payment<br/><span style="color: #cfa873;">Successful!</span></h2><p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;">Dear Sophia Montgomery,</p><p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;">Thank you for choosing <strong>Lulu Aurelian Furnished Apartments- SkyView</strong>. We are delighted to confirm that your payment has been received successfully and your booking is fully secured!</p><p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;"><strong>Check-In Date:</strong> Sunday, 18 October 2026<br/>
+                  <p style="margin: 0 0 15px 0; font-size: 13px; color: #8F6517; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-family: 'Montserrat', sans-serif;">Payment Received & Secured</p><h2 style="margin: 0 0 25px 0; font-size: 32px; font-weight: 600; color: #1D1912; letter-spacing: -0.5px; line-height: 1.15; font-family: 'Cormorant Garamond', Georgia, serif;">Payment<br/><span style="color: #9E6C15; font-weight: 700;">Successful!</span></h2><p style="margin: 0 0 18px 0; font-size: 15.5px; line-height: 1.65; color: #2C251D; font-family: 'Montserrat', sans-serif;">Dear Sophia Montgomery,</p><p style="margin: 0 0 18px 0; font-size: 15.5px; line-height: 1.65; color: #2C251D; font-family: 'Montserrat', sans-serif;">Thank you for choosing <strong>Lulu Aurelian Furnished Apartments- SkyView</strong>. We are delighted to confirm that your payment has been received successfully and your booking is fully secured!</p><p style="margin: 0 0 18px 0; font-size: 15.5px; line-height: 1.65; color: #2C251D; font-family: 'Montserrat', sans-serif;"><strong>Check-In Date:</strong> Sunday, 18 October 2026<br/>
          <strong>Check-Out Date:</strong> Friday, 23 October 2026<br/>
          <strong>Check-in Time:</strong> After 2:00 PM EAT (Early entry from 1:00 PM EAT)<br/>
          <strong>Check-out Time:</strong> Before 10:00 AM EAT</p>
-      <div style="background-color: #FAF9F6; padding: 20px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid #cfa873;">
-        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #1a1a1a;">🕒 <strong>Check-In Details Timing:</strong><br/>
-Check-in is officially as from <strong>2:00 PM EAT</strong>, but guests can access the unit early from 1:00 PM EAT. <strong>Your full check-in details (lock box code, apartment number, and Wi-Fi credentials) will be sent to you as from 1:00 PM EAT</strong> on your arrival day (Sunday, 18 October 2026).</p>
+      <div style="background-color: #FAF9F6; padding: 20px 22px; border-radius: 14px; margin-bottom: 25px; border: 1px solid #E5DFD3; border-left: 4px solid #D2A63C;">
+        <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #2C251D; font-family: 'Montserrat', sans-serif;"><strong>Immediate Check-In Access Dispatched:</strong><br/>
+Since your check-in is today (<strong>Sunday, 18 October 2026</strong>) and payment has been confirmed past 1:00 PM EAT, <strong>your complete digital check-in credentials (smart lock box code, Wi-Fi credentials, and apartment guide) have been dispatched to you immediately</strong> via separate email and WhatsApp.</p>
       </div>
     
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 16px; margin-bottom: 25px;">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr>
-            <td width="36" valign="top" style="padding-top: 2px;">
-              <span style="font-size: 22px; display: block; line-height: 1;">📶</span>
-            </td>
-            <td>
-              <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">High-Speed Suite Wi-Fi Access</h4>
-              <p style="margin: 0 0 4px 0; font-size: 13.5px; color: #444444; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-                <strong>Network Name (SSID):</strong> <span style="color: #9E6C15; font-weight: 700;">Pearl_16</span>
-              </p>
-              <p style="margin: 0; font-size: 13.5px; color: #444444; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-                <strong>Password:</strong> <span style="color: #1a1a1a; font-weight: 700;">PearlSL_16</span>
-              </p>
-              
-            </td>
-          </tr>
-        </table>
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; padding: 22px 24px; border-radius: 16px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 13.5px; font-weight: 700; color: #1D1912; text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Montserrat', sans-serif;">High-Speed Suite Wi-Fi Access</h4>
+        <p style="margin: 0 0 6px 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+          <strong>Network Name (SSID):</strong> <span style="color: #8F6517; font-weight: 700;">Pearl_16</span>
+        </p>
+        <p style="margin: 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+          <strong>Password:</strong> <span style="color: #1D1912; font-weight: 700;">PearlSL_16</span>
+        </p>
+        
       </div>
     
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 22px; border-radius: 16px; margin-bottom: 25px;">
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; padding: 22px 24px; border-radius: 16px; margin-bottom: 25px;">
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td width="36" valign="top" style="padding-top: 2px;">
-              <img src="https://img.icons8.com/ios-filled/50/cfa873/marker.png" alt="Map Pin" width="24" height="24" style="display: block;" />
-            </td>
             <td>
-              <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.5px;">Location & Coordinates</h4>
-              <p style="margin: 0 0 12px 0; font-size: 13px; color: #666666; line-height: 1.5; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-                <strong>SkyView</strong><br/>
+              <h4 style="margin: 0 0 6px 0; font-size: 14.5px; font-weight: 700; color: #1D1912; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif;">Location & Coordinates</h4>
+              <p style="margin: 0 0 14px 0; font-size: 13.5px; color: #2C251D; line-height: 1.6; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+                <strong style="color: #1D1912;">SkyView</strong><br/>
                 Skyline Apartments, off Nyeri - Nairobi Road next to former Rubis Petrol Station. Skuta, Nyeri.
               </p>
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td>
-                    <a href="https://maps.google.com/?q=-0.433276973199735,36.96868842933756" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #cfa873; color: #ffffff; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
-                      📍 Open Location Pin on Google Maps &rarr;
+                    <a href="https://maps.google.com/?q=-0.433276973199735,36.96868842933756" target="_blank" style="display: inline-block; padding: 11px 24px; background-color: #1D1912; color: #FFFFFF; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 12.5px; letter-spacing: 0.5px;">
+                      Open Location Pin on Google Maps &rarr;
                     </a>
                   </td>
                 </tr>
@@ -117,31 +117,31 @@ Check-in is officially as from <strong>2:00 PM EAT</strong>, but guests can acce
         </table>
       </div>
     
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 14px; margin-bottom: 25px;">
-        <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">📞 Guest Support & Host Assistance</h4>
-        <p style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.5;">
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; padding: 22px 24px; border-radius: 16px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 13.5px; color: #1D1912; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; font-family: 'Montserrat', sans-serif;">Guest Support & Host Assistance</h4>
+        <p style="margin: 0 0 14px 0; font-size: 13.5px; color: #2C251D; line-height: 1.5; font-family: 'Montserrat', sans-serif;">
           Should you need any assistance during your stay, feel free to reach out to our team:
         </p>
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="padding: 6px 0;">
-              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Safaricom:</span>
-              <a href="tel:0112299384" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0112299384</a>
+            <td style="padding: 6px 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', sans-serif;">
+              <strong style="color: #1D1912;">Safaricom:</strong>
+              <a href="tel:0112299384" style="margin-left: 8px; color: #8F6517; text-decoration: underline; font-weight: 700; font-size: 15px;">0112299384</a>
             </td>
           </tr>
           <tr>
-            <td style="padding: 6px 0;">
-              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Airtel:</span>
-              <a href="tel:0756958531" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0756958531</a>
+            <td style="padding: 6px 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', sans-serif;">
+              <strong style="color: #1D1912;">Airtel:</strong>
+              <a href="tel:0756958531" style="margin-left: 8px; color: #8F6517; text-decoration: underline; font-weight: 700; font-size: 15px;">0756958531</a>
             </td>
           </tr>
         </table>
       </div>
-    <p style="margin: 0 0 30px 0; font-size: 14px; color: #888;">Booking Reference: <strong>#LA-8F3A9</strong></p>
+    <p style="margin: 0 0 30px 0; font-size: 14px; color: #5C5245; font-family: 'Montserrat', sans-serif;">Booking Reference: <strong style="color: #1D1912;">#LA-8F3A9</strong></p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td align="left">
-            <a href="https://www.luluaurelian.co.ke/#/portal?token=demo-secure-token-9988" style="display: inline-block; padding: 16px 36px; background-color: #1a1a1a; color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 14px; letter-spacing: 1px;">View Booking Itinerary &rarr;</a>
+            <a href="https://www.luluaurelian.co.ke/#/portal?token=demo-secure-token-9988" style="display: inline-block; padding: 15px 36px; background-color: #1D1912; color: #FFFFFF; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 13.5px; letter-spacing: 1px;">View Booking Itinerary &rarr;</a>
           </td>
         </tr>
       </table>
@@ -153,70 +153,76 @@ Check-in is officially as from <strong>2:00 PM EAT</strong>, but guests can acce
               <tr>
                 <td>
                   
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #1D1912; color: #FFFFFF; border-radius: 0 0 24px 24px; text-align: center;">
+      <!-- Contact Section Frosted Glass Style Brand Footer -->
+      <table class="brand-footer" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #231F19; background-image: linear-gradient(rgba(29, 25, 18, 0.78), rgba(29, 25, 18, 0.88)), url('https://www.luluaurelian.co.ke/assets/cocoa/cocoa_25.jpeg'); background-size: cover; background-position: center; color: #FFFFFF; border-radius: 0 0 24px 24px; text-align: center; border-top: 1px solid rgba(210, 166, 60, 0.35);">
         <tr>
-          <td align="center" style="padding: 38px 24px 34px 24px;">
+          <td align="center" style="padding: 36px 24px 32px 24px;">
             <!-- Footer Crest Badge -->
-            <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 12px;">
+            <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 14px;">
               <tr>
-                <td align="center" style="width: 36px; height: 46px; border: 1.5px solid #cfa873; border-radius: 18px; text-align: center; vertical-align: middle;">
-                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 14px; font-weight: 700; color: #cfa873; letter-spacing: 1px; display: block;">LA</span>
+                <td align="center" style="width: 40px; height: 50px; border: 1.5px solid #D2A63C; border-radius: 20px; text-align: center; vertical-align: middle; background-color: rgba(210, 166, 60, 0.15);">
+                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; font-weight: 700; color: #EECD5C; letter-spacing: 1px; display: block; line-height: 1;">LA</span>
                 </td>
               </tr>
             </table>
-            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #FFFFFF; text-transform: uppercase; margin-bottom: 18px;">
-              LULU AURELIAN ESTATE
+
+            <!-- Brand Title matching Contact Section (White Lulu + Gold Aurelian) -->
+            <div class="footer-brand-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 500; letter-spacing: 1px; margin-bottom: 3px;">
+              <span style="color: #FFFFFF;">Lulu</span> <span style="color: #D2A63C; font-weight: 600;">Aurelian</span>
+            </div>
+            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 3.5px; color: #D2A63C; text-transform: uppercase; margin-bottom: 20px;">
+              ESTATE
             </div>
 
-            <!-- Social Links -->
+            <!-- Social Links (Matching Contact Section .contact-social-btn with Muted Gold Buttons) -->
             <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 20px auto;">
               <tr>
-                <td style="padding: 0 8px;">
-                  <a href="https://wa.me/254112299384" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/whatsapp.png" alt="WhatsApp" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://wa.me/254112299384" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/whatsapp.png" alt="WhatsApp" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/instagram-new.png" alt="Instagram" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/instagram-new.png" alt="Instagram" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.facebook.com/share/1EY74Cxf23/" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/facebook-new.png" alt="Facebook" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.facebook.com/share/1EY74Cxf23/" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/facebook-new.png" alt="Facebook" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/tiktok.png" alt="TikTok" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/tiktok.png" alt="TikTok" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/airbnb.png" alt="Airbnb" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/airbnb.png" alt="Airbnb" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/booking.png" alt="Booking.com" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/booking.png" alt="Booking.com" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
               </tr>
             </table>
 
             <!-- Copyright -->
-            <p style="margin: 0 0 10px 0; font-size: 11px; color: #A0A0A0; font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px;">
-              © 2026 Lulu Aurelian Estate. Skyline Apartments, Nyeri, Kenya.
+            <p class="footer-copy" style="margin: 0 0 12px 0; font-size: 11.5px; color: rgba(255, 255, 255, 0.75); font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px; font-weight: 400;">
+              &copy; 2026 Lulu Aurelian Estate. Skyline Apartments, Nyeri, Kenya.
             </p>
 
             <!-- Nav Links -->
             <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
               <tr>
-                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">About Us</a></td>
-                <td style="color: #555555; font-size: 11px;">|</td>
-                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">Privacy Policy</a></td>
-                <td style="color: #555555; font-size: 11px;">|</td>
-                <td style="padding: 0 8px;"><a href="https://wa.me/254112299384" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">Support</a></td>
+                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">About Us</a></td>
+                <td style="color: rgba(210, 166, 60, 0.6); font-size: 11px;">|</td>
+                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke/#/portal" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">Privacy Policy</a></td>
+                <td style="color: rgba(210, 166, 60, 0.6); font-size: 11px;">|</td>
+                <td style="padding: 0 8px;"><a href="https://wa.me/254112299384" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">Support</a></td>
               </tr>
             </table>
             

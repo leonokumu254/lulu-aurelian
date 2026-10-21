@@ -1,11 +1,44 @@
 import crypto from 'crypto';
 import { db } from '../config/db.js';
+import { emailService } from '../services/emailService.js';
+import { whatsappService } from '../services/whatsappService.js';
+
+// Asynchronously notify Managers and Agents when a guest submits a review
+async function notifyStaffOfNewReview(review, booking) {
+  try {
+    const allUsers = await db.users.getAll();
+    const staffUsers = (allUsers || []).filter(u =>
+      u.role && (u.role.toUpperCase() === 'MANAGER' || u.role.toUpperCase() === 'AGENT')
+    );
+    const staffEmails = staffUsers.map(u => u.email).filter(Boolean);
+
+    if (staffEmails.length > 0) {
+      console.log(`[REVIEW NOTIFICATION]: Dispatching new review alert to ${staffEmails.length} staff:`, staffEmails.join(', '));
+      emailService.sendStaffReviewAlert(staffEmails, review, booking).catch(err => {
+        console.error('[REVIEW EMAIL ALERT ERROR]:', err.message);
+      });
+    }
+
+    whatsappService.sendStaffReviewAlert(review, booking).catch(err => {
+      console.error('[REVIEW WHATSAPP ALERT ERROR]:', err.message);
+    });
+  } catch (err) {
+    console.warn('[REVIEW NOTIFICATION ERROR]: Could not notify staff of review:', err.message);
+  }
+}
 
 // Phase 4: Public guest submits review (Public Access - authenticated via secure_token)
 export const submitReview = async (req, res, next) => {
   try {
-    const { token } = req.query;
-    const { rating, comment } = req.body;
+    const token = req.query.token || req.body.token;
+    const { comment } = req.body;
+    let starRating = parseInt(req.body.rating, 10);
+    if ((!starRating || isNaN(starRating) || starRating < 1) && req.body.nps) {
+      const npsNum = parseInt(req.body.nps, 10);
+      starRating = Math.max(1, Math.min(5, Math.round(npsNum / 2)));
+    } else if (starRating > 5) {
+      starRating = Math.max(1, Math.min(5, Math.round(starRating / 2)));
+    }
 
     if (!token) {
       return res.status(401).json({
@@ -14,7 +47,7 @@ export const submitReview = async (req, res, next) => {
       });
     }
 
-    if (!rating || rating < 1 || rating > 5) {
+    if (!starRating || starRating < 1 || starRating > 5) {
       return res.status(400).json({
         success: false,
         error: 'Please provide a valid rating integer scale between 1 and 5.'
@@ -57,7 +90,7 @@ export const submitReview = async (req, res, next) => {
     const newReview = {
       id: crypto.randomUUID(),
       booking_id: booking.id,
-      rating: parseInt(rating, 10),
+      rating: starRating,
       comment: cleanComment,
       is_published: true, // Published for guests with verified tokens
       created_at: new Date(),
@@ -66,7 +99,10 @@ export const submitReview = async (req, res, next) => {
 
     await db.reviews.create(newReview);
 
-    console.log(`[REVIEW SYSTEM]: Testimonial registered for Booking: ${booking.id}. Rating: ${rating}`);
+    // Notify Managers and Agents immediately
+    notifyStaffOfNewReview(newReview, booking);
+
+    console.log(`[REVIEW SYSTEM]: Testimonial registered for Booking: ${booking.id}. Rating: ${starRating}`);
 
     return res.status(201).json({
       success: true,
@@ -132,6 +168,9 @@ export const submitReviewAuthenticated = async (req, res, next) => {
     };
 
     await db.reviews.create(newReview);
+
+    // Notify Managers and Agents immediately
+    notifyStaffOfNewReview(newReview, eligibleBooking);
 
     console.log(`[REVIEW SYSTEM]: Testimonial registered by ${req.user.email}. Rating: ${rating}`);
 

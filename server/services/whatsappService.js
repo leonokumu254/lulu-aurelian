@@ -49,6 +49,15 @@ class WhatsappService {
     return this.sendWhatsapp(staffPhone, message);
   }
 
+  async sendStaffReviewAlert(review, booking) {
+    const staffPhone = '254112299384';
+    const ratingStars = '★'.repeat(Math.max(1, Math.min(5, review.rating)));
+    const guestName = booking?.guest_name || 'Guest';
+    const unitName = booking?.unit_id ? booking.unit_id.toUpperCase() : 'ESTATE';
+    const message = `⭐ *NEW GUEST REVIEW RECEIVED* ⭐\n\n*Suite:* ${unitName}\n*Guest:* ${guestName}\n*Rating:* ${ratingStars} (${review.rating}/5)\n\n*Review:*\n"${review.comment || 'No comment'}"\n\n_Review can be moderated in the Staff Portal._`;
+    return this.sendWhatsapp(staffPhone, message);
+  }
+
   async sendLifecyclePing(phone, message) {
     return this.sendWhatsapp(phone, message);
   }

@@ -26,14 +26,14 @@ class EmailService {
             <table cellpadding="0" cellspacing="0" border="0" align="center">
               <tr>
                 <td align="center" style="width: 44px; height: 54px; border: 1.5px solid #1D1912; border-radius: 22px; text-align: center; vertical-align: middle; background-color: #FAF9F6;">
-                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #cfa873; letter-spacing: 1.5px; display: block; line-height: 1;">LA</span>
+                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #9E6C15; letter-spacing: 1.5px; display: block; line-height: 1;">LA</span>
                 </td>
               </tr>
             </table>
             <div style="margin-top: 10px; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3.5px; color: #1D1912; text-transform: uppercase;">
               LULU AURELIAN
             </div>
-            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 2.5px; color: #cfa873; text-transform: uppercase; margin-top: 3px;">
+            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 2.5px; color: #9E6C15; text-transform: uppercase; margin-top: 3px;">
               ESTATE
             </div>
           </td>
@@ -43,80 +43,86 @@ class EmailService {
   }
 
   /**
-   * Renders the dark footer matching the reference design.
+   * Renders the brand footer matching the Contact Section frosted glass effect.
    */
   _renderBrandFooter({ unsubscribeUrl = null } = {}) {
     const unsubHtml = unsubscribeUrl ? `
-      <p style="margin: 12px 0 0 0; font-size: 11px; color: #777777;">
-        Do you no longer want to receive these emails? <a href="${unsubscribeUrl}" style="color: #cfa873; text-decoration: underline;">Unsubscribe</a>
+      <p style="margin: 14px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.55); font-family: 'Montserrat', sans-serif;">
+        Do you no longer want to receive these emails? <a href="${unsubscribeUrl}" style="color: #EECD5C; font-weight: 500; text-decoration: underline;">Unsubscribe</a>
       </p>
     ` : '';
 
     return `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #1D1912; color: #FFFFFF; border-radius: 0 0 24px 24px; text-align: center;">
+      <!-- Contact Section Frosted Glass Style Brand Footer -->
+      <table class="brand-footer" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #231F19; background-image: linear-gradient(rgba(29, 25, 18, 0.78), rgba(29, 25, 18, 0.88)), url('https://www.luluaurelian.co.ke/assets/cocoa/cocoa_25.jpeg'); background-size: cover; background-position: center; color: #FFFFFF; border-radius: 0 0 24px 24px; text-align: center; border-top: 1px solid rgba(210, 166, 60, 0.35);">
         <tr>
-          <td align="center" style="padding: 38px 24px 34px 24px;">
+          <td align="center" style="padding: 36px 24px 32px 24px;">
             <!-- Footer Crest Badge -->
-            <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 12px;">
+            <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 14px;">
               <tr>
-                <td align="center" style="width: 36px; height: 46px; border: 1.5px solid #cfa873; border-radius: 18px; text-align: center; vertical-align: middle;">
-                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 14px; font-weight: 700; color: #cfa873; letter-spacing: 1px; display: block;">LA</span>
+                <td align="center" style="width: 40px; height: 50px; border: 1.5px solid #D2A63C; border-radius: 20px; text-align: center; vertical-align: middle; background-color: rgba(210, 166, 60, 0.15);">
+                  <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; font-weight: 700; color: #EECD5C; letter-spacing: 1px; display: block; line-height: 1;">LA</span>
                 </td>
               </tr>
             </table>
-            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #FFFFFF; text-transform: uppercase; margin-bottom: 18px;">
-              LULU AURELIAN ESTATE
+
+            <!-- Brand Title matching Contact Section (White Lulu + Gold Aurelian) -->
+            <div class="footer-brand-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 500; letter-spacing: 1px; margin-bottom: 3px;">
+              <span style="color: #FFFFFF;">Lulu</span> <span style="color: #D2A63C; font-weight: 600;">Aurelian</span>
+            </div>
+            <div style="font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 3.5px; color: #D2A63C; text-transform: uppercase; margin-bottom: 20px;">
+              ESTATE
             </div>
 
-            <!-- Social Links -->
+            <!-- Social Links (Matching Contact Section .contact-social-btn with Muted Gold Buttons) -->
             <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 20px auto;">
               <tr>
-                <td style="padding: 0 8px;">
-                  <a href="https://wa.me/254112299384" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/whatsapp.png" alt="WhatsApp" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://wa.me/254112299384" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/whatsapp.png" alt="WhatsApp" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/instagram-new.png" alt="Instagram" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.instagram.com/luluaurelian?igsh=MWE3cnk5bmdieXc0ag==" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/instagram-new.png" alt="Instagram" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.facebook.com/share/1EY74Cxf23/" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/facebook-new.png" alt="Facebook" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.facebook.com/share/1EY74Cxf23/" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/facebook-new.png" alt="Facebook" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/tiktok.png" alt="TikTok" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.tiktok.com/@luluaurelian?_r=1&_t=ZS-97lvlocMx1d" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/tiktok.png" alt="TikTok" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/airbnb.png" alt="Airbnb" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.airbnb.com/h/pearlapartmentsnyeri" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/airbnb.png" alt="Airbnb" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
-                <td style="padding: 0 8px;">
-                  <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" style="text-decoration: none;">
-                    <img src="https://img.icons8.com/ios/50/cfa873/booking.png" alt="Booking.com" width="22" height="22" style="display: block; border: 0;" />
+                <td style="padding: 0 6px;">
+                  <a href="https://www.booking.com/Share-F7S7E5V" target="_blank" style="display: block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background-color: #D2A63C; text-align: center; text-decoration: none;">
+                    <img src="https://img.icons8.com/ios/50/1D1912/booking.png" alt="Booking.com" width="18" height="18" style="vertical-align: middle; display: inline-block; border: 0;" />
                   </a>
                 </td>
               </tr>
             </table>
 
             <!-- Copyright -->
-            <p style="margin: 0 0 10px 0; font-size: 11px; color: #A0A0A0; font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px;">
-              © 2026 Lulu Aurelian Estate. Skyline Apartments, Nyeri, Kenya.
+            <p class="footer-copy" style="margin: 0 0 12px 0; font-size: 11.5px; color: rgba(255, 255, 255, 0.75); font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px; font-weight: 400;">
+              &copy; 2026 Lulu Aurelian Estate. Skyline Apartments, Nyeri, Kenya.
             </p>
 
             <!-- Nav Links -->
             <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
               <tr>
-                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">About Us</a></td>
-                <td style="color: #555555; font-size: 11px;">|</td>
-                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke/#/portal" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">Privacy Policy</a></td>
-                <td style="color: #555555; font-size: 11px;">|</td>
-                <td style="padding: 0 8px;"><a href="https://wa.me/254112299384" style="color: #cfa873; font-size: 11px; text-decoration: none; font-weight: 500;">Support</a></td>
+                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">About Us</a></td>
+                <td style="color: rgba(210, 166, 60, 0.6); font-size: 11px;">|</td>
+                <td style="padding: 0 8px;"><a href="https://www.luluaurelian.co.ke/#/portal" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">Privacy Policy</a></td>
+                <td style="color: rgba(210, 166, 60, 0.6); font-size: 11px;">|</td>
+                <td style="padding: 0 8px;"><a href="https://wa.me/254112299384" class="footer-link" style="color: #FFFFFF; font-size: 11.5px; text-decoration: none; font-weight: 500;">Support</a></td>
               </tr>
             </table>
             ${unsubHtml}
@@ -153,11 +159,17 @@ class EmailService {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>${title}</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }
         body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; }
         @media only screen and (max-width: 620px) {
@@ -165,6 +177,12 @@ class EmailService {
           .feature-col-img { width: 100px !important; }
           .feature-col-img img { width: 100px !important; height: 100px !important; }
         }
+        @media (prefers-color-scheme: dark) {
+          .brand-footer { background-color: #231F19 !important; border-top-color: rgba(210, 166, 60, 0.35) !important; }
+          .footer-brand-title, .footer-copy, .footer-link { color: #FFFFFF !important; }
+        }
+        [data-ogsc] .brand-footer { background-color: #231F19 !important; }
+        [data-ogsc] .footer-brand-title, [data-ogsc] .footer-copy, [data-ogsc] .footer-link { color: #FFFFFF !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -330,15 +348,15 @@ class EmailService {
                         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top: 1px solid rgba(29,25,18,0.08); padding-top: 18px;">
                           <tr>
                             <td width="33.3%" align="center">
-                              <span style="font-size: 20px; display: block; margin-bottom: 4px;">🎁</span>
+                              <span style="display: inline-block; width: 6px; height: 6px; background-color: #D2A63C; border-radius: 50%; margin-bottom: 6px;"></span>
                               <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: #1D1912; display: block;">Discounts & Perks</span>
                             </td>
                             <td width="33.3%" align="center">
-                              <span style="font-size: 20px; display: block; margin-bottom: 4px;">📶</span>
+                              <span style="display: inline-block; width: 6px; height: 6px; background-color: #D2A63C; border-radius: 50%; margin-bottom: 6px;"></span>
                               <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: #1D1912; display: block;">High Speed Internet</span>
                             </td>
                             <td width="33.3%" align="center">
-                              <span style="font-size: 20px; display: block; margin-bottom: 4px;">☕</span>
+                              <span style="display: inline-block; width: 6px; height: 6px; background-color: #D2A63C; border-radius: 50%; margin-bottom: 6px;"></span>
                               <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: #1D1912; display: block;">Free Refreshments</span>
                             </td>
                           </tr>
@@ -370,7 +388,7 @@ class EmailService {
    * Dedicated Checkout Review Survey Email Builder matching Image 1.
    * Features:
    * - "THANK YOU FOR STAYING WITH US!"
-   * - 5 Emoji satisfaction buttons (😞 🙁 😐 🙂 😍)
+   * - 5 Star satisfaction rating buttons
    * - 1-10 NPS rating scale
    * - Clean "Next ->" submission CTA
    * - Brand dark footer
@@ -379,27 +397,29 @@ class EmailService {
     const token = booking.secure_token || '';
     const reviewBaseUrl = `https://www.luluaurelian.co.ke/#/review?token=${token}`;
 
-    const ratingEmojis = [
-      { emoji: '😞', label: 'Very Dissatisfied', value: 1 },
-      { emoji: '🙁', label: 'Dissatisfied', value: 2 },
-      { emoji: '😐', label: 'Neutral', value: 3 },
-      { emoji: '🙂', label: 'Satisfied', value: 4 },
-      { emoji: '😍', label: 'Delighted', value: 5 }
+    const ratingOptions = [
+      { label: 'Poor', title: '1 Star - Poor', value: 1 },
+      { label: 'Fair', title: '2 Stars - Fair', value: 2 },
+      { label: 'Good', title: '3 Stars - Good', value: 3 },
+      { label: 'Very Good', title: '4 Stars - Very Good', value: 4 },
+      { label: 'Exceptional', title: '5 Stars - Exceptional', value: 5 }
     ];
 
-    const emojiHtml = ratingEmojis.map(item => `
-      <td align="center" style="padding: 0 8px;">
-        <a href="${reviewBaseUrl}&rating=${item.value}" title="${item.label}" style="font-size: 32px; text-decoration: none; display: block; line-height: 1;">
-          ${item.emoji}
+    const ratingHtml = ratingOptions.map(item => `
+      <td align="center" style="padding: 0 5px;">
+        <a href="${reviewBaseUrl}&rating=${item.value}&nps=${item.value * 2}" title="${item.title}" class="rating-btn" style="display: block; min-width: 54px; padding: 10px 4px; text-align: center; border: 1.5px solid #D2A63C; background-color: #FAF7F0; color: #8F6517; border-radius: 10px; text-decoration: none;">
+          <span style="font-size: 15px; font-weight: 700; display: block; line-height: 1;">${item.value} ★</span>
+          <span style="display: block; font-size: 10px; font-weight: 600; color: #5C5245; margin-top: 5px; font-family: 'Montserrat', sans-serif;">${item.label}</span>
         </a>
       </td>
     `).join('');
 
     let npsCells = '';
     for (let i = 1; i <= 10; i++) {
+      const starVal = Math.max(1, Math.min(5, Math.round(i / 2)));
       npsCells += `
         <td align="center" style="padding: 2px;">
-          <a href="${reviewBaseUrl}&nps=${i}" style="display: block; width: 34px; height: 34px; line-height: 34px; text-align: center; border: 1px solid #D1D5DB; background-color: #F9FAFB; color: #1D1912; text-decoration: none; border-radius: 6px; font-size: 12.5px; font-weight: 600;">
+          <a href="${reviewBaseUrl}&nps=${i}&rating=${starVal}" class="nps-btn" style="display: block; width: 34px; height: 34px; line-height: 34px; text-align: center; border: 1.5px solid #D2A63C; background-color: #FAF9F6; color: #1D1912; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 700;">
             ${i}
           </a>
         </td>
@@ -412,13 +432,27 @@ class EmailService {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>Thank You for Staying With Us</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }
         body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; }
+        @media (prefers-color-scheme: dark) {
+          .brand-footer { background-color: #231F19 !important; border-top-color: rgba(210, 166, 60, 0.35) !important; }
+          .footer-brand-title, .footer-copy, .footer-link { color: #FFFFFF !important; }
+          .nps-btn { background-color: #FAF7F0 !important; border-color: #D2A63C !important; color: #1D1912 !important; }
+        }
+        [data-ogsc] .brand-footer { background-color: #231F19 !important; }
+        [data-ogsc] .footer-brand-title, [data-ogsc] .footer-copy, [data-ogsc] .footer-link { color: #FFFFFF !important; }
+        [data-ogsc] .nps-btn { background-color: #FAF7F0 !important; border-color: #D2A63C !important; color: #1D1912 !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -456,10 +490,10 @@ class EmailService {
                     Overall, how satisfied or dissatisfied are you with our company?
                   </h3>
 
-                  <!-- Emoji Row -->
-                  <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 28px;">
+                  <!-- Star Rating Row -->
+                  <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 28px; width: 100%; max-width: 400px;">
                     <tr>
-                      ${emojiHtml}
+                      ${ratingHtml}
                     </tr>
                   </table>
 
@@ -475,8 +509,8 @@ class EmailService {
                   </table>
                   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 26px;">
                     <tr>
-                      <td align="left" style="font-size: 12px; color: #6B7280;">Not happy 😞</td>
-                      <td align="right" style="font-size: 12px; color: #6B7280;">Very happy 😍</td>
+                      <td align="left" style="font-size: 12px; color: #6B7280; font-weight: 500;">Not satisfied</td>
+                      <td align="right" style="font-size: 12px; color: #6B7280; font-weight: 500;">Extremely satisfied</td>
                     </tr>
                   </table>
 
@@ -540,13 +574,25 @@ class EmailService {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>Your Reservation has been Canceled</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }
         body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; }
+        @media (prefers-color-scheme: dark) {
+          .brand-footer { background-color: #231F19 !important; border-top-color: rgba(210, 166, 60, 0.35) !important; }
+          .footer-brand-title, .footer-copy, .footer-link { color: #FFFFFF !important; }
+        }
+        [data-ogsc] .brand-footer { background-color: #231F19 !important; }
+        [data-ogsc] .footer-brand-title, [data-ogsc] .footer-copy, [data-ogsc] .footer-link { color: #FFFFFF !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -608,8 +654,8 @@ class EmailService {
                     <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 24px auto;">
                       <tr>
                         <td>
-                          <a href="tel:+254112299384" style="display: inline-block; padding: 12px 28px; border: 1.5px solid #D1D5DB; border-radius: 30px; text-decoration: none; color: #1D1912; font-weight: 600; font-size: 13px;">
-                            <span style="color: #EF4444; margin-right: 6px;">📞</span> +254 112 299 384
+                          <a href="tel:+254112299384" style="display: inline-block; padding: 12px 28px; border: 1.5px solid #D2A63C; border-radius: 30px; text-decoration: none; color: #1D1912; font-weight: 600; font-size: 13px; background-color: #FAF7F0;">
+                            <strong style="color: #8F6517; margin-right: 6px;">Concierge:</strong> +254 112 299 384
                           </a>
                         </td>
                       </tr>
@@ -653,13 +699,25 @@ class EmailService {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>${title}</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }
         body, p, a, td, span, strong, ul, li, div { font-family: 'Montserrat', Helvetica, Arial, sans-serif !important; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', Georgia, serif !important; font-weight: 600 !important; }
+        @media (prefers-color-scheme: dark) {
+          .brand-footer { background-color: #231F19 !important; border-top-color: rgba(210, 166, 60, 0.35) !important; }
+          .footer-brand-title, .footer-copy, .footer-link { color: #FFFFFF !important; }
+        }
+        [data-ogsc] .brand-footer { background-color: #231F19 !important; }
+        [data-ogsc] .footer-brand-title, [data-ogsc] .footer-copy, [data-ogsc] .footer-link { color: #FFFFFF !important; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #FAF9F6; -webkit-font-smoothing: antialiased;">
@@ -714,31 +772,35 @@ class EmailService {
 
   _renderBadge(text) {
     if (!text) return '';
-    return `<p style="margin: 0 0 15px 0; font-size: 13px; color: #cfa873; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">${text}</p>`;
+    return `<p style="margin: 0 0 15px 0; font-size: 13px; color: #8F6517; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-family: 'Montserrat', sans-serif;">${text}</p>`;
   }
 
   _renderHeading(line1, line2) {
     if (!line1 && !line2) return '';
-    return `<h2 style="margin: 0 0 25px 0; font-size: 32px; font-weight: 300; color: #1a1a1a; letter-spacing: -1px; line-height: 1.1;">${line1 || ''}<br/><span style="color: #cfa873;">${line2 || ''}</span></h2>`;
+    return `<h2 style="margin: 0 0 25px 0; font-size: 32px; font-weight: 600; color: #1D1912; letter-spacing: -0.5px; line-height: 1.15; font-family: 'Cormorant Garamond', Georgia, serif;">${line1 || ''}<br/><span style="color: #9E6C15; font-weight: 700;">${line2 || ''}</span></h2>`;
   }
 
   _renderParagraphs(paragraphs) {
     if (!paragraphs || !paragraphs.length) return '';
-    return paragraphs.map(p => `<p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;">${p}</p>`).join('');
+    return paragraphs.map(p => {
+      const cleanP = typeof p === 'string' ? p.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim() : p;
+      return `<p style="margin: 0 0 18px 0; font-size: 15.5px; line-height: 1.65; color: #2C251D; font-family: 'Montserrat', sans-serif;">${cleanP}</p>`;
+    }).join('');
   }
 
   _renderAlertBox(text) {
     if (!text) return '';
+    const cleanText = typeof text === 'string' ? text.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim() : text;
     return `
-      <div style="background-color: #FAF9F6; padding: 20px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid #cfa873;">
-        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #1a1a1a;">${text}</p>
+      <div style="background-color: #FAF9F6; padding: 20px 22px; border-radius: 14px; margin-bottom: 25px; border: 1px solid #E5DFD3; border-left: 4px solid #D2A63C;">
+        <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #2C251D; font-family: 'Montserrat', sans-serif;">${cleanText}</p>
       </div>
     `;
   }
 
   _renderBookingRef(ref) {
     if (!ref) return '';
-    return `<p style="margin: 0 0 30px 0; font-size: 14px; color: #888;">Booking Reference: <strong>#${ref}</strong></p>`;
+    return `<p style="margin: 0 0 30px 0; font-size: 14px; color: #5C5245; font-family: 'Montserrat', sans-serif;">Booking Reference: <strong style="color: #1D1912;">#${ref}</strong></p>`;
   }
 
   _renderButton(btn) {
@@ -747,7 +809,7 @@ class EmailService {
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td align="left">
-            <a href="${btn.url}" style="display: inline-block; padding: 16px 36px; background-color: #1a1a1a; color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 14px; letter-spacing: 1px;">${btn.label} &rarr;</a>
+            <a href="${btn.url}" style="display: inline-block; padding: 15px 36px; background-color: #1D1912; color: #FFFFFF; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 13.5px; letter-spacing: 1px;">${btn.label} &rarr;</a>
           </td>
         </tr>
       </table>
@@ -760,7 +822,7 @@ class EmailService {
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td align="center">
-            <a href="${btn.url}" style="display: inline-block; padding: 16px 36px; background-color: #1a1a1a; color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 14px; letter-spacing: 1px;">${btn.label} &rarr;</a>
+            <a href="${btn.url}" style="display: inline-block; padding: 15px 36px; background-color: #1D1912; color: #FFFFFF; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 13.5px; letter-spacing: 1px;">${btn.label} &rarr;</a>
           </td>
         </tr>
       </table>
@@ -769,43 +831,79 @@ class EmailService {
 
   _renderCredentialsBox(credentials) {
     if (!credentials) return '';
-    const titleHtml = credentials.title ? `<h4 style="margin: 0 0 15px 0; font-size: 13px; color: #cfa873; text-transform: uppercase; letter-spacing: 1px;">${credentials.title}</h4>` : '';
+    const rawTitle = credentials.title || 'Unit Access & Credentials';
+    const cleanTitle = rawTitle.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+
     const itemsHtml = credentials.items.map(item => {
-      const extraHtml = item.extra ? ` <i style="color: #888;">${item.extra}</i>` : '';
-      return `<p style="margin: 0 0 10px 0; font-size: 14px; color: #cccccc;"><strong>${item.label}:</strong> <span style="color: #ffffff; font-weight: bold; font-size: 16px;">${item.value}</span>${extraHtml}</p>`;
+      const cleanLabel = (item.label || '').replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+      const cleanValue = typeof item.value === 'string' ? item.value.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim() : item.value;
+      const extraHtml = item.extra ? ` <i style="color: #6B6255; font-size: 12.5px;">${item.extra}</i>` : '';
+      return `
+        <tr style="border-bottom: 1px solid #EFE8DC;">
+          <td style="padding: 10px 0; font-size: 13.5px; color: #5C5245; font-family: 'Montserrat', sans-serif; font-weight: 600; width: 38%; vertical-align: top;">
+            ${cleanLabel}:
+          </td>
+          <td style="padding: 10px 0; font-size: 14.5px; color: #1D1912; font-family: 'Montserrat', sans-serif; font-weight: 700; width: 62%; vertical-align: top;">
+            ${cleanValue}${extraHtml}
+          </td>
+        </tr>
+      `;
     }).join('');
+
     return `
-      <div style="background-color: #1a1a1a; color: #ffffff; padding: 25px; border-radius: 16px; margin-bottom: 25px;">
-        ${titleHtml}
-        ${itemsHtml}
+      <div style="background-color: #FAF7F0; border: 1.5px solid #D2A63C; border-radius: 16px; padding: 22px 24px; margin-bottom: 25px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td colspan="2" style="padding-bottom: 12px; border-bottom: 2px solid #D2A63C;">
+              <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8F6517; text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Montserrat', sans-serif;">
+                ${cleanTitle}
+              </h4>
+            </td>
+          </tr>
+          ${itemsHtml}
+        </table>
       </div>
     `;
   }
 
   _renderRulesList(rules) {
     if (!rules || !rules.items || !rules.items.length) return '';
-    const title = rules.title || 'House Rules & Stay Guidelines';
-    const itemsHtml = rules.items.map(item => `
-      <tr style="border-bottom: 1px solid #f0ece3;">
-        <td style="padding: 10px 0; font-size: 13px; color: #4a4a4a; line-height: 1.6; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-          ${item}
-        </td>
-      </tr>
-    `).join('');
+    const rawTitle = rules.title || 'House Rules & Stay Guidelines';
+    const cleanTitle = rawTitle.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+
+    const itemsHtml = rules.items.map(item => {
+      const cleanItem = typeof item === 'string' ? item.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim() : item;
+      let formattedText = cleanItem;
+      if (typeof cleanItem === 'string') {
+        if (!cleanItem.includes('<strong') && cleanItem.includes(':')) {
+          const colonIndex = cleanItem.indexOf(':');
+          const prefix = cleanItem.substring(0, colonIndex).trim();
+          const suffix = cleanItem.substring(colonIndex + 1).trim();
+          formattedText = `<strong style="color: #1D1912; font-weight: 700;">${prefix}:</strong> ${suffix}`;
+        }
+      }
+      return `
+        <tr style="border-bottom: 1px solid #EFE8DC;">
+          <td style="padding: 10px 0; font-size: 13.5px; color: #2C251D; line-height: 1.65; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+            ${formattedText}
+          </td>
+        </tr>
+      `;
+    }).join('');
 
     return `
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; border-radius: 16px; padding: 22px; margin-bottom: 25px;">
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; border-radius: 16px; padding: 22px 24px; margin-bottom: 25px;">
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="padding-bottom: 12px; border-bottom: 2px solid #cfa873;">
-              <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;">${title}</h4>
-              <p style="margin: 4px 0 0 0; font-size: 12px; color: #777777;">To ensure a comfortable, safe, and enjoyable stay, please observe these guidelines during your time with us:</p>
+            <td style="padding-bottom: 12px; border-bottom: 2px solid #D2A63C;">
+              <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: #1D1912; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif;">${cleanTitle}</h4>
+              <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #554E45; font-family: 'Montserrat', sans-serif;">To ensure a comfortable, safe, and enjoyable stay, please observe these guidelines during your time with us:</p>
             </td>
           </tr>
           ${itemsHtml}
           <tr>
             <td style="padding-top: 14px; text-align: center;">
-              <a href="https://www.luluaurelian.co.ke/#/portal" target="_blank" style="color: #cfa873; font-weight: 600; font-size: 12px; text-decoration: underline;">
+              <a href="https://www.luluaurelian.co.ke/#/portal" target="_blank" style="color: #8F6517; font-weight: 700; font-size: 12.5px; text-decoration: underline; font-family: 'Montserrat', sans-serif;">
                 View Complete Digital House Rules in Guest Portal &rarr;
               </a>
             </td>
@@ -818,9 +916,9 @@ class EmailService {
   _renderPromoBox(promo) {
     if (!promo) return '';
     return `
-      <div style="background-color: #FAF9F6; padding: 25px; border-radius: 12px; margin-bottom: 25px; text-align: center; border: 1px dashed #cfa873;">
-        <p style="margin: 0 0 10px 0; font-size: 14px; color: #4a4a4a; text-transform: uppercase; letter-spacing: 1px;">${promo.label}</p>
-        <p style="margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #1a1a1a;">${promo.code}</p>
+      <div style="background-color: #FAF9F6; padding: 25px; border-radius: 12px; margin-bottom: 25px; text-align: center; border: 1.5px dashed #D2A63C;">
+        <p style="margin: 0 0 10px 0; font-size: 13.5px; color: #5C5245; text-transform: uppercase; letter-spacing: 1px; font-family: 'Montserrat', sans-serif;">${promo.label}</p>
+        <p style="margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #1D1912;">${promo.code}</p>
       </div>
     `;
   }
@@ -832,27 +930,18 @@ class EmailService {
 
     const ssid = (!isDummy(customSettings?.wifi_ssid)) ? customSettings.wifi_ssid.trim() : (details.wifiUsername || details.wifiSSID);
     const pass = (!isDummy(customSettings?.wifi_password)) ? customSettings.wifi_password.trim() : (details.wifiPassword || details.wifiPass);
-    const extNote = key === 'cocoa' ? `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e5dfd3; font-size: 12px; color: #666666;">Bedroom Extender: <strong>Bedroom</strong> &bull; Password: <strong>CMutwiri</strong></div>` : '';
+    const extNote = key === 'cocoa' ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #E5DFD3; font-size: 12.5px; color: #554E45;">Bedroom Extender: <strong style="color: #1D1912;">Bedroom</strong> &bull; Password: <strong style="color: #1D1912;">CMutwiri</strong></div>` : '';
 
     return `
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 16px; margin-bottom: 25px;">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr>
-            <td width="36" valign="top" style="padding-top: 2px;">
-              <span style="font-size: 22px; display: block; line-height: 1;">📶</span>
-            </td>
-            <td>
-              <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">High-Speed Suite Wi-Fi Access</h4>
-              <p style="margin: 0 0 4px 0; font-size: 13.5px; color: #444444; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-                <strong>Network Name (SSID):</strong> <span style="color: #9E6C15; font-weight: 700;">${ssid}</span>
-              </p>
-              <p style="margin: 0; font-size: 13.5px; color: #444444; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-                <strong>Password:</strong> <span style="color: #1a1a1a; font-weight: 700;">${pass}</span>
-              </p>
-              ${extNote}
-            </td>
-          </tr>
-        </table>
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; padding: 22px 24px; border-radius: 16px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 13.5px; font-weight: 700; color: #1D1912; text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Montserrat', sans-serif;">High-Speed Suite Wi-Fi Access</h4>
+        <p style="margin: 0 0 6px 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+          <strong>Network Name (SSID):</strong> <span style="color: #8F6517; font-weight: 700;">${ssid}</span>
+        </p>
+        <p style="margin: 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+          <strong>Password:</strong> <span style="color: #1D1912; font-weight: 700;">${pass}</span>
+        </p>
+        ${extNote}
       </div>
     `;
   }
@@ -860,23 +949,20 @@ class EmailService {
   _renderLocationBlock(unitId) {
     const details = UNIT_WELCOME_DETAILS[(unitId || 'skyview').toLowerCase()] || UNIT_WELCOME_DETAILS.skyview;
     return `
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 22px; border-radius: 16px; margin-bottom: 25px;">
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; padding: 22px 24px; border-radius: 16px; margin-bottom: 25px;">
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td width="36" valign="top" style="padding-top: 2px;">
-              <img src="https://img.icons8.com/ios-filled/50/cfa873/marker.png" alt="Map Pin" width="24" height="24" style="display: block;" />
-            </td>
             <td>
-              <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.5px;">Location & Coordinates</h4>
-              <p style="margin: 0 0 12px 0; font-size: 13px; color: #666666; line-height: 1.5; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
-                <strong>${details.name}</strong><br/>
+              <h4 style="margin: 0 0 6px 0; font-size: 14.5px; font-weight: 700; color: #1D1912; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif;">Location & Coordinates</h4>
+              <p style="margin: 0 0 14px 0; font-size: 13.5px; color: #2C251D; line-height: 1.6; font-family: 'Montserrat', Helvetica, Arial, sans-serif;">
+                <strong style="color: #1D1912;">${details.name}</strong><br/>
                 ${details.location}
               </p>
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td>
-                    <a href="${details.mapUrl}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #cfa873; color: #ffffff; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
-                      📍 Open Location Pin on Google Maps &rarr;
+                    <a href="${details.mapUrl}" target="_blank" style="display: inline-block; padding: 11px 24px; background-color: #1D1912; color: #FFFFFF; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 12.5px; letter-spacing: 0.5px;">
+                      Open Location Pin on Google Maps &rarr;
                     </a>
                   </td>
                 </tr>
@@ -890,22 +976,22 @@ class EmailService {
 
   _renderContactCards() {
     return `
-      <div style="background-color: #FAF9F6; border: 1px solid #e5dfd3; padding: 20px; border-radius: 14px; margin-bottom: 25px;">
-        <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">📞 Guest Support & Host Assistance</h4>
-        <p style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.5;">
+      <div style="background-color: #FAF9F6; border: 1px solid #E5DFD3; padding: 22px 24px; border-radius: 16px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 13.5px; color: #1D1912; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; font-family: 'Montserrat', sans-serif;">Guest Support & Host Assistance</h4>
+        <p style="margin: 0 0 14px 0; font-size: 13.5px; color: #2C251D; line-height: 1.5; font-family: 'Montserrat', sans-serif;">
           Should you need any assistance during your stay, feel free to reach out to our team:
         </p>
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="padding: 6px 0;">
-              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Safaricom:</span>
-              <a href="tel:0112299384" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0112299384</a>
+            <td style="padding: 6px 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', sans-serif;">
+              <strong style="color: #1D1912;">Safaricom:</strong>
+              <a href="tel:0112299384" style="margin-left: 8px; color: #8F6517; text-decoration: underline; font-weight: 700; font-size: 15px;">0112299384</a>
             </td>
           </tr>
           <tr>
-            <td style="padding: 6px 0;">
-              <span style="font-size: 14px; color: #1a1a1a; font-weight: 600;">Airtel:</span>
-              <a href="tel:0756958531" style="margin-left: 8px; color: #cfa873; text-decoration: underline; font-weight: 700; font-size: 15px;">0756958531</a>
+            <td style="padding: 6px 0; font-size: 14px; color: #2C251D; font-family: 'Montserrat', sans-serif;">
+              <strong style="color: #1D1912;">Airtel:</strong>
+              <a href="tel:0756958531" style="margin-left: 8px; color: #8F6517; text-decoration: underline; font-weight: 700; font-size: 15px;">0756958531</a>
             </td>
           </tr>
         </table>
@@ -929,8 +1015,12 @@ class EmailService {
   // ==========================================
 
   async sendEmail({ to, subject, html, text }) {
-    // 1. Try Resend API first (HTTP Port 443)
-    if (env.RESEND_API_KEY) {
+    // 1. Try Resend API first (HTTP Port 443) if valid key provided
+    const isValidResendKey = env.RESEND_API_KEY && 
+      !env.RESEND_API_KEY.includes('YOUR_KEY') && 
+      env.RESEND_API_KEY.trim().startsWith('re_');
+
+    if (isValidResendKey) {
       try {
         const response = await fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -1308,6 +1398,39 @@ class EmailService {
       }
     }
 
+    // Format guest phone for WhatsApp (e.g. 0712345678 -> 254712345678)
+    let waPhone = String(booking.guest_phone || '').replace(/\D/g, '');
+    if (waPhone.startsWith('0')) {
+      waPhone = '254' + waPhone.slice(1);
+    } else if (!waPhone.startsWith('254') && waPhone.length === 9) {
+      waPhone = '254' + waPhone;
+    }
+
+    const payUrl = `https://www.luluaurelian.co.ke/#/portal?token=${booking.secure_token || ''}`;
+    const prefilledText = `Hello ${booking.guest_name || 'Guest'}, this is the Concierge at Lulu Aurelian Estate.\n\nWe have received your booking request for ${unitName} (${inDateReadable} to ${outDateReadable}).\n\nTo secure and confirm your reservation, please proceed to complete your payment before the hold window expires. You can complete your payment directly here:\n${payUrl}\n\nPlease let us know if you need any assistance with your payment or stay. We look forward to welcoming you!`;
+    const waUrl = waPhone ? `https://wa.me/${waPhone}?text=${encodeURIComponent(prefilledText)}` : null;
+
+    const waButtonHtml = waUrl ? `
+      <div style="margin-top: 24px; padding: 20px; background-color: #FAF9F6; border: 1.5px solid #25D366; border-radius: 16px; text-align: center;">
+        <p style="margin: 0 0 10px 0; font-family: 'Montserrat', sans-serif; font-size: 13.5px; font-weight: 700; color: #1D1912;">
+          Direct Guest WhatsApp Outreach
+        </p>
+        <p style="margin: 0 0 16px 0; font-family: 'Montserrat', sans-serif; font-size: 12.5px; color: #555555; line-height: 1.5;">
+          Click below to initiate a chat with <strong>${booking.guest_name}</strong> with a prefilled payment reminder message:
+        </p>
+        <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
+          <tr>
+            <td align="center" style="border-radius: 28px; background-color: #25D366;">
+              <a href="${waUrl}" target="_blank" style="display: inline-block; padding: 13px 26px; color: #FFFFFF; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; text-decoration: none; border-radius: 28px; letter-spacing: 0.5px;">
+                <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" width="16" height="16" style="vertical-align: middle; margin-right: 8px; display: inline-block;" />
+                Chat with ${booking.guest_name} on WhatsApp &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    ` : '';
+
     const bodyContent =
       this._renderBadge('INTERNAL ALERT · NEW RESERVATION') +
       this._renderHeading('New Booking', 'Received') +
@@ -1319,7 +1442,10 @@ class EmailService {
          <strong>Check-in:</strong> ${inDateReadable} (from 2:00 PM EAT)<br/>
          <strong>Check-out:</strong> ${outDateReadable} (by 10:00 AM EAT)${cleaningText}`
       ]) +
-      this._renderButton({ label: 'View in Staff Portal', url: 'https://www.luluaurelian.co.ke/#/portal' });
+      waButtonHtml +
+      `<div style="margin-top: 18px;">` +
+      this._renderButton({ label: 'View in Staff Portal', url: 'https://www.luluaurelian.co.ke/#/portal' }) +
+      `</div>`;
 
     const html = this._getHtmlTemplate(title, preheader, bodyContent);
 
@@ -1380,6 +1506,53 @@ class EmailService {
       to: email,
       subject: 'Lulu Aurelian - Password Reset Request',
       text: `Reset your password by visiting this link: ${resetLink}`,
+      html
+    });
+  }
+
+  async sendStaffReviewAlert(emails, review, booking) {
+    if (!emails || (Array.isArray(emails) && emails.length === 0)) return;
+
+    const recipientList = Array.isArray(emails) ? emails : [emails];
+    const cleanRecipients = recipientList.map(e => String(e).trim()).filter(Boolean);
+    if (!cleanRecipients.length) return;
+
+    const data = EMAIL_TEMPLATES.STAFF_REVIEW_ALERT(review, booking);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    return this.sendEmail({
+      to: cleanRecipients.join(','),
+      subject: data.subject,
+      text: data.text,
+      html
+    });
+  }
+
+  async sendPaymentFailedFollowUp(booking, reason = null) {
+    if (!booking || !booking.guest_email) return;
+
+    const data = EMAIL_TEMPLATES.PAYMENT_FAILED_FOLLOWUP(booking, reason);
+    const bodyContent =
+      this._renderBadge(data.badge) +
+      this._renderHeading(data.headingLine1, data.headingLine2) +
+      this._renderParagraphs(data.paragraphs) +
+      this._renderAlertBox(data.alertText) +
+      this._renderLocationBlock(booking.unit_id) +
+      this._renderContactCards() +
+      this._renderButton(data.button);
+
+    const html = this._getHtmlTemplate(data.title, data.preheader, bodyContent, data.heroImage);
+
+    return this.sendEmail({
+      to: booking.guest_email,
+      subject: data.subject,
+      text: data.text,
       html
     });
   }
