@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
 /* Design Tokens & Variables */
 :root {
   --color-dark: #1D1912;
@@ -10,8 +12,8 @@
   --color-border: rgba(29, 25, 18, 0.08);
   --color-glass: rgba(243, 243, 230, 0.75);
   
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-sans: '+', sans-serif;  
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;  
   
   --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --transition-fast: all 0.2s ease;
