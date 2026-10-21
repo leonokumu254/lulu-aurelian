@@ -137,10 +137,33 @@ class PayHeroService {
         throw new Error(data.message || data.error || `PayHero Status Query failed (HTTP ${response.status})`);
       }
 
-      // Check all possible status locations (objects, nested response, arrays, data)
-      const resObj = Array.isArray(data.response)
-        ? data.response[0]
-        : (data.response || (Array.isArray(data.data) ? data.data[0] : (data.data || data)));
+      // Check all possible status locations (data.transactions, data.response, data.data, or root)
+      let candidateList = [];
+      if (Array.isArray(data.transactions)) {
+        candidateList = data.transactions;
+      } else if (Array.isArray(data.response)) {
+        candidateList = data.response;
+      } else if (Array.isArray(data.data)) {
+        candidateList = data.data;
+      }
+
+      let resObj = null;
+      if (candidateList.length > 0) {
+        // Find the actual customer payment transaction (skip internal service_charge debit)
+        resObj = candidateList.find(t =>
+          t.transaction_type !== 'service_charge' &&
+          t.description !== 'service_charge' &&
+          (Number(t.amount) > 0 || t.status || t.PaymentStatus || t.state)
+        );
+
+        // If all items are service_charge and no customer payment record is found yet, keep pending
+        if (!resObj) {
+          console.log(`[PAYHERO]: Transaction query returned only service charges for ref ${reference}. Payment still pending customer confirmation.`);
+          return { status: 'PENDING', data };
+        }
+      } else {
+        resObj = data.response || data.data || data;
+      }
 
       const rawStatus = (resObj && (resObj.status || resObj.Status || resObj.payment_status || resObj.PaymentStatus || resObj.state || resObj.State))
         || data.status || data.Status || data.payment_status || '';
@@ -148,7 +171,13 @@ class PayHeroService {
       const payHeroStatus = String(rawStatus || '').toUpperCase();
 
       let normalizedStatus;
-      if (['SUCCESS', 'COMPLETED', 'PAID', 'TRUE'].includes(payHeroStatus) || data.success === true || (resObj && (resObj.success === true || resObj.status === true))) {
+      if (
+        ['SUCCESS', 'COMPLETED', 'PAID', 'TRUE'].includes(payHeroStatus) ||
+        data.success === true ||
+        (resObj && (resObj.success === true || resObj.status === true)) ||
+        // In PayHero, an inbound customer payment record with a provider_reference is settled
+        (resObj && resObj.transaction_type && resObj.transaction_type !== 'service_charge' && Number(resObj.amount) > 0 && resObj.provider_reference)
+      ) {
         normalizedStatus = 'COMPLETED';
       } else if (['FAILED', 'DECLINED'].includes(payHeroStatus)) {
         normalizedStatus = 'FAILED';
