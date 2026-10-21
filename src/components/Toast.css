@@ -1,0 +1,149 @@
+/* ── Luxury Toast Notification Container & Cards ─────────────────────────── */
+.lulu-toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+  width: calc(100% - 32px);
+  pointer-events: none;
+}
+
+.lulu-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px 18px;
+  background: rgba(29, 25, 18, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  color: #FDFBF7;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid #D4AF37;
+  pointer-events: auto;
+  overflow: hidden;
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.25s ease;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.lulu-toast-warning {
+  border-left-color: #F59E0B;
+  background: rgba(28, 24, 20, 0.96);
+}
+
+.lulu-toast-error {
+  border-left-color: #EF4444;
+  background: rgba(28, 20, 20, 0.96);
+}
+
+.lulu-toast-success {
+  border-left-color: #10B981;
+  background: rgba(18, 28, 22, 0.96);
+}
+
+.lulu-toast-info {
+  border-left-color: #D4AF37;
+  background: rgba(29, 25, 18, 0.96);
+}
+
+.lulu-toast-icon-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.toast-icon.warning { color: #F59E0B; }
+.toast-icon.error { color: #EF4444; }
+.toast-icon.success { color: #10B981; }
+.toast-icon.info { color: #D4AF37; }
+
+.lulu-toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.lulu-toast-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #FFFFFF;
+  letter-spacing: 0.3px;
+}
+
+.lulu-toast-message {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #D8D3CC;
+  margin: 0;
+}
+
+.lulu-toast-close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: #A39B90;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-top: -2px;
+  margin-right: -4px;
+}
+
+.lulu-toast-close:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lulu-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2.5px;
+  background: rgba(212, 175, 55, 0.6);
+  width: 100%;
+  transform-origin: left;
+  animation: toastProgress linear forwards;
+}
+
+.lulu-toast-warning .lulu-toast-progress { background: #F59E0B; }
+.lulu-toast-error .lulu-toast-progress { background: #EF4444; }
+.lulu-toast-success .lulu-toast-progress { background: #10B981; }
+.lulu-toast-info .lulu-toast-progress { background: #D4AF37; }
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@media (max-width: 600px) {
+  .lulu-toast-container {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+}

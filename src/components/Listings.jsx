@@ -112,8 +112,24 @@ function ListingCard({ listing, onBookSelect }) {
     cardHref += `?${urlParams.join('&')}`;
   }
 
+  const handleCardClick = (e) => {
+    // Do not intercept if user was clicking carousel arrows or dots
+    if (e.target.closest('.bnb-arrow') || e.target.closest('.bnb-dots')) {
+      return;
+    }
+    if (nights > 0 && onBookSelect) {
+      e.preventDefault();
+      onBookSelect(listing.id);
+    }
+  };
+
   return (
-    <a href={cardHref} className="bnb-card" aria-label={`View ${listing.name}`}>
+    <a 
+      href={cardHref} 
+      className="bnb-card" 
+      onClick={handleCardClick}
+      aria-label={`View ${listing.name}`}
+    >
       {/* Image Carousel */}
       <div className="bnb-card-image-wrap">
         {/* Carousel */}

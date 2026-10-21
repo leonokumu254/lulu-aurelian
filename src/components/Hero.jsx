@@ -14,12 +14,23 @@ const IMAGES = [
 
 const FULL_LINE1 = "Experience Refined Luxury";
 const FULL_LINE2 = "at Lulu Aurelian Estate";
-export default function Hero({ onSearch, isPreloaderDone = true }) {
+export default function Hero({ onSearch, isPreloaderDone = true, initialCheckIn = '', initialCheckOut = '' }) {
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
+  const [checkIn, setCheckIn] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('checkIn') || initialCheckIn || '';
+  });
+  const [checkOut, setCheckOut] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('checkOut') || initialCheckOut || '';
+  });
   const [error, setError] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialCheckIn) setCheckIn(initialCheckIn);
+    if (initialCheckOut) setCheckOut(initialCheckOut);
+  }, [initialCheckIn, initialCheckOut]);
 
   // If preloader is active (initial visit or refresh), wait to type.
   // If preloader was skipped (navigation), display full text immediately.
@@ -28,15 +39,7 @@ export default function Hero({ onSearch, isPreloaderDone = true }) {
   const [typingPhase, setTypingPhase] = useState(() => isPreloaderDone ? 'done' : 'waiting');
   const [cursorVisible, setCursorVisible] = useState(() => !isPreloaderDone);
 
-  // Helper to derive unitId from image path
-const getUnitIdFromImage = (imgPath) => {
-  // Expect path like '/assets/skyview/skyview_1.jpg'
-  const parts = imgPath.split('/');
-  const knownUnits = ['skyview', 'cocoa', 'neema'];
-  const unit = parts.find(p => knownUnits.includes(p));
-  return unit || '';
-};
-// Background Carousel rotation
+  // Background Carousel rotation
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIdx((prev) => (prev + 1) % IMAGES.length);
@@ -135,15 +138,8 @@ const getUnitIdFromImage = (imgPath) => {
           <div
             key={idx}
             className={`hero-slide ${idx === currentIdx ? 'active' : ''}`}
-            onClick={() => {
-              const unitId = getUnitIdFromImage(img);
-              if (unitId) {
-                window.location.href = `/${unitId}`;
-              }
-            }}
             style={{ 
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url(${img})`,
-              cursor: 'pointer'
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url(${img})`
             }}
           />
         ))}

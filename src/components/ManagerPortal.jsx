@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   DollarSign, TrendingUp, UserPlus, Trash, Plus, Send, Home, Calendar, Lock, Link, Copy, Check, RefreshCw, ChevronLeft, ChevronRight,
-  FileText, Users, CheckCircle, MessageSquare, ShieldCheck, Mail, Star, AlertTriangle, X
+  FileText, Users, CheckCircle, MessageSquare, ShieldCheck, Mail, Star, AlertTriangle, X, BarChart3
 } from 'lucide-react';
 import './ManagerPortal.css';
 import { DEFAULT_SUITES_PRICING, fetchLivePricing } from '../utils/pricing';
+import ProductAnalytics from './ProductAnalytics';
 
 const SUITE_IMAGES = {
   skyview: '/assets/skyview/skyview_1.jpg',
@@ -895,6 +896,13 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
           <span>Pricing Engine</span>
         </button>
         <button 
+          className={`manager-tab-pill ${managerTab === 'analytics' ? 'active' : ''}`}
+          onClick={() => onTabChange && onTabChange('analytics')}
+        >
+          <BarChart3 size={16} />
+          <span>Product Analytics</span>
+        </button>
+        <button 
           className={`manager-tab-pill ${managerTab === 'calendar' ? 'active' : ''}`}
           onClick={() => onTabChange && onTabChange('calendar')}
         >
@@ -926,6 +934,11 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
 
       {/* Main Interactive Card */}
       <div className="dashboard-card">
+
+        {/* PRODUCT & REVENUE ANALYTICS VIEW */}
+        {managerTab === 'analytics' && (
+          <ProductAnalytics user={user} />
+        )}
 
         {/* PRICING ENGINE VIEW */}
         {managerTab === 'pricing' && (

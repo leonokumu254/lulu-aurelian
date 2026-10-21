@@ -425,7 +425,12 @@ export default function App() {
         </div>
       ) : page === 'home' ? (
         <main className="home-view">
-          <Hero onSearch={handleHeroSearch} isPreloaderDone={!showPreloader} />
+          <Hero 
+            onSearch={handleHeroSearch} 
+            isPreloaderDone={!showPreloader} 
+            initialCheckIn={formData.checkIn} 
+            initialCheckOut={formData.checkOut} 
+          />
           <About />
           <Listings onBookSelect={handleBookSelect} />
           <Suspense fallback={<PageFallback />}>

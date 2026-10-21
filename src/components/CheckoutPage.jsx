@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home, Copy, CheckCircle, Sparkles, Star } from 'lucide-react';
+import { Calendar, Users, ShieldCheck, Clock, Check, AlertTriangle, ChevronLeft, CreditCard, Lock, User, Mail, Phone, Home, Copy, CheckCircle, Sparkles, Star, AlertCircle } from 'lucide-react';
 import { getSuitePrice } from '../utils/pricing';
 import { OFFERS } from '../data/OffersData';
+import { triggerToast } from './Toast';
 import './CheckoutPage.css';
 
 const SUITES_METADATA = {
@@ -404,14 +405,36 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
     setFormError(null);
 
     // Validate details
-    if (!guestDetails.firstName || !guestDetails.lastName || !guestDetails.email || !guestDetails.phone) {
-      setFormError('Please fill in all guest contact details.');
+    if (!guestDetails.firstName?.trim()) {
+      const msg = 'Please enter your first name.';
+      setFormError(msg);
+      triggerToast({ type: 'warning', title: 'First Name Required', message: msg });
+      document.querySelector('input[name="firstName"]')?.focus();
       return;
     }
 
-    const digitsOnly = guestDetails.phone.replace(/\D/g, '');
+    if (!guestDetails.lastName?.trim()) {
+      const msg = 'Please enter your second name (last name) to continue.';
+      setFormError(msg);
+      triggerToast({ type: 'warning', title: 'Second Name Required', message: msg });
+      document.querySelector('input[name="lastName"]')?.focus();
+      return;
+    }
+
+    if (!guestDetails.email?.trim()) {
+      const msg = 'Please enter your email address to receive check-in credentials.';
+      setFormError(msg);
+      triggerToast({ type: 'warning', title: 'Email Address Required', message: msg });
+      document.querySelector('input[name="email"]')?.focus();
+      return;
+    }
+
+    const digitsOnly = guestDetails.phone ? guestDetails.phone.replace(/\D/g, '') : '';
     if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-      setFormError('Please enter a valid phone number.');
+      const msg = 'Please enter a valid Safaricom phone number (e.g. 712 345 678).';
+      setFormError(msg);
+      triggerToast({ type: 'warning', title: 'Valid Phone Required', message: msg });
+      document.querySelector('input[name="phone"]')?.focus();
       return;
     }
 
@@ -1005,16 +1028,25 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                         </div>
                         <div>
                           <h3 className="payment-status-title" style={{ color: '#1a9e35', margin: '0 0 0.5rem', fontWeight: 600 }}>
-                            Check Your Phone
+                            Please wait as we process your payment request...
                           </h3>
                           <p className="payment-status-desc" style={{ color: '#334155', margin: '0 0 0.85rem' }}>
-                            An M-Pesa payment prompt for <strong style={{ color: '#1D1912' }}>KES {totalCost.toLocaleString('en-KE')}</strong> has been sent to your phone.
-                            Enter your M-Pesa PIN on your phone handset to complete the transaction.
+                            An automated M-Pesa Buy Goods prompt for <strong style={{ color: '#1D1912' }}>KES {totalCost.toLocaleString('en-KE')}</strong> has been dispatched to <strong>+254 {mpesaPhone}</strong>.
                           </p>
+
+                          {/* Quick 3-step guide */}
+                          <div style={{ background: 'rgba(26, 158, 53, 0.06)', border: '1px solid rgba(26, 158, 53, 0.2)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem', textAlign: 'left', fontSize: '0.82rem', color: '#14532d' }}>
+                            <strong style={{ display: 'block', marginBottom: '4px' }}>On Your Phone:</strong>
+                            <ol style={{ margin: 0, paddingLeft: '1.25rem', lineHeight: '1.5' }}>
+                              <li>Unlock your phone screen.</li>
+                              <li>Enter your 4-digit M-Pesa PIN.</li>
+                              <li>Tap <strong>Send / OK</strong> to complete.</li>
+                            </ol>
+                          </div>
                         </div>
                         <div className="stk-status-pill">
                           <div className="stk-dot-pulse" />
-                          <span>Verifying payment status...</span>
+                          <span>Listening for Safaricom confirmation...</span>
                         </div>
 
                         {/* Manual Transaction Code Verification Form */}
@@ -1068,7 +1100,7 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                               {copiedField === 'stk_till' ? <CheckCircle size={14} /> : <Copy size={14} />}
                             </button>
                           </div>
-                          <div style={{ marginTop: '0.75rem' }}>
+                          <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
                             <button
                               type="button"
                               onClick={() => setStkPushSent(false)}
@@ -1076,12 +1108,43 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                             >
                               ← Try another number or payment method
                             </button>
+                            <a
+                              href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello Lulu Aurelian Estate, I have initiated an M-Pesa payment for booking #${createdBooking?.bookingId ? String(createdBooking.bookingId).substring(0, 8).toUpperCase() : ''} and would like assistance.`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: '#16a34a', fontSize: '0.8rem', textDecoration: 'underline', fontWeight: 600 }}
+                            >
+                              Need assistance? Chat with Concierge on WhatsApp
+                            </a>
                           </div>
                         </div>
                       </div>
                     </div>
                   ) : (
                     <div className="payment-methods-block">
+                      {paymentError && (
+                        <div style={{
+                          background: 'rgba(239, 68, 68, 0.08)',
+                          border: '1.5px solid rgba(239, 68, 68, 0.35)',
+                          borderRadius: '10px',
+                          padding: '0.85rem 1rem',
+                          marginBottom: '1rem',
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '0.65rem'
+                        }}>
+                          <AlertCircle size={18} style={{ color: '#dc2626', flexShrink: 0, marginTop: '2px' }} />
+                          <div style={{ flex: 1 }}>
+                            <strong style={{ display: 'block', color: '#b91c1c', fontSize: '0.88rem', marginBottom: '2px' }}>
+                              Payment Status Notice
+                            </strong>
+                            <p style={{ margin: 0, color: '#7f1d1d', fontSize: '0.82rem', lineHeight: '1.4' }}>
+                              {paymentError}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Timer Alert */}
                       <div className="payment-timer-alert">
                         <Clock size={16} />

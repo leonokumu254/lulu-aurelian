@@ -24,6 +24,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import cmsRoutes from './routes/cmsRoutes.js';
 import icalRoutes from './routes/icalRoutes.js';
 import pricingRoutes from './routes/pricingRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 const app = express();
 app.set('trust proxy', true); // Required for express-rate-limit when hosted on Railway
@@ -116,6 +117,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/cms', cmsRoutes);
 app.use('/api/ical', icalRoutes);
 app.use('/api/pricing', pricingRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 
 // --- STATIC ASSETS & SPA FRONTEND FALLBACK SERVING ---

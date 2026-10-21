@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, LayoutGrid, Sliders, Home, User, Menu, Calendar, BookOpen, Key, FileText, Star, DollarSign, Users, X, Wifi } from 'lucide-react';
+import { LogOut, LayoutGrid, Sliders, Home, User, Menu, Calendar, BookOpen, Key, FileText, Star, DollarSign, Users, X, Wifi, BarChart3 } from 'lucide-react';
 import AuthPage from './AuthPage';
 import AgentPortal from './AgentPortal';
 import ManagerPortal from './ManagerPortal';
@@ -146,6 +146,13 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               >
                 <DollarSign size={20} />
                 <span>Pricing</span>
+              </button>
+              <button 
+                className={`nav-item ${viewMode === 'analytics' ? 'active' : ''}`}
+                onClick={() => { setViewMode('analytics'); setMobileMenuOpen(false); }}
+              >
+                <BarChart3 size={20} />
+                <span>Product Analytics</span>
               </button>
               <button 
                 className={`nav-item ${viewMode === 'calendar' ? 'active' : ''}`}
@@ -318,7 +325,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
               </button>
               <div>
                 <h1>
-                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'wifi' ? 'Wi-Fi Details' : viewMode === 'rules' ? 'House Rules & Guidelines' : viewMode === 'cms' ? 'Content Studio' : portalTab === 'rules' ? 'House Rules & Guidelines' : 'Guest Portal'}
+                  {viewMode === 'pricing' ? 'Pricing Engine' : viewMode === 'analytics' ? 'Product Analytics' : viewMode === 'team' ? 'Team Management' : viewMode === 'moderation' ? 'Guest Reviews' : viewMode === 'guests' ? 'Guest Directory' : viewMode === 'operational' ? 'Agent Desk' : viewMode === 'passcodes' ? 'Key Suites' : viewMode === 'wifi' ? 'Wi-Fi Details' : viewMode === 'rules' ? 'House Rules & Guidelines' : viewMode === 'cms' ? 'Content Studio' : portalTab === 'rules' ? 'House Rules & Guidelines' : 'Guest Portal'}
                 </h1>
               </div>
             </div>

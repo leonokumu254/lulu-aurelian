@@ -12,13 +12,14 @@ const router = Router();
 // M-Pesa via PayHero — Initiate STK Push
 router.post('/mpesa/initiate', initiateMpesaPayment);
 
-// M-Pesa Manual / SMS Code Verification (Restricted to authorized staff)
-router.post('/mpesa/verify-manual', authMiddleware, requireRole('MANAGER', 'AGENT'), verifyManualMpesaPayment);
+// M-Pesa Manual / SMS Code Verification (Allows guest with booking_id or staff to verify)
+router.post('/mpesa/verify-manual', verifyManualMpesaPayment);
 
 // PayHero — STK Push Callback (PayHero server-to-server)
 router.post('/payhero/callback', payheroCallback);
 
-// PayHero — STK Push Status Query (frontend polling)
+// PayHero — STK Push Status Query (supports both POST and GET polling from client)
 router.post('/payhero/query', queryPayheroStatus);
+router.get('/payhero/query', queryPayheroStatus);
 
 export default router;

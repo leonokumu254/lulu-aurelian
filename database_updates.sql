@@ -12,18 +12,8 @@ ALTER TABLE bookings ADD COLUMN children TINYINT NOT NULL DEFAULT 0 AFTER adults
 ALTER TABLE bookings ADD COLUMN has_peak_surcharge TINYINT(1) NOT NULL DEFAULT 0 AFTER children;
 ALTER TABLE bookings ADD COLUMN hold_expires_at TIMESTAMP NULL DEFAULT NULL AFTER secure_token;
 
--- STEP 2: Expand bookings status ENUM
-ALTER TABLE bookings MODIFY COLUMN status ENUM(
-  'PENDING',
-  'AUTHORIZING',
-  'PAID',
-  'EXPIRED',
-  'PAYMENT_FAILED',
-  'CANCELLED',
-  'APPROVED',
-  'DECLINED',
-  'CANCELED'
-) NOT NULL DEFAULT 'PENDING';
+-- STEP 2: Use robust VARCHAR for bookings status (supports PENDING, AUTHORIZING, PAID, COMPLETED, EXPIRED, PAYMENT_FAILED, etc. without truncation errors)
+ALTER TABLE bookings MODIFY COLUMN status VARCHAR(32) NOT NULL DEFAULT 'PENDING';
 
 -- STEP 3: Index for cron expiry queries
 ALTER TABLE bookings ADD INDEX idx_bookings_hold_expires (hold_expires_at);
@@ -84,6 +74,9 @@ ON DUPLICATE KEY UPDATE
 
 -- STEP 10: Add booking_type column to bookings table
 ALTER TABLE bookings ADD COLUMN booking_type VARCHAR(30) NOT NULL DEFAULT 'entire' AFTER unit_id;
+
+-- STEP 11: Add total_price column to bookings table for exact revenue & financial analytics
+ALTER TABLE bookings ADD COLUMN total_price DECIMAL(10,2) NULL AFTER has_peak_surcharge;
 
 -- ================================================================
 -- Verify with:   DESCRIBE bookings;   DESCRIBE payments;   DESCRIBE unit_pricing;

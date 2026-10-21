@@ -3,6 +3,7 @@ import { Calendar, Shield, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import './BookingSummary.css';
 import { OFFERS } from '../data/OffersData';
 import { getSuitePrice } from '../utils/pricing';
+import { triggerToast } from './Toast';
 
 const SUITES_METADATA = {
   skyview: {
@@ -115,7 +116,68 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
   };
 
   const handleSubmitClick = async () => {
-    if (!isFormValid || submitting) return;
+    if (submitting || isSuccess) return;
+
+    if (nights === 0) {
+      triggerToast({
+        type: 'warning',
+        title: 'Dates Required',
+        message: 'Please select your Check-in and Check-out dates.'
+      });
+      handleOpenCalendar();
+      return;
+    }
+
+    if (!formData.firstName || !formData.firstName.trim()) {
+      triggerToast({
+        type: 'warning',
+        title: 'First Name Required',
+        message: 'Please enter your first name.'
+      });
+      document.querySelector('input[name="firstName"]')?.focus();
+      return;
+    }
+
+    if (!formData.lastName || !formData.lastName.trim()) {
+      triggerToast({
+        type: 'warning',
+        title: 'Second Name Required',
+        message: 'Please enter your second name (last name) to complete your reservation.'
+      });
+      document.querySelector('input[name="lastName"]')?.focus();
+      return;
+    }
+
+    if (!formData.email || !formData.email.trim()) {
+      triggerToast({
+        type: 'warning',
+        title: 'Email Address Required',
+        message: 'Please enter your email address to receive check-in credentials.'
+      });
+      document.querySelector('input[name="email"]')?.focus();
+      return;
+    }
+
+    if (formData.email.trim().toLowerCase() !== (formData.confirmEmail || '').trim().toLowerCase()) {
+      triggerToast({
+        type: 'warning',
+        title: 'Email Mismatch',
+        message: 'Confirmation email must match your primary email address.'
+      });
+      document.querySelector('input[name="confirmEmail"]')?.focus();
+      return;
+    }
+
+    if (!formData.phone || !isPhoneValid) {
+      triggerToast({
+        type: 'warning',
+        title: 'Valid Phone Required',
+        message: 'Please enter a valid phone number for M-Pesa authorization.'
+      });
+      document.querySelector('input[name="phone"]')?.focus();
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError('');
 
@@ -394,7 +456,7 @@ export default function BookingSummary({ formData, onSubmit, guestUser }) {
         <button
           type="button"
           className="btn-primary summary-submit-btn"
-          disabled={!isFormValid || submitting || isSuccess}
+          disabled={submitting || isSuccess}
           onClick={handleSubmitClick}
           style={{ backgroundColor: isSuccess ? '#10B981' : undefined }}
         >

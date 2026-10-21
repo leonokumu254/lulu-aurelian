@@ -206,11 +206,11 @@ if (useMySQL) {
           console.log('[DB MIGRATE]: Added total_price column to bookings table.');
         }
 
-        // Ensure status ENUM includes 'COMPLETED'
+        // Convert status to VARCHAR(32) to prevent any ENUM truncation errors permanently
         const statusCol = bookingCols.find(c => c.Field === 'status');
-        if (statusCol && !statusCol.Type.includes('COMPLETED')) {
-          await pool.query("ALTER TABLE bookings MODIFY COLUMN status ENUM('PENDING', 'AUTHORIZING', 'PAID', 'COMPLETED', 'EXPIRED', 'PAYMENT_FAILED', 'CANCELLED') NOT NULL DEFAULT 'PENDING'");
-          console.log("[DB MIGRATE]: Updated bookings.status ENUM to include 'COMPLETED'.");
+        if (statusCol && (statusCol.Type.toLowerCase().startsWith('enum') || !statusCol.Type.toLowerCase().includes('varchar'))) {
+          await pool.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(32) NOT NULL DEFAULT 'PENDING'");
+          console.log("[DB MIGRATE]: Converted bookings.status to VARCHAR(32) to ensure all status transitions succeed.");
         }
       } catch (bErr) {
         console.warn('[DB MIGRATE]: Could not alter bookings table:', bErr.message);
@@ -524,9 +524,9 @@ export const db = {
           }
         } catch (dbErr) {
           if (dbErr.message && dbErr.message.includes("Data truncated for column 'status'")) {
-            console.warn("[DB RECOVERY]: Altering bookings.status ENUM to include 'COMPLETED'...");
+            console.warn("[DB RECOVERY]: Altering bookings.status to VARCHAR(32) to support all status values...");
             try {
-              await pool.query("ALTER TABLE bookings MODIFY COLUMN status ENUM('PENDING', 'AUTHORIZING', 'PAID', 'COMPLETED', 'EXPIRED', 'PAYMENT_FAILED', 'CANCELLED') NOT NULL DEFAULT 'PENDING'");
+              await pool.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(32) NOT NULL DEFAULT 'PENDING'");
               if (approved_by) {
                 await pool.query(
                   'UPDATE bookings SET status = ?, approved_by = ?, approved_at = ?, updated_at = ? WHERE id = ?',
@@ -858,6 +858,14 @@ export const db = {
         return true;
       }
       return false;
+    },
+
+    getAll: async () => {
+      if (useMySQL) {
+        const [rows] = await pool.query('SELECT * FROM payments ORDER BY created_at DESC');
+        return rows;
+      }
+      return [...inMemory.payments].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     },
 
     findByBookingId: async (booking_id) => {

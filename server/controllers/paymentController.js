@@ -209,13 +209,25 @@ export const payheroCallback = async (req, res) => {
     }
 
     const payload = req.body || {};
+    const stkCallback = payload.Body?.stkCallback || payload.stkCallback || null;
     const resObj = payload.response || payload.data || payload.results || {};
 
     // Extract all possible references and status formats
-    const external_reference = payload.external_reference || payload.ExternalReference || resObj.external_reference || resObj.ExternalReference || null;
-    const reference = payload.reference || payload.Reference || resObj.reference || resObj.Reference || payload.checkout_request_id || payload.CheckoutRequestID || null;
-    const rawStatus = payload.status || payload.Status || payload.payment_status || payload.PaymentStatus || resObj.status || resObj.Status || resObj.payment_status || (payload.success ? 'SUCCESS' : '');
-    const mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference || payload.Receipt || resObj.provider_reference || resObj.MpesaReceiptNumber || null;
+    const external_reference = payload.external_reference || payload.ExternalReference || resObj.external_reference || resObj.ExternalReference || payload.AccountReference || resObj.AccountReference || payload.BillRefNumber || null;
+    const reference = payload.reference || payload.Reference || resObj.reference || resObj.Reference || payload.checkout_request_id || payload.CheckoutRequestID || payload.checkoutRequestId || resObj.checkout_request_id || resObj.CheckoutRequestID || resObj.checkoutRequestId || (stkCallback && stkCallback.CheckoutRequestID) || null;
+    
+    const isDarajaSuccess = stkCallback && (stkCallback.ResultCode === 0 || stkCallback.ResultCode === '0');
+    const isDarajaFailed = stkCallback && stkCallback.ResultCode !== undefined && stkCallback.ResultCode !== null && stkCallback.ResultCode !== 0 && stkCallback.ResultCode !== '0';
+    
+    let rawStatus = payload.status || payload.Status || payload.payment_status || payload.PaymentStatus || resObj.status || resObj.Status || resObj.payment_status || (payload.success ? 'SUCCESS' : '');
+    if (isDarajaSuccess) rawStatus = 'SUCCESS';
+    if (isDarajaFailed) rawStatus = 'FAILED';
+
+    let mpesaReceipt = payload.provider_reference || payload.MpesaReceiptNumber || payload.MPESA_Reference || payload.Receipt || resObj.provider_reference || resObj.MpesaReceiptNumber || null;
+    if (!mpesaReceipt && stkCallback?.CallbackMetadata?.Item) {
+      const receiptItem = stkCallback.CallbackMetadata.Item.find(it => it.Name === 'MpesaReceiptNumber');
+      if (receiptItem) mpesaReceipt = receiptItem.Value;
+    }
 
     const payHeroStatus = String(rawStatus || '').toUpperCase();
     const payHeroRef = reference || external_reference;
@@ -416,8 +428,8 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
  */
 export const queryPayheroStatus = async (req, res) => {
   try {
-    const { checkoutRequestId, booking_id, bookingId } = req.body;
-    const bId = booking_id || bookingId;
+    const checkoutRequestId = req.body?.checkoutRequestId || req.query?.checkoutRequestId || req.body?.checkout_request_id || req.query?.checkout_request_id;
+    const bId = req.body?.booking_id || req.body?.bookingId || req.query?.booking_id || req.query?.bookingId;
 
     // 1. Check if the booking itself is ALREADY marked PAID
     if (bId) {
