@@ -3,7 +3,7 @@ import {
   DollarSign, TrendingUp, TrendingDown, Calendar, CreditCard,
   Building2, Percent, ArrowUpRight, ArrowDownRight, RefreshCw,
   Download, Search, Sparkles, CheckCircle2, ShieldCheck,
-  ChevronRight, BarChart3, PieChart, Users, Layers
+  ChevronRight, BarChart3, PieChart, Users, Layers, Smartphone
 } from 'lucide-react';
 import './ProductAnalytics.css';
 
@@ -442,10 +442,10 @@ export default function ProductAnalytics({ user }) {
           <div className="panel-header-row">
             <div>
               <h3 className="panel-title">
-                <CreditCard size={18} className="panel-icon-gold" />
+                <Smartphone size={18} className="panel-icon-gold" />
                 Payment Channels
               </h3>
-              <p className="panel-subtitle">Settlement gateway split</p>
+              <p className="panel-subtitle">Settlement gateway split • 100% STK Push (Till)</p>
             </div>
             <span className="security-tag">
               <ShieldCheck size={13} />
@@ -454,56 +454,43 @@ export default function ProductAnalytics({ user }) {
           </div>
 
           <div className="payment-distribution-stack">
-            <div className="stacked-progress-bar">
-              <div className="stack-segment mpesa-segment" style={{ width: '78%' }} title="M-Pesa: 78%"></div>
-              <div className="stack-segment stanbic-segment" style={{ width: '14%' }} title="Stanbic: 14%"></div>
-              <div className="stack-segment card-segment" style={{ width: '8%' }} title="Card: 8%"></div>
+            <div className="stacked-progress-bar unified-stk-bar">
+              <div
+                className="stack-segment mpesa-segment unified-fill"
+                style={{ width: '100%' }}
+                title="M-Pesa STK Push (Till): 100%"
+              >
+                <div className="bar-shimmer-glow"></div>
+              </div>
             </div>
 
             <div className="channels-list">
-              <div className="channel-item">
+              <div className="channel-item brand-channel-card">
                 <div className="channel-info">
-                  <span className="channel-dot mpesa-dot"></span>
+                  <div className="channel-icon-badge">
+                    <Smartphone size={17} />
+                  </div>
                   <div>
-                    <span className="channel-name">M-Pesa (Till & STK Push)</span>
-                    <span className="channel-desc">Instant mobile settlements</span>
+                    <div className="channel-title-row">
+                      <span className="channel-name">M-Pesa (Till & STK Push)</span>
+                      <span className="channel-active-pill">SOLE GATEWAY</span>
+                    </div>
+                    <span className="channel-desc">Instant Buy Goods prompt • Till No: 4364845</span>
                   </div>
                 </div>
                 <div className="channel-value">
-                  <strong>78%</strong>
-                  <span>{formatKES(Math.round(currentKPIs.revenue * 0.78))}</span>
-                </div>
-              </div>
-
-              <div className="channel-item">
-                <div className="channel-info">
-                  <span className="channel-dot stanbic-dot"></span>
-                  <div>
-                    <span className="channel-name">Stanbic Bank Paybill</span>
-                    <span className="channel-desc">Corporate & bank transfers</span>
-                  </div>
-                </div>
-                <div className="channel-value">
-                  <strong>14%</strong>
-                  <span>{formatKES(Math.round(currentKPIs.revenue * 0.14))}</span>
-                </div>
-              </div>
-
-              <div className="channel-item">
-                <div className="channel-info">
-                  <span className="channel-dot card-dot"></span>
-                  <div>
-                    <span className="channel-name">Card & International</span>
-                    <span className="channel-desc">Visa, Mastercard, PayPal</span>
-                  </div>
-                </div>
-                <div className="channel-value">
-                  <strong>8%</strong>
-                  <span>{formatKES(Math.round(currentKPIs.revenue * 0.08))}</span>
+                  <strong className="channel-percentage">100%</strong>
+                  <span className="channel-amount">{formatKES(currentKPIs.revenue)}</span>
                 </div>
               </div>
             </div>
+
+            <div className="payment-protocol-footer">
+              <CheckCircle2 size={13} className="protocol-check-icon" />
+              <span>Automated Safaricom Daraja STK Push prompt & real-time webhook settlement</span>
+            </div>
           </div>
+          <div className="card-accent-line"></div>
         </div>
       </div>
 

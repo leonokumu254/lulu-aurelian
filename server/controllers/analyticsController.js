@@ -235,11 +235,9 @@ export const getAnalyticsMetrics = async (req, res, next) => {
       sharePercent: Number(((s.revenue / totalSuiteRevenue) * 100).toFixed(1))
     }));
 
-    // Payment channel distribution
+    // Payment channel distribution - 100% STK Push (Till 4364845) only
     const paymentChannels = {
-      mpesa: { label: 'M-Pesa (Till & STK)', share: 78 },
-      stanbic: { label: 'Stanbic Bank', share: 14 },
-      card: { label: 'Card / International', share: 8 }
+      mpesa: { label: 'M-Pesa (Till & STK Push)', share: 100 }
     };
 
     // Format recent transactions

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   DollarSign, TrendingUp, UserPlus, Trash, Plus, Send, Home, Calendar, Lock, Link, Copy, Check, RefreshCw, ChevronLeft, ChevronRight,
   FileText, Users, CheckCircle, MessageSquare, ShieldCheck, Mail, Star, AlertTriangle, X, BarChart3
@@ -435,6 +435,17 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
   };
+
+  // SUB-TABS BAR REF & AUTO-SCROLL TO ACTIVE TAB ON MOBILE
+  const tabsBarRef = useRef(null);
+  useEffect(() => {
+    if (tabsBarRef.current) {
+      const activeBtn = tabsBarRef.current.querySelector('.manager-tab-pill.active');
+      if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [managerTab]);
 
   // PRICING ENGINE STATE
   const [suites, setSuites] = useState(() => {
@@ -887,49 +898,81 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
       )}
 
       {/* Clean User-Friendly Segmented Control Tab Navigation */}
-      <div className="manager-sub-tabs-bar">
-        <button 
-          className={`manager-tab-pill ${managerTab === 'pricing' ? 'active' : ''}`}
-          onClick={() => onTabChange && onTabChange('pricing')}
-        >
-          <DollarSign size={16} />
-          <span>Pricing Engine</span>
-        </button>
-        <button 
-          className={`manager-tab-pill ${managerTab === 'analytics' ? 'active' : ''}`}
-          onClick={() => onTabChange && onTabChange('analytics')}
-        >
-          <BarChart3 size={16} />
-          <span>Product Analytics</span>
-        </button>
-        <button 
-          className={`manager-tab-pill ${managerTab === 'calendar' ? 'active' : ''}`}
-          onClick={() => onTabChange && onTabChange('calendar')}
-        >
-          <Calendar size={16} />
-          <span>Calendar & iCal</span>
-        </button>
-        <button 
-          className={`manager-tab-pill ${managerTab === 'team' ? 'active' : ''}`}
-          onClick={() => onTabChange && onTabChange('team')}
-        >
-          <Users size={16} />
-          <span>Team Management</span>
-        </button>
-        <button 
-          className={`manager-tab-pill ${managerTab === 'moderation' ? 'active' : ''}`}
-          onClick={() => onTabChange && onTabChange('moderation')}
-        >
-          <Star size={16} />
-          <span>Guest Reviews</span>
-        </button>
-        <button 
-          className={`manager-tab-pill ${managerTab === 'guests' ? 'active' : ''}`}
-          onClick={() => onTabChange && onTabChange('guests')}
-        >
-          <Users size={16} />
-          <span>Guest Directory</span>
-        </button>
+      <div className="manager-sub-tabs-container">
+        <div className="manager-sub-tabs-bar" ref={tabsBarRef} role="tablist">
+          <button 
+            className={`manager-tab-pill ${managerTab === 'pricing' ? 'active' : ''}`}
+            onClick={() => onTabChange && onTabChange('pricing')}
+            type="button"
+            role="tab"
+            aria-selected={managerTab === 'pricing'}
+            title="Pricing Engine"
+          >
+            <DollarSign size={16} />
+            <span className="tab-label-full">Pricing Engine</span>
+            <span className="tab-label-short">Pricing</span>
+          </button>
+          <button 
+            className={`manager-tab-pill ${managerTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => onTabChange && onTabChange('analytics')}
+            type="button"
+            role="tab"
+            aria-selected={managerTab === 'analytics'}
+            title="Product Analytics"
+          >
+            <BarChart3 size={16} />
+            <span className="tab-label-full">Product Analytics</span>
+            <span className="tab-label-short">Analytics</span>
+          </button>
+          <button 
+            className={`manager-tab-pill ${managerTab === 'calendar' ? 'active' : ''}`}
+            onClick={() => onTabChange && onTabChange('calendar')}
+            type="button"
+            role="tab"
+            aria-selected={managerTab === 'calendar'}
+            title="Calendar & iCal"
+          >
+            <Calendar size={16} />
+            <span className="tab-label-full">Calendar & iCal</span>
+            <span className="tab-label-short">Calendar</span>
+          </button>
+          <button 
+            className={`manager-tab-pill ${managerTab === 'team' ? 'active' : ''}`}
+            onClick={() => onTabChange && onTabChange('team')}
+            type="button"
+            role="tab"
+            aria-selected={managerTab === 'team'}
+            title="Team Management"
+          >
+            <Users size={16} />
+            <span className="tab-label-full">Team Management</span>
+            <span className="tab-label-short">Team</span>
+          </button>
+          <button 
+            className={`manager-tab-pill ${managerTab === 'moderation' ? 'active' : ''}`}
+            onClick={() => onTabChange && onTabChange('moderation')}
+            type="button"
+            role="tab"
+            aria-selected={managerTab === 'moderation'}
+            title="Guest Reviews"
+          >
+            <Star size={16} />
+            <span className="tab-label-full">Guest Reviews</span>
+            <span className="tab-label-short">Reviews</span>
+          </button>
+          <button 
+            className={`manager-tab-pill ${managerTab === 'guests' ? 'active' : ''}`}
+            onClick={() => onTabChange && onTabChange('guests')}
+            type="button"
+            role="tab"
+            aria-selected={managerTab === 'guests'}
+            title="Guest Directory"
+          >
+            <Users size={16} />
+            <span className="tab-label-full">Guest Directory</span>
+            <span className="tab-label-short">Guests</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Interactive Card */}

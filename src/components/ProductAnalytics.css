@@ -613,6 +613,18 @@
 /* --------------------------------------------------------------------------
    4. PAYMENT DISTRIBUTION
    -------------------------------------------------------------------------- */
+.payment-panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-white, #FFFFFF);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(29, 25, 18, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .security-tag {
   display: inline-flex;
   align-items: center;
@@ -622,41 +634,54 @@
   font-weight: 700;
   color: #15803D;
   background: rgba(34, 197, 94, 0.1);
-  padding: 3px 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  letter-spacing: 0.02em;
 }
 
 .payment-distribution-stack {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  flex: 1;
+  justify-content: center;
 }
 
-.stacked-progress-bar {
+.stacked-progress-bar.unified-stk-bar {
   width: 100%;
-  height: 12px;
-  border-radius: 8px;
-  background: rgba(29, 25, 18, 0.08);
+  height: 10px;
+  border-radius: 9999px;
+  background: rgba(29, 25, 18, 0.06);
   display: flex;
   overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-.stack-segment {
+.stack-segment.unified-fill {
   height: 100%;
-  transition: width 0.4s ease;
+  width: 100%;
+  position: relative;
+  background: linear-gradient(90deg, #15803D 0%, #16A34A 22%, #D4AF37 70%, #BB8525 100%);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mpesa-segment {
-  background: #15803D; /* M-Pesa green */
+.bar-shimmer-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+  border-radius: 9999px;
+  animation: barShimmer 3s ease-in-out infinite;
 }
 
-.stanbic-segment {
-  background: #0284C7; /* Stanbic blue */
-}
-
-.card-segment {
-  background: #A3721D; /* Card gold */
+@keyframes barShimmer {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
 }
 
 .channels-list {
@@ -665,45 +690,78 @@
   gap: 12px;
 }
 
-.channel-item {
+.channel-item.brand-channel-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  background: #FDFBF7;
-  border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, #FAF8F5 100%);
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(29, 25, 18, 0.04);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.channel-item.brand-channel-card:hover {
+  border-color: rgba(212, 175, 55, 0.65);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.18);
+  transform: translateY(-2px);
 }
 
 .channel-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.channel-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+.channel-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #BB8525;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
 }
 
-.mpesa-dot { background-color: #15803D; }
-.stanbic-dot { background-color: #0284C7; }
-.card-dot { background-color: #A3721D; }
+.channel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 .channel-name {
   font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #1D1912;
-  display: block;
+  letter-spacing: -0.01em;
+}
+
+.channel-active-pill {
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #8F6517;
+  background: rgba(212, 175, 55, 0.14);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  text-transform: uppercase;
 }
 
 .channel-desc {
   font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: #71695C;
+  display: block;
+  margin-top: 2px;
 }
 
 .channel-value {
@@ -713,17 +771,39 @@
   align-items: flex-end;
 }
 
-.channel-value strong {
+.channel-percentage {
   font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.88rem;
+  font-size: 1.15rem;
+  font-weight: 800;
   color: #1D1912;
+  line-height: 1.1;
 }
 
-.channel-value span {
+.channel-amount {
   font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.7rem;
-  color: #8F6517;
-  font-weight: 600;
+  font-size: 0.78rem;
+  color: #A3721D;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.payment-protocol-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.72rem;
+  color: #71695C;
+  padding: 8px 12px;
+  background: rgba(212, 175, 55, 0.06);
+  border-radius: 8px;
+  border: 1px dashed rgba(212, 175, 55, 0.25);
+  margin-top: 2px;
+}
+
+.protocol-check-icon {
+  color: #15803D;
+  flex-shrink: 0;
 }
 
 /* --------------------------------------------------------------------------
