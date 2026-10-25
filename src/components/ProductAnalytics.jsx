@@ -19,6 +19,53 @@ const SUITE_NAMES = {
   neema: 'Neema Haven'
 };
 
+const formatStayDates = (checkIn, checkOut) => {
+  if (!checkIn) return 'N/A';
+  try {
+    const parse = (d) => {
+      if (!d) return null;
+      const str = String(d).trim();
+      const datePart = str.split('T')[0];
+      const parts = datePart.split('-');
+      if (parts.length === 3) {
+        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      }
+      const parsed = new Date(str);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    };
+
+    const dIn = parse(checkIn);
+    const dOut = checkOut ? parse(checkOut) : null;
+
+    if (!dIn || isNaN(dIn.getTime())) {
+      return String(checkIn).split('T')[0] + (checkOut ? ` ➔ ${String(checkOut).split('T')[0]}` : '');
+    }
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const inDay = String(dIn.getDate()).padStart(2, '0');
+    const inMonth = monthNames[dIn.getMonth()];
+    const inYear = dIn.getFullYear();
+
+    if (!dOut || isNaN(dOut.getTime())) {
+      return `${inDay} ${inMonth} ${inYear}`;
+    }
+
+    const outDay = String(dOut.getDate()).padStart(2, '0');
+    const outMonth = monthNames[dOut.getMonth()];
+    const outYear = dOut.getFullYear();
+
+    if (inMonth === outMonth && inYear === outYear) {
+      return `${inDay} – ${outDay} ${inMonth} ${inYear}`;
+    }
+    if (inYear === outYear) {
+      return `${inDay} ${inMonth} – ${outDay} ${outMonth} ${inYear}`;
+    }
+    return `${inDay} ${inMonth} ${inYear} – ${outDay} ${outMonth} ${outYear}`;
+  } catch {
+    return `${String(checkIn).split('T')[0]} ➔ ${String(checkOut).split('T')[0]}`;
+  }
+};
+
 export default function ProductAnalytics({ user }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -199,16 +246,6 @@ export default function ProductAnalytics({ user }) {
       {/* Top Banner Header */}
       <div className="analytics-hero-header">
         <div className="analytics-hero-title">
-          <div className="analytics-badge-row">
-            <span className="estate-pill">
-              <Sparkles size={13} className="sparkle-icon" />
-              LULU AURELIAN ESTATE
-            </span>
-            <span className="live-pulse-pill">
-              <span className="pulse-dot"></span>
-              LIVE FINANCIAL INTELLIGENCE
-            </span>
-          </div>
           <h2>Product & Revenue Analytics</h2>
           <p>
             Real-time yield telemetry, booking velocity, and suite performance benchmarks across the estate.
@@ -436,62 +473,6 @@ export default function ProductAnalytics({ user }) {
             </div>
           </div>
         </div>
-
-        {/* Payment Channels & Distribution */}
-        <div className="dashboard-panel payment-panel">
-          <div className="panel-header-row">
-            <div>
-              <h3 className="panel-title">
-                <Smartphone size={18} className="panel-icon-gold" />
-                Payment Channels
-              </h3>
-              <p className="panel-subtitle">Settlement gateway split • 100% STK Push (Till)</p>
-            </div>
-            <span className="security-tag">
-              <ShieldCheck size={13} />
-              100% Encrypted
-            </span>
-          </div>
-
-          <div className="payment-distribution-stack">
-            <div className="stacked-progress-bar unified-stk-bar">
-              <div
-                className="stack-segment mpesa-segment unified-fill"
-                style={{ width: '100%' }}
-                title="M-Pesa STK Push (Till): 100%"
-              >
-                <div className="bar-shimmer-glow"></div>
-              </div>
-            </div>
-
-            <div className="channels-list">
-              <div className="channel-item brand-channel-card">
-                <div className="channel-info">
-                  <div className="channel-icon-badge">
-                    <Smartphone size={17} />
-                  </div>
-                  <div>
-                    <div className="channel-title-row">
-                      <span className="channel-name">M-Pesa (Till & STK Push)</span>
-                      <span className="channel-active-pill">SOLE GATEWAY</span>
-                    </div>
-                    <span className="channel-desc">Instant Buy Goods prompt • Till No: 4364845</span>
-                  </div>
-                </div>
-                <div className="channel-value">
-                  <strong className="channel-percentage">100%</strong>
-                  <span className="channel-amount">{formatKES(currentKPIs.revenue)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="payment-protocol-footer">
-              <CheckCircle2 size={13} className="protocol-check-icon" />
-              <span>Automated Safaricom Daraja STK Push prompt & real-time webhook settlement</span>
-            </div>
-          </div>
-          <div className="card-accent-line"></div>
-        </div>
       </div>
 
       {/* Suite Performance Yield Matrix */}
@@ -632,8 +613,9 @@ export default function ProductAnalytics({ user }) {
                       </span>
                     </td>
                     <td>
-                      <span className="dates-range-text">
-                        {tx.check_in} ➔ {tx.check_out}
+                      <span className="dates-range-text" title={`${tx.check_in} to ${tx.check_out}`}>
+                        <Calendar size={13} className="stay-calendar-icon" />
+                        {formatStayDates(tx.check_in, tx.check_out)}
                       </span>
                     </td>
                     <td>

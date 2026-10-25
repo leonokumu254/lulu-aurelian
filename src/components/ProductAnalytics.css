@@ -36,18 +36,21 @@
 /* --------------------------------------------------------------------------
    1. HERO HEADER BANNER
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   1. HERO HEADER BANNER (Matching Lulu Aurelian Project Theme)
+   -------------------------------------------------------------------------- */
 .analytics-hero-header {
-  background: linear-gradient(135deg, rgba(29, 25, 18, 0.96) 0%, rgba(45, 38, 28, 0.94) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: var(--color-white, #FFFFFF);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 18px;
   padding: 24px 28px;
-  color: #FAF9F6;
+  color: var(--color-dark, #1D1912);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
-  box-shadow: 0 10px 30px rgba(29, 25, 18, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(29, 25, 18, 0.04);
   position: relative;
   overflow: hidden;
 }
@@ -55,88 +58,42 @@
 .analytics-hero-header::before {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 
-.analytics-badge-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-
-.estate-pill {
-  font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #D4AF37;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(212, 175, 55, 0.12);
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid rgba(212, 175, 55, 0.25);
-}
-
-.sparkle-icon {
-  color: #D4AF37;
-}
-
-.live-pulse-pill {
-  font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #A3E635;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(163, 230, 53, 0.1);
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid rgba(163, 230, 53, 0.25);
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #A3E635;
-  box-shadow: 0 0 8px #A3E635;
-  animation: pulseAnimation 2s infinite ease-in-out;
-}
-
-@keyframes pulseAnimation {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+.analytics-hero-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #D4AF37 50%, transparent 100%);
+  opacity: 0.7;
 }
 
 .analytics-hero-title h2 {
   font-family: var(--font-serif, 'Cormorant Garamond', serif);
-  font-size: 2rem;
+  font-size: 2.1rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #FFFFFF;
+  color: #1D1912;
   margin: 0 0 6px 0;
   line-height: 1.15;
 }
 
 .analytics-hero-title p {
   font-family: var(--font-sans, 'Montserrat', sans-serif);
-  font-size: 0.88rem;
-  color: rgba(250, 249, 246, 0.72);
+  font-size: 0.9rem;
+  color: #615A4F;
   margin: 0;
-  max-width: 620px;
-  line-height: 1.45;
+  max-width: 640px;
+  line-height: 1.5;
 }
 
 .analytics-hero-controls {
@@ -148,8 +105,8 @@
 
 /* Period Segmented Buttons */
 .period-segment-control {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: #F8F6F0;
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 30px;
   padding: 4px;
   display: flex;
@@ -160,7 +117,7 @@
   background: transparent;
   border: none;
   outline: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: #71695C;
   font-family: var(--font-sans, 'Montserrat', sans-serif);
   font-size: 0.78rem;
   font-weight: 600;
@@ -171,14 +128,15 @@
 }
 
 .period-btn:hover {
-  color: #FFFFFF;
+  color: #1D1912;
+  background: rgba(212, 175, 55, 0.1);
 }
 
 .period-btn.active {
-  background: linear-gradient(135deg, #D4AF37 0%, #A3721D 100%);
-  color: #1D1912;
+  background: #1D1912;
+  color: #D4AF37;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 2px 8px rgba(29, 25, 18, 0.18);
 }
 
 .action-buttons-group {
@@ -188,9 +146,9 @@
 }
 
 .btn-action-glass {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #FAF9F6;
+  background: #FFFFFF;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #1D1912;
   font-family: var(--font-sans, 'Montserrat', sans-serif);
   font-size: 0.8rem;
   font-weight: 600;
@@ -200,12 +158,14 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(29, 25, 18, 0.03);
   transition: all 0.2s ease;
 }
 
 .btn-action-glass:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(212, 175, 55, 0.4);
+  background: #FAF8F5;
+  border-color: #D4AF37;
+  color: #8F6517;
 }
 
 .btn-action-glass.spinning svg {
@@ -219,7 +179,7 @@
 .btn-action-gold {
   background: linear-gradient(135deg, #D4AF37 0%, #8F6517 100%);
   border: none;
-  color: #1D1912;
+  color: #FFFFFF;
   font-family: var(--font-sans, 'Montserrat', sans-serif);
   font-size: 0.8rem;
   font-weight: 700;
@@ -229,13 +189,14 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.28);
+  transition: all 0.25s ease;
 }
 
 .btn-action-gold:hover {
+  background: linear-gradient(135deg, #E6C252 0%, #A3721D 100%);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.38);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
 }
 
 /* --------------------------------------------------------------------------
@@ -455,10 +416,10 @@
   margin: 0;
 }
 
-/* Middle 2-Column Split: Trajectory Chart & Payment Channels */
+/* Middle Full-Width Trajectory Chart */
 .analytics-middle-grid {
   display: grid;
-  grid-template-columns: 2fr 1.1fr;
+  grid-template-columns: 1fr;
   gap: 18px;
 }
 
@@ -1080,8 +1041,23 @@
 }
 
 .dates-range-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #F8F5EE;
+  padding: 5px 11px;
+  border-radius: 8px;
   font-weight: 600;
-  color: #4A4438;
+  font-size: 0.8rem;
+  color: #2D2517;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.stay-calendar-icon {
+  color: #8F6517;
+  flex-shrink: 0;
 }
 
 .nights-badge {
