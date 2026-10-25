@@ -306,7 +306,7 @@ export default function SuitePasscodes({ section = 'keys' }) {
                       <div className="saved-pin-container" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '0.65rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
                           <span className="saved-pin-label">Network (SSID):</span>
-                          <span className="saved-pin-value" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '0.92rem', letterSpacing: 'normal', color: '#1D1912' }}>
+                          <span className="saved-pin-value" style={{ fontFamily: 'var(--font-sans)', fontSize: '0.92rem', letterSpacing: 'normal', color: '#1D1912' }}>
                             {savedWifiSSIDs[unitId] || 'Not set'}
                           </span>
                           {savedWifiSSIDs[unitId] && (
@@ -322,7 +322,7 @@ export default function SuitePasscodes({ section = 'keys' }) {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', borderTop: '1px dashed rgba(187, 133, 37, 0.2)', paddingTop: '0.5rem' }}>
                           <span className="saved-pin-label">Password:</span>
-                          <span className="saved-pin-value" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '0.92rem', letterSpacing: showSaved[unitId] ? 'normal' : '2px', color: '#8c6014', fontWeight: '600' }}>
+                          <span className="saved-pin-value" style={{ fontFamily: 'var(--font-sans)', fontSize: '0.92rem', letterSpacing: showSaved[unitId] ? 'normal' : '2px', color: '#8c6014', fontWeight: '600' }}>
                             {showSaved[unitId] ? (savedWifiPasswords[unitId] || 'None') : '••••••••'}
                           </span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginLeft: 'auto' }}>

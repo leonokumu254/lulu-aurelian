@@ -111,15 +111,6 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
-        {/* Mobile Menu Toggle Overlay */}
-        {mobileMenuOpen && (
-          <div 
-            className="mobile-overlay" 
-            style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 95}}
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
-
         {/* Left Sidebar */}
         <aside className={`dashboard-sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="sidebar-profile">
@@ -320,7 +311,7 @@ export default function PortalDashboard({ user, setUser, formData, setFormData, 
           {/* Top Header */}
           <header className="dashboard-top-header">
             <div className="header-title-group">
-              <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(true)}>
+              <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu">
                 <Menu size={22} />
               </button>
               <div>

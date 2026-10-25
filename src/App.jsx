@@ -368,6 +368,34 @@ export default function App() {
     }
   };
 
+  const handleAuthSuccess = (user) => {
+    setAuthUser({
+      ...user,
+      role: user.role.toLowerCase(),
+      avatar: user.avatar || '/avatar.svg'
+    });
+    setShowGuestAuth(false);
+    // Auto-fill booking form from profile
+    const nameParts = (user?.name || '').split(' ');
+    
+    // Handle phone prefix if applicable
+    let rawPhone = user.phone || '';
+    let countryCode = '+254';
+    if (rawPhone.startsWith('+254')) {
+      rawPhone = rawPhone.substring(4);
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      firstName: nameParts[0] || '',
+      lastName: nameParts.slice(1).join(' ') || '',
+      email: user.email,
+      confirmEmail: user.email,
+      phone: rawPhone,
+      phoneCountryCode: countryCode
+    }));
+  };
+
   // Callback on final booking request
   const handleBookingSubmit = (completedDetails) => {
     setSuccessDetails(completedDetails);
@@ -503,6 +531,7 @@ export default function App() {
                 setFormData={setFormData} 
                 onSubmit={handleBookingSubmit}
                 user={authUser}
+                onAuthSuccess={handleAuthSuccess}
               />
             </div>
             
@@ -544,33 +573,7 @@ export default function App() {
       <GuestAuthModal
         isOpen={showGuestAuth}
         onClose={() => setShowGuestAuth(false)}
-        onAuthSuccess={(user) => {
-          setAuthUser({
-            ...user,
-            role: user.role.toLowerCase(),
-            avatar: user.avatar || '/avatar.svg'
-          });
-          setShowGuestAuth(false);
-          // Auto-fill booking form from profile
-          const nameParts = (user?.name || '').split(' ');
-          
-          // Handle phone prefix if applicable
-          let rawPhone = user.phone || '';
-          let countryCode = '+254';
-          if (rawPhone.startsWith('+254')) {
-            rawPhone = rawPhone.substring(4);
-          }
-          
-          setFormData(prev => ({
-            ...prev,
-            firstName: nameParts[0] || '',
-            lastName: nameParts.slice(1).join(' ') || '',
-            email: user.email,
-            confirmEmail: user.email,
-            phone: rawPhone,
-            phoneCountryCode: countryCode
-          }));
-        }}
+        onAuthSuccess={handleAuthSuccess}
         onContinueAsGuest={() => {
           setShowGuestAuth(false);
           setGuestAuthDismissed(true);

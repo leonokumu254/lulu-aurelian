@@ -1,7 +1,47 @@
+:root, .guest-portal-container {
+  --portal-dark: var(--color-dark, #1D1912);
+  --portal-bg: var(--color-bg, #F3F3E6);
+  --portal-gold: var(--color-gold-deep, #9E6C15);
+  --portal-gold-deep: var(--color-gold-deep, #9E6C15);
+  --portal-gold-bright: var(--color-gold-bright, #EECD5C);
+  --portal-gold-muted: var(--color-gold-muted, #D2A63C);
+  --portal-white: var(--color-white, #FFFFFF);
+  --portal-text: var(--color-dark, #1D1912);
+  --portal-text-muted: rgba(29, 25, 18, 0.65);
+  --portal-card-bg: rgba(255, 255, 255, 0.92);
+  --portal-card-border: rgba(158, 108, 21, 0.16);
+  --portal-shadow: 0 10px 30px rgba(29, 25, 18, 0.05);
+  --portal-font-display: var(--font-serif, 'Cormorant Garamond', Georgia, serif);
+  --portal-font-sans: var(--font-sans, 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif);
+}
+
 .guest-portal-container {
-  padding: 2rem 0;
+  padding: 1.5rem 0 2rem;
   animation: fadeIn 0.4s ease-out;
   color: var(--portal-text);
+  font-family: var(--portal-font-sans);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.guest-portal-container * {
+  box-sizing: border-box;
+}
+
+.guest-portal-container h1,
+.guest-portal-container h2,
+.guest-portal-container h3,
+.guest-portal-container h4 {
+  font-family: var(--portal-font-display);
+  letter-spacing: 0.02em;
+}
+
+.guest-portal-container input,
+.guest-portal-container button,
+.guest-portal-container select,
+.guest-portal-container textarea {
   font-family: var(--portal-font-sans);
 }
 
@@ -20,14 +60,16 @@
 .guest-portal-title {
   color: var(--portal-text);
   font-family: var(--portal-font-display);
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .guest-portal-subtitle {
   color: var(--portal-text-muted);
-  font-size: 1.05rem;
+  font-size: 0.98rem;
+  font-family: var(--portal-font-sans);
 }
 
 .guest-portal-grid {
@@ -924,9 +966,87 @@
   /* Modals */
   .status-modal-box {
     padding: 1.75rem 1.15rem;
-    width: 92vw;
-    max-width: 92vw;
+    width: 94vw;
+    max-width: 94vw;
+    max-height: 90vh;
+    overflow-y: auto;
     box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .guest-portal-title {
+    font-size: 1.35rem;
+  }
+
+  .status-banner-card {
+    padding: 0.85rem 0.75rem;
+  }
+
+  .stepper-track {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: 4px;
+  }
+
+  .stepper-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stepper-node {
+    min-width: 52px;
+  }
+
+  .action-card {
+    padding: 1rem 0.75rem;
+  }
+
+  .arrival-date {
+    font-size: 1.35rem;
+  }
+
+  .arrival-year {
+    font-size: 1.35rem;
+  }
+
+  .payment-gateway-block input,
+  .payment-phone-input,
+  .manual-code-input {
+    font-size: 16px !important; /* Prevents iOS auto-zoom on input focus */
+    min-height: 44px;
+  }
+
+  .btn-pay-now,
+  .btn-modify,
+  .btn-verify-manual {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loyalty-widget,
+  .history-widget {
+    padding: 1rem 0.8rem;
+  }
+
+  .loyalty-ring-container svg {
+    max-width: 120px;
+    height: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .guest-portal-title {
+    font-size: 1.25rem;
+  }
+  .arrival-date, .arrival-year {
+    font-size: 1.2rem;
+  }
+  .action-card {
+    padding: 0.85rem 0.65rem;
   }
 }
 

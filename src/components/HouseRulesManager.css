@@ -2,7 +2,23 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
-  color: #1a1714;
+  color: var(--color-dark, #1D1912);
+  font-family: var(--font-sans);
+}
+
+.rules-mgr-wrapper h1,
+.rules-mgr-wrapper h2,
+.rules-mgr-wrapper h3,
+.rules-mgr-wrapper h4 {
+  font-family: var(--font-serif);
+  letter-spacing: 0.02em;
+}
+
+.rules-mgr-wrapper input,
+.rules-mgr-wrapper button,
+.rules-mgr-wrapper select,
+.rules-mgr-wrapper textarea {
+  font-family: var(--font-sans);
 }
 
 .rules-toast {
@@ -379,4 +395,40 @@
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .rules-mgr-header {
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rules-mgr-header h2 {
+    font-size: 1.35rem;
+  }
+  .rules-mgr-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .rules-mgr-actions button,
+  .btn-save-rules-bottom {
+    width: 100%;
+    justify-content: center;
+    min-height: 42px;
+  }
+  .editor-card-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .editor-card-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+  .rules-toast {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    justify-content: center;
+  }
 }

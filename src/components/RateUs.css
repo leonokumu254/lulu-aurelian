@@ -159,3 +159,44 @@
 .btn-close-modal:hover {
   background: var(--color-gold-deep);
 }
+
+@media (max-width: 600px) {
+  .rate-us-container {
+    padding: 20px 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .rate-us-header h2 {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+  }
+  .rate-us-header p {
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+  }
+  .star-rating-container {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .rate-us-form .form-group {
+    margin-bottom: 18px;
+  }
+  .rate-us-form textarea {
+    font-size: 16px !important;
+    padding: 12px;
+    min-height: 100px;
+  }
+  .btn-submit-review {
+    min-height: 46px;
+    font-size: 0.95rem;
+  }
+  .rate-us-success-modal {
+    padding: 24px 16px;
+  }
+  .rate-us-success-modal h2 {
+    font-size: 1.75rem;
+  }
+  .rate-us-success-modal p {
+    font-size: 0.95rem;
+  }
+}
