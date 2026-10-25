@@ -612,6 +612,7 @@
 
 .slider-wrapper input[type="range"] {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 4px;
   background: rgba(29, 25, 18, 0.08);
@@ -621,6 +622,7 @@
 
 .slider-wrapper input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   width: 14px;
   height: 14px;
   border-radius: 50%;

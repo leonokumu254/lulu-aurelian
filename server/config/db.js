@@ -206,11 +206,27 @@ if (useMySQL) {
           console.log('[DB MIGRATE]: Added total_price column to bookings table.');
         }
 
-        // Convert status to VARCHAR(32) to prevent any ENUM truncation errors permanently
+        // Ensure status in bookings is VARCHAR(64) to prevent any ENUM or short VARCHAR truncation errors permanently
         const statusCol = bookingCols.find(c => c.Field === 'status');
-        if (statusCol && (statusCol.Type.toLowerCase().startsWith('enum') || !statusCol.Type.toLowerCase().includes('varchar'))) {
-          await pool.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(32) NOT NULL DEFAULT 'PENDING'");
-          console.log("[DB MIGRATE]: Converted bookings.status to VARCHAR(32) to ensure all status transitions succeed.");
+        const varcharMatch = statusCol?.Type?.match(/varchar\((\d+)\)/i);
+        const varcharLen = varcharMatch ? parseInt(varcharMatch[1], 10) : 0;
+        if (statusCol && (statusCol.Type.toLowerCase().startsWith('enum') || varcharLen < 64)) {
+          await pool.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(64) NOT NULL DEFAULT 'PENDING'");
+          console.log("[DB MIGRATE]: Converted bookings.status to VARCHAR(64) to ensure all status transitions succeed.");
+        }
+
+        // Also ensure payments.status is VARCHAR(64)
+        try {
+          const [paymentCols] = await pool.query('DESCRIBE payments');
+          const pStatusCol = paymentCols.find(c => c.Field === 'status');
+          const pVarcharMatch = pStatusCol?.Type?.match(/varchar\((\d+)\)/i);
+          const pVarcharLen = pVarcharMatch ? parseInt(pVarcharMatch[1], 10) : 0;
+          if (pStatusCol && (pStatusCol.Type.toLowerCase().startsWith('enum') || pVarcharLen < 64)) {
+            await pool.query("ALTER TABLE payments MODIFY COLUMN status VARCHAR(64) NOT NULL DEFAULT 'PENDING'");
+            console.log("[DB MIGRATE]: Converted payments.status to VARCHAR(64).");
+          }
+        } catch (pErr) {
+          console.warn('[DB MIGRATE]: Could not alter payments table:', pErr.message);
         }
       } catch (bErr) {
         console.warn('[DB MIGRATE]: Could not alter bookings table:', bErr.message);
@@ -524,9 +540,9 @@ export const db = {
           }
         } catch (dbErr) {
           if (dbErr.message && dbErr.message.includes("Data truncated for column 'status'")) {
-            console.warn("[DB RECOVERY]: Altering bookings.status to VARCHAR(32) to support all status values...");
+            console.warn("[DB RECOVERY]: Altering bookings.status to VARCHAR(64) to support all status values...");
             try {
-              await pool.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(32) NOT NULL DEFAULT 'PENDING'");
+              await pool.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(64) NOT NULL DEFAULT 'PENDING'");
               if (approved_by) {
                 await pool.query(
                   'UPDATE bookings SET status = ?, approved_by = ?, approved_at = ?, updated_at = ? WHERE id = ?',

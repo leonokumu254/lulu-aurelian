@@ -1,4 +1,5 @@
 import { db } from '../config/db.js';
+import { env } from '../config/env.js';
 import { paypalService } from '../services/paypalService.js';
 import { payheroService } from '../services/payheroService.js';
 import { emailService } from '../services/emailService.js';
@@ -198,7 +199,7 @@ export const payheroCallback = async (req, res) => {
     // ── Webhook Authentication Verification ──────────────────────────
     const apiKeyHeader = req.headers['x-api-key'] || req.headers['x-payhero-signature'] || '';
     const querySecret = req.query.secret || '';
-    const configuredSecret = env.PAYHERO_API_KEY || env.MPESA_CALLBACK_SECRET;
+    const configuredSecret = env?.PAYHERO_API_KEY || process.env.PAYHERO_API_KEY || env?.MPESA_CALLBACK_SECRET || process.env.MPESA_CALLBACK_SECRET;
 
     if (configuredSecret && (apiKeyHeader || querySecret)) {
       const provided = apiKeyHeader || querySecret;

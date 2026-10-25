@@ -202,11 +202,17 @@ class CronService {
     console.log('[CRON WORKER]: Scanning for completed stays to transition from PAID to COMPLETED...');
     try {
       const now = new Date();
-      const bookings = await db.bookings.getAll('PAID');
+      let bookings = [];
+      try {
+        bookings = await db.bookings.getAll('PAID');
+      } catch (getErr) {
+        console.warn('[CRON WARN]: Filtered query for PAID bookings failed, falling back to all bookings:', getErr.message);
+        bookings = await db.bookings.getAll();
+      }
       let completedCount = 0;
 
       for (const b of bookings) {
-        if (b.status === 'PAID') {
+        if (String(b.status || '').toUpperCase() === 'PAID') {
           const outDateStr = b.check_out instanceof Date 
             ? b.check_out.toISOString().split('T')[0] 
             : String(b.check_out || '').split('T')[0];
