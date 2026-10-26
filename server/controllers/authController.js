@@ -72,11 +72,12 @@ export const login = async (req, res, next) => {
       });
     }
 
-    generateTokensAndSetCookies(res, user);
+    const tokens = generateTokensAndSetCookies(res, user);
 
-    // Return profile payload
+    // Return profile payload with accessToken token
     return res.status(200).json({
       success: true,
+      token: tokens.accessToken,
       user: {
         id: user.id,
         name: user.name,
@@ -227,10 +228,11 @@ export const googleLogin = async (req, res, next) => {
       }
     }
 
-    generateTokensAndSetCookies(res, user);
+    const tokens = generateTokensAndSetCookies(res, user);
 
     return res.status(200).json({
       success: true,
+      token: tokens.accessToken,
       user: {
         id: user.id,
         name: user.name,

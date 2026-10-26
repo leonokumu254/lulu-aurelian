@@ -35,7 +35,14 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
   }, []);
 
   const saveToken = (token) => {
-    // Legacy token saving removed; JWTs are now stored in HttpOnly cookies
+    if (token) {
+      try {
+        localStorage.setItem('staff_token', token);
+        localStorage.setItem('token', token);
+      } catch (err) {
+        console.warn('[STORAGE WARN]: Failed to persist token:', err);
+      }
+    }
   };
 
   const googleLogin = useGoogleLogin({
@@ -46,6 +53,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
         const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ access_token: tokenResponse.access_token })
         });
         const data = await response.json();
@@ -64,7 +72,8 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
           setLoading(false);
         }
       } catch(err) {
-        setError('Connection error.');
+        console.error('[AUTH GOOGLE ERROR]:', err);
+        setError('Connection error. Please try again.');
         setLoading(false);
       }
     },
@@ -84,6 +93,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
       const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: email.trim().toLowerCase(), password })
       });
       const data = await response.json();
@@ -103,6 +113,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
         setError(data.error || 'Invalid credentials.');
       }
     } catch (err) {
+      console.error('[AUTH LOGIN ERROR]:', err);
       setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
@@ -130,6 +141,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
       const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: `${firstName.trim()} ${lastName.trim()}`,
           email: email.trim().toLowerCase(),
@@ -152,6 +164,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
         setError(data.error || 'Registration failed.');
       }
     } catch (err) {
+      console.error('[AUTH REGISTER ERROR]:', err);
       setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
@@ -172,6 +185,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
       const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: email.trim().toLowerCase() })
       });
       const data = await response.json();
@@ -181,6 +195,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
         setError(data.error || 'Failed to send reset link.');
       }
     } catch (err) {
+      console.error('[AUTH FORGOT ERROR]:', err);
       setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
@@ -209,6 +224,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
       const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ token: resetToken, password })
       });
       const data = await response.json();
@@ -222,6 +238,7 @@ export default function AuthPage({ onLoginSuccess, isStaffPortal = false }) {
         setError(data.error || 'Password reset failed.');
       }
     } catch (err) {
+      console.error('[AUTH RESET ERROR]:', err);
       setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
