@@ -1,7 +1,28 @@
 import { db } from '../config/db.js';
 
+// Format date values to YYYY-MM-DD
+const formatToDateStr = (val) => {
+  if (!val) return '';
+  if (val instanceof Date) {
+    const y = val.getFullYear();
+    const m = String(val.getMonth() + 1).padStart(2, '0');
+    const d = String(val.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  const s = String(val).trim();
+  if (s.includes('T')) return s.split('T')[0];
+  const parsed = new Date(s);
+  if (!isNaN(parsed.getTime())) {
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, '0');
+    const d = String(parsed.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  return s.slice(0, 10);
+};
+
 /**
- * Calculates analytics and KPIs for the Manager Portal
+ * Calculates real analytics and KPIs for the Manager Portal
  * Endpoint: GET /api/analytics/metrics
  */
 export const getAnalyticsMetrics = async (req, res, next) => {
@@ -20,7 +41,7 @@ export const getAnalyticsMetrics = async (req, res, next) => {
 
     const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-    // Standard suite pricing defaults if needed for calculating missing total_price
+    // Standard suite pricing defaults
     const SUITE_DEFAULTS = {
       skyview: 5500,
       cocoa: 5000,
@@ -29,7 +50,7 @@ export const getAnalyticsMetrics = async (req, res, next) => {
 
     const isPaidStatus = (status) => {
       const s = String(status || '').toUpperCase();
-      return ['PAID', 'COMPLETED', 'CONFIRMED', 'OCCUPIED', 'APPROVED'].includes(s);
+      return ['PAID', 'COMPLETED', 'CONFIRMED', 'OCCUPIED', 'APPROVED', 'SETTLED'].includes(s);
     };
 
     // Helper to calculate nights between check_in and check_out
@@ -42,10 +63,11 @@ export const getAnalyticsMetrics = async (req, res, next) => {
       return Math.max(1, diff);
     };
 
-    // Calculate revenue for a booking
+    // Calculate real revenue for a booking
     const getBookingAmount = (b) => {
-      if (b.total_price && !isNaN(Number(b.total_price)) && Number(b.total_price) > 0) {
-        return Number(b.total_price);
+      const price = Number(b.total_price);
+      if (!isNaN(price) && price >= 500) {
+        return price;
       }
       const unitKey = String(b.unit_id || 'skyview').toLowerCase();
       const base = SUITE_DEFAULTS[unitKey] || 5000;
@@ -73,14 +95,18 @@ export const getAnalyticsMetrics = async (req, res, next) => {
         const amount = getBookingAmount(b);
         const nights = calculateNights(b.check_in, b.check_out);
         const bookingDate = getBookingDate(b);
+        const monthKey = `${bookingDate.getFullYear()}-${String(bookingDate.getMonth() + 1).padStart(2, '0')}`;
         return {
           ...b,
           calculated_amount: amount,
           calculated_nights: nights,
           booking_date: bookingDate,
-          month_key: `${bookingDate.getFullYear()}-${String(bookingDate.getMonth() + 1).padStart(2, '0')}`
+          month_key: monthKey
         };
       });
+
+    // Sort descending by date (most recent first)
+    confirmedBookings.sort((a, b) => new Date(b.booking_date).getTime() - new Date(a.booking_date).getTime());
 
     // 1. Current Month & Last Month metrics
     let thisMonthRevenue = 0;
@@ -150,15 +176,14 @@ export const getAnalyticsMetrics = async (req, res, next) => {
       }
     });
 
-    // Cross-check payments table for any additional recorded payments this month
+    // Cross-check payments table for any additional recorded payments
     allPayments.forEach(p => {
       if (p.status && ['COMPLETED', 'PAID', 'SUCCESS'].includes(String(p.status).toUpperCase())) {
         const pDate = new Date(p.created_at || now);
         const pKey = `${pDate.getFullYear()}-${String(pDate.getMonth() + 1).padStart(2, '0')}`;
-        // If not already covered by confirmedBookings (simple sanity check)
         const matched = confirmedBookings.some(b => b.id === p.booking_id);
-        if (!matched && p.amount && Number(p.amount) > 0) {
-          const amt = Number(p.amount);
+        const amt = Number(p.amount);
+        if (!matched && !isNaN(amt) && amt >= 500) {
           if (pKey === currentMonthKey) {
             thisMonthRevenue += amt;
           } else if (pKey === lastMonthKey) {
@@ -171,39 +196,6 @@ export const getAnalyticsMetrics = async (req, res, next) => {
         }
       }
     });
-
-    // Provide high-fidelity hospitality benchmark if fresh DB has few test records
-    // This allows the manager to immediately see rich analytical charts and trends
-    let isDemonstrationData = false;
-    if (thisMonthRevenue === 0 && confirmedBookings.length === 0) {
-      isDemonstrationData = true;
-      thisMonthRevenue = 184500;
-      lastMonthRevenue = 162000;
-      thisMonthBookingsCount = 14;
-      lastMonthBookingsCount = 12;
-      thisMonthNights = 34;
-      lastMonthNights = 30;
-
-      suiteMetrics.skyview.revenue = 74500;
-      suiteMetrics.skyview.bookings = 5;
-      suiteMetrics.skyview.nights = 13;
-
-      suiteMetrics.cocoa.revenue = 62000;
-      suiteMetrics.cocoa.bookings = 5;
-      suiteMetrics.cocoa.nights = 12;
-
-      suiteMetrics.neema.revenue = 48000;
-      suiteMetrics.neema.bookings = 4;
-      suiteMetrics.neema.nights = 9;
-
-      // Populate trend curve realistically
-      const sampleMultipliers = [0.65, 0.72, 0.81, 0.88, 0.95, 1.0];
-      monthlyTrend.forEach((m, idx) => {
-        m.revenue = Math.round(184500 * sampleMultipliers[idx]);
-        m.bookings = Math.round(14 * sampleMultipliers[idx]);
-        m.nights = Math.round(34 * sampleMultipliers[idx]);
-      });
-    }
 
     // Calculations
     const revenueDiff = thisMonthRevenue - lastMonthRevenue;
@@ -218,15 +210,17 @@ export const getAnalyticsMetrics = async (req, res, next) => {
 
     const averageBookingRate = thisMonthBookingsCount > 0
       ? Math.round(thisMonthRevenue / thisMonthBookingsCount)
-      : (lastMonthBookingsCount > 0 ? Math.round(lastMonthRevenue / lastMonthBookingsCount) : 13178);
+      : (lastMonthBookingsCount > 0 ? Math.round(lastMonthRevenue / lastMonthBookingsCount) : 0);
 
     const averageDailyRate = thisMonthNights > 0
       ? Math.round(thisMonthRevenue / thisMonthNights)
-      : 5426;
+      : 0;
 
     // Total capacity: 3 suites * daysInMonth
     const totalCapacityNights = daysInCurrentMonth * 3;
-    const occupancyRate = Math.min(100, Number(((thisMonthNights / totalCapacityNights) * 100).toFixed(1)));
+    const occupancyRate = totalCapacityNights > 0
+      ? Math.min(100, Number(((thisMonthNights / totalCapacityNights) * 100).toFixed(1)))
+      : 0;
 
     // Suite percentages
     const totalSuiteRevenue = Math.max(1, thisMonthRevenue);
@@ -241,13 +235,13 @@ export const getAnalyticsMetrics = async (req, res, next) => {
     };
 
     // Format recent transactions
-    const recentTransactions = confirmedBookings.slice(0, 10).map(b => ({
+    const recentTransactions = confirmedBookings.slice(0, 50).map(b => ({
       id: b.id,
       guest_name: b.guest_name || 'Valued Guest',
       guest_email: b.guest_email || 'guest@example.com',
       unit_id: b.unit_id || 'skyview',
-      check_in: b.check_in ? String(b.check_in).split('T')[0] : '2026-10-01',
-      check_out: b.check_out ? String(b.check_out).split('T')[0] : '2026-10-02',
+      check_in: formatToDateStr(b.check_in),
+      check_out: formatToDateStr(b.check_out),
       nights: b.calculated_nights,
       amount: b.calculated_amount,
       status: b.status || 'PAID',
@@ -258,7 +252,7 @@ export const getAnalyticsMetrics = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       data: {
-        isDemonstrationData,
+        isDemonstrationData: false,
         period: {
           month: monthNames[currentMonth],
           year: currentYear,

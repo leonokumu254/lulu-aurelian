@@ -78,8 +78,12 @@ export default function ProductAnalytics({ user }) {
   const fetchAnalytics = async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true);
     try {
+      const token = localStorage.getItem('token');
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/analytics/metrics`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers
       });
       if (res.ok) {
         const json = await res.json();
@@ -151,70 +155,87 @@ export default function ProductAnalytics({ user }) {
   const currentKPIs = useMemo(() => {
     if (!data || !data.kpis) {
       return {
-        revenue: 184500,
-        prevRevenue: 162000,
-        revenueGrowth: 13.9,
-        bookings: 14,
-        prevBookings: 12,
-        bookingGrowth: 16.7,
-        avgRate: 13178,
-        adr: 5426,
-        occupancy: 36.6,
-        nights: 34,
+        revenue: 0,
+        prevRevenue: 0,
+        revenueGrowth: 0,
+        bookings: 0,
+        prevBookings: 0,
+        bookingGrowth: 0,
+        avgRate: 0,
+        adr: 0,
+        occupancy: 0,
+        nights: 0,
         totalCapacity: 93
       };
     }
 
-    const { kpis } = data;
+    const { kpis, monthlyTrend = [] } = data;
+
     if (period === 'lastMonth') {
+      const prev2Month = monthlyTrend.length >= 2 ? monthlyTrend[monthlyTrend.length - 2] : null;
+      const prev3Month = monthlyTrend.length >= 3 ? monthlyTrend[monthlyTrend.length - 3] : null;
+      const prevRev = prev3Month ? prev3Month.revenue : 0;
+      const revGrowth = prevRev > 0 ? Number((((kpis.lastMonthRevenue - prevRev) / prevRev) * 100).toFixed(1)) : 0;
       return {
         revenue: kpis.lastMonthRevenue,
-        prevRevenue: Math.round(kpis.lastMonthRevenue * 0.9),
-        revenueGrowth: 10.0,
+        prevRevenue: prevRev,
+        revenueGrowth: revGrowth,
         bookings: kpis.lastMonthBookingsCount,
-        prevBookings: Math.round(kpis.lastMonthBookingsCount * 0.9),
-        bookingGrowth: 8.5,
-        avgRate: kpis.lastMonthBookingsCount > 0 ? Math.round(kpis.lastMonthRevenue / kpis.lastMonthBookingsCount) : 12500,
-        adr: Math.round(kpis.averageDailyRate * 0.95),
-        occupancy: Math.max(25, Number((kpis.occupancyRate * 0.9).toFixed(1))),
-        nights: Math.round(kpis.thisMonthNights * 0.9),
+        prevBookings: prev3Month ? prev3Month.bookings : 0,
+        bookingGrowth: prev3Month && prev3Month.bookings > 0 ? Number((((kpis.lastMonthBookingsCount - prev3Month.bookings) / prev3Month.bookings) * 100).toFixed(1)) : 0,
+        avgRate: kpis.lastMonthBookingsCount > 0 ? Math.round(kpis.lastMonthRevenue / kpis.lastMonthBookingsCount) : 0,
+        adr: prev2Month && prev2Month.nights > 0 ? Math.round(kpis.lastMonthRevenue / prev2Month.nights) : 0,
+        occupancy: kpis.totalCapacityNights > 0 ? Math.min(100, Number((((prev2Month ? prev2Month.nights : 0) / kpis.totalCapacityNights) * 100).toFixed(1))) : 0,
+        nights: prev2Month ? prev2Month.nights : 0,
         totalCapacity: kpis.totalCapacityNights
       };
     }
 
     if (period === 'quarter') {
-      const totalRev = (data.monthlyTrend || []).slice(-3).reduce((acc, m) => acc + (m.revenue || 0), 0) || (kpis.thisMonthRevenue * 2.8);
-      const totalBookings = (data.monthlyTrend || []).slice(-3).reduce((acc, m) => acc + (m.bookings || 0), 0) || (kpis.thisMonthBookingsCount * 2.7);
+      const qMonths = monthlyTrend.slice(-3);
+      const prevQMonths = monthlyTrend.slice(-6, -3);
+      const totalRev = qMonths.reduce((acc, m) => acc + (m.revenue || 0), 0);
+      const prevRev = prevQMonths.reduce((acc, m) => acc + (m.revenue || 0), 0);
+      const totalBookings = qMonths.reduce((acc, m) => acc + (m.bookings || 0), 0);
+      const prevBookings = prevQMonths.reduce((acc, m) => acc + (m.bookings || 0), 0);
+      const totalNights = qMonths.reduce((acc, m) => acc + (m.nights || 0), 0);
+      const cap = kpis.totalCapacityNights * 3;
+      const revGrowth = prevRev > 0 ? Number((((totalRev - prevRev) / prevRev) * 100).toFixed(1)) : (totalRev > 0 ? 100 : 0);
+      const bkgGrowth = prevBookings > 0 ? Number((((totalBookings - prevBookings) / prevBookings) * 100).toFixed(1)) : 0;
+
       return {
         revenue: totalRev,
-        prevRevenue: Math.round(totalRev * 0.85),
-        revenueGrowth: 17.6,
-        bookings: Math.round(totalBookings),
-        prevBookings: Math.round(totalBookings * 0.85),
-        bookingGrowth: 14.2,
-        avgRate: totalBookings > 0 ? Math.round(totalRev / totalBookings) : kpis.averageBookingRate,
-        adr: kpis.averageDailyRate,
-        occupancy: Number((kpis.occupancyRate * 1.05).toFixed(1)),
-        nights: Math.round(kpis.thisMonthNights * 2.9),
-        totalCapacity: kpis.totalCapacityNights * 3
+        prevRevenue: prevRev,
+        revenueGrowth: revGrowth,
+        bookings: totalBookings,
+        prevBookings: prevBookings,
+        bookingGrowth: bkgGrowth,
+        avgRate: totalBookings > 0 ? Math.round(totalRev / totalBookings) : 0,
+        adr: totalNights > 0 ? Math.round(totalRev / totalNights) : 0,
+        occupancy: cap > 0 ? Math.min(100, Number(((totalNights / cap) * 100).toFixed(1))) : 0,
+        nights: totalNights,
+        totalCapacity: cap
       };
     }
 
     if (period === 'all') {
-      const totalRev = (data.monthlyTrend || []).reduce((acc, m) => acc + (m.revenue || 0), 0) || (kpis.thisMonthRevenue * 5.2);
-      const totalBookings = (data.monthlyTrend || []).reduce((acc, m) => acc + (m.bookings || 0), 0) || (kpis.thisMonthBookingsCount * 5.1);
+      const totalRev = monthlyTrend.reduce((acc, m) => acc + (m.revenue || 0), 0);
+      const totalBookings = monthlyTrend.reduce((acc, m) => acc + (m.bookings || 0), 0);
+      const totalNights = monthlyTrend.reduce((acc, m) => acc + (m.nights || 0), 0);
+      const cap = kpis.totalCapacityNights * Math.max(1, monthlyTrend.length);
+
       return {
         revenue: totalRev,
-        prevRevenue: Math.round(totalRev * 0.8),
-        revenueGrowth: 25.0,
-        bookings: Math.round(totalBookings),
-        prevBookings: Math.round(totalBookings * 0.8),
-        bookingGrowth: 21.0,
-        avgRate: totalBookings > 0 ? Math.round(totalRev / totalBookings) : kpis.averageBookingRate,
-        adr: kpis.averageDailyRate,
-        occupancy: 42.5,
-        nights: Math.round(kpis.thisMonthNights * 5.2),
-        totalCapacity: kpis.totalCapacityNights * 6
+        prevRevenue: 0,
+        revenueGrowth: 100,
+        bookings: totalBookings,
+        prevBookings: 0,
+        bookingGrowth: 100,
+        avgRate: totalBookings > 0 ? Math.round(totalRev / totalBookings) : 0,
+        adr: totalNights > 0 ? Math.round(totalRev / totalNights) : 0,
+        occupancy: cap > 0 ? Math.min(100, Number(((totalNights / cap) * 100).toFixed(1))) : 0,
+        nights: totalNights,
+        totalCapacity: cap
       };
     }
 
@@ -236,9 +257,9 @@ export default function ProductAnalytics({ user }) {
 
   // Max revenue in trend for scaling bars
   const maxTrendRevenue = useMemo(() => {
-    if (!data || !data.monthlyTrend || data.monthlyTrend.length === 0) return 200000;
+    if (!data || !data.monthlyTrend || data.monthlyTrend.length === 0) return 50000;
     const maxVal = Math.max(...data.monthlyTrend.map(m => m.revenue || 0));
-    return maxVal > 0 ? maxVal * 1.15 : 200000;
+    return maxVal > 0 ? maxVal * 1.15 : 50000;
   }, [data]);
 
   return (
@@ -420,15 +441,10 @@ export default function ProductAnalytics({ user }) {
 
           <div className="chart-canvas-container">
             <div className="chart-bars-wrap">
-              {(data?.monthlyTrend || [
-                { label: 'May 2026', monthName: 'May', revenue: 120000, bookings: 9 },
-                { label: 'Jun 2026', monthName: 'Jun', revenue: 133000, bookings: 10 },
-                { label: 'Jul 2026', monthName: 'Jul', revenue: 149500, bookings: 11 },
-                { label: 'Aug 2026', monthName: 'Aug', revenue: 162500, bookings: 12 },
-                { label: 'Sep 2026', monthName: 'Sep', revenue: 175000, bookings: 13 },
-                { label: 'Oct 2026', monthName: 'Oct', revenue: 184500, bookings: 14 }
-              ]).map((m, idx) => {
-                const heightPercent = Math.min(100, Math.max(15, Math.round((m.revenue / maxTrendRevenue) * 100)));
+              {(data?.monthlyTrend || []).map((m, idx) => {
+                const heightPercent = maxTrendRevenue > 0 && m.revenue > 0
+                  ? Math.min(100, Math.max(10, Math.round((m.revenue / maxTrendRevenue) * 100)))
+                  : 4;
                 const isCurrentMonth = idx === (data?.monthlyTrend?.length || 6) - 1;
                 const isHovered = activeBarHover === idx;
 
@@ -490,21 +506,17 @@ export default function ProductAnalytics({ user }) {
         </div>
 
         <div className="suites-yield-grid">
-          {(data?.suiteBreakdown || [
-            { id: 'skyview', name: 'Skyview Hideaway', revenue: 74500, bookings: 5, nights: 13, sharePercent: 40.4 },
-            { id: 'cocoa', name: 'Cocoa Retreat', revenue: 62000, bookings: 5, nights: 12, sharePercent: 33.6 },
-            { id: 'neema', name: 'Neema Haven', revenue: 48000, bookings: 4, nights: 9, sharePercent: 26.0 }
-          ]).map(s => {
+          {(data?.suiteBreakdown || []).map(s => {
             const suiteKey = s.id ? s.id.toLowerCase() : 'skyview';
             const imgUrl = SUITE_PREVIEWS[suiteKey] || SUITE_PREVIEWS.skyview;
-            const avgSuiteRate = s.bookings > 0 ? Math.round(s.revenue / s.bookings) : 12000;
+            const avgSuiteRate = s.bookings > 0 ? Math.round(s.revenue / s.bookings) : 0;
 
             return (
               <div key={s.id} className="suite-yield-card">
                 <div className="suite-card-image-wrap">
                   <img src={imgUrl} alt={s.name} className="suite-card-thumb" />
                   <div className="suite-share-badge">
-                    <span>{s.sharePercent || 33.3}% share</span>
+                    <span>{s.sharePercent || 0}% share</span>
                   </div>
                 </div>
 
