@@ -1,6 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Loader2 } from 'lucide-react';
+import { Star, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import './Reviews.css';
+
+function ReviewCardItem({ review, formatDate }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const comment = (review.comment || '').trim();
+  const MAX_LENGTH = 140;
+  const isLong = comment.length > MAX_LENGTH;
+
+  const getTruncatedText = (text) => {
+    if (text.length <= MAX_LENGTH) return text;
+    const sub = text.slice(0, MAX_LENGTH);
+    const lastSpace = sub.lastIndexOf(' ');
+    return (lastSpace > 60 ? sub.slice(0, lastSpace) : sub).trim() + '...';
+  };
+
+  const displayText = isExpanded || !isLong ? comment : getTruncatedText(comment);
+
+  return (
+    <div className="review-card">
+      <div className="review-author-info">
+        <div className="review-avatar">
+          {review.guest_name ? review.guest_name.charAt(0).toUpperCase() : '?'}
+        </div>
+        <div>
+          <h3 className="feedback-name">{review.guest_name || 'Anonymous Guest'}</h3>
+          <p className="feedback-date">{formatDate(review.created_at)}</p>
+        </div>
+      </div>
+      <div className="review-rating">
+        {[...Array(review.rating || 5)].map((_, i) => (
+          <Star key={i} size={14} fill="currentColor" className="review-star" />
+        ))}
+      </div>
+      <p className="feedback-content">"{displayText}"</p>
+      {isLong && (
+        <button
+          type="button"
+          className="review-read-more-btn"
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+        >
+          {isExpanded ? (
+            <>
+              <span>Show less</span>
+              <ChevronUp size={13} />
+            </>
+          ) : (
+            <>
+              <span>Read more</span>
+              <ChevronDown size={13} />
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function Reviews({ unitId }) {
   const [reviews, setReviews] = useState([]);
@@ -76,23 +132,7 @@ export default function Reviews({ unitId }) {
         ) : (
           <div className="reviews-grid">
             {displayReviews.map((review) => (
-              <div key={review.id} className="review-card">
-                <div className="review-author-info">
-                  <div className="review-avatar">
-                    {review.guest_name ? review.guest_name.charAt(0).toUpperCase() : '?'}
-                  </div>
-                  <div>
-                    <h3 className="feedback-name">{review.guest_name || 'Anonymous Guest'}</h3>
-                    <p className="feedback-date">{formatDate(review.created_at)}</p>
-                  </div>
-                </div>
-                <div className="review-rating">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} size={14} fill="currentColor" className="review-star" />
-                  ))}
-                </div>
-                <p className="feedback-content">"{review.comment}"</p>
-              </div>
+              <ReviewCardItem key={review.id} review={review} formatDate={formatDate} />
             ))}
           </div>
         )}
