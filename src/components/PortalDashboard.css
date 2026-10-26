@@ -305,25 +305,30 @@
 
 .mobile-menu-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
+  background: #1D1912;
+  border: 1.5px solid #D4AF37;
+  border-radius: 10px;
+  color: #F5DE98;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  margin-right: 12px;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-toggle svg {
+  color: #F5DE98;
+  stroke: #F5DE98;
 }
 
 @media (max-width: 992px) {
   .mobile-menu-toggle {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #1D1912;
-    border: 1.5px solid #D4AF37;
-    border-radius: 10px;
-    color: #EECD5C;
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    margin-right: 10px;
-    flex-shrink: 0;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(29, 25, 18, 0.22);
-    transition: all 0.2s ease;
   }
   .mobile-menu-toggle:hover,
   .mobile-menu-toggle:active {
@@ -331,7 +336,12 @@
     border-color: #F1D479;
     color: #FFFFFF;
     transform: scale(1.04);
-    box-shadow: 0 6px 16px rgba(212, 175, 55, 0.35);
+    box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
+  }
+  .mobile-menu-toggle:hover svg,
+  .mobile-menu-toggle:active svg {
+    color: #FFFFFF;
+    stroke: #FFFFFF;
   }
   .header-title-group {
     display: flex;

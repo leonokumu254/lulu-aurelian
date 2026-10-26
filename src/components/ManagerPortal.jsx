@@ -431,9 +431,13 @@ export default function ManagerPortal({ user, managerTab = 'pricing', onTabChang
 
   // TOAST NOTIFICATIONS
   const [toastMessage, setToastMessage] = useState('');
-  const triggerToast = (msg) => {
+  const toastTimeoutRef = useRef(null);
+  const triggerToast = (msg, duration = 4500) => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 3000);
+    toastTimeoutRef.current = setTimeout(() => setToastMessage(''), duration);
   };
 
   // SUB-TABS BAR REF & AUTO-SCROLL TO ACTIVE TAB ON MOBILE

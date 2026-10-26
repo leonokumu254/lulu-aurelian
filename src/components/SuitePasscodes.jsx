@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Key, RefreshCw, Save, CheckCircle, AlertCircle, Shield, Eye, EyeOff, Copy, Building2, Wifi } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Key, RefreshCw, Save, CheckCircle, AlertCircle, Shield, Eye, EyeOff, Copy, Building2, Wifi, X } from 'lucide-react';
 import './SuitePasscodes.css';
 
 export default function SuitePasscodes({ section = 'keys' }) {
@@ -9,6 +9,7 @@ export default function SuitePasscodes({ section = 'keys' }) {
   const [error, setError] = useState('');
   const [savingUnit, setSavingUnit] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
+  const toastTimeoutRef = useRef(null);
   const [selectedUnit, setSelectedUnit] = useState('all');
   const [passcodes, setPasscodes] = useState({ skyview: '', cocoa: '', neema: '' });
   const [houseNumbers, setHouseNumbers] = useState({ skyview: '', cocoa: '', neema: '' });
@@ -65,9 +66,22 @@ export default function SuitePasscodes({ section = 'keys' }) {
     fetchSettings();
   }, []);
 
-  const triggerToast = (msg) => {
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const triggerToast = (msg, duration = 4500) => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastMessage('');
+    }, duration);
   };
 
   // Generate a random 4-digit recommendation
@@ -129,9 +143,12 @@ export default function SuitePasscodes({ section = 'keys' }) {
           ...prev,
           [unitId]: wifiPasswords[unitId]
         }));
-        triggerToast(`Successfully saved ${isWifi ? 'Wi-Fi credentials' : 'key settings'} for ${getUnitName(unitId)}!`);
+        triggerToast(
+          `Successfully saved ${isWifi ? 'Wi-Fi credentials' : 'key settings'} for ${getUnitName(unitId)}!`,
+          8000
+        );
       } else {
-        triggerToast(data.error || 'Failed to update settings.');
+        triggerToast(data.error || 'Failed to update settings.', 6000);
       }
     } catch (err) {
       console.error(err);
@@ -181,13 +198,26 @@ export default function SuitePasscodes({ section = 'keys' }) {
     <div className="suite-passcodes-container">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="passcode-toast animate-fade-in">
-          {toastMessage.startsWith('Error') ? (
-            <AlertCircle className="toast-icon-error" size={18} />
-          ) : (
-            <CheckCircle className="toast-icon-success" size={18} />
-          )}
-          <span>{toastMessage}</span>
+        <div className="passcode-toast animate-fade-in" role="alert">
+          <div className="toast-content-group">
+            {toastMessage.startsWith('Error') ? (
+              <AlertCircle className="toast-icon-error" size={18} />
+            ) : (
+              <CheckCircle className="toast-icon-success" size={18} />
+            )}
+            <span>{toastMessage}</span>
+          </div>
+          <button
+            type="button"
+            className="toast-close-btn"
+            onClick={() => {
+              if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+              setToastMessage('');
+            }}
+            aria-label="Dismiss notification"
+          >
+            <X size={15} />
+          </button>
         </div>
       )}
 

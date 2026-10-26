@@ -118,17 +118,29 @@
 }
 .mobile-menu-toggle {
   display: none;
-  background: none;
-  border: none;
+  background: #1D1912;
+  border: 1.5px solid #D4AF37;
+  border-radius: 10px;
   cursor: pointer;
-  color: var(--color-white);
+  color: #F5DE98;
   position: relative;
   z-index: 1002;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-toggle:hover,
+.mobile-menu-toggle:active {
+  background: #2D2517;
+  border-color: #EECD5C;
+  color: #FFFFFF;
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
 }
 .mobile-nav-overlay {
   position: fixed;
