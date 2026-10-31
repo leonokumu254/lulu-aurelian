@@ -453,10 +453,10 @@ export default function GuestPortal({ user, onBookNew }) {
                         <Mail size={18} color="#9E6C15" style={{ flexShrink: 0, marginTop: '2px' }} />
                         <div>
                           <strong style={{ fontSize: '0.88rem', color: '#1D1912', display: 'block', marginBottom: '2px' }}>
-                            Check-In Details Sent Via Email
+                            Keycode & Wi-Fi Details Active Immediately
                           </strong>
                           <p style={{ margin: 0, fontSize: '0.82rem', color: '#4A3E31', lineHeight: 1.5 }}>
-                            Your door lockbox passcode, Wi-Fi credentials, and arrival guide will be sent via email to <strong>{user?.email || activeBooking?.guest_email || 'your registered email'}</strong>. Full check-in credentials are dispatched on your arrival day ({formatEATDate(activeBooking?.check_in)}) as from <strong>1:00 PM EAT</strong>.
+                            Your digital keycode and Wi-Fi credentials are ready and active below for your convenience. Check-in commences from <strong>2:00 PM EAT</strong> on your arrival day ({formatEATDate(activeBooking?.check_in)}).
                           </p>
                         </div>
                       </div>

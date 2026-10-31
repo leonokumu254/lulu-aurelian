@@ -256,6 +256,16 @@ export default function App() {
           !el.closest('.wa-chat-window') &&
           !el.closest('.gallery-modal-overlay') &&
           !el.closest('.booking-view-container') &&
+          !el.closest('.checkout-page') &&
+          !el.closest('.checkout-card') &&
+          !el.closest('.welcome-back-banner') &&
+          !el.closest('.welcome-guest-banner') &&
+          !el.closest('.confirm-guest-details-card') &&
+          !el.closest('.lulu-toast-container') &&
+          !el.closest('.lulu-toast') &&
+          !el.closest('.payment-input-group') &&
+          !el.closest('.stk-waiting-container') &&
+          !el.closest('.payment-success-card') &&
           !el.closest('.lightbox-overlay') &&
           !el.closest('.sm-overlay') &&
           !el.closest('footer')

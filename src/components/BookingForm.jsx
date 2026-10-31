@@ -555,9 +555,6 @@ export default function BookingForm({ formData, setFormData, onSubmit, user, onA
         {!user ? (
           <div className="booking-google-fast-card">
             <div className="booking-google-fast-info">
-              <span className="booking-google-badge">
-                <Sparkles size={13} /> 1-CLICK FAST BOOKING
-              </span>
               <h3 className="booking-google-title">Sign in with Google</h3>
               <p className="booking-google-sub">
                 Skip manual entry. Connect with Google to autofill your guest details instantly.
@@ -568,19 +565,19 @@ export default function BookingForm({ formData, setFormData, onSubmit, user, onA
               className="btn-booking-google"
               onClick={() => googleLogin()}
               disabled={googleLoading}
-              aria-label="Sign in with Google to pre-fill booking details"
+              aria-label="Continue with Google to autofill guest details"
             >
               <GoogleIcon />
-              <span>{googleLoading ? 'Connecting...' : 'Sign in with Google'}</span>
+              <span>{googleLoading ? 'Connecting...' : 'Continue with Google'}</span>
             </button>
           </div>
         ) : (
-          <div className="welcome-back-banner">
+          <div className="welcome-back-banner no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
             <span className="welcome-back-tag">WELCOME BACK</span>
-            <h3 className="welcome-back-name">
+            <h3 className="welcome-back-name no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
               Hello, {formData.firstName || (user && user.name ? user.name.split(' ')[0] : 'Valued Guest')}
             </h3>
-            <p className="welcome-back-subtext">
+            <p className="welcome-back-subtext no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
               We've prepared your details for a seamless reservation. Please review and confirm your contact information below.
             </p>
           </div>

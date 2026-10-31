@@ -1110,33 +1110,40 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.7rem;
-  padding: 0.75rem 1.3rem;
-  min-height: 46px;
+  gap: 0.65rem;
+  padding: 0.7rem 1.3rem;
+  min-height: 44px;
   background: #ffffff;
-  color: #1D1912;
-  border: 1.5px solid #d4cebe;
-  border-radius: 10px;
+  color: var(--color-dark, #1D1912);
+  border: none !important;
+  border-radius: 8px;
   font-family: var(--font-sans);
   font-size: 0.88rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px rgba(29, 25, 18, 0.08);
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .btn-booking-google:hover:not(:disabled) {
-  background: #fdfcf9;
-  border-color: var(--color-gold-deep, #9E6C15);
-  box-shadow: 0 4px 14px rgba(158, 108, 21, 0.16);
+  background: #FAF8F2;
+  box-shadow: 0 3px 8px rgba(29, 25, 18, 0.12);
   transform: translateY(-1px);
 }
 
 .btn-booking-google:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.welcome-back-banner,
+.welcome-back-banner * {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
 }
 
 @media (max-width: 640px) {

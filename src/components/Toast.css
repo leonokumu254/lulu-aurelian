@@ -87,6 +87,9 @@
   margin: 0 0 4px 0;
   color: #FFFFFF;
   letter-spacing: 0.3px;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
 }
 
 .lulu-toast-message {
@@ -95,6 +98,9 @@
   line-height: 1.45;
   color: #D8D3CC;
   margin: 0;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
 }
 
 .lulu-toast-close {

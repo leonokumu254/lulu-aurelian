@@ -316,6 +316,23 @@ export const payheroCallback = async (req, res) => {
 
       const booking = await db.bookings.findById(payment.booking_id);
       if (booking) {
+        // Save customer phone number to database to reduce guest friction
+        const customerPhone = payload.phone_number || payload.phone || resObj.phone_number || resObj.phone || '';
+        if (customerPhone) {
+          const cleanDigits = String(customerPhone).replace(/[^0-9]/g, '');
+          const normalized = cleanDigits.startsWith('254') ? `+${cleanDigits}` : `+254${cleanDigits.replace(/^0+/, '')}`;
+          await db.bookings.updateGuestPhone(booking.id, normalized).catch(() => {});
+          booking.guest_phone = normalized;
+          if (booking.user_id) {
+            await db.users.updatePhone(booking.user_id, normalized).catch(() => {});
+          } else if (booking.guest_email) {
+            const user = await db.users.findByEmail(booking.guest_email);
+            if (user) {
+              await db.users.updatePhone(user.id, normalized).catch(() => {});
+            }
+          }
+        }
+
         dispatchPostPaymentNotifications(booking, {
           transaction_ref: mpesaReceipt || payment.transaction_ref,
           gateway: 'MPESA',
@@ -356,7 +373,7 @@ export const payheroCallback = async (req, res) => {
  */
 export const verifyManualMpesaPayment = async (req, res, next) => {
   try {
-    const { booking_id, mpesa_code } = req.body;
+    const { booking_id, mpesa_code, phone } = req.body;
 
     if (!booking_id) {
       return res.status(400).json({ success: false, error: 'Missing booking_id.' });
@@ -370,6 +387,22 @@ export const verifyManualMpesaPayment = async (req, res, next) => {
 
     if (!booking) {
       return res.status(404).json({ success: false, error: 'Booking not found.' });
+    }
+
+    // Save phone to booking and user profile if supplied
+    if (phone) {
+      const cleanDigits = String(phone).replace(/[^0-9]/g, '');
+      const normalizedPhone = cleanDigits.startsWith('254') ? `+${cleanDigits}` : `+254${cleanDigits.replace(/^0+/, '')}`;
+      await db.bookings.updateGuestPhone(booking.id, normalizedPhone).catch(() => {});
+      booking.guest_phone = normalizedPhone;
+      if (booking.user_id) {
+        await db.users.updatePhone(booking.user_id, normalizedPhone).catch(() => {});
+      } else if (booking.guest_email) {
+        const u = await db.users.findByEmail(booking.guest_email);
+        if (u) {
+          await db.users.updatePhone(u.id, normalizedPhone).catch(() => {});
+        }
+      }
     }
 
     // Idempotent: If already paid, return immediate success

@@ -8,9 +8,24 @@ let toastTimeout = null;
  * Global helper to trigger toast notifications from anywhere in the app
  * Usage: triggerToast({ type: 'warning', title: 'Second Name Required', message: 'Please enter your second name.' })
  */
-export const triggerToast = ({ type = 'info', title = '', message = '', duration = 4500 }) => {
+export const triggerToast = (options = {}) => {
+  let payload = {};
+  if (typeof options === 'string') {
+    payload = { type: 'info', title: '', message: options, duration: 4500 };
+  } else if (typeof options === 'object' && options !== null) {
+    payload = {
+      type: options.type || 'info',
+      title: options.title || '',
+      message: options.message || '',
+      duration: options.duration || 4500
+    };
+  }
+  // Fallback so toast is never completely blank
+  if (!payload.title && !payload.message) {
+    payload.message = 'Notification';
+  }
   window.dispatchEvent(new CustomEvent('lulu-toast', {
-    detail: { id: Date.now() + Math.random(), type, title, message, duration }
+    detail: { id: Date.now() + Math.random(), ...payload }
   }));
 };
 
@@ -40,14 +55,14 @@ export default function Toast() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="lulu-toast-container" aria-live="polite">
+    <div className="lulu-toast-container no-reveal" aria-live="polite">
       {toasts.map(toast => {
         const isWarning = toast.type === 'warning';
         const isError = toast.type === 'error';
         const isSuccess = toast.type === 'success';
 
         return (
-          <div key={toast.id} className={`lulu-toast lulu-toast-${toast.type} animate-slide-in`}>
+          <div key={toast.id} className={`lulu-toast lulu-toast-${toast.type} animate-slide-in no-reveal`}>
             <div className="lulu-toast-icon-wrap">
               {isSuccess && <CheckCircle size={20} className="toast-icon success" />}
               {isError && <AlertCircle size={20} className="toast-icon error" />}
@@ -55,9 +70,17 @@ export default function Toast() {
               {!isSuccess && !isError && !isWarning && <Info size={20} className="toast-icon info" />}
             </div>
 
-            <div className="lulu-toast-content">
-              {toast.title && <h4 className="lulu-toast-title">{toast.title}</h4>}
-              {toast.message && <p className="lulu-toast-message">{toast.message}</p>}
+            <div className="lulu-toast-content no-reveal">
+              {toast.title && (
+                <h4 className="lulu-toast-title no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
+                  {toast.title}
+                </h4>
+              )}
+              {toast.message && (
+                <p className="lulu-toast-message no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
+                  {toast.message}
+                </p>
+              )}
             </div>
 
             <button 

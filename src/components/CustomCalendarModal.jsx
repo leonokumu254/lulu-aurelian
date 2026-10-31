@@ -79,7 +79,7 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
   const rightDays = getDaysInMonth(rightMonthInfo.year, rightMonthInfo.month);
 
   const isDateBlocked = (date) => {
-    if (!date) return false;
+    if (!date || date < today) return false;
     const targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     return blockedDates.some(range => {
       const start = parseDateString(range.checkIn);
@@ -258,7 +258,7 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
             </div>
             <div className="days-grid">
               {leftDays.map((day, idx) => {
-                const isBlocked = day && isDateBlocked(day);
+                const isBlocked = day && day >= today && isDateBlocked(day);
                 return (
                   <div
                     key={`left-${idx}`}
@@ -287,7 +287,7 @@ export default function CustomCalendarModal({ isOpen, initialCheckIn, initialChe
             </div>
             <div className="days-grid">
               {rightDays.map((day, idx) => {
-                const isBlocked = day && isDateBlocked(day);
+                const isBlocked = day && day >= today && isDateBlocked(day);
                 return (
                   <div
                     key={`right-${idx}`}

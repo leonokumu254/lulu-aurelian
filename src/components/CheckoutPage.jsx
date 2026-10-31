@@ -233,7 +233,8 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
         credentials: 'include',
         body: JSON.stringify({
           booking_id: createdBooking?.bookingId || createdBooking?.id,
-          mpesa_code: mpesaCode.trim()
+          mpesa_code: mpesaCode.trim(),
+          phone: mpesaPhone ? normalizePhone(mpesaPhone) : undefined
         })
       });
       const data = await res.json();
@@ -725,10 +726,12 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                   {user ? (
                     /* Authenticated guest editable summary */
                     <div className="profile-verified-card">
-                      <div className="welcome-guest-banner">
+                      <div className="welcome-guest-banner no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
                         <span className="welcome-guest-tag">Welcome Back</span>
-                        <h3>Hello, {user.name ? user.name.split(' ')[0] : 'Valued Guest'}</h3>
-                        <p className="welcome-guest-text">
+                        <h3 className="no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
+                          Hello, {user.name ? user.name.split(' ')[0] : 'Valued Guest'}
+                        </h3>
+                        <p className="welcome-guest-text no-reveal" style={{ opacity: 1, visibility: 'visible', transform: 'none' }}>
                           We've prepared your details for a seamless reservation. Please review and confirm your contact information below.
                         </p>
                       </div>
@@ -827,9 +830,6 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       {/* Prominent Google 1-Click Fast Checkout Banner */}
                       <div className="checkout-google-banner">
                         <div className="checkout-google-banner-text">
-                          <span className="checkout-google-tag">
-                            <Sparkles size={13} /> 1-CLICK FAST BOOKING
-                          </span>
                           <h4 className="checkout-google-title">Sign in with Google</h4>
                           <p className="checkout-google-sub">
                             Bypass manual typing. Autofill your guest profile and track your reservation in one click.
@@ -1064,72 +1064,67 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
               {step === 2 && createdBooking && (
                 <div className="card-body-content animate-slide-down">
                   {paymentComplete ? (
-                    <div className="payment-success-card animate-slide-down">
-                      <div className="success-icon-ring" style={{ color: '#1a9e35', borderColor: '#1a9e35' }}>
-                        <Check size={36} />
+                    <div className="payment-success-card animate-slide-down no-reveal" style={{ padding: '0.5rem 0' }}>
+                      <div className="success-icon-ring" style={{ color: '#1a9e35', borderColor: '#1a9e35', margin: '0 auto 0.75rem', width: '56px', height: '56px' }}>
+                        <Check size={28} />
                       </div>
-                      <span style={{ color: '#a3721d', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.5rem' }}>
+                      <span className="no-reveal" style={{ color: '#a3721d', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '0.35rem', opacity: 1, visibility: 'visible' }}>
                         Reservation Confirmed
                       </span>
-                      <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.1rem', fontWeight: 600, margin: '0 0 0.5rem', color: '#1D1912', lineHeight: '1.2' }}>
+                      <h3 className="no-reveal" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.8rem', fontWeight: 600, margin: '0 0 0.35rem', color: '#1D1912', lineHeight: '1.2', opacity: 1, visibility: 'visible', transform: 'none' }}>
                         Welcome to Lulu Aurelian
                       </h3>
-                      <p style={{ maxWidth: '520px', margin: '0 auto 1.5rem', color: '#475569', lineHeight: '1.6', fontSize: '0.95rem', fontWeight: 400 }}>
+                      <p className="no-reveal" style={{ maxWidth: '500px', margin: '0 auto 0.9rem', color: '#475569', lineHeight: '1.5', fontSize: '0.88rem', fontWeight: 400, opacity: 1, visibility: 'visible', transform: 'none' }}>
                         Thank you, <strong style={{ color: '#1D1912', fontWeight: 600 }}>{createdBooking?.guestName || `${guestDetails?.firstName || ''} ${guestDetails?.lastName || ''}`.trim() || 'Valued Guest'}</strong>. Your reservation for <strong style={{ color: '#1D1912', fontWeight: 600 }}>{createdBooking?.suiteName || suite?.name || 'Your Suite'}</strong> is verified and locked in.
                       </p>
 
-                      <div style={{ background: 'rgba(163, 114, 29, 0.05)', border: '1.5px solid rgba(163, 114, 29, 0.25)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', textAlign: 'left' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.5rem' }}>
-                          <span style={{ fontSize: '0.8rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Booking Reference</span>
-                          <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1rem', color: '#1D1912', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: '4px' }}>
+                      <div className="no-reveal" style={{ background: 'rgba(163, 114, 29, 0.05)', border: '1.5px solid rgba(163, 114, 29, 0.25)', borderRadius: '10px', padding: '1rem', marginBottom: '1rem', textAlign: 'left', opacity: 1, visibility: 'visible' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.4rem' }}>
+                          <span style={{ fontSize: '0.76rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Booking Reference</span>
+                          <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.95rem', color: '#1D1912', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: '4px' }}>
                             #{createdBooking?.bookingId ? String(createdBooking.bookingId).substring(0, 8).toUpperCase() : 'LULU-CONFIRMED'}
                           </span>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem', fontSize: '0.88rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem', fontSize: '0.85rem' }}>
                           <div>
-                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Check-In:</span>
+                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.74rem' }}>Check-In:</span>
                             <strong style={{ color: '#1D1912' }}>{formatDate(params.checkIn)} (from 2:00 PM)</strong>
                           </div>
                           <div>
-                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Check-Out:</span>
+                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.74rem' }}>Check-Out:</span>
                             <strong style={{ color: '#1D1912' }}>{formatDate(params.checkOut)} (by 10:00 AM)</strong>
                           </div>
                           <div>
-                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.78rem' }}>Total Paid:</span>
+                            <span style={{ color: '#6b7280', display: 'block', fontSize: '0.74rem' }}>Total Paid:</span>
                             <strong style={{ color: '#1a9e35' }}>KES {(totalCost || 0).toLocaleString('en-KE')}</strong>
                           </div>
                         </div>
                       </div>
 
-                      <div style={{ background: '#FAF6ED', border: '1.5px dashed #C29B38', borderRadius: '12px', padding: '1.15rem 1.25rem', marginBottom: '1.5rem', textAlign: 'left' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.45rem' }}>
-                          <Sparkles size={18} style={{ color: '#8C6014', flexShrink: 0 }} />
-                          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#8C6014', letterSpacing: '0.02em' }}>
-                            Keyless Smart-Lock Access
-                          </h4>
-                        </div>
-                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#334155', lineHeight: '1.55', fontWeight: 400 }}>
-                          Your unique digital door passcode, high-speed Wi-Fi credentials, and driving directions have been dispatched to <strong style={{ color: '#1D1912', fontWeight: 600 }}>{createdBooking?.email || guestDetails?.email || 'your email'}</strong>.
-                        </p>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '420px', margin: '0 auto' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxWidth: '420px', margin: '0 auto' }}>
                         <a
                           href={`https://wa.me/254112299384?text=${encodeURIComponent(`Hello Lulu Aurelian Estate, I have completed payment for my reservation #${createdBooking?.bookingId ? String(createdBooking.bookingId).substring(0, 8).toUpperCase() : ''} for ${suite?.name || 'Your Suite'} (${formatDate(params.checkIn)} - ${formatDate(params.checkOut)}).`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                            background: '#25D366', color: '#fff', padding: '0.85rem 1.25rem', borderRadius: '8px',
-                            fontWeight: 600, textDecoration: 'none', fontSize: '0.95rem', boxShadow: '0 2px 8px rgba(37, 211, 102, 0.25)'
+                            background: '#25D366', color: '#fff', padding: '0.85rem 1.25rem', borderRadius: '6px',
+                            fontFamily: 'var(--font-sans)',
+                            fontWeight: 600,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            fontSize: '0.85rem',
+                            textDecoration: 'none',
+                            boxShadow: '0 2px 8px rgba(37, 211, 102, 0.25)',
+                            transition: 'var(--transition-fast)'
                           }}
                         >
-                          <Phone size={18} />
+                          <Phone size={16} />
                           <span>Chat with Concierge on WhatsApp</span>
                         </a>
 
                         {user ? (
-                          <button onClick={handleGoToPortal} className="btn-primary checkout-action-btn">
+                          <button onClick={handleGoToPortal} className="btn-primary checkout-action-btn" style={{ fontFamily: 'var(--font-sans)' }}>
                             View Reservation in Guest Dashboard
                           </button>
                         ) : (
@@ -1137,8 +1132,9 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                             href="/"
                             style={{
                               display: 'block', textAlign: 'center', padding: '0.8rem 1.25rem',
-                              border: '1.5px solid var(--color-dark, #1D1912)', borderRadius: '8px',
-                              color: 'var(--color-dark, #1D1912)', textDecoration: 'none', fontWeight: 600, fontSize: '0.9rem'
+                              border: '1.5px solid var(--color-dark, #1D1912)', borderRadius: '6px',
+                              color: 'var(--color-dark, #1D1912)', textDecoration: 'none', fontWeight: 600, fontSize: '0.85rem',
+                              fontFamily: 'var(--font-sans)', letterSpacing: '0.08em', textTransform: 'uppercase'
                             }}
                           >
                             Return to Home
@@ -1322,17 +1318,17 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                       {paymentMethod === 'mpesa' && (
                         <div className="payment-input-group animate-slide-down">
                           {/* Official Buy Goods Details Card */}
-                          <div style={{ background: 'rgba(163, 114, 29, 0.04)', border: '1.5px solid rgba(163, 114, 29, 0.3)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.4rem' }}>
-                              <h4 style={{ margin: 0, color: '#1a9e35', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div className="no-reveal" style={{ background: 'rgba(163, 114, 29, 0.04)', border: '1.5px solid rgba(163, 114, 29, 0.3)', borderRadius: '12px', padding: '1rem 1.15rem', marginBottom: '1rem', opacity: 1, visibility: 'visible' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem', borderBottom: '1px solid rgba(163, 114, 29, 0.15)', paddingBottom: '0.4rem' }}>
+                              <span className="no-reveal" style={{ margin: 0, color: '#1a9e35', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.15rem', fontWeight: 700, letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px', opacity: 1, visibility: 'visible' }}>
                                 OFFICIAL TILL DETAILS
-                              </h4>
-                              <span style={{ fontSize: '0.72rem', background: '#1a9e35', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>BUY GOODS</span>
+                              </span>
+                              <span style={{ fontSize: '0.72rem', background: '#1a9e35', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.5px' }}>BUY GOODS</span>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                              <div style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.08)' }}>
-                                <span style={{ display: 'block', fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>TILL NUMBER</span>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem', marginBottom: '0.65rem' }}>
+                              <div style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.08)' }}>
+                                <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Till Number</span>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                                   <strong style={{ fontSize: '1.15rem', color: '#1D1912', letterSpacing: '1px' }}>4364845</strong>
                                   <button
@@ -1345,9 +1341,23 @@ export default function CheckoutPage({ user, setUser, onLogout }) {
                                   </button>
                                 </div>
                               </div>
+
+                              <div style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.08)' }}>
+                                <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Merchant Name</span>
+                                <div style={{ marginTop: '2px' }}>
+                                  <strong style={{ fontSize: '0.95rem', color: '#1D1912' }}>Lulu Aurelian</strong>
+                                </div>
+                              </div>
+
+                              <div style={{ background: 'rgba(0, 0, 0, 0.03)', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.08)' }}>
+                                <span style={{ display: 'block', fontSize: '0.68rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Total Amount</span>
+                                <div style={{ marginTop: '2px' }}>
+                                  <strong style={{ fontSize: '1.05rem', color: '#1a9e35' }}>KES {totalCost.toLocaleString('en-KE')}</strong>
+                                </div>
+                              </div>
                             </div>
 
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', lineHeight: '1.5' }}>
+                            <p className="no-reveal" style={{ margin: 0, fontSize: '0.78rem', color: '#475569', lineHeight: '1.45', opacity: 1, visibility: 'visible', transform: 'none' }}>
                               Enter your Safaricom phone below to receive an automated Buy Goods STK prompt for <strong>KES {totalCost.toLocaleString('en-KE')}</strong>, or pay manually via your M-Pesa menu using Till No <strong>4364845</strong>.
                             </p>
                           </div>

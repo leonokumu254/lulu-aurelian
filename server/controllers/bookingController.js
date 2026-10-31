@@ -289,6 +289,22 @@ export const initiatePayment = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'M-Pesa phone number is required.' });
     }
 
+    // Persist phone number to database to avoid guest frustration
+    if (targetPhone) {
+      const cleanDigits = String(targetPhone).replace(/[^0-9]/g, '');
+      const normalizedPhone = cleanDigits.startsWith('254') ? `+${cleanDigits}` : `+254${cleanDigits.replace(/^0+/, '')}`;
+      await db.bookings.updateGuestPhone(booking.id, normalizedPhone).catch(() => {});
+      booking.guest_phone = normalizedPhone;
+      if (booking.user_id) {
+        await db.users.updatePhone(booking.user_id, normalizedPhone).catch(() => {});
+      } else if (booking.guest_email) {
+        const u = await db.users.findByEmail(booking.guest_email);
+        if (u) {
+          await db.users.updatePhone(u.id, normalizedPhone).catch(() => {});
+        }
+      }
+    }
+
     // ── Determine amount (dynamically fetched from DB rates)
     const unitPricing   = await db.pricing.getUnitPricing(booking.unit_id);
     const isOneBed      = booking.booking_type === 'one_bedroom';

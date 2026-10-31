@@ -386,6 +386,25 @@ export const db = {
         }
         return user || null;
       }
+    },
+
+    updatePhone: async (id, phone) => {
+      const now = new Date();
+      if (useMySQL) {
+        await pool.query(
+          'UPDATE users SET phone = ?, updated_at = ? WHERE id = ?',
+          [phone || null, now, id]
+        );
+        const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+        return rows[0] || null;
+      } else {
+        const user = inMemory.users.find(u => u.id === id);
+        if (user) {
+          user.phone = phone || null;
+          user.updated_at = now;
+        }
+        return user || null;
+      }
     }
   },
 
@@ -574,6 +593,24 @@ export const db = {
           booking.approved_by = approved_by;
           booking.approved_at = approved_at || now;
         }
+        booking.updated_at = now;
+      }
+      return booking || null;
+    },
+
+    updateGuestPhone: async (id, phone) => {
+      const now = new Date();
+      if (useMySQL) {
+        await pool.query(
+          'UPDATE bookings SET guest_phone = ?, updated_at = ? WHERE id = ?',
+          [phone, now, id]
+        );
+        const [rows] = await pool.query('SELECT * FROM bookings WHERE id = ?', [id]);
+        return rows[0] || null;
+      }
+      const booking = inMemory.bookings.find(b => b.id === id);
+      if (booking) {
+        booking.guest_phone = phone;
         booking.updated_at = now;
       }
       return booking || null;
